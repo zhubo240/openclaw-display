@@ -73,7 +73,17 @@
 
   .error-detail { margin:0.5rem 0; }
   .error-title { font-size:0.75rem; font-weight:600; color:var(--yellow); margin-bottom:0.3rem; }
+  .error-analysis { font-size:0.78rem; color:var(--yellow); background:rgba(210,153,34,0.08); border:1px solid rgba(210,153,34,0.2); border-radius:6px; padding:0.5rem 0.8rem; margin-bottom:0.4rem; white-space:pre-line; line-height:1.5; }
+  .error-expand { margin-top:0.3rem; }
+  .error-expand summary { font-size:0.75rem; font-weight:600; color:var(--muted); cursor:pointer; padding:0.2rem 0; }
+  .error-expand summary:hover { color:var(--blue); }
+  .error-expand[open] summary { color:var(--blue); }
   .log-block { background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:0.6rem 0.8rem; font-family:'SF Mono',Monaco,Consolas,monospace; font-size:0.72rem; overflow-x:auto; white-space:pre-wrap; word-break:break-all; color:var(--muted); max-height:250px; overflow-y:auto; }
+
+  .conv-list { font-size:0.75rem; color:var(--muted); padding:0.4rem 0; border-bottom:1px solid rgba(48,54,61,0.5); margin-bottom:0.2rem; display:flex; flex-direction:column; gap:0.15rem; }
+  .conv-title { font-weight:600; color:var(--text); margin-bottom:0.2rem; }
+  .conv-item { padding:0.1rem 0.4rem; border-radius:3px; }
+  .conv-item.sel { background:rgba(88,166,255,0.1); color:var(--blue); font-weight:600; }
 
   .last-msg { font-size:0.8rem; color:var(--muted); padding:0.5rem 0 0.4rem; border-bottom:1px solid rgba(48,54,61,0.5); margin-bottom:0.2rem; }
   .last-msg em { color:var(--text); font-style:normal; }
@@ -94,7 +104,7 @@
 </head>
 <body>
 <h1>OpenClaw 诊断报告</h1>
-<p class="meta">2026-02-10 19:18:23 · Bos-MacBook-Air.local · agents: butler cn-macro lifestyle openclaw-ops realestate us-mean-reversion us-semiconductor</p>
+<p class="meta">2026-02-11 07:07:41 · Bos-MacBook-Air.local · agents: butler</p>
 
 <div class="global-bar">
   <div class="g-chip pass"><span class="dot"></span>Discord OK</div>
@@ -103,231 +113,59 @@
 </div>
 
 <div class="summary">
-  <div class="summary-card pass"><div class="summary-num">18</div><div class="summary-label">PASS</div></div>
-  <div class="summary-card fail"><div class="summary-num">9</div><div class="summary-label">FAIL</div></div>
-  <div class="summary-card warn"><div class="summary-num">8</div><div class="summary-label">WARN</div></div>
+  <div class="summary-card pass"><div class="summary-num">3</div><div class="summary-label">PASS</div></div>
+  <div class="summary-card fail"><div class="summary-num">1</div><div class="summary-label">FAIL</div></div>
+  <div class="summary-card warn"><div class="summary-num">1</div><div class="summary-label">WARN</div></div>
 </div>
 
 <div class="agent-tabs">
   <div class="agent-tab all active" onclick="filterAgent('all')">全部</div>
   <div class="agent-tab" onclick="filterAgent('butler')">butler</div>
-  <div class="agent-tab" onclick="filterAgent('cn-macro')">cn-macro</div>
-  <div class="agent-tab" onclick="filterAgent('lifestyle')">lifestyle</div>
-  <div class="agent-tab" onclick="filterAgent('openclaw-ops')">openclaw-ops</div>
-  <div class="agent-tab" onclick="filterAgent('realestate')">realestate</div>
-  <div class="agent-tab" onclick="filterAgent('us-mean-reversion')">us-mean-reversion</div>
-  <div class="agent-tab" onclick="filterAgent('us-semiconductor')">us-semiconductor</div>
 </div>
 
 
 <div class="agent-card fail" data-agent="butler">
   <div class="agent-header" onclick="toggleAgent(this)">
     <span class="agent-name">butler</span>
-    <span class="agent-meta">4h ago · 15k/200k (8%)</span>
-    <div class="token-bar"><div class="token-fill green" style="width:8%"></div></div>
+    <span class="agent-meta">27m ago · 14k/200k (7%)</span>
+    <div class="token-bar"><div class="token-fill green" style="width:7%"></div></div>
     <span class="agent-badge fail">3P 1F 1W</span>
     <span class="arrow">&#9654;</span>
   </div>
   <div class="agent-body">
-    <div class="last-msg">最近消息: <em>2026-02-10 07:16:13</em> (UTC) — <em>测试一下</em></div>
+    <div class="conv-list"><span class="conv-title">对话记录:</span><span class="conv-item">[1] 2026-02-10 22:40:30 — 怎么回事？</span><span class="conv-item sel">[2] 2026-02-10 03:51:07 — list all available MCP tools that start with 'browser'</span></div>
+    <div class="last-msg">选中对话 #2: <em>2026-02-10 03:51:07</em> (UTC) — <em>list all available MCP tools that start with 'browser'</em></div>
     <div class="dtree-flow">
       <div class="dtree-step"><div class="dtree-node pass"><div class="dtree-dot"></div><div class="dtree-label">Gateway</div></div><div class="dtree-line"></div></div>
       <div class="dtree-step"><div class="dtree-node pass"><div class="dtree-dot"></div><div class="dtree-label">CLI 调用</div></div><div class="dtree-line"></div></div>
       <div class="dtree-step"><div class="dtree-node pass"><div class="dtree-dot"></div><div class="dtree-label">串行队列</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node warn"><div class="dtree-dot"></div><div class="dtree-label">CLI 完成</div></div><div class="dtree-line"></div></div>
+      <div class="dtree-step"><div class="dtree-node fail"><div class="dtree-dot"></div><div class="dtree-label">CLI 完成</div></div><div class="dtree-line"></div></div>
       <div class="dtree-step"><div class="dtree-node pass"><div class="dtree-dot"></div><div class="dtree-label">静默过滤</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node fail"><div class="dtree-dot"></div><div class="dtree-label">送达</div></div></div>
+      <div class="dtree-step"><div class="dtree-node warn"><div class="dtree-dot"></div><div class="dtree-label">送达</div></div></div>
     </div>
-    <div class="check pass"><span class="check-label">Session 状态</span><span class="check-detail">Token 15k/200k (8%) — 正常, 最近活跃 4h ago</span></div>
-    <div class="check pass"><span class="check-label">CLI 活跃</span><span class="check-detail">最近调用: 10:30:23 (528分钟前, 全局 1 条)</span></div>
-    <div class="check warn"><span class="check-label">CLI 完成</span><span class="check-detail">无完成记录（日志窗口可能太短）</span></div>
-    <div class="check pass"><span class="check-label">静默过滤</span><span class="check-detail">最后回复: '**[管家]** 收到！我在，连接正常。'</span></div>
-    <div class="check fail"><span class="check-label">Discord 送达</span><span class="check-detail">2 条投递错误, 无正向信号</span></div>
+    <div class="check pass"><span class="check-label">Session 状态</span><span class="check-detail">Token 14k/200k (7%) — 正常, 最近活跃 27m ago</span></div>
+    <div class="check pass"><span class="check-label">CLI 活跃</span><span class="check-detail">最近调用: 22:59:42 (488分钟前, 全局 11 条)</span></div>
+    <div class="check fail"><span class="check-label">CLI 完成</span><span class="check-detail">发现 2 条 CLI 错误</span></div>
     <div class="error-detail">
-      <div class="error-title">送达错误详情</div>
-      <div class="log-block">2026-02-10T09:48:48.589Z error gateway/channels/discord {&quot;subsystem&quot;:&quot;gateway/channels/discord&quot;} discord gateway error: Error: WebSocket was closed before the connection was established
-2026-02-10T09:48:48.599Z error gateway/channels/discord {&quot;subsystem&quot;:&quot;gateway/channels/discord&quot;} discord gateway error: Error: WebSocket was closed before the connection was established</div>
+      <div class="error-analysis">WebSocket 断连 (1005): Discord 连接中断期间 CLI 请求失败，通常是短暂网络波动，会自动恢复</div>
+      <details class="error-expand">
+        <summary>展开日志上下文 (±5行)</summary>
+        <div class="log-block">2026-02-10T22:35:57.609Z warn [EventQueue] Slow listener detected: DiscordReactionListener took 1815ms for event MESSAGE_REACTION_ADD
+2026-02-10T22:35:57.972Z info agent/claude-cli {&quot;subsystem&quot;:&quot;agent/claude-cli&quot;} cli exec: provider=claude-cli model=opus promptChars=185
+2026-02-10T22:36:00.982Z info gateway/channels/discord {&quot;subsystem&quot;:&quot;gateway/channels/discord&quot;} discord gateway: Attempting resume with backoff: 1000ms
+2026-02-10T22:36:01.221Z info gateway/channels/discord {&quot;subsystem&quot;:&quot;gateway/channels/discord&quot;} discord gateway: WebSocket connection closed with code 1005
+2026-02-10T22:36:06.439Z info agent/claude-cli {&quot;subsystem&quot;:&quot;agent/claude-cli&quot;} cli exec: provider=claude-cli model=opus promptChars=701
+2026-02-10T22:36:06.488Z error Embedded agent failed before reply: CLI failed.
+2026-02-10T22:36:06.497Z error [openclaw] Unhandled promise rejection: FailoverError: CLI failed.
+    at file:///opt/homebrew/lib/node_modules/openclaw/dist/reply-DptDUVRg.js:62380:11
+2026-02-10T22:36:08.682Z info gateway/canvas {&quot;subsystem&quot;:&quot;gateway/canvas&quot;} canvas host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /Users/bozhu/.openclaw/canvas)
+2026-02-10T22:36:08.733Z info gateway/heartbeat {&quot;subsystem&quot;:&quot;gateway/heartbeat&quot;} {&quot;intervalMs&quot;:1800000} heartbeat: started
+2026-02-10T22:36:08.736Z info gateway {&quot;subsystem&quot;:&quot;gateway&quot;} agent model: claude-cli/claude-opus-4-6
+2026-02-10T22:36:08.737Z info gateway {&quot;subsystem&quot;:&quot;gateway&quot;} listening on ws://127.0.0.1:18789 (PID 3400)</div>
+      </details>
     </div>
-  </div>
-</div>
-<div class="agent-card fail" data-agent="cn-macro">
-  <div class="agent-header" onclick="toggleAgent(this)">
-    <span class="agent-name">cn-macro</span>
-    <span class="agent-meta">8h ago · 18k/200k (9%)</span>
-    <div class="token-bar"><div class="token-fill green" style="width:9%"></div></div>
-    <span class="agent-badge fail">3P 1F 1W</span>
-    <span class="arrow">&#9654;</span>
-  </div>
-  <div class="agent-body">
-    <div class="last-msg">最近消息: <em>2026-02-10 03:08:27</em> (UTC) — <em>这</em></div>
-    <div class="dtree-flow">
-      <div class="dtree-step"><div class="dtree-node pass"><div class="dtree-dot"></div><div class="dtree-label">Gateway</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node pass"><div class="dtree-dot"></div><div class="dtree-label">CLI 调用</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node pass"><div class="dtree-dot"></div><div class="dtree-label">串行队列</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node warn"><div class="dtree-dot"></div><div class="dtree-label">CLI 完成</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node pass"><div class="dtree-dot"></div><div class="dtree-label">静默过滤</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node fail"><div class="dtree-dot"></div><div class="dtree-label">送达</div></div></div>
-    </div>
-    <div class="check pass"><span class="check-label">Session 状态</span><span class="check-detail">Token 18k/200k (9%) — 正常, 最近活跃 8h ago</span></div>
-    <div class="check pass"><span class="check-label">CLI 活跃</span><span class="check-detail">最近调用: 10:30:23 (528分钟前, 全局 1 条)</span></div>
-    <div class="check warn"><span class="check-label">CLI 完成</span><span class="check-detail">无完成记录（日志窗口可能太短）</span></div>
-    <div class="check pass"><span class="check-label">静默过滤</span><span class="check-detail">最后回复: '这... 什么？😄'</span></div>
-    <div class="check fail"><span class="check-label">Discord 送达</span><span class="check-detail">2 条投递错误, 无正向信号</span></div>
-    <div class="error-detail">
-      <div class="error-title">送达错误详情</div>
-      <div class="log-block">2026-02-10T09:48:48.589Z error gateway/channels/discord {&quot;subsystem&quot;:&quot;gateway/channels/discord&quot;} discord gateway error: Error: WebSocket was closed before the connection was established
-2026-02-10T09:48:48.599Z error gateway/channels/discord {&quot;subsystem&quot;:&quot;gateway/channels/discord&quot;} discord gateway error: Error: WebSocket was closed before the connection was established</div>
-    </div>
-  </div>
-</div>
-<div class="agent-card fail" data-agent="lifestyle">
-  <div class="agent-header" onclick="toggleAgent(this)">
-    <span class="agent-name">lifestyle</span>
-    <span class="agent-meta">45m ago · 200k/200k (100%)</span>
-    <div class="token-bar"><div class="token-fill red" style="width:100%"></div></div>
-    <span class="agent-badge fail">2P 2F 1W</span>
-    <span class="arrow">&#9654;</span>
-  </div>
-  <div class="agent-body">
-    <div class="last-msg">最近消息: <em>2026-02-10 10:33:15</em> (UTC) — <em>每天的安排，之前说的太笼统了</em></div>
-    <div class="dtree-flow">
-      <div class="dtree-step"><div class="dtree-node pass"><div class="dtree-dot"></div><div class="dtree-label">Gateway</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node pass"><div class="dtree-dot"></div><div class="dtree-label">CLI 调用</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node pass"><div class="dtree-dot"></div><div class="dtree-label">串行队列</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node warn"><div class="dtree-dot"></div><div class="dtree-label">CLI 完成</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node pass"><div class="dtree-dot"></div><div class="dtree-label">静默过滤</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node fail"><div class="dtree-dot"></div><div class="dtree-label">送达</div></div></div>
-    </div>
-    <div class="check fail"><span class="check-label">Session 状态</span><span class="check-detail">Token 200k/200k (100%) — 即将满！需要清 session</span></div>
-    <div class="check pass"><span class="check-label">CLI 活跃</span><span class="check-detail">最近调用: 10:30:23 (528分钟前, 全局 1 条)</span></div>
-    <div class="check warn"><span class="check-label">CLI 完成</span><span class="check-detail">无完成记录（日志窗口可能太短）</span></div>
-    <div class="check pass"><span class="check-label">静默过滤</span><span class="check-detail">最后回复: '好的，综合了多个网页，以下是我能找到的**最详细的每日节目时间表**：'</span></div>
-    <div class="check fail"><span class="check-label">Discord 送达</span><span class="check-detail">2 条投递错误, 无正向信号</span></div>
-    <div class="error-detail">
-      <div class="error-title">送达错误详情</div>
-      <div class="log-block">2026-02-10T09:48:48.589Z error gateway/channels/discord {&quot;subsystem&quot;:&quot;gateway/channels/discord&quot;} discord gateway error: Error: WebSocket was closed before the connection was established
-2026-02-10T09:48:48.599Z error gateway/channels/discord {&quot;subsystem&quot;:&quot;gateway/channels/discord&quot;} discord gateway error: Error: WebSocket was closed before the connection was established</div>
-    </div>
-  </div>
-</div>
-<div class="agent-card fail" data-agent="openclaw-ops">
-  <div class="agent-header" onclick="toggleAgent(this)">
-    <span class="agent-name">openclaw-ops</span>
-    <span class="agent-meta">4h ago · 18k/205k (9%)</span>
-    <div class="token-bar"><div class="token-fill green" style="width:9%"></div></div>
-    <span class="agent-badge fail">2P 1F 2W</span>
-    <span class="arrow">&#9654;</span>
-  </div>
-  <div class="agent-body">
-    <div class="last-msg">最近消息: <em>无数据</em> (UTC) — <em>(空)</em></div>
-    <div class="dtree-flow">
-      <div class="dtree-step"><div class="dtree-node pass"><div class="dtree-dot"></div><div class="dtree-label">Gateway</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node pass"><div class="dtree-dot"></div><div class="dtree-label">CLI 调用</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node pass"><div class="dtree-dot"></div><div class="dtree-label">串行队列</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node warn"><div class="dtree-dot"></div><div class="dtree-label">CLI 完成</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node warn"><div class="dtree-dot"></div><div class="dtree-label">静默过滤</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node fail"><div class="dtree-dot"></div><div class="dtree-label">送达</div></div></div>
-    </div>
-    <div class="check pass"><span class="check-label">Session 状态</span><span class="check-detail">Token 18k/205k (9%) — 正常, 最近活跃 4h ago</span></div>
-    <div class="check pass"><span class="check-label">CLI 活跃</span><span class="check-detail">最近调用: 10:30:23 (528分钟前, 全局 1 条)</span></div>
-    <div class="check warn"><span class="check-label">CLI 完成</span><span class="check-detail">无完成记录（日志窗口可能太短）</span></div>
-    <div class="check warn"><span class="check-label">静默过滤</span><span class="check-detail">无 assistant 消息记录</span></div>
-    <div class="check fail"><span class="check-label">Discord 送达</span><span class="check-detail">2 条投递错误, 无正向信号</span></div>
-    <div class="error-detail">
-      <div class="error-title">送达错误详情</div>
-      <div class="log-block">2026-02-10T09:48:48.589Z error gateway/channels/discord {&quot;subsystem&quot;:&quot;gateway/channels/discord&quot;} discord gateway error: Error: WebSocket was closed before the connection was established
-2026-02-10T09:48:48.599Z error gateway/channels/discord {&quot;subsystem&quot;:&quot;gateway/channels/discord&quot;} discord gateway error: Error: WebSocket was closed before the connection was established</div>
-    </div>
-  </div>
-</div>
-<div class="agent-card fail" data-agent="realestate">
-  <div class="agent-header" onclick="toggleAgent(this)">
-    <span class="agent-name">realestate</span>
-    <span class="agent-meta">4h ago · 79k/200k (40%)</span>
-    <div class="token-bar"><div class="token-fill green" style="width:40%"></div></div>
-    <span class="agent-badge fail">3P 1F 1W</span>
-    <span class="arrow">&#9654;</span>
-  </div>
-  <div class="agent-body">
-    <div class="last-msg">最近消息: <em>2026-02-10 06:57:14</em> (UTC) — <em>hi</em></div>
-    <div class="dtree-flow">
-      <div class="dtree-step"><div class="dtree-node pass"><div class="dtree-dot"></div><div class="dtree-label">Gateway</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node pass"><div class="dtree-dot"></div><div class="dtree-label">CLI 调用</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node pass"><div class="dtree-dot"></div><div class="dtree-label">串行队列</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node warn"><div class="dtree-dot"></div><div class="dtree-label">CLI 完成</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node pass"><div class="dtree-dot"></div><div class="dtree-label">静默过滤</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node fail"><div class="dtree-dot"></div><div class="dtree-label">送达</div></div></div>
-    </div>
-    <div class="check pass"><span class="check-label">Session 状态</span><span class="check-detail">Token 79k/200k (40%) — 正常, 最近活跃 4h ago</span></div>
-    <div class="check pass"><span class="check-label">CLI 活跃</span><span class="check-detail">最近调用: 10:30:23 (528分钟前, 全局 1 条)</span></div>
-    <div class="check warn"><span class="check-label">CLI 完成</span><span class="check-detail">无完成记录（日志窗口可能太短）</span></div>
-    <div class="check pass"><span class="check-label">静默过滤</span><span class="check-detail">最后回复: '在的！有什么需要？'</span></div>
-    <div class="check fail"><span class="check-label">Discord 送达</span><span class="check-detail">2 条投递错误, 无正向信号</span></div>
-    <div class="error-detail">
-      <div class="error-title">送达错误详情</div>
-      <div class="log-block">2026-02-10T09:48:48.589Z error gateway/channels/discord {&quot;subsystem&quot;:&quot;gateway/channels/discord&quot;} discord gateway error: Error: WebSocket was closed before the connection was established
-2026-02-10T09:48:48.599Z error gateway/channels/discord {&quot;subsystem&quot;:&quot;gateway/channels/discord&quot;} discord gateway error: Error: WebSocket was closed before the connection was established</div>
-    </div>
-  </div>
-</div>
-<div class="agent-card fail" data-agent="us-mean-reversion">
-  <div class="agent-header" onclick="toggleAgent(this)">
-    <span class="agent-name">us-mean-reversion</span>
-    <span class="agent-meta">6h ago · 192k/200k (96%)</span>
-    <div class="token-bar"><div class="token-fill red" style="width:96%"></div></div>
-    <span class="agent-badge fail">2P 2F 1W</span>
-    <span class="arrow">&#9654;</span>
-  </div>
-  <div class="agent-body">
-    <div class="last-msg">最近消息: <em>2026-02-10 05:33:04</em> (UTC) — <em>那你写个文档，将我们对话记录进去。 关于这个误差，以及公司级别数据缺失</em></div>
-    <div class="dtree-flow">
-      <div class="dtree-step"><div class="dtree-node pass"><div class="dtree-dot"></div><div class="dtree-label">Gateway</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node pass"><div class="dtree-dot"></div><div class="dtree-label">CLI 调用</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node pass"><div class="dtree-dot"></div><div class="dtree-label">串行队列</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node warn"><div class="dtree-dot"></div><div class="dtree-label">CLI 完成</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node pass"><div class="dtree-dot"></div><div class="dtree-label">静默过滤</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node fail"><div class="dtree-dot"></div><div class="dtree-label">送达</div></div></div>
-    </div>
-    <div class="check fail"><span class="check-label">Session 状态</span><span class="check-detail">Token 192k/200k (96%) — 即将满！需要清 session</span></div>
-    <div class="check pass"><span class="check-label">CLI 活跃</span><span class="check-detail">最近调用: 10:30:23 (528分钟前, 全局 1 条)</span></div>
-    <div class="check warn"><span class="check-label">CLI 完成</span><span class="check-detail">无完成记录（日志窗口可能太短）</span></div>
-    <div class="check pass"><span class="check-label">静默过滤</span><span class="check-detail">最后回复: '已创建文档 `sp500_project_export/数据局限性说明.md` '</span></div>
-    <div class="check fail"><span class="check-label">Discord 送达</span><span class="check-detail">2 条投递错误, 无正向信号</span></div>
-    <div class="error-detail">
-      <div class="error-title">送达错误详情</div>
-      <div class="log-block">2026-02-10T09:48:48.589Z error gateway/channels/discord {&quot;subsystem&quot;:&quot;gateway/channels/discord&quot;} discord gateway error: Error: WebSocket was closed before the connection was established
-2026-02-10T09:48:48.599Z error gateway/channels/discord {&quot;subsystem&quot;:&quot;gateway/channels/discord&quot;} discord gateway error: Error: WebSocket was closed before the connection was established</div>
-    </div>
-  </div>
-</div>
-<div class="agent-card fail" data-agent="us-semiconductor">
-  <div class="agent-header" onclick="toggleAgent(this)">
-    <span class="agent-name">us-semiconductor</span>
-    <span class="agent-meta">9h ago · 18k/200k (9%)</span>
-    <div class="token-bar"><div class="token-fill green" style="width:9%"></div></div>
-    <span class="agent-badge fail">3P 1F 1W</span>
-    <span class="arrow">&#9654;</span>
-  </div>
-  <div class="agent-body">
-    <div class="last-msg">最近消息: <em>2026-02-10 02:44:27</em> (UTC) — <em>systemPrompt override test - please reply</em></div>
-    <div class="dtree-flow">
-      <div class="dtree-step"><div class="dtree-node pass"><div class="dtree-dot"></div><div class="dtree-label">Gateway</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node pass"><div class="dtree-dot"></div><div class="dtree-label">CLI 调用</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node pass"><div class="dtree-dot"></div><div class="dtree-label">串行队列</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node warn"><div class="dtree-dot"></div><div class="dtree-label">CLI 完成</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node pass"><div class="dtree-dot"></div><div class="dtree-label">静默过滤</div></div><div class="dtree-line"></div></div>
-      <div class="dtree-step"><div class="dtree-node fail"><div class="dtree-dot"></div><div class="dtree-label">送达</div></div></div>
-    </div>
-    <div class="check pass"><span class="check-label">Session 状态</span><span class="check-detail">Token 18k/200k (9%) — 正常, 最近活跃 9h ago</span></div>
-    <div class="check pass"><span class="check-label">CLI 活跃</span><span class="check-detail">最近调用: 10:30:23 (528分钟前, 全局 1 条)</span></div>
-    <div class="check warn"><span class="check-label">CLI 完成</span><span class="check-detail">无完成记录（日志窗口可能太短）</span></div>
-    <div class="check pass"><span class="check-label">静默过滤</span><span class="check-detail">最后回复: 'Hey Bo! I'm here and responding. What's '</span></div>
-    <div class="check fail"><span class="check-label">Discord 送达</span><span class="check-detail">2 条投递错误, 无正向信号</span></div>
-    <div class="error-detail">
-      <div class="error-title">送达错误详情</div>
-      <div class="log-block">2026-02-10T09:48:48.589Z error gateway/channels/discord {&quot;subsystem&quot;:&quot;gateway/channels/discord&quot;} discord gateway error: Error: WebSocket was closed before the connection was established
-2026-02-10T09:48:48.599Z error gateway/channels/discord {&quot;subsystem&quot;:&quot;gateway/channels/discord&quot;} discord gateway error: Error: WebSocket was closed before the connection was established</div>
-    </div>
+    <div class="check pass"><span class="check-label">静默过滤</span><span class="check-detail">最后回复: '**[管家]**'</span></div>
+    <div class="check warn"><span class="check-label">Discord 送达</span><span class="check-detail">无正向信号也无错误（数据不足）</span></div>
   </div>
 </div>
 

@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
 # OpenClaw Agent 诊断脚本 (v2)
 # 按 agent 维度检查，输出 HTML 报告
-# 用法: ./diagnose.sh <agent1> [agent2 ...] [--open] [--all]
-#   agent:  指定检查的 agent 名称（必须至少一个，或用 --all）
-#   --open: 生成后自动打开浏览器
-#   --all:  检查所有活跃 agent
+# 用法: ./diagnose.sh <agent1> [agent2 ...] [--open] [--all] [--conv N]
+#   agent:   指定检查的 agent 名称（必须至少一个，或用 --all）
+#   --open:  生成后自动打开浏览器
+#   --all:   检查所有活跃 agent
+#   --conv N: 使用第 N 次对话 (1=最近, 最多5), 默认 1
 #
 # 示例:
 #   ./diagnose.sh butler us-mean-reversion
 #   ./diagnose.sh --all --open
-#   ./diagnose.sh realestate
+#   ./diagnose.sh realestate --conv 3
 
 set -euo pipefail
 
@@ -24,15 +25,27 @@ RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[0;33m'; BLUE='\033[0;34m'; CY
 # Parse args
 AUTO_OPEN=false
 ALL_AGENTS=false
+CONV_NUM=1
 AGENTS=()
+NEXT_IS_CONV=false
 for arg in "$@"; do
+  if [[ "$NEXT_IS_CONV" == true ]]; then
+    CONV_NUM="$arg"
+    NEXT_IS_CONV=false
+    continue
+  fi
   case "$arg" in
     --open) AUTO_OPEN=true ;;
     --all)  ALL_AGENTS=true ;;
+    --conv) NEXT_IS_CONV=true ;;
+    --conv=*) CONV_NUM="${arg#--conv=}" ;;
     -*)     echo "Unknown option: $arg"; exit 1 ;;
     *)      AGENTS+=("$arg") ;;
   esac
 done
+# Clamp conv number to 1-5
+[[ "$CONV_NUM" -lt 1 ]] 2>/dev/null && CONV_NUM=1
+[[ "$CONV_NUM" -gt 5 ]] 2>/dev/null && CONV_NUM=5
 
 # Collect global data first
 echo -e "${BLUE}${BOLD}OpenClaw 诊断${NC} — $DIAG_TIME"
@@ -109,92 +122,121 @@ for AGENT in "${AGENTS[@]}"; do
   echo -e "\n${BOLD}${CYAN}━━ $AGENT ━━${NC}"
   A_PASS=0; A_FAIL=0; A_WARN=0
 
-  # ── Extract latest user message from JSONL session ──
+  # ── Extract recent conversations from JSONL sessions (top 5) ──
   LAST_MSG_TIME=""
   LAST_MSG_TEXT=""
+  LAST_ASST_TEXT=""
   _JSONL_RAW=$(python3 << PYEOF
 import json, os, glob, re
+
 agent = "${AGENT}"
+conv_num = max(1, min(5, int("${CONV_NUM}")))
 
-# Step 1: Resolve agent workspace → Claude projects dir
+# Step 1: Resolve agent workspace -> Claude projects dir
 base_ws = os.path.expanduser("~/.openclaw/workspace")
-agent_ws = base_ws + "-" + agent  # e.g. workspace-us-mean-reversion
+agent_ws = base_ws + "-" + agent
 if not os.path.isdir(agent_ws):
-    agent_ws = base_ws  # butler uses default workspace
+    agent_ws = base_ws
 
-# Convert workspace path to Claude project dir name: replace / with -, remove .
 proj_name = agent_ws.replace("/", "-").replace(".", "-")
 proj_dir = os.path.expanduser("~/.claude/projects/" + proj_name)
 
-# Step 2: Find the most recently modified JSONL in that project dir
-jsonl = None
+# Step 2: Find top 5 most recently modified JSONLs
+jsonls = []
 if os.path.isdir(proj_dir):
     candidates = glob.glob(os.path.join(proj_dir, "*.jsonl"))
-    # Exclude subagent files
     candidates = [c for c in candidates if "/subagents/" not in c]
-    if candidates:
-        jsonl = max(candidates, key=os.path.getmtime)
+    candidates.sort(key=os.path.getmtime, reverse=True)
+    jsonls = candidates[:5]
 
-if not jsonl:
-    print("|")
-    print("ASST|")
+if not jsonls:
+    print("EMPTY|")
     exit()
 
-# Step 3: Extract last user message and last assistant message
-ts = txt = ""
-asst_txt = ""
-with open(jsonl) as f:
-    for line in f:
-        try:
-            e = json.loads(line.strip())
-            if e.get("type") == "user":
-                m = e.get("message", {})
-                if m.get("role") == "user":
-                    ts = e.get("timestamp", "")
-                    content = m.get("content", "")
-                    if isinstance(content, str):
-                        t = content.strip()
-                        # Extract actual message from Discord metadata
-                        # Pattern: [Discord ...] Username: actual message
-                        match = re.search(r'\]\s*\w[^:\n]*:\s*(.+?)(?:\n|$)', t)
-                        if match:
-                            txt = match.group(1).strip()[:80]
-                        else:
-                            while t.startswith("[") and "]" in t:
-                                t = t[t.index("]")+1:].strip()
-                            txt = t[:80]
-                    elif isinstance(content, list):
-                        for c in content:
-                            if c.get("type") == "text":
-                                t = c["text"].strip()
-                                while t.startswith("[") and "]" in t:
-                                    t = t[t.index("]")+1:].strip()
-                                txt = t[:80]
-                                break
-            elif e.get("type") == "assistant":
-                m = e.get("message", {})
-                content = m.get("content", [])
-                if isinstance(content, list):
-                    for c in content:
-                        if c.get("type") == "text":
-                            t = c.get("text", "").strip()
-                            if t:
-                                asst_txt = t[:60]
-                                break
-                elif isinstance(content, str) and content.strip():
-                    asst_txt = content.strip()[:60]
-        except: pass
-print(f"{ts}|{txt}")
-print(f"ASST|{asst_txt}")
+actual_sel = min(conv_num, len(jsonls))
+sel_ts = sel_txt = sel_asst = ""
+
+def extract_user_text(content):
+    """Extract user message text from content field."""
+    if isinstance(content, str):
+        t = content.strip()
+        match = re.search(r'\]\s*\w[^:\n]*:\s*(.+?)(?:\n|$)', t)
+        if match:
+            return match.group(1).strip()[:60]
+        while t.startswith("[") and "]" in t:
+            t = t[t.index("]")+1:].strip()
+        return t[:60]
+    elif isinstance(content, list):
+        for c in content:
+            if c.get("type") == "text":
+                t = c["text"].strip()
+                while t.startswith("[") and "]" in t:
+                    t = t[t.index("]")+1:].strip()
+                return t[:60]
+    return ""
+
+def extract_asst_text(content):
+    """Extract assistant message text from content field."""
+    if isinstance(content, list):
+        for c in content:
+            if c.get("type") == "text":
+                t = c.get("text", "").strip()
+                if t:
+                    return t[:60]
+    elif isinstance(content, str) and content.strip():
+        return content.strip()[:60]
+    return ""
+
+for idx, jf in enumerate(jsonls, 1):
+    ts = txt = asst = ""
+    with open(jf) as f:
+        for line in f:
+            try:
+                e = json.loads(line.strip())
+                if e.get("type") == "user":
+                    m = e.get("message", {})
+                    if m.get("role") == "user":
+                        ts = e.get("timestamp", "")
+                        txt = extract_user_text(m.get("content", ""))
+                elif e.get("type") == "assistant":
+                    asst = extract_asst_text(e.get("message", {}).get("content", []))
+            except: pass
+    sel = "*" if idx == actual_sel else " "
+    print(f"CONV|{sel}|{idx}|{ts}|{txt}|{asst}")
+    if idx == actual_sel:
+        sel_ts = ts
+        sel_txt = txt
+        sel_asst = asst
+
+print(f"USER|{sel_ts}|{sel_txt}")
+print(f"ASST|{sel_asst}")
 PYEOF
 )
-  LAST_MSG_TIME=$(echo "$_JSONL_RAW" | head -1 | cut -d'|' -f1)
-  LAST_MSG_TEXT=$(echo "$_JSONL_RAW" | head -1 | cut -d'|' -f2-)
-  LAST_ASST_TEXT=$(echo "$_JSONL_RAW" | sed -n '2p' | cut -d'|' -f2-)
+
+  # Parse conversation list and selected data
+  CONV_LIST=$(echo "$_JSONL_RAW" | grep "^CONV|" || true)
+  LAST_MSG_TIME=$(echo "$_JSONL_RAW" | grep "^USER|" | head -1 | cut -d'|' -f2)
+  LAST_MSG_TEXT=$(echo "$_JSONL_RAW" | grep "^USER|" | head -1 | cut -d'|' -f3-)
+  LAST_ASST_TEXT=$(echo "$_JSONL_RAW" | grep "^ASST|" | head -1 | cut -d'|' -f2-)
+
   if [[ -n "$LAST_MSG_TIME" ]]; then
     LAST_MSG_DISPLAY="${LAST_MSG_TIME:0:10} ${LAST_MSG_TIME:11:8}"
   else
     LAST_MSG_DISPLAY="无数据"
+  fi
+
+  # Display conversation list
+  if [[ -n "$CONV_LIST" ]]; then
+    CONV_TOTAL=$(echo "$CONV_LIST" | wc -l | tr -d ' ')
+    echo -e "  ${BLUE}对话记录 (${CONV_TOTAL} 条, 选中 #${CONV_NUM}):${NC}"
+    while IFS='|' read -r _ sel idx ts txt asst; do
+      TS_SHORT="${ts:0:10} ${ts:11:8}"
+      if [[ "$sel" == "*" ]]; then
+        echo -e "    ${GREEN}→ [$idx]${NC} $TS_SHORT — $txt"
+      else
+        echo -e "      ${CYAN}[$idx]${NC} $TS_SHORT — $txt"
+      fi
+    done <<< "$CONV_LIST"
   fi
 
   # ── 1. Session status ──
@@ -289,20 +331,26 @@ PYEOF
     # Extract more context: get ±5 lines around each error
     CLI_ERROR_CONTEXT=$(echo "$LOGS_RAW" | grep -B5 -A5 -iE "(Embedded agent failed|CLI failed|FailoverError)" | head -60 || true)
 
-    # Check for specific patterns
+    # Build error analysis — pattern matching with explanations
+    CLI_ERROR_ANALYSIS=""
     if echo "$CLI_ERROR_CONTEXT" | grep -q "code 1005"; then
-      echo -e "    ${YELLOW}↳ 原因: Discord WebSocket 断连 (code 1005) 期间 CLI 请求失败${NC}"
+      CLI_ERROR_ANALYSIS="${CLI_ERROR_ANALYSIS}WebSocket 断连 (1005): Discord 连接中断期间 CLI 请求失败，通常是短暂网络波动，会自动恢复\n"
+      echo -e "    ${YELLOW}↳ 原因: Discord WebSocket 断连 (code 1005)${NC}"
     fi
     if echo "$CLI_ERROR_CONTEXT" | grep -q "EPIPE"; then
+      CLI_ERROR_ANALYSIS="${CLI_ERROR_ANALYSIS}管道中断 (EPIPE): CLI 子进程提前退出，父进程写入失败，可能是 OOM 或 crash\n"
       echo -e "    ${YELLOW}↳ 原因: CLI 进程管道中断 (EPIPE)${NC}"
     fi
     if echo "$CLI_ERROR_CONTEXT" | grep -q "timeout"; then
+      CLI_ERROR_ANALYSIS="${CLI_ERROR_ANALYSIS}响应超时: CLI 未在规定时间内完成，可能是 API 慢或 prompt 太大\n"
       echo -e "    ${YELLOW}↳ 原因: CLI 响应超时${NC}"
     fi
     if echo "$CLI_ERROR_CONTEXT" | grep -q "rate.limit\|429"; then
+      CLI_ERROR_ANALYSIS="${CLI_ERROR_ANALYSIS}速率限制 (429): Anthropic API 限流，需要等待或升级 plan\n"
       echo -e "    ${YELLOW}↳ 原因: API 速率限制${NC}"
     fi
     if echo "$CLI_ERROR_CONTEXT" | grep -q "socket hang up"; then
+      CLI_ERROR_ANALYSIS="${CLI_ERROR_ANALYSIS}网络中断 (socket hang up): 底层 TCP 连接被重置，通常是 ISP 或 DNS 问题\n"
       echo -e "    ${YELLOW}↳ 原因: 网络连接中断 (socket hang up)${NC}"
     fi
 
@@ -450,8 +498,24 @@ except: print('error')
 
   CLI_ERRORS_ESC=$(html_escape "${CLI_ERRORS:-}")
   CLI_ERROR_CTX_ESC=$(html_escape "${CLI_ERROR_CONTEXT:-}")
+  CLI_ERROR_ANALYSIS_ESC=$(html_escape "$(echo -e "${CLI_ERROR_ANALYSIS:-}")")
   DELIVER_ERRORS_ESC=$(html_escape "${DELIVER_ERRORS:-}")
   LAST_MSG_TEXT_ESC=$(html_escape "${LAST_MSG_TEXT:-}")
+
+  # Build conversation list HTML
+  CONV_LIST_HTML=""
+  if [[ -n "$CONV_LIST" ]]; then
+    CONV_LIST_HTML="<div class=\"conv-list\"><span class=\"conv-title\">对话记录:</span>"
+    while IFS='|' read -r _ sel idx ts txt asst; do
+      TS_SHORT="${ts:0:10} ${ts:11:8}"
+      if [[ "$sel" == "*" ]]; then
+        CONV_LIST_HTML="${CONV_LIST_HTML}<span class=\"conv-item sel\">[$idx] ${TS_SHORT} — $(html_escape "$txt")</span>"
+      else
+        CONV_LIST_HTML="${CONV_LIST_HTML}<span class=\"conv-item\">[$idx] ${TS_SHORT} — $(html_escape "$txt")</span>"
+      fi
+    done <<< "$CONV_LIST"
+    CONV_LIST_HTML="${CONV_LIST_HTML}</div>"
+  fi
 
   AGENT_HTML="$AGENT_HTML
 <div class=\"agent-card ${AGENT_STATUS_CLASS}\" data-agent=\"${AGENT}\">
@@ -463,7 +527,8 @@ except: print('error')
     <span class=\"arrow\">&#9654;</span>
   </div>
   <div class=\"agent-body\">
-    <div class=\"last-msg\">最近消息: <em>${LAST_MSG_DISPLAY}</em> (UTC) — <em>${LAST_MSG_TEXT_ESC:-(空)}</em></div>
+    ${CONV_LIST_HTML}
+    <div class=\"last-msg\">选中对话 #${CONV_NUM}: <em>${LAST_MSG_DISPLAY}</em> (UTC) — <em>${LAST_MSG_TEXT_ESC:-(空)}</em></div>
     <div class=\"dtree-flow\">
       <div class=\"dtree-step\"><div class=\"dtree-node ${GW_CLASS}\"><div class=\"dtree-dot\"></div><div class=\"dtree-label\">Gateway</div></div><div class=\"dtree-line\"></div></div>
       <div class=\"dtree-step\"><div class=\"dtree-node ${S2_CLASS}\"><div class=\"dtree-dot\"></div><div class=\"dtree-label\">CLI 调用</div></div><div class=\"dtree-line\"></div></div>
@@ -478,9 +543,17 @@ except: print('error')
 
   if [[ -n "$CLI_ERROR_CONTEXT" ]]; then
     AGENT_HTML="$AGENT_HTML
-    <div class=\"error-detail\">
-      <div class=\"error-title\">CLI 错误上下文 (±5行)</div>
-      <div class=\"log-block\">${CLI_ERROR_CTX_ESC}</div>
+    <div class=\"error-detail\">"
+    # Show analysis if available
+    if [[ -n "$CLI_ERROR_ANALYSIS" ]]; then
+      AGENT_HTML="$AGENT_HTML
+      <div class=\"error-analysis\">${CLI_ERROR_ANALYSIS_ESC}</div>"
+    fi
+    AGENT_HTML="$AGENT_HTML
+      <details class=\"error-expand\">
+        <summary>展开日志上下文 (±5行)</summary>
+        <div class=\"log-block\">${CLI_ERROR_CTX_ESC}</div>
+      </details>
     </div>"
   fi
 
@@ -491,8 +564,10 @@ except: print('error')
   if [[ -n "$DELIVER_ERRORS" ]]; then
     AGENT_HTML="$AGENT_HTML
     <div class=\"error-detail\">
-      <div class=\"error-title\">送达错误详情</div>
-      <div class=\"log-block\">${DELIVER_ERRORS_ESC}</div>
+      <details class=\"error-expand\">
+        <summary>展开送达错误详情</summary>
+        <div class=\"log-block\">${DELIVER_ERRORS_ESC}</div>
+      </details>
     </div>"
   fi
 
@@ -586,7 +661,17 @@ cat > "$REPORT_FILE" << 'HTMLEOF'
 
   .error-detail { margin:0.5rem 0; }
   .error-title { font-size:0.75rem; font-weight:600; color:var(--yellow); margin-bottom:0.3rem; }
+  .error-analysis { font-size:0.78rem; color:var(--yellow); background:rgba(210,153,34,0.08); border:1px solid rgba(210,153,34,0.2); border-radius:6px; padding:0.5rem 0.8rem; margin-bottom:0.4rem; white-space:pre-line; line-height:1.5; }
+  .error-expand { margin-top:0.3rem; }
+  .error-expand summary { font-size:0.75rem; font-weight:600; color:var(--muted); cursor:pointer; padding:0.2rem 0; }
+  .error-expand summary:hover { color:var(--blue); }
+  .error-expand[open] summary { color:var(--blue); }
   .log-block { background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:0.6rem 0.8rem; font-family:'SF Mono',Monaco,Consolas,monospace; font-size:0.72rem; overflow-x:auto; white-space:pre-wrap; word-break:break-all; color:var(--muted); max-height:250px; overflow-y:auto; }
+
+  .conv-list { font-size:0.75rem; color:var(--muted); padding:0.4rem 0; border-bottom:1px solid rgba(48,54,61,0.5); margin-bottom:0.2rem; display:flex; flex-direction:column; gap:0.15rem; }
+  .conv-title { font-weight:600; color:var(--text); margin-bottom:0.2rem; }
+  .conv-item { padding:0.1rem 0.4rem; border-radius:3px; }
+  .conv-item.sel { background:rgba(88,166,255,0.1); color:var(--blue); font-weight:600; }
 
   .last-msg { font-size:0.8rem; color:var(--muted); padding:0.5rem 0 0.4rem; border-bottom:1px solid rgba(48,54,61,0.5); margin-bottom:0.2rem; }
   .last-msg em { color:var(--text); font-style:normal; }
