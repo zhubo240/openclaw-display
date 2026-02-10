@@ -109,6 +109,94 @@ for AGENT in "${AGENTS[@]}"; do
   echo -e "\n${BOLD}${CYAN}━━ $AGENT ━━${NC}"
   A_PASS=0; A_FAIL=0; A_WARN=0
 
+  # ── Extract latest user message from JSONL session ──
+  LAST_MSG_TIME=""
+  LAST_MSG_TEXT=""
+  _JSONL_RAW=$(python3 << PYEOF
+import json, os, glob, re
+agent = "${AGENT}"
+
+# Step 1: Resolve agent workspace → Claude projects dir
+base_ws = os.path.expanduser("~/.openclaw/workspace")
+agent_ws = base_ws + "-" + agent  # e.g. workspace-us-mean-reversion
+if not os.path.isdir(agent_ws):
+    agent_ws = base_ws  # butler uses default workspace
+
+# Convert workspace path to Claude project dir name: replace / with -, remove .
+proj_name = agent_ws.replace("/", "-").replace(".", "-")
+proj_dir = os.path.expanduser("~/.claude/projects/" + proj_name)
+
+# Step 2: Find the most recently modified JSONL in that project dir
+jsonl = None
+if os.path.isdir(proj_dir):
+    candidates = glob.glob(os.path.join(proj_dir, "*.jsonl"))
+    # Exclude subagent files
+    candidates = [c for c in candidates if "/subagents/" not in c]
+    if candidates:
+        jsonl = max(candidates, key=os.path.getmtime)
+
+if not jsonl:
+    print("|")
+    print("ASST|")
+    exit()
+
+# Step 3: Extract last user message and last assistant message
+ts = txt = ""
+asst_txt = ""
+with open(jsonl) as f:
+    for line in f:
+        try:
+            e = json.loads(line.strip())
+            if e.get("type") == "user":
+                m = e.get("message", {})
+                if m.get("role") == "user":
+                    ts = e.get("timestamp", "")
+                    content = m.get("content", "")
+                    if isinstance(content, str):
+                        t = content.strip()
+                        # Extract actual message from Discord metadata
+                        # Pattern: [Discord ...] Username: actual message
+                        match = re.search(r'\]\s*\w[^:\n]*:\s*(.+?)(?:\n|$)', t)
+                        if match:
+                            txt = match.group(1).strip()[:80]
+                        else:
+                            while t.startswith("[") and "]" in t:
+                                t = t[t.index("]")+1:].strip()
+                            txt = t[:80]
+                    elif isinstance(content, list):
+                        for c in content:
+                            if c.get("type") == "text":
+                                t = c["text"].strip()
+                                while t.startswith("[") and "]" in t:
+                                    t = t[t.index("]")+1:].strip()
+                                txt = t[:80]
+                                break
+            elif e.get("type") == "assistant":
+                m = e.get("message", {})
+                content = m.get("content", [])
+                if isinstance(content, list):
+                    for c in content:
+                        if c.get("type") == "text":
+                            t = c.get("text", "").strip()
+                            if t:
+                                asst_txt = t[:60]
+                                break
+                elif isinstance(content, str) and content.strip():
+                    asst_txt = content.strip()[:60]
+        except: pass
+print(f"{ts}|{txt}")
+print(f"ASST|{asst_txt}")
+PYEOF
+)
+  LAST_MSG_TIME=$(echo "$_JSONL_RAW" | head -1 | cut -d'|' -f1)
+  LAST_MSG_TEXT=$(echo "$_JSONL_RAW" | head -1 | cut -d'|' -f2-)
+  LAST_ASST_TEXT=$(echo "$_JSONL_RAW" | sed -n '2p' | cut -d'|' -f2-)
+  if [[ -n "$LAST_MSG_TIME" ]]; then
+    LAST_MSG_DISPLAY="${LAST_MSG_TIME:0:10} ${LAST_MSG_TIME:11:8}"
+  else
+    LAST_MSG_DISPLAY="无数据"
+  fi
+
   # ── 1. Session status ──
   SESSION_LINE=$(echo "$STATUS_RAW" | grep "agent:${AGENT}:" || true)
   SESSION_AGE="未找到"; SESSION_TOKENS="未知"; TOKEN_PCT=0
@@ -141,41 +229,61 @@ for AGENT in "${AGENTS[@]}"; do
     ((A_FAIL++))
   fi
 
-  # ── 2. CLI exec activity ──
-  # Look for cli exec entries that might be for this agent
-  # Logs don't include agent name in cli exec, so we check OpenClaw session files
-  CLI_EXEC_LINES=$(echo "$LOGS_RAW" | grep "cli exec" | tail -20 || true)
-  if [[ -z "$CLI_EXEC_LINES" ]]; then
-    CLI_EXEC_COUNT=0
-  else
-    CLI_EXEC_COUNT=$(echo "$CLI_EXEC_LINES" | wc -l | tr -d ' ')
-  fi
-  S2_PASS=true
-  if [[ "$CLI_EXEC_COUNT" -gt 0 ]]; then
-    echo -e "  ${GREEN}[CLI exec] PASS${NC} — 全局 $CLI_EXEC_COUNT 条 cli exec 记录"
+  # ── 2. CLI exec activity — 提取最近一条的时间戳 ──
+  CLI_EXEC_LAST=$(echo "$LOGS_RAW" | grep "cli exec:" | tail -1 || true)
+  CLI_EXEC_COUNT=$(echo "$LOGS_RAW" | grep -c "cli exec" || true)
+  S2_PASS=true; S2_DETAIL=""
+
+  if [[ -n "$CLI_EXEC_LAST" ]]; then
+    # Extract ISO timestamp from log line (e.g. 2025-01-15T15:16:09.123Z)
+    CLI_EXEC_TIME=$(echo "$CLI_EXEC_LAST" | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}' | tail -1 || true)
+    if [[ -n "$CLI_EXEC_TIME" ]]; then
+      CLI_TIME_SHORT="${CLI_EXEC_TIME:11:8}"
+      # Calculate minutes ago (macOS date -j)
+      CLI_EPOCH=$(date -j -f "%Y-%m-%dT%H:%M:%S" "$CLI_EXEC_TIME" +%s 2>/dev/null || echo "0")
+      NOW_EPOCH=$(date +%s)
+      if [[ "$CLI_EPOCH" -gt 0 ]]; then
+        CLI_AGO_MIN=$(( (NOW_EPOCH - CLI_EPOCH) / 60 ))
+        S2_DETAIL="最近调用: ${CLI_TIME_SHORT} (${CLI_AGO_MIN}分钟前, 全局 ${CLI_EXEC_COUNT} 条)"
+      else
+        S2_DETAIL="最近调用: ${CLI_TIME_SHORT} (全局 ${CLI_EXEC_COUNT} 条)"
+      fi
+    else
+      S2_DETAIL="有 cli exec 记录 (全局 ${CLI_EXEC_COUNT} 条)"
+    fi
+    echo -e "  ${GREEN}[CLI exec] PASS${NC} — $S2_DETAIL"
     ((A_PASS++))
   else
     S2_PASS=false
-    echo -e "  ${RED}[CLI exec] FAIL${NC} — 无 cli exec 记录"
+    S2_DETAIL="无 cli exec 记录"
+    echo -e "  ${RED}[CLI exec] FAIL${NC} — $S2_DETAIL"
     ((A_FAIL++))
   fi
 
-  # ── 3. CLI errors (agent-level) ──
-  # Check for errors. The "Embedded agent failed" line includes agent context nearby
-  # Also look for stderr/stdout from the CLI process
-  CLI_ERRORS=$(echo "$LOGS_RAW" | grep -iE "(Embedded agent failed|CLI failed|FailoverError|cli.*(error|timeout|EPIPE))" | tail -10 || true)
-  S3_PASS=true; S3_DETAIL=""; CLI_ERROR_CONTEXT=""
+  # ── 3. CLI 完成 & 错误 ──
+  # Positive signal: embedded run done with aborted=false
+  RUN_DONE=$(echo "$LOGS_RAW" | grep "embedded run done.*aborted=false" | tail -1 || true)
+  RUN_ABORTED=$(echo "$LOGS_RAW" | grep "embedded run done.*aborted=true" | tail -1 || true)
+  RUN_DURATION=""
+  if [[ -n "$RUN_DONE" ]]; then
+    RUN_DURATION=$(echo "$RUN_DONE" | grep -oE 'durationMs=[0-9]+' | head -1 | cut -d= -f2 || true)
+  fi
 
-  if [[ -z "$CLI_ERRORS" ]]; then
-    CLI_ERROR_COUNT=0
-    S3_DETAIL="无 CLI 错误"
-    echo -e "  ${GREEN}[CLI 错误] PASS${NC} — $S3_DETAIL"
-    ((A_PASS++))
-  else
+  # Error detection (existing logic preserved)
+  CLI_ERRORS=$(echo "$LOGS_RAW" | grep -iE "(Embedded agent failed|CLI failed|FailoverError|cli.*(error|timeout|EPIPE))" | tail -10 || true)
+  S3_PASS=true; S3_DETAIL=""; S3_STATUS="pass"; CLI_ERROR_CONTEXT=""
+
+  if [[ -n "$RUN_ABORTED" ]]; then
+    # Aborted run = FAIL
+    S3_PASS=false; S3_STATUS="fail"
+    S3_DETAIL="运行被中断 (aborted=true)"
+    echo -e "  ${RED}[CLI 完成] FAIL${NC} — $S3_DETAIL"
+    ((A_FAIL++))
+  elif [[ -n "$CLI_ERRORS" ]]; then
     CLI_ERROR_COUNT=$(echo "$CLI_ERRORS" | wc -l | tr -d ' ')
-    S3_PASS=false
+    S3_PASS=false; S3_STATUS="fail"
     S3_DETAIL="发现 $CLI_ERROR_COUNT 条 CLI 错误"
-    echo -e "  ${RED}[CLI 错误] FAIL${NC} — $S3_DETAIL"
+    echo -e "  ${RED}[CLI 完成] FAIL${NC} — $S3_DETAIL"
     ((A_FAIL++))
 
     # Extract more context: get ±5 lines around each error
@@ -204,70 +312,114 @@ for AGENT in "${AGENTS[@]}"; do
       echo -e "    ${YELLOW}↳ CLI stderr:${NC}"
       echo "$CLI_STDERR" | head -5 | sed 's/^/      /'
     fi
-  fi
-
-  # ── 4. NO_REPLY / HEARTBEAT_OK check (agent-specific) ──
-  S4_PASS=true; S4_DETAIL=""; SILENT_INFO=""
-  # Check Claude session files for this specific agent
-  AGENT_JSONL=$(find "$HOME/.claude/projects" -path "*openclaw*" -name "*.jsonl" -mmin -120 2>/dev/null | xargs grep -l "\"$AGENT\"" 2>/dev/null || true)
-  # Also check OpenClaw session store
-  OC_SESSION_FILE="$HOME/.openclaw/agents/main/sessions/sessions.json"
-
-  if [[ -n "$AGENT_JSONL" ]]; then
-    for f in $AGENT_JSONL; do
-      LAST_RESP=$(grep '"role":"assistant"' "$f" 2>/dev/null | tail -1 || true)
-      if [[ -n "$LAST_RESP" ]]; then
-        RESP_TEXT=$(echo "$LAST_RESP" | python3 -c "
-import json,sys
-try:
-  data=json.loads(sys.stdin.read())
-  msg=data.get('message',data)
-  for c in msg.get('content',[]):
-    if c.get('type')=='text':
-      t=c.get('text','').strip()
-      if t: print(t[:200]); break
-except: pass
-" 2>/dev/null || true)
-
-        if [[ "$RESP_TEXT" == "HEARTBEAT_OK" || "$RESP_TEXT" == "NO_REPLY" ]]; then
-          S4_PASS=false
-          SILENT_INFO="最后响应: $RESP_TEXT"
-        fi
-      fi
-    done
-  fi
-
-  if [[ "$S4_PASS" == true ]]; then
-    S4_DETAIL="无静默过滤"
-    echo -e "  ${GREEN}[静默检查] PASS${NC} — $S4_DETAIL"
+  elif [[ -n "$RUN_DONE" ]]; then
+    # Positive: completed successfully
+    if [[ -n "$RUN_DURATION" ]]; then
+      DUR_SEC=$(echo "scale=1; $RUN_DURATION / 1000" | bc 2>/dev/null || echo "${RUN_DURATION}ms")
+      S3_DETAIL="最近完成: ${DUR_SEC}s, 未中断"
+    else
+      S3_DETAIL="最近完成, aborted=false"
+    fi
+    echo -e "  ${GREEN}[CLI 完成] PASS${NC} — $S3_DETAIL"
     ((A_PASS++))
   else
-    S4_DETAIL="检测到静默响应: $SILENT_INFO"
+    # No completion record and no errors — WARN
+    S3_STATUS="warn"
+    S3_DETAIL="无完成记录（日志窗口可能太短）"
+    echo -e "  ${YELLOW}[CLI 完成] WARN${NC} — $S3_DETAIL"
+    ((A_WARN++))
+  fi
+
+  # ── 4. 静默过滤 — 查 agent JSONL 最后 assistant 消息 ──
+  S4_PASS=true; S4_DETAIL=""; S4_STATUS="pass"
+
+  if [[ -z "$LAST_ASST_TEXT" ]]; then
+    # No assistant message found in JSONL
+    S4_STATUS="warn"
+    S4_DETAIL="无 assistant 消息记录"
+    echo -e "  ${YELLOW}[静默检查] WARN${NC} — $S4_DETAIL"
+    ((A_WARN++))
+  elif [[ "$LAST_ASST_TEXT" == "HEARTBEAT_OK" || "$LAST_ASST_TEXT" == "NO_REPLY" ]]; then
+    S4_PASS=false; S4_STATUS="fail"
+    S4_DETAIL="最后响应: $LAST_ASST_TEXT"
     echo -e "  ${RED}[静默检查] FAIL${NC} — $S4_DETAIL"
     ((A_FAIL++))
+  else
+    ASST_DISPLAY="${LAST_ASST_TEXT:0:40}"
+    S4_DETAIL="最后回复: '${ASST_DISPLAY}'"
+    echo -e "  ${GREEN}[静默检查] PASS${NC} — $S4_DETAIL"
+    ((A_PASS++))
   fi
 
-  # ── 5. Delivery check (Discord errors) ──
+  # ── 5. 送达 — 查 session 状态 + systemSent ──
+  # Positive signal 1: session state transition to idle with run_completed
+  DELIVERY_OK=$(echo "$LOGS_RAW" | grep 'session state:.*new=idle.*reason="run_completed"' | tail -1 || true)
+  # Positive signal 2: systemSent in sessions.json
+  SYSTEM_SENT=$(python3 -c "
+import json, os
+try:
+    f = os.path.expanduser(os.path.join('~', '.openclaw', 'agents', 'main', 'sessions', 'sessions.json'))
+    data = json.load(open(f))
+    for sid, sess in data.items():
+        if '${AGENT}' in str(sid) or sess.get('agent','') == '${AGENT}':
+            print('true' if sess.get('systemSent') else 'false')
+            break
+    else:
+        print('unknown')
+except: print('error')
+" 2>/dev/null || echo "error")
+
+  # Error detection (existing)
   DELIVER_ERRORS=$(echo "$LOGS_RAW" | grep -iE "deliver.*(error|fail)|discord.*(error|rate)" | tail -5 || true)
-  S5_PASS=true; S5_DETAIL=""
-  if [[ -z "$DELIVER_ERRORS" ]]; then
-    S5_DETAIL="无投递错误"
-    echo -e "  ${GREEN}[送达] PASS${NC} — $S5_DETAIL"
-    ((A_PASS++))
-  else
+
+  S5_PASS=true; S5_DETAIL=""; S5_STATUS="pass"
+  HAS_POSITIVE=false
+  POSITIVE_PARTS=""
+
+  if [[ -n "$DELIVERY_OK" ]]; then
+    HAS_POSITIVE=true
+    POSITIVE_PARTS="run_completed"
+  fi
+  if [[ "$SYSTEM_SENT" == "true" ]]; then
+    HAS_POSITIVE=true
+    if [[ -n "$POSITIVE_PARTS" ]]; then
+      POSITIVE_PARTS="${POSITIVE_PARTS} + systemSent=true"
+    else
+      POSITIVE_PARTS="systemSent=true"
+    fi
+  fi
+
+  if [[ -n "$DELIVER_ERRORS" ]]; then
     DELIVER_COUNT=$(echo "$DELIVER_ERRORS" | wc -l | tr -d ' ')
-    # Check if socket hang up (network issue, not agent issue)
     SOCKET_ERRORS=$(echo "$DELIVER_ERRORS" | grep -c "socket hang up" || true)
-    if [[ "$SOCKET_ERRORS" -eq "$DELIVER_COUNT" ]]; then
+
+    if [[ "$HAS_POSITIVE" == true ]]; then
+      # Errors exist but positive signal too — WARN
+      S5_STATUS="warn"
+      S5_DETAIL="${POSITIVE_PARTS} (但有 ${DELIVER_COUNT} 条历史错误)"
+      echo -e "  ${YELLOW}[送达] WARN${NC} — $S5_DETAIL"
+      ((A_WARN++))
+    elif [[ "$SOCKET_ERRORS" -eq "$DELIVER_COUNT" ]]; then
+      S5_STATUS="warn"
       S5_DETAIL="$DELIVER_COUNT 条网络错误 (socket hang up) — 断网导致"
       echo -e "  ${YELLOW}[送达] WARN${NC} — $S5_DETAIL"
       ((A_WARN++))
     else
-      S5_PASS=false
-      S5_DETAIL="$DELIVER_COUNT 条投递错误"
+      S5_PASS=false; S5_STATUS="fail"
+      S5_DETAIL="$DELIVER_COUNT 条投递错误, 无正向信号"
       echo -e "  ${RED}[送达] FAIL${NC} — $S5_DETAIL"
       ((A_FAIL++))
     fi
+  elif [[ "$HAS_POSITIVE" == true ]]; then
+    S5_DETAIL="${POSITIVE_PARTS}"
+    echo -e "  ${GREEN}[送达] PASS${NC} — $S5_DETAIL"
+    ((A_PASS++))
+  else
+    # No positive signal and no errors
+    S5_STATUS="warn"
+    S5_DETAIL="无正向信号也无错误（数据不足）"
+    echo -e "  ${YELLOW}[送达] WARN${NC} — $S5_DETAIL"
+    ((A_WARN++))
   fi
 
   # ── Agent summary ──
@@ -288,14 +440,18 @@ except: pass
   # Build HTML for this agent
   S1_CLASS="pass"; [[ "$S1_PASS" != true ]] && { [[ "$TOKEN_PCT" -ge 75 && "$TOKEN_PCT" -lt 90 ]] && S1_CLASS="warn" || S1_CLASS="fail"; }
   S2_CLASS="pass"; [[ "$S2_PASS" != true ]] && S2_CLASS="fail"
-  S3_CLASS="pass"; [[ "$S3_PASS" != true ]] && S3_CLASS="fail"
-  S4_CLASS="pass"; [[ "$S4_PASS" != true ]] && S4_CLASS="fail"
-  S5_CLASS="pass"; [[ "$S5_PASS" != true ]] && S5_CLASS="fail"
-  [[ -n "$DELIVER_ERRORS" && "$S5_PASS" == true ]] && S5_CLASS="warn"
+  S3_CLASS="${S3_STATUS:-pass}"
+  S4_CLASS="${S4_STATUS:-pass}"
+  S5_CLASS="${S5_STATUS:-pass}"
+
+  # Decision tree: Gateway and Serialize classes (global, but shown per agent)
+  GW_CLASS="pass"; [[ "$GLOBAL_CONN_PASS" != true ]] && GW_CLASS="fail"
+  S_SER_CLASS="pass"; [[ "$SERIALIZE_PASS" != true ]] && S_SER_CLASS="warn"
 
   CLI_ERRORS_ESC=$(html_escape "${CLI_ERRORS:-}")
   CLI_ERROR_CTX_ESC=$(html_escape "${CLI_ERROR_CONTEXT:-}")
   DELIVER_ERRORS_ESC=$(html_escape "${DELIVER_ERRORS:-}")
+  LAST_MSG_TEXT_ESC=$(html_escape "${LAST_MSG_TEXT:-}")
 
   AGENT_HTML="$AGENT_HTML
 <div class=\"agent-card ${AGENT_STATUS_CLASS}\" data-agent=\"${AGENT}\">
@@ -307,9 +463,18 @@ except: pass
     <span class=\"arrow\">&#9654;</span>
   </div>
   <div class=\"agent-body\">
+    <div class=\"last-msg\">最近消息: <em>${LAST_MSG_DISPLAY}</em> (UTC) — <em>${LAST_MSG_TEXT_ESC:-(空)}</em></div>
+    <div class=\"dtree-flow\">
+      <div class=\"dtree-step\"><div class=\"dtree-node ${GW_CLASS}\"><div class=\"dtree-dot\"></div><div class=\"dtree-label\">Gateway</div></div><div class=\"dtree-line\"></div></div>
+      <div class=\"dtree-step\"><div class=\"dtree-node ${S2_CLASS}\"><div class=\"dtree-dot\"></div><div class=\"dtree-label\">CLI 调用</div></div><div class=\"dtree-line\"></div></div>
+      <div class=\"dtree-step\"><div class=\"dtree-node ${S_SER_CLASS}\"><div class=\"dtree-dot\"></div><div class=\"dtree-label\">串行队列</div></div><div class=\"dtree-line\"></div></div>
+      <div class=\"dtree-step\"><div class=\"dtree-node ${S3_CLASS}\"><div class=\"dtree-dot\"></div><div class=\"dtree-label\">CLI 完成</div></div><div class=\"dtree-line\"></div></div>
+      <div class=\"dtree-step\"><div class=\"dtree-node ${S4_CLASS}\"><div class=\"dtree-dot\"></div><div class=\"dtree-label\">静默过滤</div></div><div class=\"dtree-line\"></div></div>
+      <div class=\"dtree-step\"><div class=\"dtree-node ${S5_CLASS}\"><div class=\"dtree-dot\"></div><div class=\"dtree-label\">送达</div></div></div>
+    </div>
     <div class=\"check ${S1_CLASS}\"><span class=\"check-label\">Session 状态</span><span class=\"check-detail\">$(html_escape "$S1_DETAIL")</span></div>
-    <div class=\"check ${S2_CLASS}\"><span class=\"check-label\">CLI 活跃</span><span class=\"check-detail\">全局 ${CLI_EXEC_COUNT} 条 exec 记录</span></div>
-    <div class=\"check ${S3_CLASS}\"><span class=\"check-label\">CLI 错误</span><span class=\"check-detail\">$(html_escape "$S3_DETAIL")</span></div>"
+    <div class=\"check ${S2_CLASS}\"><span class=\"check-label\">CLI 活跃</span><span class=\"check-detail\">$(html_escape "$S2_DETAIL")</span></div>
+    <div class=\"check ${S3_CLASS}\"><span class=\"check-label\">CLI 完成</span><span class=\"check-detail\">$(html_escape "$S3_DETAIL")</span></div>"
 
   if [[ -n "$CLI_ERROR_CONTEXT" ]]; then
     AGENT_HTML="$AGENT_HTML
@@ -422,6 +587,19 @@ cat > "$REPORT_FILE" << 'HTMLEOF'
   .error-detail { margin:0.5rem 0; }
   .error-title { font-size:0.75rem; font-weight:600; color:var(--yellow); margin-bottom:0.3rem; }
   .log-block { background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:0.6rem 0.8rem; font-family:'SF Mono',Monaco,Consolas,monospace; font-size:0.72rem; overflow-x:auto; white-space:pre-wrap; word-break:break-all; color:var(--muted); max-height:250px; overflow-y:auto; }
+
+  .last-msg { font-size:0.8rem; color:var(--muted); padding:0.5rem 0 0.4rem; border-bottom:1px solid rgba(48,54,61,0.5); margin-bottom:0.2rem; }
+  .last-msg em { color:var(--text); font-style:normal; }
+  .dtree-flow { display:flex; align-items:flex-start; padding:0.6rem 0; margin-bottom:0.4rem; border-bottom:1px solid rgba(48,54,61,0.5); }
+  .dtree-step { display:flex; align-items:flex-start; flex:1; min-width:0; }
+  .dtree-step:last-child { flex:0 0 auto; }
+  .dtree-node { display:flex; flex-direction:column; align-items:center; }
+  .dtree-dot { width:14px; height:14px; border-radius:50%; flex-shrink:0; }
+  .dtree-node.pass .dtree-dot { background:var(--green); box-shadow:0 0 4px rgba(63,185,80,0.4); }
+  .dtree-node.fail .dtree-dot { background:var(--red); box-shadow:0 0 4px rgba(248,81,73,0.4); }
+  .dtree-node.warn .dtree-dot { background:var(--yellow); box-shadow:0 0 4px rgba(210,153,34,0.4); }
+  .dtree-label { font-size:0.65rem; color:var(--muted); margin-top:0.2rem; white-space:nowrap; }
+  .dtree-line { flex:1; height:2px; background:var(--border); margin:6px 4px 0; min-width:8px; }
 
   footer { margin-top:2rem; padding-top:1rem; border-top:1px solid var(--border); color:var(--muted); font-size:0.75rem; text-align:center; }
   footer a { color:var(--blue); }
