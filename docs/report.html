@@ -5,193 +5,205 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OpenClaw 诊断报告</title>
 <style>
-  :root { --bg:#0d1117; --card:#161b22; --border:#30363d; --text:#e6edf3; --muted:#8b949e; --green:#3fb950; --red:#f85149; --yellow:#d29922; --blue:#58a6ff; --purple:#bc8cff; }
+  :root { --bg:#0d1117; --card:#161b22; --border:#30363d; --text:#e6edf3; --muted:#8b949e; --green:#3fb950; --red:#f85149; --yellow:#d29922; --blue:#58a6ff; --cyan:#56d4dd; --purple:#bc8cff; }
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.6; padding:1.5rem; max-width:960px; margin:0 auto; }
+  body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.6; padding:1.5rem; max-width:1100px; margin:0 auto; }
   h1 { font-size:1.5rem; margin-bottom:0.2rem; }
-  .meta { color:var(--muted); font-size:0.85rem; margin-bottom:1.5rem; }
+  .meta { color:var(--muted); font-size:0.85rem; margin-bottom:1rem; }
+
+  .global-bar { display:flex; gap:0.8rem; margin-bottom:1.5rem; flex-wrap:wrap; }
+  .g-chip { background:var(--card); border:1px solid var(--border); border-radius:6px; padding:0.4rem 0.8rem; font-size:0.8rem; display:flex; align-items:center; gap:0.4rem; }
+  .g-chip.pass { border-color:var(--green); }
+  .g-chip.fail { border-color:var(--red); }
+  .g-chip .dot { width:8px; height:8px; border-radius:50%; }
+  .g-chip.pass .dot { background:var(--green); }
+  .g-chip.fail .dot { background:var(--red); }
+
   .summary { display:flex; gap:1rem; margin-bottom:1.5rem; }
-  .summary-card { flex:1; background:var(--card); border:1px solid var(--border); border-radius:8px; padding:1rem; text-align:center; }
+  .summary-card { flex:1; background:var(--card); border:1px solid var(--border); border-radius:8px; padding:0.8rem; text-align:center; }
   .summary-card.pass { border-color:var(--green); }
   .summary-card.fail { border-color:var(--red); }
-  .summary-num { font-size:2rem; font-weight:800; }
+  .summary-card.warn { border-color:var(--yellow); }
+  .summary-num { font-size:1.8rem; font-weight:800; }
   .summary-card.pass .summary-num { color:var(--green); }
   .summary-card.fail .summary-num { color:var(--red); }
-  .summary-label { font-size:0.8rem; color:var(--muted); }
+  .summary-card.warn .summary-num { color:var(--yellow); }
+  .summary-label { font-size:0.75rem; color:var(--muted); }
 
-  .step { background:var(--card); border:1px solid var(--border); border-radius:8px; margin-bottom:0.75rem; overflow:hidden; }
-  .step.pass { border-left:3px solid var(--green); }
-  .step.fail { border-left:3px solid var(--red); }
-  .step.warn { border-left:3px solid var(--yellow); }
-  .step-header { display:flex; align-items:center; gap:0.6rem; padding:0.75rem 1rem; cursor:pointer; }
-  .step-header:hover { background:rgba(255,255,255,0.02); }
-  .step-icon { font-size:1.1rem; flex-shrink:0; }
-  .step.pass .step-icon { color:var(--green); }
-  .step.fail .step-icon { color:var(--red); }
-  .step.warn .step-icon { color:var(--yellow); }
-  .step-num { background:var(--blue); color:#fff; font-size:0.65rem; font-weight:700; padding:0.1rem 0.4rem; border-radius:10px; flex-shrink:0; }
-  .step-title { font-weight:600; font-size:0.9rem; flex:1; }
-  .step-badge { font-size:0.7rem; font-weight:700; padding:0.1rem 0.5rem; border-radius:10px; }
-  .step.pass .step-badge { background:rgba(63,185,80,0.15); color:var(--green); }
-  .step.fail .step-badge { background:rgba(248,81,73,0.15); color:var(--red); }
-  .step.warn .step-badge { background:rgba(210,153,34,0.15); color:var(--yellow); }
-  .arrow { color:var(--muted); transition:transform 0.2s; font-size:0.75rem; }
-  .step.open .arrow { transform:rotate(90deg); }
-  .step-body { display:none; padding:0 1rem 0.8rem; font-size:0.85rem; }
-  .step.open .step-body { display:block; }
-  .log-block { background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:0.6rem 0.8rem; margin:0.5rem 0; font-family:'SF Mono',Monaco,Consolas,monospace; font-size:0.75rem; overflow-x:auto; white-space:pre-wrap; word-break:break-all; color:var(--muted); max-height:200px; overflow-y:auto; }
-  .detail { margin:0.4rem 0; }
-  .detail strong { color:var(--blue); }
+  /* Agent selector tabs */
+  .agent-tabs { display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap; }
+  .agent-tab { background:var(--card); border:1px solid var(--border); border-radius:6px; padding:0.4rem 1rem; font-size:0.85rem; cursor:pointer; color:var(--muted); transition:all 0.2s; }
+  .agent-tab:hover { border-color:var(--blue); color:var(--text); }
+  .agent-tab.active { border-color:var(--blue); color:var(--blue); background:rgba(88,166,255,0.08); }
+  .agent-tab.all { font-weight:600; }
 
-  .seq { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
-  .seq-flow { display:flex; gap:0; align-items:stretch; width:100%; }
-  .seq-node { flex:1; text-align:center; padding:0.6rem 0.3rem; border:1px solid var(--border); font-size:0.7rem; font-weight:600; position:relative; }
-  .seq-node::after { content:'→'; position:absolute; right:-8px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:0.9rem; z-index:1; }
-  .seq-node:last-child::after { display:none; }
-  .seq-node.pass { background:rgba(63,185,80,0.08); border-color:var(--green); color:var(--green); }
-  .seq-node.fail { background:rgba(248,81,73,0.08); border-color:var(--red); color:var(--red); }
-  .seq-node.warn { background:rgba(210,153,34,0.08); border-color:var(--yellow); color:var(--yellow); }
-  .seq-node.skip { opacity:0.3; }
-  .seq-node:first-child { border-radius:6px 0 0 6px; }
-  .seq-node:last-child { border-radius:0 6px 6px 0; }
+  /* Agent card */
+  .agent-card { background:var(--card); border:1px solid var(--border); border-radius:8px; margin-bottom:0.75rem; overflow:hidden; display:none; }
+  .agent-card.visible { display:block; }
+  .agent-card.pass { border-left:3px solid var(--green); }
+  .agent-card.fail { border-left:3px solid var(--red); }
+  .agent-card.warn { border-left:3px solid var(--yellow); }
 
-  table { width:100%; border-collapse:collapse; margin:0.5rem 0; }
-  th,td { padding:0.4rem 0.6rem; text-align:left; border-bottom:1px solid var(--border); font-size:0.8rem; }
-  th { color:var(--muted); font-weight:600; }
+  .agent-header { display:flex; align-items:center; gap:0.6rem; padding:0.75rem 1rem; cursor:pointer; }
+  .agent-header:hover { background:rgba(255,255,255,0.02); }
+  .agent-name { font-weight:700; font-size:1rem; color:var(--cyan); min-width:140px; }
+  .agent-meta { color:var(--muted); font-size:0.8rem; min-width:160px; }
+  .token-bar { flex:1; max-width:120px; height:6px; background:var(--border); border-radius:3px; overflow:hidden; }
+  .token-fill { height:100%; border-radius:3px; transition:width 0.3s; }
+  .token-fill.green { background:var(--green); }
+  .token-fill.yellow { background:var(--yellow); }
+  .token-fill.red { background:var(--red); }
+  .agent-badge { font-size:0.7rem; font-weight:700; padding:0.15rem 0.5rem; border-radius:10px; }
+  .agent-badge.pass { background:rgba(63,185,80,0.15); color:var(--green); }
+  .agent-badge.fail { background:rgba(248,81,73,0.15); color:var(--red); }
+  .agent-badge.warn { background:rgba(210,153,34,0.15); color:var(--yellow); }
+  .arrow { color:var(--muted); transition:transform 0.2s; font-size:0.75rem; margin-left:auto; }
+  .agent-card.open .arrow { transform:rotate(90deg); }
+
+  .agent-body { display:none; padding:0 1rem 0.8rem; }
+  .agent-card.open .agent-body { display:block; }
+
+  .check { display:flex; align-items:center; gap:0.5rem; padding:0.35rem 0; border-bottom:1px solid rgba(48,54,61,0.5); font-size:0.85rem; }
+  .check::before { content:''; width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .check.pass::before { background:var(--green); }
+  .check.fail::before { background:var(--red); }
+  .check.warn::before { background:var(--yellow); }
+  .check-label { font-weight:600; min-width:100px; color:var(--text); }
+  .check-detail { color:var(--muted); }
+
+  .error-detail { margin:0.5rem 0; }
+  .error-title { font-size:0.75rem; font-weight:600; color:var(--yellow); margin-bottom:0.3rem; }
+  .log-block { background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:0.6rem 0.8rem; font-family:'SF Mono',Monaco,Consolas,monospace; font-size:0.72rem; overflow-x:auto; white-space:pre-wrap; word-break:break-all; color:var(--muted); max-height:250px; overflow-y:auto; }
 
   footer { margin-top:2rem; padding-top:1rem; border-top:1px solid var(--border); color:var(--muted); font-size:0.75rem; text-align:center; }
+  footer a { color:var(--blue); }
 </style>
 </head>
 <body>
 <h1>OpenClaw 诊断报告</h1>
-<p class="meta">2026-02-10 14:08:13 · Bos-MacBook-Air.local</p>
+<p class="meta">2026-02-10 14:29:40 · Bos-MacBook-Air.local · agents: butler us-mean-reversion</p>
+
+<div class="global-bar">
+  <div class="g-chip pass"><span class="dot"></span>Discord OK</div>
+  <div class="g-chip pass"><span class="dot"></span>Gateway reachable</div>
+  <div class="g-chip pass"><span class="dot"></span>claude-cli: serialize=False</div>
+</div>
 
 <div class="summary">
-  <div class="summary-card pass">
-    <div class="summary-num">5</div>
-    <div class="summary-label">PASS</div>
-  </div>
-  <div class="summary-card fail">
-    <div class="summary-num">2</div>
-    <div class="summary-label">FAIL</div>
-  </div>
+  <div class="summary-card pass"><div class="summary-num">4</div><div class="summary-label">PASS</div></div>
+  <div class="summary-card fail"><div class="summary-num">3</div><div class="summary-label">FAIL</div></div>
+  <div class="summary-card warn"><div class="summary-num">3</div><div class="summary-label">WARN</div></div>
 </div>
 
-<!-- Sequence flow -->
-<div class="seq">
-  <div class="seq-flow">
-    <div class="seq-node pass">1. Discord<br>→ Gateway</div>
-    <div class="seq-node pass">2. Gateway<br>→ Agent</div>
-    <div class="seq-node pass">3. Queue<br>serialize</div>
-    <div class="seq-node fail">4. Claude<br>CLI</div>
-    <div class="seq-node pass">5. NO_REPLY<br>过滤</div>
-    <div class="seq-node pass">6. → Discord<br>送达</div>
-  </div>
+<div class="agent-tabs">
+  <div class="agent-tab all active" onclick="filterAgent('all')">全部</div>
+  <div class="agent-tab" onclick="filterAgent('butler')">butler</div>
+  <div class="agent-tab" onclick="filterAgent('us-mean-reversion')">us-mean-reversion</div>
 </div>
 
-<!-- Step 1 -->
-<div class="step pass open" onclick="this.classList.toggle('open')">
-  <div class="step-header">
-    <span class="step-icon">&#10003;</span>
-    <span class="step-num">Step 1</span>
-    <span class="step-title">Gateway & Discord 连接</span>
-    <span class="step-badge">PASS</span>
+
+<div class="agent-card fail" data-agent="butler">
+  <div class="agent-header" onclick="toggleAgent(this)">
+    <span class="agent-name">butler</span>
+    <span class="agent-meta">27m ago · 169k/200k (84%)</span>
+    <div class="token-bar"><div class="token-fill yellow" style="width:84%"></div></div>
+    <span class="agent-badge fail">2P 1F 2W</span>
     <span class="arrow">&#9654;</span>
   </div>
-  <div class="step-body">
-    <div class="detail"><strong>Discord:</strong> OK</div>
-    <div class="detail"><strong>Gateway:</strong> reachable</div>
-    <div class="detail"><strong>Sessions:</strong> │ Sessions        │ 6 active · default claude-opus-4-6 (200k ctx) · 7 stores                                          │</div>
-  </div>
-</div>
-
-<!-- Step 2 -->
-<div class="step pass" onclick="this.classList.toggle('open')">
-  <div class="step-header">
-    <span class="step-icon">&#10003;</span>
-    <span class="step-num">Step 2</span>
-    <span class="step-title">Agent 路由 (cli exec)</span>
-    <span class="step-badge">PASS</span>
-    <span class="arrow">&#9654;</span>
-  </div>
-  <div class="step-body">
-    <div class="detail"><strong>最近 cli exec:</strong> 3 条</div>
-    <div class="log-block">2026-02-10T06:02:48.201Z info agent/claude-cli {&quot;subsystem&quot;:&quot;agent/claude-cli&quot;} cli exec: provider=claude-cli model=opus promptChars=186
+  <div class="agent-body">
+    <div class="check pass"><span class="check-label">Session 状态</span><span class="check-detail">Token 169k/200k (84%) — 偏高</span></div>
+    <div class="check pass"><span class="check-label">CLI 活跃</span><span class="check-detail">全局 9 条 exec 记录</span></div>
+    <div class="check fail"><span class="check-label">CLI 错误</span><span class="check-detail">发现 2 条 CLI 错误</span></div>
+    <div class="error-detail">
+      <div class="error-title">CLI 错误上下文 (±5行)</div>
+      <div class="log-block">2026-02-10T06:02:48.201Z info agent/claude-cli {&quot;subsystem&quot;:&quot;agent/claude-cli&quot;} cli exec: provider=claude-cli model=opus promptChars=186
+2026-02-10T06:02:58.862Z info gateway/channels/discord {&quot;subsystem&quot;:&quot;gateway/channels/discord&quot;} discord gateway: Attempting resume with backoff: 1000ms
+2026-02-10T06:02:59.144Z warn [EventQueue] Slow listener detected: DiscordReactionListener took 1462ms for event MESSAGE_REACTION_ADD
+2026-02-10T06:02:59.173Z info gateway/channels/discord {&quot;subsystem&quot;:&quot;gateway/channels/discord&quot;} discord gateway: WebSocket connection closed with code 1005
 2026-02-10T06:02:59.484Z info agent/claude-cli {&quot;subsystem&quot;:&quot;agent/claude-cli&quot;} cli exec: provider=claude-cli model=opus promptChars=187
-2026-02-10T06:03:46.071Z info agent/claude-cli {&quot;subsystem&quot;:&quot;agent/claude-cli&quot;} cli exec: provider=claude-cli model=opus promptChars=187</div>
+2026-02-10T06:02:59.545Z error Embedded agent failed before reply: CLI failed.
+2026-02-10T06:02:59.551Z error [openclaw] Unhandled promise rejection: FailoverError: CLI failed.
+    at file:///opt/homebrew/lib/node_modules/openclaw/dist/reply-DptDUVRg.js:62380:11
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-02-10T06:03:01.695Z info gateway/canvas {&quot;subsystem&quot;:&quot;gateway/canvas&quot;} canvas host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /Users/bozhu/.openclaw/canvas)
+2026-02-10T06:03:01.741Z info gateway/heartbeat {&quot;subsystem&quot;:&quot;gateway/heartbeat&quot;} {&quot;intervalMs&quot;:1800000} heartbeat: started
+2026-02-10T06:03:01.744Z info gateway {&quot;subsystem&quot;:&quot;gateway&quot;} agent model: claude-cli/claude-opus-4-6</div>
+    </div>
+    <div class="check pass"><span class="check-label">静默过滤</span><span class="check-detail">无静默过滤</span></div>
+    <div class="check warn"><span class="check-label">Discord 送达</span><span class="check-detail">5 条网络错误 (socket hang up) — 断网导致</span></div>
+    <div class="error-detail">
+      <div class="error-title">送达错误详情</div>
+      <div class="log-block">2026-02-10T06:17:57.653Z error gateway/channels/discord {&quot;subsystem&quot;:&quot;gateway/channels/discord&quot;} discord gateway error: Error: socket hang up
+2026-02-10T06:18:23.144Z error gateway/channels/discord {&quot;subsystem&quot;:&quot;gateway/channels/discord&quot;} discord gateway error: Error: socket hang up
+2026-02-10T06:19:02.988Z error gateway/channels/discord {&quot;subsystem&quot;:&quot;gateway/channels/discord&quot;} discord gateway error: Error: socket hang up
+2026-02-10T06:19:50.601Z error gateway/channels/discord {&quot;subsystem&quot;:&quot;gateway/channels/discord&quot;} discord gateway error: Error: socket hang up
+2026-02-10T06:20:44.362Z error gateway/channels/discord {&quot;subsystem&quot;:&quot;gateway/channels/discord&quot;} discord gateway error: Error: socket hang up</div>
+    </div>
   </div>
 </div>
-
-<!-- Step 3 -->
-<div class="step pass" onclick="this.classList.toggle('open')">
-  <div class="step-header">
-    <span class="step-icon">&#10003;</span>
-    <span class="step-num">Step 3</span>
-    <span class="step-title">串行队列 (serialize)</span>
-    <span class="step-badge">PASS</span>
+<div class="agent-card fail" data-agent="us-mean-reversion">
+  <div class="agent-header" onclick="toggleAgent(this)">
+    <span class="agent-name">us-mean-reversion</span>
+    <span class="agent-meta">57m ago · 192k/200k (96%)</span>
+    <div class="token-bar"><div class="token-fill red" style="width:96%"></div></div>
+    <span class="agent-badge fail">2P 2F 1W</span>
     <span class="arrow">&#9654;</span>
   </div>
-  <div class="step-body">
-    <div class="detail"><strong>配置:</strong> claude-cli: serialize=False</div>
-    <div class="detail"><strong>Slow listener 警告:</strong> 3 次</div>
+  <div class="agent-body">
+    <div class="check fail"><span class="check-label">Session 状态</span><span class="check-detail">Token 192k/200k (96%) — 即将满！需要清 session</span></div>
+    <div class="check pass"><span class="check-label">CLI 活跃</span><span class="check-detail">全局 9 条 exec 记录</span></div>
+    <div class="check fail"><span class="check-label">CLI 错误</span><span class="check-detail">发现 2 条 CLI 错误</span></div>
+    <div class="error-detail">
+      <div class="error-title">CLI 错误上下文 (±5行)</div>
+      <div class="log-block">2026-02-10T06:02:48.201Z info agent/claude-cli {&quot;subsystem&quot;:&quot;agent/claude-cli&quot;} cli exec: provider=claude-cli model=opus promptChars=186
+2026-02-10T06:02:58.862Z info gateway/channels/discord {&quot;subsystem&quot;:&quot;gateway/channels/discord&quot;} discord gateway: Attempting resume with backoff: 1000ms
+2026-02-10T06:02:59.144Z warn [EventQueue] Slow listener detected: DiscordReactionListener took 1462ms for event MESSAGE_REACTION_ADD
+2026-02-10T06:02:59.173Z info gateway/channels/discord {&quot;subsystem&quot;:&quot;gateway/channels/discord&quot;} discord gateway: WebSocket connection closed with code 1005
+2026-02-10T06:02:59.484Z info agent/claude-cli {&quot;subsystem&quot;:&quot;agent/claude-cli&quot;} cli exec: provider=claude-cli model=opus promptChars=187
+2026-02-10T06:02:59.545Z error Embedded agent failed before reply: CLI failed.
+2026-02-10T06:02:59.551Z error [openclaw] Unhandled promise rejection: FailoverError: CLI failed.
+    at file:///opt/homebrew/lib/node_modules/openclaw/dist/reply-DptDUVRg.js:62380:11
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-02-10T06:03:01.695Z info gateway/canvas {&quot;subsystem&quot;:&quot;gateway/canvas&quot;} canvas host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /Users/bozhu/.openclaw/canvas)
+2026-02-10T06:03:01.741Z info gateway/heartbeat {&quot;subsystem&quot;:&quot;gateway/heartbeat&quot;} {&quot;intervalMs&quot;:1800000} heartbeat: started
+2026-02-10T06:03:01.744Z info gateway {&quot;subsystem&quot;:&quot;gateway&quot;} agent model: claude-cli/claude-opus-4-6</div>
+    </div>
+    <div class="check pass"><span class="check-label">静默过滤</span><span class="check-detail">无静默过滤</span></div>
+    <div class="check warn"><span class="check-label">Discord 送达</span><span class="check-detail">5 条网络错误 (socket hang up) — 断网导致</span></div>
+    <div class="error-detail">
+      <div class="error-title">送达错误详情</div>
+      <div class="log-block">2026-02-10T06:17:57.653Z error gateway/channels/discord {&quot;subsystem&quot;:&quot;gateway/channels/discord&quot;} discord gateway error: Error: socket hang up
+2026-02-10T06:18:23.144Z error gateway/channels/discord {&quot;subsystem&quot;:&quot;gateway/channels/discord&quot;} discord gateway error: Error: socket hang up
+2026-02-10T06:19:02.988Z error gateway/channels/discord {&quot;subsystem&quot;:&quot;gateway/channels/discord&quot;} discord gateway error: Error: socket hang up
+2026-02-10T06:19:50.601Z error gateway/channels/discord {&quot;subsystem&quot;:&quot;gateway/channels/discord&quot;} discord gateway error: Error: socket hang up
+2026-02-10T06:20:44.362Z error gateway/channels/discord {&quot;subsystem&quot;:&quot;gateway/channels/discord&quot;} discord gateway error: Error: socket hang up</div>
+    </div>
   </div>
 </div>
-
-<!-- Step 4 -->
-<div class="step fail" onclick="this.classList.toggle('open')">
-  <div class="step-header">
-    <span class="step-icon">&#10007;</span>
-    <span class="step-num">Step 4</span>
-    <span class="step-title">Claude CLI 响应</span>
-    <span class="step-badge">FAIL</span>
-    <span class="arrow">&#9654;</span>
-  </div>
-  <div class="step-body">
-    <div class="detail"><strong>状态:</strong> 发现 2 条 CLI 错误</div>
-    <div class="log-block">2026-02-10T06:02:59.545Z error Embedded agent failed before reply: CLI failed.
-2026-02-10T06:02:59.551Z error [openclaw] Unhandled promise rejection: FailoverError: CLI failed.</div>
-  </div>
-</div>
-
-<!-- Step 5 -->
-<div class="step pass" onclick="this.classList.toggle('open')">
-  <div class="step-header">
-    <span class="step-icon">&#10003;</span>
-    <span class="step-num">Step 5</span>
-    <span class="step-title">静默过滤 (NO_REPLY / HEARTBEAT_OK)</span>
-    <span class="step-badge">PASS</span>
-    <span class="arrow">&#9654;</span>
-  </div>
-  <div class="step-body">
-    <div class="detail"><strong>状态:</strong> 最近 session 无静默过滤</div>
-
-  </div>
-</div>
-
-<!-- Step 6 -->
-<div class="step pass" onclick="this.classList.toggle('open')">
-  <div class="step-header">
-    <span class="step-icon">&#10003;</span>
-    <span class="step-num">Step 6</span>
-    <span class="step-title">Discord 送达</span>
-    <span class="step-badge">PASS</span>
-    <span class="arrow">&#9654;</span>
-  </div>
-  <div class="step-body">
-    <div class="detail"><strong>投递错误:</strong> 0 条</div>
-  </div>
-</div>
-
-<!-- Agent table -->
-<h2 style="font-size:1.1rem;margin:1.5rem 0 0.5rem;">Agent 状态</h2>
-<table>
-  <tr><th>Agent</th><th>最近活跃</th><th>Token 用量</th></tr>
-  <tr><td>realestate</td><td>4m ago</td><td>18k/200k (9%)</td></tr><tr><td>butler</td><td>5m ago</td><td>169k/200k (84%)</td></tr><tr><td>us-mean-reversion</td><td>35m ago</td><td>192k/200k (96%)</td></tr><tr><td>lifestyle</td><td>3h ago</td><td>30k/200k (15%)</td></tr><tr><td>cn-macro</td><td>3h ago</td><td>18k/200k (9%)</td></tr><tr><td>us-semiconductor</td><td>3h ago</td><td>18k/200k (9%)</td></tr>
-</table>
 
 <footer>
-  <p>由 <code>openclaw-diagnose.sh</code> 自动生成 · <a href="index.html" style="color:var(--blue);">决策树参考</a></p>
+  <p>由 <code>diagnose.sh</code> 自动生成 · <a href="index.html">决策树参考</a></p>
 </footer>
 
+<script>
+function filterAgent(name) {
+  document.querySelectorAll('.agent-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('.agent-card').forEach(c => {
+    if (name === 'all' || c.dataset.agent === name) {
+      c.classList.add('visible');
+    } else {
+      c.classList.remove('visible');
+    }
+  });
+}
+function toggleAgent(el) {
+  el.closest('.agent-card').classList.toggle('open');
+}
+// Show all on load
+document.querySelectorAll('.agent-card').forEach(c => c.classList.add('visible'));
+// Auto-expand failed agents
+document.querySelectorAll('.agent-card.fail').forEach(c => c.classList.add('open'));
+</script>
 </body>
 </html>

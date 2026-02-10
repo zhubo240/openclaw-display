@@ -1,80 +1,62 @@
 #!/usr/bin/env bash
-# OpenClaw Agent 诊断脚本
-# 自动跑完 6 步检查，输出 HTML 报告
-# 用法: ./diagnose.sh [agent-id] [--open]
-#   agent-id: 可选，指定检查哪个 agent（默认检查所有）
-#   --open:   生成后自动打开浏览器
+# OpenClaw Agent 诊断脚本 (v2)
+# 按 agent 维度检查，输出 HTML 报告
+# 用法: ./diagnose.sh <agent1> [agent2 ...] [--open] [--all]
+#   agent:  指定检查的 agent 名称（必须至少一个，或用 --all）
+#   --open: 生成后自动打开浏览器
+#   --all:  检查所有活跃 agent
+#
+# 示例:
+#   ./diagnose.sh butler us-mean-reversion
+#   ./diagnose.sh --all --open
+#   ./diagnose.sh realestate
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPORT_FILE="$SCRIPT_DIR/report.html"
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+DIAG_TIME=$(date '+%Y-%m-%d %H:%M:%S')
 
-AGENT_FILTER="${1:-}"
+# Colors
+RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[0;33m'; BLUE='\033[0;34m'; CYAN='\033[0;36m'; NC='\033[0m'; BOLD='\033[1m'
+
+# Parse args
 AUTO_OPEN=false
+ALL_AGENTS=false
+AGENTS=()
 for arg in "$@"; do
-  [[ "$arg" == "--open" ]] && AUTO_OPEN=true
+  case "$arg" in
+    --open) AUTO_OPEN=true ;;
+    --all)  ALL_AGENTS=true ;;
+    -*)     echo "Unknown option: $arg"; exit 1 ;;
+    *)      AGENTS+=("$arg") ;;
+  esac
 done
-[[ "$AGENT_FILTER" == "--open" ]] && AGENT_FILTER=""
 
-# Colors for terminal output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
-BLUE='\033[0;34m'
-NC='\033[0m'
-
-echo -e "${BLUE}OpenClaw 诊断${NC} — $(date '+%Y-%m-%d %H:%M:%S')"
+# Collect global data first
+echo -e "${BLUE}${BOLD}OpenClaw 诊断${NC} — $DIAG_TIME"
 echo "────────────────────────────────────"
 
-# ── Step 1: Discord & Gateway status ──
-echo -e "\n${BLUE}[Step 1]${NC} 检查 Gateway 和 Discord 连接..."
-STEP1_RAW=$(openclaw status --deep 2>&1 || true)
-STEP1_DISCORD="unknown"
-STEP1_GATEWAY="unknown"
-STEP1_SESSIONS=""
-STEP1_PASS=false
+STATUS_RAW=$(openclaw status --deep 2>&1 || true)
+LOGS_RAW=$(openclaw logs --max-bytes 200000 2>&1 || true)
 
-if echo "$STEP1_RAW" | grep -q "Discord.*OK"; then
-  STEP1_DISCORD="OK"
-fi
-if echo "$STEP1_RAW" | grep -q "Gateway.*reachable"; then
-  STEP1_GATEWAY="reachable"
-fi
-STEP1_SESSIONS=$(echo "$STEP1_RAW" | grep "Sessions" | head -1 || true)
-
-if [[ "$STEP1_DISCORD" == "OK" && "$STEP1_GATEWAY" == "reachable" ]]; then
-  STEP1_PASS=true
-  echo -e "  ${GREEN}PASS${NC} — Discord: $STEP1_DISCORD, Gateway: $STEP1_GATEWAY"
+# ── Global: Discord & Gateway ──
+echo -e "\n${BLUE}[全局]${NC} 检查 Gateway 和 Discord 连接..."
+DISCORD_OK=false; GATEWAY_OK=false
+echo "$STATUS_RAW" | grep -q "Discord.*OK" && DISCORD_OK=true
+echo "$STATUS_RAW" | grep -q "Gateway.*reachable" && GATEWAY_OK=true
+GLOBAL_CONN_PASS=false
+if [[ "$DISCORD_OK" == true && "$GATEWAY_OK" == true ]]; then
+  GLOBAL_CONN_PASS=true
+  echo -e "  ${GREEN}PASS${NC} — Discord: OK, Gateway: reachable"
 else
-  echo -e "  ${RED}FAIL${NC} — Discord: $STEP1_DISCORD, Gateway: $STEP1_GATEWAY"
+  echo -e "  ${RED}FAIL${NC} — Discord: $DISCORD_OK, Gateway: $GATEWAY_OK"
 fi
 
-# ── Step 2: Recent cli exec entries ──
-echo -e "\n${BLUE}[Step 2]${NC} 检查最近 cli exec 记录..."
-LOGS_RAW=$(openclaw logs --max-bytes 50000 2>&1 || true)
-CLI_EXECS=$(echo "$LOGS_RAW" | grep "cli exec" | tail -10 || true)
-if [[ -z "$CLI_EXECS" ]]; then
-  STEP2_COUNT=0
-else
-  STEP2_COUNT=$(echo "$CLI_EXECS" | wc -l | tr -d ' ')
-fi
-STEP2_PASS=false
-
-if [[ "$STEP2_COUNT" -gt 0 ]]; then
-  STEP2_PASS=true
-  echo -e "  ${GREEN}PASS${NC} — 找到 $STEP2_COUNT 条 cli exec 记录"
-else
-  echo -e "  ${RED}FAIL${NC} — 没有找到 cli exec 记录"
-fi
-
-# ── Step 3: Serialization delay check ──
-echo -e "\n${BLUE}[Step 3]${NC} 检查串行队列延迟..."
-STEP3_PASS=true
-STEP3_DELAYS=""
+# ── Global: serialize config ──
 SERIALIZE_VAL=$(python3 -c "
-import json,sys
+import json
 try:
   cfg=json.load(open('$HOME/.openclaw/openclaw.json'))
   backends=cfg.get('agents',{}).get('defaults',{}).get('cliBackends',{})
@@ -83,156 +65,287 @@ try:
     print(f'{name}: serialize={ser}')
 except: print('error reading config')
 " 2>/dev/null || echo "error")
-
+SERIALIZE_PASS=true
 if echo "$SERIALIZE_VAL" | grep -q "serialize=True"; then
-  STEP3_PASS=false
-  STEP3_DELAYS="serialize=true (所有 agent 串行执行)"
-  echo -e "  ${RED}WARN${NC} — $STEP3_DELAYS"
-else
-  STEP3_DELAYS="serialize=false (并发执行)"
-  echo -e "  ${GREEN}PASS${NC} — $STEP3_DELAYS"
+  SERIALIZE_PASS=false
 fi
 
-# Check for slow listener warnings
-SLOW_LISTENER_LINES=$(echo "$LOGS_RAW" | grep "Slow listener" || true)
-if [[ -z "$SLOW_LISTENER_LINES" ]]; then
-  SLOW_LISTENERS=0
-else
-  SLOW_LISTENERS=$(echo "$SLOW_LISTENER_LINES" | wc -l | tr -d ' ')
-fi
-if [[ "$SLOW_LISTENERS" -gt 0 ]]; then
-  echo -e "  ${YELLOW}WARN${NC} — $SLOW_LISTENERS 次 Slow listener 警告"
-fi
-
-# ── Step 4: CLI response check ──
-echo -e "\n${BLUE}[Step 4]${NC} 检查 Claude CLI 响应..."
-STEP4_PASS=true
-STEP4_DETAILS=""
-
-# Check for errors in logs
-CLI_ERRORS=$(echo "$LOGS_RAW" | grep -iE "cli.*(error|fail|timeout|EPIPE)" | tail -5 || true)
-if [[ -z "$CLI_ERRORS" ]]; then
-  CLI_ERROR_COUNT=0
-else
-  CLI_ERROR_COUNT=$(echo "$CLI_ERRORS" | wc -l | tr -d ' ')
+# ── Resolve agent list ──
+if [[ "$ALL_AGENTS" == true ]]; then
+  # Extract agent names from session table
+  while IFS= read -r line; do
+    if [[ "$line" =~ agent:([a-zA-Z0-9_-]+): ]]; then
+      AGENTS+=("${BASH_REMATCH[1]}")
+    fi
+  done <<< "$(echo "$STATUS_RAW" | grep "agent:")"
 fi
 
-if [[ "$CLI_ERROR_COUNT" -gt 0 ]]; then
-  STEP4_PASS=false
-  STEP4_DETAILS="发现 $CLI_ERROR_COUNT 条 CLI 错误"
-  echo -e "  ${RED}FAIL${NC} — $STEP4_DETAILS"
-else
-  STEP4_DETAILS="无 CLI 错误"
-  echo -e "  ${GREEN}PASS${NC} — $STEP4_DETAILS"
+if [[ ${#AGENTS[@]} -eq 0 ]]; then
+  echo -e "\n${RED}错误: 请指定至少一个 agent 名称，或使用 --all${NC}"
+  echo "用法: $0 <agent1> [agent2 ...] [--open] [--all]"
+  echo ""
+  echo "可用 agent:"
+  echo "$STATUS_RAW" | grep "agent:" | sed 's/.*agent:\([^:]*\):.*/  \1/' | sort -u
+  exit 1
 fi
 
-# ── Step 5: NO_REPLY / HEARTBEAT_OK check ──
-echo -e "\n${BLUE}[Step 5]${NC} 检查静默过滤 (NO_REPLY / HEARTBEAT_OK)..."
-STEP5_PASS=true
-STEP5_DETAILS=""
-SILENT_SESSIONS=""
+# Deduplicate
+AGENTS=($(printf '%s\n' "${AGENTS[@]}" | sort -u))
 
-# Find recent session files and check for silent responses
-JSONL_FILES=$(find "$HOME/.claude/projects" -path "*openclaw-workspace*" -name "*.jsonl" -newer /tmp/.openclaw-diag-marker 2>/dev/null || \
-  find "$HOME/.claude/projects" -path "*openclaw-workspace*" -name "*.jsonl" -mmin -60 2>/dev/null || true)
+echo -e "\n${CYAN}诊断 agent:${NC} ${AGENTS[*]}"
+echo "────────────────────────────────────"
 
-touch /tmp/.openclaw-diag-marker 2>/dev/null || true
+# ── Per-agent diagnostics ──
+html_escape() {
+  echo "$1" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g; s/"/\&quot;/g'
+}
 
-for f in $JSONL_FILES; do
-  WORKSPACE=$(echo "$f" | sed 's/.*openclaw-workspace-\{0,1\}//' | cut -d/ -f1)
-  [[ -z "$WORKSPACE" ]] && WORKSPACE="default"
+TOTAL_PASS=0
+TOTAL_FAIL=0
+TOTAL_WARN=0
+AGENT_HTML=""
 
-  # Get the last assistant response
-  LAST_RESPONSE=$(grep '"role":"assistant"' "$f" 2>/dev/null | tail -1 || true)
-  if [[ -n "$LAST_RESPONSE" ]]; then
-    RESPONSE_TEXT=$(echo "$LAST_RESPONSE" | python3 -c "
+for AGENT in "${AGENTS[@]}"; do
+  echo -e "\n${BOLD}${CYAN}━━ $AGENT ━━${NC}"
+  A_PASS=0; A_FAIL=0; A_WARN=0
+
+  # ── 1. Session status ──
+  SESSION_LINE=$(echo "$STATUS_RAW" | grep "agent:${AGENT}:" || true)
+  SESSION_AGE="未找到"; SESSION_TOKENS="未知"; TOKEN_PCT=0
+  S1_PASS=true; S1_DETAIL=""
+
+  if [[ -n "$SESSION_LINE" ]]; then
+    SESSION_AGE=$(echo "$SESSION_LINE" | grep -oE '[0-9]+[mhd] ago' || echo "?")
+    SESSION_TOKENS=$(echo "$SESSION_LINE" | grep -oE '[0-9]+k/[0-9]+k \([0-9]+%\)' || echo "?")
+    TOKEN_PCT=$(echo "$SESSION_TOKENS" | grep -oE '[0-9]+%' | tr -d '%' || echo "0")
+    TOKEN_PCT=${TOKEN_PCT:-0}
+
+    if [[ "$TOKEN_PCT" -ge 90 ]]; then
+      S1_PASS=false
+      S1_DETAIL="Token $SESSION_TOKENS — 即将满！需要清 session"
+      echo -e "  ${RED}[Session] FAIL${NC} — $S1_DETAIL"
+      ((A_FAIL++))
+    elif [[ "$TOKEN_PCT" -ge 75 ]]; then
+      S1_DETAIL="Token $SESSION_TOKENS — 偏高"
+      echo -e "  ${YELLOW}[Session] WARN${NC} — $S1_DETAIL"
+      ((A_WARN++))
+    else
+      S1_DETAIL="Token $SESSION_TOKENS — 正常, 最近活跃 $SESSION_AGE"
+      echo -e "  ${GREEN}[Session] PASS${NC} — $S1_DETAIL"
+      ((A_PASS++))
+    fi
+  else
+    S1_PASS=false
+    S1_DETAIL="agent session 未找到（可能未启动或名称错误）"
+    echo -e "  ${RED}[Session] FAIL${NC} — $S1_DETAIL"
+    ((A_FAIL++))
+  fi
+
+  # ── 2. CLI exec activity ──
+  # Look for cli exec entries that might be for this agent
+  # Logs don't include agent name in cli exec, so we check OpenClaw session files
+  CLI_EXEC_LINES=$(echo "$LOGS_RAW" | grep "cli exec" | tail -20 || true)
+  if [[ -z "$CLI_EXEC_LINES" ]]; then
+    CLI_EXEC_COUNT=0
+  else
+    CLI_EXEC_COUNT=$(echo "$CLI_EXEC_LINES" | wc -l | tr -d ' ')
+  fi
+  S2_PASS=true
+  if [[ "$CLI_EXEC_COUNT" -gt 0 ]]; then
+    echo -e "  ${GREEN}[CLI exec] PASS${NC} — 全局 $CLI_EXEC_COUNT 条 cli exec 记录"
+    ((A_PASS++))
+  else
+    S2_PASS=false
+    echo -e "  ${RED}[CLI exec] FAIL${NC} — 无 cli exec 记录"
+    ((A_FAIL++))
+  fi
+
+  # ── 3. CLI errors (agent-level) ──
+  # Check for errors. The "Embedded agent failed" line includes agent context nearby
+  # Also look for stderr/stdout from the CLI process
+  CLI_ERRORS=$(echo "$LOGS_RAW" | grep -iE "(Embedded agent failed|CLI failed|FailoverError|cli.*(error|timeout|EPIPE))" | tail -10 || true)
+  S3_PASS=true; S3_DETAIL=""; CLI_ERROR_CONTEXT=""
+
+  if [[ -z "$CLI_ERRORS" ]]; then
+    CLI_ERROR_COUNT=0
+    S3_DETAIL="无 CLI 错误"
+    echo -e "  ${GREEN}[CLI 错误] PASS${NC} — $S3_DETAIL"
+    ((A_PASS++))
+  else
+    CLI_ERROR_COUNT=$(echo "$CLI_ERRORS" | wc -l | tr -d ' ')
+    S3_PASS=false
+    S3_DETAIL="发现 $CLI_ERROR_COUNT 条 CLI 错误"
+    echo -e "  ${RED}[CLI 错误] FAIL${NC} — $S3_DETAIL"
+    ((A_FAIL++))
+
+    # Extract more context: get ±5 lines around each error
+    CLI_ERROR_CONTEXT=$(echo "$LOGS_RAW" | grep -B5 -A5 -iE "(Embedded agent failed|CLI failed|FailoverError)" | head -60 || true)
+
+    # Check for specific patterns
+    if echo "$CLI_ERROR_CONTEXT" | grep -q "code 1005"; then
+      echo -e "    ${YELLOW}↳ 原因: Discord WebSocket 断连 (code 1005) 期间 CLI 请求失败${NC}"
+    fi
+    if echo "$CLI_ERROR_CONTEXT" | grep -q "EPIPE"; then
+      echo -e "    ${YELLOW}↳ 原因: CLI 进程管道中断 (EPIPE)${NC}"
+    fi
+    if echo "$CLI_ERROR_CONTEXT" | grep -q "timeout"; then
+      echo -e "    ${YELLOW}↳ 原因: CLI 响应超时${NC}"
+    fi
+    if echo "$CLI_ERROR_CONTEXT" | grep -q "rate.limit\|429"; then
+      echo -e "    ${YELLOW}↳ 原因: API 速率限制${NC}"
+    fi
+    if echo "$CLI_ERROR_CONTEXT" | grep -q "socket hang up"; then
+      echo -e "    ${YELLOW}↳ 原因: 网络连接中断 (socket hang up)${NC}"
+    fi
+
+    # Check for verbose stderr/stdout near the error
+    CLI_STDERR=$(echo "$LOGS_RAW" | grep -A2 "cli stderr" | head -10 || true)
+    if [[ -n "$CLI_STDERR" ]]; then
+      echo -e "    ${YELLOW}↳ CLI stderr:${NC}"
+      echo "$CLI_STDERR" | head -5 | sed 's/^/      /'
+    fi
+  fi
+
+  # ── 4. NO_REPLY / HEARTBEAT_OK check (agent-specific) ──
+  S4_PASS=true; S4_DETAIL=""; SILENT_INFO=""
+  # Check Claude session files for this specific agent
+  AGENT_JSONL=$(find "$HOME/.claude/projects" -path "*openclaw*" -name "*.jsonl" -mmin -120 2>/dev/null | xargs grep -l "\"$AGENT\"" 2>/dev/null || true)
+  # Also check OpenClaw session store
+  OC_SESSION_FILE="$HOME/.openclaw/agents/main/sessions/sessions.json"
+
+  if [[ -n "$AGENT_JSONL" ]]; then
+    for f in $AGENT_JSONL; do
+      LAST_RESP=$(grep '"role":"assistant"' "$f" 2>/dev/null | tail -1 || true)
+      if [[ -n "$LAST_RESP" ]]; then
+        RESP_TEXT=$(echo "$LAST_RESP" | python3 -c "
 import json,sys
 try:
   data=json.loads(sys.stdin.read())
   msg=data.get('message',data)
   for c in msg.get('content',[]):
     if c.get('type')=='text':
-      print(c.get('text',''))
-      break
+      t=c.get('text','').strip()
+      if t: print(t[:200]); break
 except: pass
 " 2>/dev/null || true)
 
-    if [[ "$RESPONSE_TEXT" == "HEARTBEAT_OK" || "$RESPONSE_TEXT" == "NO_REPLY" ]]; then
-      STEP5_PASS=false
-      SILENT_SESSIONS="$SILENT_SESSIONS\n  - $WORKSPACE: $RESPONSE_TEXT"
+        if [[ "$RESP_TEXT" == "HEARTBEAT_OK" || "$RESP_TEXT" == "NO_REPLY" ]]; then
+          S4_PASS=false
+          SILENT_INFO="最后响应: $RESP_TEXT"
+        fi
+      fi
+    done
+  fi
+
+  if [[ "$S4_PASS" == true ]]; then
+    S4_DETAIL="无静默过滤"
+    echo -e "  ${GREEN}[静默检查] PASS${NC} — $S4_DETAIL"
+    ((A_PASS++))
+  else
+    S4_DETAIL="检测到静默响应: $SILENT_INFO"
+    echo -e "  ${RED}[静默检查] FAIL${NC} — $S4_DETAIL"
+    ((A_FAIL++))
+  fi
+
+  # ── 5. Delivery check (Discord errors) ──
+  DELIVER_ERRORS=$(echo "$LOGS_RAW" | grep -iE "deliver.*(error|fail)|discord.*(error|rate)" | tail -5 || true)
+  S5_PASS=true; S5_DETAIL=""
+  if [[ -z "$DELIVER_ERRORS" ]]; then
+    S5_DETAIL="无投递错误"
+    echo -e "  ${GREEN}[送达] PASS${NC} — $S5_DETAIL"
+    ((A_PASS++))
+  else
+    DELIVER_COUNT=$(echo "$DELIVER_ERRORS" | wc -l | tr -d ' ')
+    # Check if socket hang up (network issue, not agent issue)
+    SOCKET_ERRORS=$(echo "$DELIVER_ERRORS" | grep -c "socket hang up" || true)
+    if [[ "$SOCKET_ERRORS" -eq "$DELIVER_COUNT" ]]; then
+      S5_DETAIL="$DELIVER_COUNT 条网络错误 (socket hang up) — 断网导致"
+      echo -e "  ${YELLOW}[送达] WARN${NC} — $S5_DETAIL"
+      ((A_WARN++))
+    else
+      S5_PASS=false
+      S5_DETAIL="$DELIVER_COUNT 条投递错误"
+      echo -e "  ${RED}[送达] FAIL${NC} — $S5_DETAIL"
+      ((A_FAIL++))
     fi
   fi
-done
 
-if [[ "$STEP5_PASS" == true ]]; then
-  STEP5_DETAILS="最近 session 无静默过滤"
-  echo -e "  ${GREEN}PASS${NC} — $STEP5_DETAILS"
-else
-  STEP5_DETAILS="发现静默响应:"
-  echo -e "  ${RED}FAIL${NC} — $STEP5_DETAILS"
-  echo -e "$SILENT_SESSIONS"
-fi
+  # ── Agent summary ──
+  TOTAL_PASS=$((TOTAL_PASS + A_PASS))
+  TOTAL_FAIL=$((TOTAL_FAIL + A_FAIL))
+  TOTAL_WARN=$((TOTAL_WARN + A_WARN))
 
-# ── Step 6: Delivery check ──
-echo -e "\n${BLUE}[Step 6]${NC} 检查消息送达..."
-STEP6_PASS=true
-DELIVER_LINES=$(echo "$LOGS_RAW" | grep -iE "deliver|discord.*send|discord.*message" | tail -5 || true)
-DELIVER_ERRORS=$(echo "$LOGS_RAW" | grep -iE "deliver.*(error|fail)|discord.*(error|rate)" | tail -5 || true)
-if [[ -z "$DELIVER_ERRORS" ]]; then
-  DELIVER_ERROR_COUNT=0
-else
-  DELIVER_ERROR_COUNT=$(echo "$DELIVER_ERRORS" | wc -l | tr -d ' ')
-fi
+  # Determine overall agent status
+  AGENT_STATUS_CLASS="pass"
+  [[ "$A_WARN" -gt 0 ]] && AGENT_STATUS_CLASS="warn"
+  [[ "$A_FAIL" -gt 0 ]] && AGENT_STATUS_CLASS="fail"
 
-if [[ "$DELIVER_ERROR_COUNT" -gt 0 ]]; then
-  STEP6_PASS=false
-  echo -e "  ${RED}FAIL${NC} — 发现 $DELIVER_ERROR_COUNT 条投递错误"
-else
-  echo -e "  ${GREEN}PASS${NC} — 无投递错误"
-fi
+  # Determine token bar color
+  TOKEN_BAR_CLASS="green"
+  [[ "$TOKEN_PCT" -ge 75 ]] && TOKEN_BAR_CLASS="yellow"
+  [[ "$TOKEN_PCT" -ge 90 ]] && TOKEN_BAR_CLASS="red"
 
-# ── Per-agent status ──
-echo -e "\n${BLUE}[Agent 状态]${NC}"
-AGENT_STATUS=$(echo "$STEP1_RAW" | sed -n '/^Sessions$/,/^$/p' || true)
-if [[ -z "$AGENT_STATUS" ]]; then
-  AGENT_STATUS=$(echo "$STEP1_RAW" | grep -A20 "Sessions" | head -20 || true)
-fi
+  # Build HTML for this agent
+  S1_CLASS="pass"; [[ "$S1_PASS" != true ]] && { [[ "$TOKEN_PCT" -ge 75 && "$TOKEN_PCT" -lt 90 ]] && S1_CLASS="warn" || S1_CLASS="fail"; }
+  S2_CLASS="pass"; [[ "$S2_PASS" != true ]] && S2_CLASS="fail"
+  S3_CLASS="pass"; [[ "$S3_PASS" != true ]] && S3_CLASS="fail"
+  S4_CLASS="pass"; [[ "$S4_PASS" != true ]] && S4_CLASS="fail"
+  S5_CLASS="pass"; [[ "$S5_PASS" != true ]] && S5_CLASS="fail"
+  [[ -n "$DELIVER_ERRORS" && "$S5_PASS" == true ]] && S5_CLASS="warn"
 
-AGENT_ROWS=""
-# Parse session info from status
-while IFS= read -r line; do
-  if echo "$line" | grep -q "agent:"; then
-    AGENT_NAME=$(echo "$line" | sed 's/.*agent:\([^:]*\).*/\1/' | head -c 20)
-    AGENT_AGE=$(echo "$line" | grep -oE '[0-9]+[mhd] ago' || echo "?")
-    AGENT_TOKENS=$(echo "$line" | grep -oE '[0-9]+k/[0-9]+k \([0-9]+%\)' || echo "?")
-    AGENT_ROWS="$AGENT_ROWS<tr><td>$AGENT_NAME</td><td>$AGENT_AGE</td><td>$AGENT_TOKENS</td></tr>"
-    echo -e "  $AGENT_NAME — $AGENT_AGE — $AGENT_TOKENS"
+  CLI_ERRORS_ESC=$(html_escape "${CLI_ERRORS:-}")
+  CLI_ERROR_CTX_ESC=$(html_escape "${CLI_ERROR_CONTEXT:-}")
+  DELIVER_ERRORS_ESC=$(html_escape "${DELIVER_ERRORS:-}")
+
+  AGENT_HTML="$AGENT_HTML
+<div class=\"agent-card ${AGENT_STATUS_CLASS}\" data-agent=\"${AGENT}\">
+  <div class=\"agent-header\" onclick=\"toggleAgent(this)\">
+    <span class=\"agent-name\">${AGENT}</span>
+    <span class=\"agent-meta\">${SESSION_AGE} · ${SESSION_TOKENS}</span>
+    <div class=\"token-bar\"><div class=\"token-fill ${TOKEN_BAR_CLASS}\" style=\"width:${TOKEN_PCT}%\"></div></div>
+    <span class=\"agent-badge ${AGENT_STATUS_CLASS}\">${A_PASS}P ${A_FAIL}F ${A_WARN}W</span>
+    <span class=\"arrow\">&#9654;</span>
+  </div>
+  <div class=\"agent-body\">
+    <div class=\"check ${S1_CLASS}\"><span class=\"check-label\">Session 状态</span><span class=\"check-detail\">$(html_escape "$S1_DETAIL")</span></div>
+    <div class=\"check ${S2_CLASS}\"><span class=\"check-label\">CLI 活跃</span><span class=\"check-detail\">全局 ${CLI_EXEC_COUNT} 条 exec 记录</span></div>
+    <div class=\"check ${S3_CLASS}\"><span class=\"check-label\">CLI 错误</span><span class=\"check-detail\">$(html_escape "$S3_DETAIL")</span></div>"
+
+  if [[ -n "$CLI_ERROR_CONTEXT" ]]; then
+    AGENT_HTML="$AGENT_HTML
+    <div class=\"error-detail\">
+      <div class=\"error-title\">CLI 错误上下文 (±5行)</div>
+      <div class=\"log-block\">${CLI_ERROR_CTX_ESC}</div>
+    </div>"
   fi
-done <<< "$(echo "$STEP1_RAW")"
+
+  AGENT_HTML="$AGENT_HTML
+    <div class=\"check ${S4_CLASS}\"><span class=\"check-label\">静默过滤</span><span class=\"check-detail\">$(html_escape "$S4_DETAIL")</span></div>
+    <div class=\"check ${S5_CLASS}\"><span class=\"check-label\">Discord 送达</span><span class=\"check-detail\">$(html_escape "$S5_DETAIL")</span></div>"
+
+  if [[ -n "$DELIVER_ERRORS" ]]; then
+    AGENT_HTML="$AGENT_HTML
+    <div class=\"error-detail\">
+      <div class=\"error-title\">送达错误详情</div>
+      <div class=\"log-block\">${DELIVER_ERRORS_ESC}</div>
+    </div>"
+  fi
+
+  AGENT_HTML="$AGENT_HTML
+  </div>
+</div>"
+
+done
 
 # ── Summary ──
 echo -e "\n────────────────────────────────────"
-TOTAL_PASS=0
-TOTAL_FAIL=0
-for s in "$STEP1_PASS" "$STEP2_PASS" "$STEP3_PASS" "$STEP4_PASS" "$STEP5_PASS" "$STEP6_PASS"; do
-  [[ "$s" == true ]] && ((TOTAL_PASS++)) || ((TOTAL_FAIL++))
-done
-echo -e "结果: ${GREEN}$TOTAL_PASS PASS${NC}  ${RED}$TOTAL_FAIL FAIL${NC}"
+echo -e "总计: ${GREEN}$TOTAL_PASS PASS${NC}  ${RED}$TOTAL_FAIL FAIL${NC}  ${YELLOW}$TOTAL_WARN WARN${NC}"
 
-# ── Escape HTML helper ──
-html_escape() {
-  echo "$1" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g; s/"/\&quot;/g'
-}
+# ── Generate HTML ──
+SERIALIZE_ESC=$(html_escape "$SERIALIZE_VAL")
+AGENT_NAMES_JSON=$(printf '%s\n' "${AGENTS[@]}" | python3 -c "import sys,json; print(json.dumps([l.strip() for l in sys.stdin]))")
 
-# ── Generate HTML Report ──
-step_class() { [[ "$1" == true ]] && echo "pass" || echo "fail"; }
-step_icon() { [[ "$1" == true ]] && echo "&#10003;" || echo "&#10007;"; }
-step_label() { [[ "$1" == true ]] && echo "PASS" || echo "FAIL"; }
-
-CLI_EXECS_ESCAPED=$(html_escape "$CLI_EXECS")
-CLI_ERRORS_ESCAPED=$(html_escape "$CLI_ERRORS")
-
-cat > "$REPORT_FILE" << 'HTMLHEAD'
+cat > "$REPORT_FILE" << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -240,194 +353,136 @@ cat > "$REPORT_FILE" << 'HTMLHEAD'
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OpenClaw 诊断报告</title>
 <style>
-  :root { --bg:#0d1117; --card:#161b22; --border:#30363d; --text:#e6edf3; --muted:#8b949e; --green:#3fb950; --red:#f85149; --yellow:#d29922; --blue:#58a6ff; --purple:#bc8cff; }
+  :root { --bg:#0d1117; --card:#161b22; --border:#30363d; --text:#e6edf3; --muted:#8b949e; --green:#3fb950; --red:#f85149; --yellow:#d29922; --blue:#58a6ff; --cyan:#56d4dd; --purple:#bc8cff; }
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.6; padding:1.5rem; max-width:960px; margin:0 auto; }
+  body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.6; padding:1.5rem; max-width:1100px; margin:0 auto; }
   h1 { font-size:1.5rem; margin-bottom:0.2rem; }
-  .meta { color:var(--muted); font-size:0.85rem; margin-bottom:1.5rem; }
+  .meta { color:var(--muted); font-size:0.85rem; margin-bottom:1rem; }
+
+  .global-bar { display:flex; gap:0.8rem; margin-bottom:1.5rem; flex-wrap:wrap; }
+  .g-chip { background:var(--card); border:1px solid var(--border); border-radius:6px; padding:0.4rem 0.8rem; font-size:0.8rem; display:flex; align-items:center; gap:0.4rem; }
+  .g-chip.pass { border-color:var(--green); }
+  .g-chip.fail { border-color:var(--red); }
+  .g-chip .dot { width:8px; height:8px; border-radius:50%; }
+  .g-chip.pass .dot { background:var(--green); }
+  .g-chip.fail .dot { background:var(--red); }
+
   .summary { display:flex; gap:1rem; margin-bottom:1.5rem; }
-  .summary-card { flex:1; background:var(--card); border:1px solid var(--border); border-radius:8px; padding:1rem; text-align:center; }
+  .summary-card { flex:1; background:var(--card); border:1px solid var(--border); border-radius:8px; padding:0.8rem; text-align:center; }
   .summary-card.pass { border-color:var(--green); }
   .summary-card.fail { border-color:var(--red); }
-  .summary-num { font-size:2rem; font-weight:800; }
+  .summary-card.warn { border-color:var(--yellow); }
+  .summary-num { font-size:1.8rem; font-weight:800; }
   .summary-card.pass .summary-num { color:var(--green); }
   .summary-card.fail .summary-num { color:var(--red); }
-  .summary-label { font-size:0.8rem; color:var(--muted); }
+  .summary-card.warn .summary-num { color:var(--yellow); }
+  .summary-label { font-size:0.75rem; color:var(--muted); }
 
-  .step { background:var(--card); border:1px solid var(--border); border-radius:8px; margin-bottom:0.75rem; overflow:hidden; }
-  .step.pass { border-left:3px solid var(--green); }
-  .step.fail { border-left:3px solid var(--red); }
-  .step.warn { border-left:3px solid var(--yellow); }
-  .step-header { display:flex; align-items:center; gap:0.6rem; padding:0.75rem 1rem; cursor:pointer; }
-  .step-header:hover { background:rgba(255,255,255,0.02); }
-  .step-icon { font-size:1.1rem; flex-shrink:0; }
-  .step.pass .step-icon { color:var(--green); }
-  .step.fail .step-icon { color:var(--red); }
-  .step.warn .step-icon { color:var(--yellow); }
-  .step-num { background:var(--blue); color:#fff; font-size:0.65rem; font-weight:700; padding:0.1rem 0.4rem; border-radius:10px; flex-shrink:0; }
-  .step-title { font-weight:600; font-size:0.9rem; flex:1; }
-  .step-badge { font-size:0.7rem; font-weight:700; padding:0.1rem 0.5rem; border-radius:10px; }
-  .step.pass .step-badge { background:rgba(63,185,80,0.15); color:var(--green); }
-  .step.fail .step-badge { background:rgba(248,81,73,0.15); color:var(--red); }
-  .step.warn .step-badge { background:rgba(210,153,34,0.15); color:var(--yellow); }
-  .arrow { color:var(--muted); transition:transform 0.2s; font-size:0.75rem; }
-  .step.open .arrow { transform:rotate(90deg); }
-  .step-body { display:none; padding:0 1rem 0.8rem; font-size:0.85rem; }
-  .step.open .step-body { display:block; }
-  .log-block { background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:0.6rem 0.8rem; margin:0.5rem 0; font-family:'SF Mono',Monaco,Consolas,monospace; font-size:0.75rem; overflow-x:auto; white-space:pre-wrap; word-break:break-all; color:var(--muted); max-height:200px; overflow-y:auto; }
-  .detail { margin:0.4rem 0; }
-  .detail strong { color:var(--blue); }
+  /* Agent selector tabs */
+  .agent-tabs { display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap; }
+  .agent-tab { background:var(--card); border:1px solid var(--border); border-radius:6px; padding:0.4rem 1rem; font-size:0.85rem; cursor:pointer; color:var(--muted); transition:all 0.2s; }
+  .agent-tab:hover { border-color:var(--blue); color:var(--text); }
+  .agent-tab.active { border-color:var(--blue); color:var(--blue); background:rgba(88,166,255,0.08); }
+  .agent-tab.all { font-weight:600; }
 
-  .seq { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
-  .seq-flow { display:flex; gap:0; align-items:stretch; width:100%; }
-  .seq-node { flex:1; text-align:center; padding:0.6rem 0.3rem; border:1px solid var(--border); font-size:0.7rem; font-weight:600; position:relative; }
-  .seq-node::after { content:'→'; position:absolute; right:-8px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:0.9rem; z-index:1; }
-  .seq-node:last-child::after { display:none; }
-  .seq-node.pass { background:rgba(63,185,80,0.08); border-color:var(--green); color:var(--green); }
-  .seq-node.fail { background:rgba(248,81,73,0.08); border-color:var(--red); color:var(--red); }
-  .seq-node.warn { background:rgba(210,153,34,0.08); border-color:var(--yellow); color:var(--yellow); }
-  .seq-node.skip { opacity:0.3; }
-  .seq-node:first-child { border-radius:6px 0 0 6px; }
-  .seq-node:last-child { border-radius:0 6px 6px 0; }
+  /* Agent card */
+  .agent-card { background:var(--card); border:1px solid var(--border); border-radius:8px; margin-bottom:0.75rem; overflow:hidden; display:none; }
+  .agent-card.visible { display:block; }
+  .agent-card.pass { border-left:3px solid var(--green); }
+  .agent-card.fail { border-left:3px solid var(--red); }
+  .agent-card.warn { border-left:3px solid var(--yellow); }
 
-  table { width:100%; border-collapse:collapse; margin:0.5rem 0; }
-  th,td { padding:0.4rem 0.6rem; text-align:left; border-bottom:1px solid var(--border); font-size:0.8rem; }
-  th { color:var(--muted); font-weight:600; }
+  .agent-header { display:flex; align-items:center; gap:0.6rem; padding:0.75rem 1rem; cursor:pointer; }
+  .agent-header:hover { background:rgba(255,255,255,0.02); }
+  .agent-name { font-weight:700; font-size:1rem; color:var(--cyan); min-width:140px; }
+  .agent-meta { color:var(--muted); font-size:0.8rem; min-width:160px; }
+  .token-bar { flex:1; max-width:120px; height:6px; background:var(--border); border-radius:3px; overflow:hidden; }
+  .token-fill { height:100%; border-radius:3px; transition:width 0.3s; }
+  .token-fill.green { background:var(--green); }
+  .token-fill.yellow { background:var(--yellow); }
+  .token-fill.red { background:var(--red); }
+  .agent-badge { font-size:0.7rem; font-weight:700; padding:0.15rem 0.5rem; border-radius:10px; }
+  .agent-badge.pass { background:rgba(63,185,80,0.15); color:var(--green); }
+  .agent-badge.fail { background:rgba(248,81,73,0.15); color:var(--red); }
+  .agent-badge.warn { background:rgba(210,153,34,0.15); color:var(--yellow); }
+  .arrow { color:var(--muted); transition:transform 0.2s; font-size:0.75rem; margin-left:auto; }
+  .agent-card.open .arrow { transform:rotate(90deg); }
+
+  .agent-body { display:none; padding:0 1rem 0.8rem; }
+  .agent-card.open .agent-body { display:block; }
+
+  .check { display:flex; align-items:center; gap:0.5rem; padding:0.35rem 0; border-bottom:1px solid rgba(48,54,61,0.5); font-size:0.85rem; }
+  .check::before { content:''; width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .check.pass::before { background:var(--green); }
+  .check.fail::before { background:var(--red); }
+  .check.warn::before { background:var(--yellow); }
+  .check-label { font-weight:600; min-width:100px; color:var(--text); }
+  .check-detail { color:var(--muted); }
+
+  .error-detail { margin:0.5rem 0; }
+  .error-title { font-size:0.75rem; font-weight:600; color:var(--yellow); margin-bottom:0.3rem; }
+  .log-block { background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:0.6rem 0.8rem; font-family:'SF Mono',Monaco,Consolas,monospace; font-size:0.72rem; overflow-x:auto; white-space:pre-wrap; word-break:break-all; color:var(--muted); max-height:250px; overflow-y:auto; }
 
   footer { margin-top:2rem; padding-top:1rem; border-top:1px solid var(--border); color:var(--muted); font-size:0.75rem; text-align:center; }
+  footer a { color:var(--blue); }
 </style>
 </head>
 <body>
-HTMLHEAD
+HTMLEOF
 
 cat >> "$REPORT_FILE" << EOF
 <h1>OpenClaw 诊断报告</h1>
-<p class="meta">$(date '+%Y-%m-%d %H:%M:%S') · $(hostname)</p>
+<p class="meta">${DIAG_TIME} · $(hostname) · agents: ${AGENTS[*]}</p>
+
+<div class="global-bar">
+  <div class="g-chip $(if [[ "$GLOBAL_CONN_PASS" == true ]]; then echo pass; else echo fail; fi)"><span class="dot"></span>Discord $(if [[ "$DISCORD_OK" == true ]]; then echo OK; else echo FAIL; fi)</div>
+  <div class="g-chip $(if [[ "$GLOBAL_CONN_PASS" == true ]]; then echo pass; else echo fail; fi)"><span class="dot"></span>Gateway $(if [[ "$GATEWAY_OK" == true ]]; then echo reachable; else echo FAIL; fi)</div>
+  <div class="g-chip $(if [[ "$SERIALIZE_PASS" == true ]]; then echo pass; else echo fail; fi)"><span class="dot"></span>${SERIALIZE_ESC}</div>
+</div>
 
 <div class="summary">
-  <div class="summary-card pass">
-    <div class="summary-num">$TOTAL_PASS</div>
-    <div class="summary-label">PASS</div>
-  </div>
-  <div class="summary-card fail">
-    <div class="summary-num">$TOTAL_FAIL</div>
-    <div class="summary-label">FAIL</div>
-  </div>
+  <div class="summary-card pass"><div class="summary-num">$TOTAL_PASS</div><div class="summary-label">PASS</div></div>
+  <div class="summary-card fail"><div class="summary-num">$TOTAL_FAIL</div><div class="summary-label">FAIL</div></div>
+  <div class="summary-card warn"><div class="summary-num">$TOTAL_WARN</div><div class="summary-label">WARN</div></div>
 </div>
 
-<!-- Sequence flow -->
-<div class="seq">
-  <div class="seq-flow">
-    <div class="seq-node $(step_class $STEP1_PASS)">1. Discord<br>→ Gateway</div>
-    <div class="seq-node $(step_class $STEP2_PASS)">2. Gateway<br>→ Agent</div>
-    <div class="seq-node $(step_class $STEP3_PASS)">3. Queue<br>serialize</div>
-    <div class="seq-node $(step_class $STEP4_PASS)">4. Claude<br>CLI</div>
-    <div class="seq-node $(step_class $STEP5_PASS)">5. NO_REPLY<br>过滤</div>
-    <div class="seq-node $(step_class $STEP6_PASS)">6. → Discord<br>送达</div>
-  </div>
+<div class="agent-tabs">
+  <div class="agent-tab all active" onclick="filterAgent('all')">全部</div>
+EOF
+
+for AGENT in "${AGENTS[@]}"; do
+  echo "  <div class=\"agent-tab\" onclick=\"filterAgent('${AGENT}')\">${AGENT}</div>" >> "$REPORT_FILE"
+done
+
+cat >> "$REPORT_FILE" << EOF
 </div>
 
-<!-- Step 1 -->
-<div class="step $(step_class $STEP1_PASS) open" onclick="this.classList.toggle('open')">
-  <div class="step-header">
-    <span class="step-icon">$(step_icon $STEP1_PASS)</span>
-    <span class="step-num">Step 1</span>
-    <span class="step-title">Gateway & Discord 连接</span>
-    <span class="step-badge">$(step_label $STEP1_PASS)</span>
-    <span class="arrow">&#9654;</span>
-  </div>
-  <div class="step-body">
-    <div class="detail"><strong>Discord:</strong> $STEP1_DISCORD</div>
-    <div class="detail"><strong>Gateway:</strong> $STEP1_GATEWAY</div>
-    <div class="detail"><strong>Sessions:</strong> $(html_escape "$STEP1_SESSIONS")</div>
-  </div>
-</div>
-
-<!-- Step 2 -->
-<div class="step $(step_class $STEP2_PASS)" onclick="this.classList.toggle('open')">
-  <div class="step-header">
-    <span class="step-icon">$(step_icon $STEP2_PASS)</span>
-    <span class="step-num">Step 2</span>
-    <span class="step-title">Agent 路由 (cli exec)</span>
-    <span class="step-badge">$(step_label $STEP2_PASS)</span>
-    <span class="arrow">&#9654;</span>
-  </div>
-  <div class="step-body">
-    <div class="detail"><strong>最近 cli exec:</strong> $STEP2_COUNT 条</div>
-    <div class="log-block">$CLI_EXECS_ESCAPED</div>
-  </div>
-</div>
-
-<!-- Step 3 -->
-<div class="step $(step_class $STEP3_PASS)" onclick="this.classList.toggle('open')">
-  <div class="step-header">
-    <span class="step-icon">$(step_icon $STEP3_PASS)</span>
-    <span class="step-num">Step 3</span>
-    <span class="step-title">串行队列 (serialize)</span>
-    <span class="step-badge">$(step_label $STEP3_PASS)</span>
-    <span class="arrow">&#9654;</span>
-  </div>
-  <div class="step-body">
-    <div class="detail"><strong>配置:</strong> $(html_escape "$SERIALIZE_VAL")</div>
-    <div class="detail"><strong>Slow listener 警告:</strong> $SLOW_LISTENERS 次</div>
-  </div>
-</div>
-
-<!-- Step 4 -->
-<div class="step $(step_class $STEP4_PASS)" onclick="this.classList.toggle('open')">
-  <div class="step-header">
-    <span class="step-icon">$(step_icon $STEP4_PASS)</span>
-    <span class="step-num">Step 4</span>
-    <span class="step-title">Claude CLI 响应</span>
-    <span class="step-badge">$(step_label $STEP4_PASS)</span>
-    <span class="arrow">&#9654;</span>
-  </div>
-  <div class="step-body">
-    <div class="detail"><strong>状态:</strong> $STEP4_DETAILS</div>
-$(if [[ -n "$CLI_ERRORS" ]]; then echo "    <div class=\"log-block\">$CLI_ERRORS_ESCAPED</div>"; fi)
-  </div>
-</div>
-
-<!-- Step 5 -->
-<div class="step $(step_class $STEP5_PASS)" onclick="this.classList.toggle('open')">
-  <div class="step-header">
-    <span class="step-icon">$(step_icon $STEP5_PASS)</span>
-    <span class="step-num">Step 5</span>
-    <span class="step-title">静默过滤 (NO_REPLY / HEARTBEAT_OK)</span>
-    <span class="step-badge">$(step_label $STEP5_PASS)</span>
-    <span class="arrow">&#9654;</span>
-  </div>
-  <div class="step-body">
-    <div class="detail"><strong>状态:</strong> $STEP5_DETAILS</div>
-$(if [[ -n "$SILENT_SESSIONS" ]]; then echo "    <div class=\"log-block\">$(echo -e "$SILENT_SESSIONS")</div>"; fi)
-  </div>
-</div>
-
-<!-- Step 6 -->
-<div class="step $(step_class $STEP6_PASS)" onclick="this.classList.toggle('open')">
-  <div class="step-header">
-    <span class="step-icon">$(step_icon $STEP6_PASS)</span>
-    <span class="step-num">Step 6</span>
-    <span class="step-title">Discord 送达</span>
-    <span class="step-badge">$(step_label $STEP6_PASS)</span>
-    <span class="arrow">&#9654;</span>
-  </div>
-  <div class="step-body">
-    <div class="detail"><strong>投递错误:</strong> $DELIVER_ERROR_COUNT 条</div>
-  </div>
-</div>
-
-<!-- Agent table -->
-<h2 style="font-size:1.1rem;margin:1.5rem 0 0.5rem;">Agent 状态</h2>
-<table>
-  <tr><th>Agent</th><th>最近活跃</th><th>Token 用量</th></tr>
-  $AGENT_ROWS
-</table>
+${AGENT_HTML}
 
 <footer>
-  <p>由 <code>openclaw-diagnose.sh</code> 自动生成 · <a href="index.html" style="color:var(--blue);">决策树参考</a></p>
+  <p>由 <code>diagnose.sh</code> 自动生成 · <a href="index.html">决策树参考</a></p>
 </footer>
 
+<script>
+function filterAgent(name) {
+  document.querySelectorAll('.agent-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('.agent-card').forEach(c => {
+    if (name === 'all' || c.dataset.agent === name) {
+      c.classList.add('visible');
+    } else {
+      c.classList.remove('visible');
+    }
+  });
+}
+function toggleAgent(el) {
+  el.closest('.agent-card').classList.toggle('open');
+}
+// Show all on load
+document.querySelectorAll('.agent-card').forEach(c => c.classList.add('visible'));
+// Auto-expand failed agents
+document.querySelectorAll('.agent-card.fail').forEach(c => c.classList.add('open'));
+</script>
 </body>
 </html>
 EOF
