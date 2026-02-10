@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenClaw 诊断报告</title>
+<style>
+  :root { --bg:#0d1117; --card:#161b22; --border:#30363d; --text:#e6edf3; --muted:#8b949e; --green:#3fb950; --red:#f85149; --yellow:#d29922; --blue:#58a6ff; --purple:#bc8cff; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif; background:var(--bg); color:var(--text); line-height:1.6; padding:1.5rem; max-width:960px; margin:0 auto; }
+  h1 { font-size:1.5rem; margin-bottom:0.2rem; }
+  .meta { color:var(--muted); font-size:0.85rem; margin-bottom:1.5rem; }
+  .summary { display:flex; gap:1rem; margin-bottom:1.5rem; }
+  .summary-card { flex:1; background:var(--card); border:1px solid var(--border); border-radius:8px; padding:1rem; text-align:center; }
+  .summary-card.pass { border-color:var(--green); }
+  .summary-card.fail { border-color:var(--red); }
+  .summary-num { font-size:2rem; font-weight:800; }
+  .summary-card.pass .summary-num { color:var(--green); }
+  .summary-card.fail .summary-num { color:var(--red); }
+  .summary-label { font-size:0.8rem; color:var(--muted); }
+
+  .step { background:var(--card); border:1px solid var(--border); border-radius:8px; margin-bottom:0.75rem; overflow:hidden; }
+  .step.pass { border-left:3px solid var(--green); }
+  .step.fail { border-left:3px solid var(--red); }
+  .step.warn { border-left:3px solid var(--yellow); }
+  .step-header { display:flex; align-items:center; gap:0.6rem; padding:0.75rem 1rem; cursor:pointer; }
+  .step-header:hover { background:rgba(255,255,255,0.02); }
+  .step-icon { font-size:1.1rem; flex-shrink:0; }
+  .step.pass .step-icon { color:var(--green); }
+  .step.fail .step-icon { color:var(--red); }
+  .step.warn .step-icon { color:var(--yellow); }
+  .step-num { background:var(--blue); color:#fff; font-size:0.65rem; font-weight:700; padding:0.1rem 0.4rem; border-radius:10px; flex-shrink:0; }
+  .step-title { font-weight:600; font-size:0.9rem; flex:1; }
+  .step-badge { font-size:0.7rem; font-weight:700; padding:0.1rem 0.5rem; border-radius:10px; }
+  .step.pass .step-badge { background:rgba(63,185,80,0.15); color:var(--green); }
+  .step.fail .step-badge { background:rgba(248,81,73,0.15); color:var(--red); }
+  .step.warn .step-badge { background:rgba(210,153,34,0.15); color:var(--yellow); }
+  .arrow { color:var(--muted); transition:transform 0.2s; font-size:0.75rem; }
+  .step.open .arrow { transform:rotate(90deg); }
+  .step-body { display:none; padding:0 1rem 0.8rem; font-size:0.85rem; }
+  .step.open .step-body { display:block; }
+  .log-block { background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:0.6rem 0.8rem; margin:0.5rem 0; font-family:'SF Mono',Monaco,Consolas,monospace; font-size:0.75rem; overflow-x:auto; white-space:pre-wrap; word-break:break-all; color:var(--muted); max-height:200px; overflow-y:auto; }
+  .detail { margin:0.4rem 0; }
+  .detail strong { color:var(--blue); }
+
+  .seq { display:flex; flex-direction:column; align-items:center; margin:1.5rem 0; }
+  .seq-flow { display:flex; gap:0; align-items:stretch; width:100%; }
+  .seq-node { flex:1; text-align:center; padding:0.6rem 0.3rem; border:1px solid var(--border); font-size:0.7rem; font-weight:600; position:relative; }
+  .seq-node::after { content:'→'; position:absolute; right:-8px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:0.9rem; z-index:1; }
+  .seq-node:last-child::after { display:none; }
+  .seq-node.pass { background:rgba(63,185,80,0.08); border-color:var(--green); color:var(--green); }
+  .seq-node.fail { background:rgba(248,81,73,0.08); border-color:var(--red); color:var(--red); }
+  .seq-node.warn { background:rgba(210,153,34,0.08); border-color:var(--yellow); color:var(--yellow); }
+  .seq-node.skip { opacity:0.3; }
+  .seq-node:first-child { border-radius:6px 0 0 6px; }
+  .seq-node:last-child { border-radius:0 6px 6px 0; }
+
+  table { width:100%; border-collapse:collapse; margin:0.5rem 0; }
+  th,td { padding:0.4rem 0.6rem; text-align:left; border-bottom:1px solid var(--border); font-size:0.8rem; }
+  th { color:var(--muted); font-weight:600; }
+
+  footer { margin-top:2rem; padding-top:1rem; border-top:1px solid var(--border); color:var(--muted); font-size:0.75rem; text-align:center; }
+</style>
+</head>
+<body>
+<h1>OpenClaw 诊断报告</h1>
+<p class="meta">2026-02-10 14:08:13 · Bos-MacBook-Air.local</p>
+
+<div class="summary">
+  <div class="summary-card pass">
+    <div class="summary-num">5</div>
+    <div class="summary-label">PASS</div>
+  </div>
+  <div class="summary-card fail">
+    <div class="summary-num">2</div>
+    <div class="summary-label">FAIL</div>
+  </div>
+</div>
+
+<!-- Sequence flow -->
+<div class="seq">
+  <div class="seq-flow">
+    <div class="seq-node pass">1. Discord<br>→ Gateway</div>
+    <div class="seq-node pass">2. Gateway<br>→ Agent</div>
+    <div class="seq-node pass">3. Queue<br>serialize</div>
+    <div class="seq-node fail">4. Claude<br>CLI</div>
+    <div class="seq-node pass">5. NO_REPLY<br>过滤</div>
+    <div class="seq-node pass">6. → Discord<br>送达</div>
+  </div>
+</div>
+
+<!-- Step 1 -->
+<div class="step pass open" onclick="this.classList.toggle('open')">
+  <div class="step-header">
+    <span class="step-icon">&#10003;</span>
+    <span class="step-num">Step 1</span>
+    <span class="step-title">Gateway & Discord 连接</span>
+    <span class="step-badge">PASS</span>
+    <span class="arrow">&#9654;</span>
+  </div>
+  <div class="step-body">
+    <div class="detail"><strong>Discord:</strong> OK</div>
+    <div class="detail"><strong>Gateway:</strong> reachable</div>
+    <div class="detail"><strong>Sessions:</strong> │ Sessions        │ 6 active · default claude-opus-4-6 (200k ctx) · 7 stores                                          │</div>
+  </div>
+</div>
+
+<!-- Step 2 -->
+<div class="step pass" onclick="this.classList.toggle('open')">
+  <div class="step-header">
+    <span class="step-icon">&#10003;</span>
+    <span class="step-num">Step 2</span>
+    <span class="step-title">Agent 路由 (cli exec)</span>
+    <span class="step-badge">PASS</span>
+    <span class="arrow">&#9654;</span>
+  </div>
+  <div class="step-body">
+    <div class="detail"><strong>最近 cli exec:</strong> 3 条</div>
+    <div class="log-block">2026-02-10T06:02:48.201Z info agent/claude-cli {&quot;subsystem&quot;:&quot;agent/claude-cli&quot;} cli exec: provider=claude-cli model=opus promptChars=186
+2026-02-10T06:02:59.484Z info agent/claude-cli {&quot;subsystem&quot;:&quot;agent/claude-cli&quot;} cli exec: provider=claude-cli model=opus promptChars=187
+2026-02-10T06:03:46.071Z info agent/claude-cli {&quot;subsystem&quot;:&quot;agent/claude-cli&quot;} cli exec: provider=claude-cli model=opus promptChars=187</div>
+  </div>
+</div>
+
+<!-- Step 3 -->
+<div class="step pass" onclick="this.classList.toggle('open')">
+  <div class="step-header">
+    <span class="step-icon">&#10003;</span>
+    <span class="step-num">Step 3</span>
+    <span class="step-title">串行队列 (serialize)</span>
+    <span class="step-badge">PASS</span>
+    <span class="arrow">&#9654;</span>
+  </div>
+  <div class="step-body">
+    <div class="detail"><strong>配置:</strong> claude-cli: serialize=False</div>
+    <div class="detail"><strong>Slow listener 警告:</strong> 3 次</div>
+  </div>
+</div>
+
+<!-- Step 4 -->
+<div class="step fail" onclick="this.classList.toggle('open')">
+  <div class="step-header">
+    <span class="step-icon">&#10007;</span>
+    <span class="step-num">Step 4</span>
+    <span class="step-title">Claude CLI 响应</span>
+    <span class="step-badge">FAIL</span>
+    <span class="arrow">&#9654;</span>
+  </div>
+  <div class="step-body">
+    <div class="detail"><strong>状态:</strong> 发现 2 条 CLI 错误</div>
+    <div class="log-block">2026-02-10T06:02:59.545Z error Embedded agent failed before reply: CLI failed.
+2026-02-10T06:02:59.551Z error [openclaw] Unhandled promise rejection: FailoverError: CLI failed.</div>
+  </div>
+</div>
+
+<!-- Step 5 -->
+<div class="step pass" onclick="this.classList.toggle('open')">
+  <div class="step-header">
+    <span class="step-icon">&#10003;</span>
+    <span class="step-num">Step 5</span>
+    <span class="step-title">静默过滤 (NO_REPLY / HEARTBEAT_OK)</span>
+    <span class="step-badge">PASS</span>
+    <span class="arrow">&#9654;</span>
+  </div>
+  <div class="step-body">
+    <div class="detail"><strong>状态:</strong> 最近 session 无静默过滤</div>
+
+  </div>
+</div>
+
+<!-- Step 6 -->
+<div class="step pass" onclick="this.classList.toggle('open')">
+  <div class="step-header">
+    <span class="step-icon">&#10003;</span>
+    <span class="step-num">Step 6</span>
+    <span class="step-title">Discord 送达</span>
+    <span class="step-badge">PASS</span>
+    <span class="arrow">&#9654;</span>
+  </div>
+  <div class="step-body">
+    <div class="detail"><strong>投递错误:</strong> 0 条</div>
+  </div>
+</div>
+
+<!-- Agent table -->
+<h2 style="font-size:1.1rem;margin:1.5rem 0 0.5rem;">Agent 状态</h2>
+<table>
+  <tr><th>Agent</th><th>最近活跃</th><th>Token 用量</th></tr>
+  <tr><td>realestate</td><td>4m ago</td><td>18k/200k (9%)</td></tr><tr><td>butler</td><td>5m ago</td><td>169k/200k (84%)</td></tr><tr><td>us-mean-reversion</td><td>35m ago</td><td>192k/200k (96%)</td></tr><tr><td>lifestyle</td><td>3h ago</td><td>30k/200k (15%)</td></tr><tr><td>cn-macro</td><td>3h ago</td><td>18k/200k (9%)</td></tr><tr><td>us-semiconductor</td><td>3h ago</td><td>18k/200k (9%)</td></tr>
+</table>
+
+<footer>
+  <p>由 <code>openclaw-diagnose.sh</code> 自动生成 · <a href="index.html" style="color:var(--blue);">决策树参考</a></p>
+</footer>
+
+</body>
+</html>
