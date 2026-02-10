@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenClaw Agent 不响应 - 诊断决策树</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --card: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --green: #3fb950;
+    --red: #f85149;
+    --yellow: #d29922;
+    --blue: #58a6ff;
+    --purple: #bc8cff;
+    --orange: #f0883e;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 2rem;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .subtitle {
+    color: var(--muted);
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+  }
+  .tree {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .node {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 0;
+  }
+  .node-header {
+    padding: 1rem 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    user-select: none;
+    transition: background 0.15s;
+  }
+  .node-header:hover {
+    background: rgba(255,255,255,0.03);
+  }
+  .step-badge {
+    background: var(--blue);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .node-title {
+    font-weight: 600;
+    font-size: 1.05rem;
+    flex: 1;
+  }
+  .arrow {
+    color: var(--muted);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .node.open .arrow {
+    transform: rotate(90deg);
+  }
+  .node-body {
+    display: none;
+    padding: 0 1.2rem 1.2rem;
+  }
+  .node.open .node-body {
+    display: block;
+  }
+  .check {
+    background: rgba(88,166,255,0.08);
+    border-left: 3px solid var(--blue);
+    padding: 0.75rem 1rem;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+  }
+  .check code {
+    background: rgba(255,255,255,0.1);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+  }
+  .branch {
+    margin: 0.75rem 0;
+    padding-left: 1rem;
+    border-left: 2px solid var(--border);
+  }
+  .branch-label {
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .tag-yes {
+    background: rgba(63,185,80,0.15);
+    color: var(--green);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.1rem 0.5rem;
+    border-radius: 10px;
+  }
+  .tag-no {
+    background: rgba(248,81,73,0.15);
+    color: var(--red);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.1rem 0.5rem;
+    border-radius: 10px;
+  }
+  .cause {
+    background: rgba(248,81,73,0.06);
+    border-left: 3px solid var(--red);
+    padding: 0.6rem 0.8rem;
+    border-radius: 0 6px 6px 0;
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+  }
+  .cause strong { color: var(--red); }
+  .fix {
+    background: rgba(63,185,80,0.06);
+    border-left: 3px solid var(--green);
+    padding: 0.6rem 0.8rem;
+    border-radius: 0 6px 6px 0;
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+  }
+  .fix strong { color: var(--green); }
+  .fix code, .cause code {
+    background: rgba(255,255,255,0.1);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+  }
+  .connector {
+    display: flex;
+    justify-content: center;
+    padding: 0.3rem 0;
+  }
+  .connector svg {
+    width: 24px;
+    height: 24px;
+    color: var(--muted);
+  }
+  .next-step {
+    color: var(--blue);
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+  }
+  footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.85rem;
+    text-align: center;
+  }
+  footer a { color: var(--blue); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  @media (max-width: 640px) {
+    body { padding: 1rem; }
+    h1 { font-size: 1.4rem; }
+  }
+</style>
+</head>
+<body>
+
+<h1>OpenClaw Agent 不响应 — 诊断决策树</h1>
+<p class="subtitle">按步骤检查，定位 agent 沉默的原因。点击展开每一步。</p>
+
+<div class="tree">
+
+<!-- Step 1 -->
+<div class="node open" id="step1">
+  <div class="node-header" onclick="toggle('step1')">
+    <span class="step-badge">Step 1</span>
+    <span class="node-title">消息有 👀 反应吗？</span>
+    <span class="arrow">&#9654;</span>
+  </div>
+  <div class="node-body">
+    <div class="check">
+      <strong>检查方式：</strong>在 Discord 频道里看你发的消息下方是否出现 👀 反应
+    </div>
+
+    <div class="branch">
+      <div class="branch-label"><span class="tag-no">没有 👀</span> 消息没到 OpenClaw</div>
+      <div class="cause"><strong>可能原因：</strong></div>
+      <ul style="margin:0.5rem 0 0.5rem 1.5rem; font-size:0.9rem;">
+        <li>Discord WebSocket 断连（code 1005/1006）</li>
+        <li><code>groupPolicy</code> 不是 <code>"open"</code>，频道不在白名单</li>
+        <li>Discord token 失效 / bot 下线</li>
+      </ul>
+      <div class="fix"><strong>修复：</strong><code>openclaw status --deep</code> 查 Discord 状态；<code>openclaw gateway restart</code> 重启</div>
+    </div>
+
+    <div class="branch">
+      <div class="branch-label"><span class="tag-yes">有 👀</span> 消息已到达 OpenClaw</div>
+      <p class="next-step">&#8594; 进入 Step 2</p>
+    </div>
+  </div>
+</div>
+
+<div class="connector"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
+
+<!-- Step 2 -->
+<div class="node" id="step2">
+  <div class="node-header" onclick="toggle('step2')">
+    <span class="step-badge">Step 2</span>
+    <span class="node-title">日志有 cli exec 吗？</span>
+    <span class="arrow">&#9654;</span>
+  </div>
+  <div class="node-body">
+    <div class="check">
+      <strong>检查方式：</strong><code>openclaw logs --max-bytes 20000 | grep "cli exec"</code>
+    </div>
+
+    <div class="branch">
+      <div class="branch-label"><span class="tag-no">没有 cli exec</span> 消息没有触发 agent</div>
+      <div class="cause"><strong>可能原因：</strong><code>bindings</code> 配置错误，频道 ID 没有绑定到 agent</div>
+      <div class="fix"><strong>修复：</strong>检查 <code>openclaw.json</code> 的 <code>bindings</code> 数组，确认频道 ID 和 agentId 映射正确</div>
+    </div>
+
+    <div class="branch">
+      <div class="branch-label"><span class="tag-yes">有 cli exec</span> Claude CLI 已被调用</div>
+      <p class="next-step">&#8594; 进入 Step 3</p>
+    </div>
+  </div>
+</div>
+
+<div class="connector"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
+
+<!-- Step 3 -->
+<div class="node" id="step3">
+  <div class="node-header" onclick="toggle('step3')">
+    <span class="step-badge">Step 3</span>
+    <span class="node-title">cli exec 延迟很久吗（>30s）？</span>
+    <span class="arrow">&#9654;</span>
+  </div>
+  <div class="node-body">
+    <div class="check">
+      <strong>检查方式：</strong>对比日志中 <code>cli exec</code> 的时间戳和 Discord 消息发送时间
+    </div>
+
+    <div class="branch">
+      <div class="branch-label"><span class="tag-no">延迟 >30s</span> 被串行队列阻塞</div>
+      <div class="cause"><strong>原因：</strong><code>cliBackends.serialize</code> 默认 <code>true</code>，所有 agent 共用一个串行队列。一个 agent 处理慢会阻塞其他所有 agent。</div>
+      <div class="fix"><strong>修复：</strong>在 <code>openclaw.json</code> 的 <code>cliBackends.claude-cli</code> 中添加 <code>"serialize": false</code></div>
+    </div>
+
+    <div class="branch">
+      <div class="branch-label"><span class="tag-yes">很快出现</span> 没有队列阻塞</div>
+      <p class="next-step">&#8594; 进入 Step 4</p>
+    </div>
+  </div>
+</div>
+
+<div class="connector"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
+
+<!-- Step 4 -->
+<div class="node" id="step4">
+  <div class="node-header" onclick="toggle('step4')">
+    <span class="step-badge">Step 4</span>
+    <span class="node-title">Claude CLI 返回了响应吗？</span>
+    <span class="arrow">&#9654;</span>
+  </div>
+  <div class="node-body">
+    <div class="check">
+      <strong>检查方式：</strong><code>openclaw logs --max-bytes 30000 | grep -A2 "cli exec"</code><br>看 cli exec 之后是否有输出日志
+    </div>
+
+    <div class="branch">
+      <div class="branch-label"><span class="tag-no">没有响应 / 报错</span> Claude CLI 执行失败</div>
+      <div class="cause"><strong>排查：</strong></div>
+      <ul style="margin:0.5rem 0 0.5rem 1.5rem; font-size:0.9rem;">
+        <li>手动测试：<code>echo "test" | claude -p --output-format json</code></li>
+        <li>API key / 网络问题</li>
+        <li>内存不足：<code>ps aux | grep claude</code></li>
+        <li>Session context 太大（超 200k token）→ 清 session</li>
+      </ul>
+      <div class="fix"><strong>修复：</strong>清 Claude session：删除 <code>~/.claude/projects/-Users-*-openclaw-workspace-*/*.jsonl</code></div>
+    </div>
+
+    <div class="branch">
+      <div class="branch-label"><span class="tag-yes">有响应</span> CLI 正常返回</div>
+      <p class="next-step">&#8594; 进入 Step 5</p>
+    </div>
+  </div>
+</div>
+
+<div class="connector"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
+
+<!-- Step 5 -->
+<div class="node" id="step5">
+  <div class="node-header" onclick="toggle('step5')">
+    <span class="step-badge">Step 5</span>
+    <span class="node-title">响应内容是 HEARTBEAT_OK / NO_REPLY 吗？</span>
+    <span class="arrow">&#9654;</span>
+  </div>
+  <div class="node-body">
+    <div class="check">
+      <strong>检查方式：</strong>读 Claude session 文件，查看 assistant 的实际回复<br>
+      <code>ls -lt ~/.claude/projects/-Users-*-openclaw-workspace-*/*.jsonl | head -3</code><br>
+      然后读最新的 <code>.jsonl</code> 文件，看 <code>"content":[{"text":"..."}]</code>
+    </div>
+
+    <div class="branch">
+      <div class="branch-label"><span class="tag-no">是 HEARTBEAT_OK / NO_REPLY</span> 被 OpenClaw 静默过滤</div>
+      <div class="cause"><strong>原因 1 — OpenClaw 内置注入：</strong>当 <code>requireMention: false</code> 时，OpenClaw 注入系统提示："Be extremely selective: reply only when directly addressed. Otherwise stay silent." + 告知 agent NO_REPLY token</div>
+      <div class="fix"><strong>修复：</strong>在 <code>openclaw.json</code> 频道配置中添加 <code>"systemPrompt": "Dedicated channel. Always respond to every message. Only use NO_REPLY for heartbeat polls."</code></div>
+
+      <div class="cause" style="margin-top:0.75rem;"><strong>原因 2 — AGENTS.md 规则过激：</strong>"Stay silent (HEARTBEAT_OK) when: It's just casual banter" — agent 把正常消息归类为闲聊</div>
+      <div class="fix"><strong>修复：</strong>改 AGENTS.md 中 "Stay silent" 部分，默认 RESPOND，仅对 heartbeat poll 静默</div>
+
+      <div class="cause" style="margin-top:0.75rem;"><strong>原因 3 — 旧 session 缓存：</strong>Claude 在旧 session 中学到了错误的"沉默"行为模式</div>
+      <div class="fix"><strong>修复：</strong>清两层 session：<br>
+        1. <code>rm ~/.claude/projects/-Users-*-openclaw-workspace-*/*.jsonl</code><br>
+        2. 每个 agent 的 <code>~/.openclaw/agents/*/sessions/sessions.json</code> 写入 <code>{}</code>
+      </div>
+    </div>
+
+    <div class="branch">
+      <div class="branch-label"><span class="tag-yes">正常文本</span> Claude 回复了正常内容</div>
+      <p class="next-step">&#8594; 进入 Step 6</p>
+    </div>
+  </div>
+</div>
+
+<div class="connector"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg></div>
+
+<!-- Step 6 -->
+<div class="node" id="step6">
+  <div class="node-header" onclick="toggle('step6')">
+    <span class="step-badge">Step 6</span>
+    <span class="node-title">响应送达 Discord 了吗？</span>
+    <span class="arrow">&#9654;</span>
+  </div>
+  <div class="node-body">
+    <div class="check">
+      <strong>检查方式：</strong>日志搜 deliver / send 相关信息；Discord 频道是否显示 bot 回复
+    </div>
+
+    <div class="branch">
+      <div class="branch-label"><span class="tag-no">没送达</span> Discord 投递失败</div>
+      <div class="cause"><strong>可能原因：</strong></div>
+      <ul style="margin:0.5rem 0 0.5rem 1.5rem; font-size:0.9rem;">
+        <li>Bot 在频道没有「发送消息」权限</li>
+        <li>消息超长被截断或丢弃</li>
+        <li>Discord API 限流 (rate limit)</li>
+        <li>WebSocket 断连</li>
+      </ul>
+      <div class="fix"><strong>修复：</strong>检查 bot 权限；<code>openclaw gateway restart</code></div>
+    </div>
+
+    <div class="branch">
+      <div class="branch-label"><span class="tag-yes">已送达</span> 问题已解决</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<footer>
+  <p>基于 2026-02-10 实际 debug 经验总结 &middot; OpenClaw + Claude CLI (cliBackend) 架构</p>
+  <p style="margin-top:0.3rem">常用命令：<code>openclaw status --deep</code> &middot; <code>openclaw logs --max-bytes 20000</code> &middot; <code>openclaw gateway restart</code></p>
+</footer>
+
+<script>
+function toggle(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+</script>
+
+</body>
+</html>
