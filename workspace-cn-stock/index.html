@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A股投资分析框架</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a25;
+    --border: #2a2a3a;
+    --text: #e0e0e8;
+    --text2: #9090a0;
+    --accent: #e05050;
+    --accent2: #f0c040;
+    --green: #40c080;
+    --blue: #5080e0;
+    --orange: #e08040;
+    --red: #e05050;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+  /* Hero */
+  .hero {
+    padding: 80px 0 60px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero h1 {
+    font-size: 2.4em;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+  }
+  .hero h1 .hl { color: var(--accent); }
+  .hero .subtitle {
+    font-size: 1.05em;
+    color: var(--text2);
+    margin-bottom: 32px;
+  }
+  .hero .tagline {
+    display: inline-block;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 28px;
+    font-size: 0.95em;
+    color: var(--text2);
+    line-height: 1.8;
+    max-width: 760px;
+    text-align: left;
+  }
+  .hero .tagline strong { color: var(--accent2); font-weight: 600; }
+
+  /* Stats bar */
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    padding: 28px 0;
+    margin: 40px 0 0;
+    flex-wrap: wrap;
+  }
+  .stat-item { text-align: center; min-width: 100px; }
+  .stat-num { font-size: 1.8em; font-weight: 700; color: var(--accent); }
+  .stat-label { font-size: 0.82em; color: var(--text2); margin-top: 2px; }
+
+  /* Core traits */
+  .traits {
+    padding: 48px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .traits h2 {
+    text-align: center;
+    font-size: 1.3em;
+    font-weight: 600;
+    margin-bottom: 28px;
+    color: var(--text2);
+    letter-spacing: 0.08em;
+  }
+  .traits-grid {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    align-items: stretch;
+    flex-wrap: wrap;
+  }
+  .trait-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px 28px;
+    flex: 1;
+    min-width: 240px;
+    max-width: 340px;
+  }
+  .trait-box h3 {
+    font-size: 0.9em;
+    color: var(--text2);
+    margin-bottom: 14px;
+    letter-spacing: 0.06em;
+  }
+  .trait-box.left { border-left: 3px solid var(--red); }
+  .trait-box.right { border-left: 3px solid var(--green); }
+  .trait-item {
+    padding: 5px 0;
+    font-size: 0.92em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .trait-item .dot {
+    width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+  }
+  .trait-box.left .dot { background: var(--red); }
+  .trait-box.right .dot { background: var(--green); }
+  .arrow-mid {
+    font-size: 2em;
+    color: var(--text2);
+    flex-shrink: 0;
+    align-self: center;
+  }
+
+  /* Five judgments */
+  .judgments {
+    padding: 48px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .judgments h2 {
+    text-align: center;
+    font-size: 1.3em;
+    font-weight: 600;
+    margin-bottom: 28px;
+    color: var(--text2);
+    letter-spacing: 0.08em;
+  }
+  .judgment-list {
+    display: grid;
+    gap: 12px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  .judgment-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 0.92em;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .judgment-num {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-weight: 700;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.82em;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .judgment-text strong { color: var(--accent2); }
+
+  /* Dashboard */
+  .dashboard {
+    padding: 48px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .dashboard h2 {
+    text-align: center;
+    font-size: 1.3em;
+    font-weight: 600;
+    margin-bottom: 28px;
+    color: var(--text2);
+    letter-spacing: 0.08em;
+  }
+  .dash-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px;
+  }
+  .dash-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .dash-label { font-size: 0.78em; color: var(--text2); margin-bottom: 6px; }
+  .dash-value { font-size: 1.3em; font-weight: 700; }
+  .dash-trend { font-size: 0.75em; margin-top: 4px; }
+  .trend-down { color: var(--red); }
+  .trend-up { color: var(--green); }
+  .trend-warn { color: var(--orange); }
+  .trend-neutral { color: var(--text2); }
+
+  /* Dimensions */
+  .dimensions {
+    padding: 48px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .dimensions h2 {
+    text-align: center;
+    font-size: 1.3em;
+    font-weight: 600;
+    margin-bottom: 28px;
+    color: var(--text2);
+    letter-spacing: 0.08em;
+  }
+  .dim-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+  .dim-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .dim-card:hover { border-color: var(--accent); }
+  .dim-card.special { border-color: var(--accent2); }
+  .dim-card.special:hover { border-color: var(--accent); }
+  .dim-header {
+    padding: 18px 20px 14px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .dim-title {
+    font-size: 1em;
+    font-weight: 600;
+  }
+  .dim-num {
+    color: var(--accent);
+    font-weight: 700;
+    margin-right: 8px;
+    font-size: 0.85em;
+  }
+  .dim-card.special .dim-num { color: var(--accent2); }
+  .dim-toggle {
+    color: var(--text2);
+    font-size: 0.85em;
+    transition: transform 0.2s;
+  }
+  .dim-card.open .dim-toggle { transform: rotate(180deg); }
+  .dim-desc {
+    padding: 0 20px 6px;
+    font-size: 0.84em;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+  .dim-questions {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  .dim-card.open .dim-questions {
+    max-height: 600px;
+  }
+  .dim-q-list {
+    padding: 8px 20px 16px;
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+  }
+  .dim-q-item {
+    padding: 6px 0;
+    font-size: 0.85em;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dim-q-item::before {
+    content: '';
+    width: 4px; height: 4px;
+    background: var(--accent);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dim-card.special .dim-q-item::before {
+    background: var(--accent2);
+  }
+
+  /* Bull/Bear timeline */
+  .timeline {
+    padding: 48px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .timeline h2 {
+    text-align: center;
+    font-size: 1.3em;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text2);
+    letter-spacing: 0.08em;
+  }
+  .timeline .sub {
+    text-align: center;
+    color: var(--text2);
+    font-size: 0.88em;
+    margin-bottom: 28px;
+  }
+  .tl-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px;
+    max-width: 800px;
+    margin: 0 auto;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+    font-size: 0.82em;
+    line-height: 1.8;
+    color: var(--text2);
+    white-space: pre;
+    overflow-x: auto;
+  }
+  .tl-box .bull { color: var(--green); font-weight: 600; }
+  .tl-box .bear { color: var(--red); font-weight: 600; }
+  .tl-box .hl { color: var(--accent2); font-weight: 600; }
+
+  /* Footer */
+  .footer {
+    padding: 40px 0;
+    text-align: center;
+    color: var(--text2);
+    font-size: 0.82em;
+  }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 1.6em; }
+    .stats-bar { gap: 16px; }
+    .traits-grid { flex-direction: column; align-items: stretch; }
+    .arrow-mid { text-align: center; transform: rotate(90deg); }
+    .dim-grid { grid-template-columns: 1fr; }
+    .dash-grid { grid-template-columns: repeat(2, 1fr); }
+    .tl-box { font-size: 0.7em; padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Hero -->
+  <section class="hero">
+    <h1><span class="hl">A股</span>投资分析框架</h1>
+    <p class="subtitle">24 个关键问题 &middot; 8 个维度 &middot; 1 个专题研究 &middot; 系统理解中国股市</p>
+    <div class="tagline">
+      A股是全球第二大股票市场，拥有 <strong>5,400+</strong> 家上市公司、<strong>85万亿+</strong> 总市值，以散户为主导交易但机构化加速推进，兼具<strong>"政策市"</strong>和<strong>"资金市"</strong>特征，牛短熊长但结构性机会常在。
+    </div>
+    <div class="stats-bar">
+      <div class="stat-item"><div class="stat-num">5,477</div><div class="stat-label">上市公司</div></div>
+      <div class="stat-item"><div class="stat-num">86万亿</div><div class="stat-label">总市值（元）</div></div>
+      <div class="stat-item"><div class="stat-num">2.2亿</div><div class="stat-label">投资者</div></div>
+      <div class="stat-item"><div class="stat-num">6万亿</div><div class="stat-label">ETF 规模（元）</div></div>
+    </div>
+  </section>
+
+  <!-- Core traits -->
+  <section class="traits">
+    <h2>A 股 核 心 特 征</h2>
+    <div class="traits-grid">
+      <div class="trait-box left">
+        <h3>散户主导交易</h3>
+        <div class="trait-item"><span class="dot"></span>交易量占 60-70%</div>
+        <div class="trait-item"><span class="dot"></span>"七亏二平一赚"</div>
+        <div class="trait-item"><span class="dot"></span>换手率全球最高</div>
+        <div class="trait-item"><span class="dot"></span>追涨杀跌行为显著</div>
+      </div>
+      <div class="arrow-mid">&rarr;</div>
+      <div class="trait-box right">
+        <h3>机构化加速推进</h3>
+        <div class="trait-item"><span class="dot"></span>公募规模 30 万亿+</div>
+        <div class="trait-item"><span class="dot"></span>ETF 规模突破 6 万亿</div>
+        <div class="trait-item"><span class="dot"></span>外资累计流入万亿+</div>
+        <div class="trait-item"><span class="dot"></span>量化交易占比 20%+</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Five judgments -->
+  <section class="judgments">
+    <h2>五 大 关 键 认 知</h2>
+    <div class="judgment-list">
+      <div class="judgment-item">
+        <div class="judgment-num">1</div>
+        <div class="judgment-text"><strong>A股是政策市</strong> &mdash; "政策底 &rarr; 市场底 &rarr; 经济底" 是反复验证的传导规律。理解政策信号是A股投资的必修课。</div>
+      </div>
+      <div class="judgment-item">
+        <div class="judgment-num">2</div>
+        <div class="judgment-text"><strong>牛短熊长是历史规律</strong> &mdash; 牛市平均 12 个月 / 涨 217%，熊市平均 27 个月 / 跌 56%。机构化和注册制正在改变这一格局。</div>
+      </div>
+      <div class="judgment-item">
+        <div class="judgment-num">3</div>
+        <div class="judgment-text"><strong>板块轮动是常态</strong> &mdash; A股很少有普涨行情，更多是结构性机会。大盘/小盘、价值/成长的风格切换持续存在。</div>
+      </div>
+      <div class="judgment-item">
+        <div class="judgment-num">4</div>
+        <div class="judgment-text"><strong>估值是锚</strong> &mdash; 沪深300 PE 10-15倍是长期中枢。低于 10 倍是历史大底，高于 18 倍往往是阶段性顶部。</div>
+      </div>
+      <div class="judgment-item">
+        <div class="judgment-num">5</div>
+        <div class="judgment-text"><strong>指数基金优于个股</strong> &mdash; 散户亏损率超 80%，而沪深300 近 10 年年化约 7-8%，红利低波近 10 年年化约 10-14%。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dashboard -->
+  <section class="dashboard">
+    <h2>关 键 数 据 仪 表 盘 &nbsp; 2025</h2>
+    <div class="dash-grid">
+      <div class="dash-item">
+        <div class="dash-label">上市公司</div>
+        <div class="dash-value">5,477 家</div>
+        <div class="dash-trend trend-up">注册制后扩容</div>
+      </div>
+      <div class="dash-item">
+        <div class="dash-label">总市值</div>
+        <div class="dash-value">~86 万亿</div>
+        <div class="dash-trend trend-neutral">全球第二</div>
+      </div>
+      <div class="dash-item">
+        <div class="dash-label">沪深300 PE</div>
+        <div class="dash-value">12-13x</div>
+        <div class="dash-trend trend-neutral">历史中位偏低</div>
+      </div>
+      <div class="dash-item">
+        <div class="dash-label">中证红利股息率</div>
+        <div class="dash-value">5-6%</div>
+        <div class="dash-trend trend-up">历史高位</div>
+      </div>
+      <div class="dash-item">
+        <div class="dash-label">北向资金累计净流入</div>
+        <div class="dash-value">~1.8 万亿</div>
+        <div class="dash-trend trend-warn">近年波动加大</div>
+      </div>
+      <div class="dash-item">
+        <div class="dash-label">两融余额</div>
+        <div class="dash-value">1.5-1.8 万亿</div>
+        <div class="dash-trend trend-neutral">情绪指标</div>
+      </div>
+      <div class="dash-item">
+        <div class="dash-label">ETF 总规模</div>
+        <div class="dash-value">~6 万亿</div>
+        <div class="dash-trend trend-up">爆发式增长</div>
+      </div>
+      <div class="dash-item">
+        <div class="dash-label">日均成交额</div>
+        <div class="dash-value">1-1.5 万亿</div>
+        <div class="dash-trend trend-neutral">市场活跃度</div>
+      </div>
+      <div class="dash-item">
+        <div class="dash-label">公募基金规模</div>
+        <div class="dash-value">30 万亿+</div>
+        <div class="dash-trend trend-up">持续增长</div>
+      </div>
+      <div class="dash-item">
+        <div class="dash-label">年度退市数量</div>
+        <div class="dash-value">~40-50 家</div>
+        <div class="dash-trend trend-warn">退市常态化</div>
+      </div>
+      <div class="dash-item">
+        <div class="dash-label">投资者数量</div>
+        <div class="dash-value">~2.2 亿</div>
+        <div class="dash-trend trend-neutral">散户为主</div>
+      </div>
+      <div class="dash-item">
+        <div class="dash-label">散户亏损率</div>
+        <div class="dash-value">&gt;80%</div>
+        <div class="dash-trend trend-down">七亏二平一赚</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 Dimensions + 1 Special -->
+  <section class="dimensions">
+    <h2>八 大 维 度 + 专 题 研 究</h2>
+    <div class="dim-grid" id="dimGrid"></div>
+  </section>
+
+  <!-- Bull/Bear Timeline -->
+  <section class="timeline">
+    <h2>A 股 牛 熊 简 史</h2>
+    <p class="sub">牛短熊长 &middot; 政策驱动 &middot; 估值为锚</p>
+    <div class="tl-box"><span class="hl">1990</span>  A股开市（上交所/深交所成立）
+  |
+<span class="bull">1990-93</span>  第一轮牛市  96 &rarr; 1558  <span class="bull">+1523%</span>
+<span class="bear">1993-96</span>  第一轮熊市  1558 &rarr; 512  <span class="bear">-67%</span>
+  |
+<span class="bull">1996-97</span>  政策牛      512 &rarr; 1510 <span class="bull">+195%</span>
+<span class="bull">1999-01</span>  519行情    1057 &rarr; 2245 <span class="bull">+112%</span>
+<span class="bear">2001-05</span>  大熊市      2245 &rarr; 998  <span class="bear">-56%</span>  国有股减持
+  |
+<span class="bull">2005-07</span>  <span class="hl">超级大牛市</span>  998 &rarr; 6124 <span class="bull">+514%</span>  股改+经济高增长
+<span class="bear">2008</span>     金融危机    6124 &rarr; 1664 <span class="bear">-73%</span>
+<span class="bull">2009</span>     四万亿反弹  1664 &rarr; 3478 <span class="bull">+109%</span>
+  |
+<span class="bull">2014-15</span>  <span class="hl">杠杆牛</span>      2000 &rarr; 5178 <span class="bull">+159%</span>  杠杆资金 5 万亿+
+<span class="bear">2015</span>     <span class="hl">股灾</span>        5178 &rarr; 2850 <span class="bear">-45%</span>   千股跌停
+  |
+<span class="bull">2019-21</span>  结构性牛市  中证全指     <span class="bull">+74%</span>   赛道投资
+<span class="bear">2021-24</span>  震荡下行                 <span class="bear">-30%</span>   房地产+中美博弈
+  |
+<span class="bull">2024.9</span>   <span class="hl">924政策组合拳</span>  反弹启动  <span class="bull">AI叙事</span></div>
+  </section>
+
+  <!-- Footer -->
+  <section class="footer">
+    <p>数据基准：2025 年 &middot; 本框架为分析参考，不构成投资建议</p>
+  </section>
+
+</div>
+
+<script>
+const dims = [
+  {
+    num: "一", title: "市场基础", special: false,
+    desc: "主板、创业板、科创板、北交所四大板块，T+1 交易，涨跌停板制度。5,400+ 上市公司，ETF 规模突破 6 万亿。",
+    qs: ["Q01 市场结构：主板、创业板、科创板、北交所","Q02 交易规则：T+1、涨跌停、集合竞价","Q03 核心指数体系"]
+  },
+  {
+    num: "二", title: "参与者与资金", special: false,
+    desc: "2.2 亿投资者，散户贡献 60-70% 交易量。公募 30 万亿+，北向资金累计净流入超 1.8 万亿。两融余额约 1.5-1.8 万亿。",
+    qs: ["Q04 市场参与者全景","Q05 北向资金与外资","Q06 融资融券与杠杆资金"]
+  },
+  {
+    num: "三", title: "行业与板块", special: false,
+    desc: "申万 31 个一级行业。板块轮动是 A 股最显著特征。2025-2026 主线：AI、红利、半导体、低空经济、机器人。",
+    qs: ["Q07 行业分类体系","Q08 板块轮动规律","Q09 当前市场主线与核心题材"]
+  },
+  {
+    num: "四", title: "估值与选股", special: false,
+    desc: "PE/PB/PS/股息率是核心指标。主流策略：价值、成长、红利低波、Smart Beta。财报分析看 ROE 和自由现金流。",
+    qs: ["Q10 常用估值指标","Q11 主流投资策略","Q12 基本面分析与财报解读"]
+  },
+  {
+    num: "五", title: "宏观与政策", special: false,
+    desc: "社融领先 A 股约 1-2 个季度。降准降息推升市场。\"政策底 → 市场底 → 经济底\" 是核心传导规律。",
+    qs: ["Q13 关键宏观指标对 A 股的影响","Q14 货币政策与 A 股","Q15 A 股的\"政策市\"特征"]
+  },
+  {
+    num: "六", title: "周期与历史", special: false,
+    desc: "7 轮完整牛熊周期。最大牛市 998→6124（+514%），最大熊市 6124→1664（-73%）。2015 股灾是最深刻教训。",
+    qs: ["Q16 历史牛熊市回顾","Q17 牛熊周期规律","Q18 历史重大教训"]
+  },
+  {
+    num: "七", title: "实操与风控", special: false,
+    desc: "散户亏损率超 80%。ETF/指数基金优于个股。仓位管理、止损纪律、分散投资是基本功。",
+    qs: ["Q19 个股 vs ETF/基金","Q20 仓位管理与止损","Q21 新手常见陷阱"]
+  },
+  {
+    num: "八", title: "工具与信息", special: false,
+    desc: "同花顺、东方财富看盘。Wind 为专业标杆。警惕卖方研报偏见和\"小作文\"噪音。",
+    qs: ["Q22 看盘与研究工具","Q23 券商研报解读","Q24 财经信息源评估"]
+  },
+  {
+    num: "专题", title: "红利低波策略研究", special: true,
+    desc: "高股息+低波动双因子。PE ~7x（20% 分位），股息率 ~6%（94%+ 分位），2019-2024 连续 6 年正收益。ETF 规模从 218 亿暴增至 4,709 亿。",
+    qs: ["指数基本面与估值","历史表现与回撤分析","投资建议与预期收益"]
+  }
+];
+
+const grid = document.getElementById('dimGrid');
+dims.forEach((d) => {
+  const card = document.createElement('div');
+  card.className = 'dim-card' + (d.special ? ' special' : '');
+  card.innerHTML = `
+    <div class="dim-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="dim-title"><span class="dim-num">${d.num}</span>${d.title}</div>
+      <div class="dim-toggle">&#9660;</div>
+    </div>
+    <div class="dim-desc">${d.desc}</div>
+    <div class="dim-questions">
+      <div class="dim-q-list">
+        ${d.qs.map(q => `<div class="dim-q-item">${q}</div>`).join('')}
+      </div>
+    </div>
+  `;
+  grid.appendChild(card);
+});
+</script>
+
+</body>
+</html>
