@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>开发者工具生态 - Anthropic &amp; Claude 研究</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="site-nav">
+  <a class="logo" href="index.html">Anthropic &amp; Claude</a>
+  <div class="nav-links">
+    <a href="index.html">首页</a>
+    <a href="tools.html" class="active">工具</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <div class="breadcrumb"><a href="index.html">首页</a> / 开发者工具生态</div>
+    <h1>开发者工具生态</h1>
+  </div>
+
+  <div class="cat-timeline" style="--cat-color: #d97706;">
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">Claude Code</div>
+      <div class="cat-tl-item">
+        <div class="item-title"><a href="https://docs.anthropic.com/en/docs/claude-code" target="_blank">Claude Code</a></div>
+        <div class="item-meta">2025-05 发布 &middot; 终端原生 AI 编程助手</div>
+        <div class="item-desc">Anthropic 官方 CLI 编程工具，直接在终端中运行。能读写文件、执行命令、搜索代码、管理 Git，支持多轮对齐式任务规划。随 Claude 4 同步发布，成为 Anthropic 收入增长的核心驱动。</div>
+        <div class="paper-tags"><span class="tag tag-accent">核心产品</span><span class="tag tag-blue">CLI</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title">Claude Code 关键特性</div>
+        <div class="item-meta">持续迭代中</div>
+        <div class="item-desc">
+          <strong>权限系统</strong>：分级权限控制（允许/拒绝/始终允许），沙盒化 Bash 执行。
+          <strong>Hooks</strong>：可配置的事件钩子，在工具调用前后执行自定义命令。
+          <strong>Agent SDK</strong>：基于 Claude Code 构建自定义 AI 代理的 SDK。
+          <strong>IDE 集成</strong>：VS Code / JetBrains 扩展，内嵌 Claude Code 面板。
+          <strong>Git 集成</strong>：自动 diff 分析、commit message 生成、PR 创建。
+        </div>
+        <div class="paper-tags"><span class="tag tag-blue">Permissions</span><span class="tag tag-green">Hooks</span><span class="tag tag-purple">Agent SDK</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title">CLAUDE.md 上下文系统</div>
+        <div class="item-meta">项目级 AI 记忆</div>
+        <div class="item-desc">通过项目根目录的 CLAUDE.md 文件为 Claude Code 提供持久化上下文（编码规范、架构说明、常用命令）。支持层级覆盖：全局 ~/.claude/CLAUDE.md → 项目 → 子目录。</div>
+        <div class="paper-tags"><span class="tag tag-blue">Context</span><span class="tag tag-green">Memory</span></div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">MCP 协议</div>
+      <div class="cat-tl-item">
+        <div class="item-title"><a href="https://modelcontextprotocol.io" target="_blank">Model Context Protocol (MCP)</a></div>
+        <div class="item-meta">2024-11 发布 &middot; 开放标准</div>
+        <div class="item-desc">AI 模型与外部工具/数据源的标准化连接协议。类似 AI 的「USB-C」— 一个协议连接所有工具。采用 JSON-RPC 2.0，支持 stdio 和 SSE 两种传输方式。</div>
+        <div class="paper-tags"><span class="tag tag-accent">开放标准</span><span class="tag tag-blue">JSON-RPC</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title">MCP 生态系统</div>
+        <div class="item-meta">快速增长中</div>
+        <div class="item-desc">
+          <strong>官方 Server</strong>：GitHub、Google Drive、Slack、Postgres、Puppeteer 等。
+          <strong>社区 Server</strong>：数百个第三方实现覆盖 Notion、Jira、AWS、Kubernetes 等。
+          <strong>SDK</strong>：TypeScript、Python、Java、Go 官方 SDK。
+          <strong>2025-11</strong>：发布 MCP 1.0 正式版，新增 OAuth 2.1 认证和可发现性协议。
+        </div>
+        <div class="paper-tags"><span class="tag tag-green">Ecosystem</span><span class="tag tag-purple">OAuth 2.1</span></div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">Computer Use</div>
+      <div class="cat-tl-item">
+        <div class="item-title"><a href="https://docs.anthropic.com/en/docs/computer-use" target="_blank">Computer Use</a></div>
+        <div class="item-meta">2024-10 公开 Beta</div>
+        <div class="item-desc">让 Claude 直接操作计算机界面 — 移动鼠标、点击按钮、输入文本、截屏分析。通过 API 以工具调用方式提供，支持 Docker 沙盒化运行。Claude 3.5 Sonnet v2 首发，后续所有模型持续优化。</div>
+        <div class="paper-tags"><span class="tag tag-accent">Beta</span><span class="tag tag-blue">GUI Automation</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title">Computer Use 演进</div>
+        <div class="item-meta">持续优化</div>
+        <div class="item-desc">从 3.5 Sonnet v2 的基础版到 Claude Sonnet 4.6 的业界最强。OSWorld 基准测试得分从初始 14.9% 提升至 2026 年初的 40%+。主要应用：自动化测试、RPA、数据录入、跨应用工作流。</div>
+        <div class="paper-tags"><span class="tag tag-blue">OSWorld</span><span class="tag tag-green">RPA</span></div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">API 与平台</div>
+      <div class="cat-tl-item">
+        <div class="item-title">Messages API</div>
+        <div class="item-meta">核心 API</div>
+        <div class="item-desc">统一的消息格式 API，支持多轮对话、系统提示词、流式输出。支持工具调用（tool use）、视觉输入、PDF 解析。通过 Anthropic 直接 API、AWS Bedrock、Google Vertex AI 三个渠道提供。</div>
+        <div class="paper-tags"><span class="tag tag-blue">REST API</span><span class="tag tag-green">Streaming</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title">Extended Thinking API</div>
+        <div class="item-meta">2025-02 起</div>
+        <div class="item-desc">允许模型在回复前进行深度推理的 API 参数。开发者可设置 thinking budget 控制推理深度。思考过程默认加密返回（支持缓存），可选明文显示。</div>
+        <div class="paper-tags"><span class="tag tag-blue">Thinking</span><span class="tag tag-purple">Budget Control</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title">Prompt Caching &amp; Batches API</div>
+        <div class="item-meta">2024-08 / 2024-09</div>
+        <div class="item-desc">Prompt Caching 缓存重复前缀最高降本 90%。Batches API 支持异步批量处理，成本降低 50%，24 小时内完成。两者可组合使用。</div>
+        <div class="paper-tags"><span class="tag tag-orange">降本</span><span class="tag tag-blue">Caching</span><span class="tag tag-green">Batch</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title">Claude Desktop</div>
+        <div class="item-meta">2024-03 起</div>
+        <div class="item-desc">macOS / Windows 原生桌面应用，支持 Artifacts、Analysis tool（Python 沙盒执行）、MCP 集成、项目知识库（Projects）。免费和 Pro（$20/月）/ Team（$30/人/月）用户可用。</div>
+        <div class="paper-tags"><span class="tag tag-accent">Desktop App</span><span class="tag tag-blue">Artifacts</span></div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">Agent SDK</div>
+      <div class="cat-tl-item">
+        <div class="item-title"><a href="https://github.com/anthropics/agent-sdk" target="_blank">Claude Agent SDK</a></div>
+        <div class="item-meta">2025 &middot; 开源框架</div>
+        <div class="item-desc">基于 Claude Code 内核构建自定义 AI 代理的开发框架。支持多代理编排、工具注册、上下文管理、权限控制。可用于构建专业领域的代码助手、运维机器人、数据分析代理等。</div>
+        <div class="paper-tags"><span class="tag tag-purple">开源</span><span class="tag tag-blue">Multi-Agent</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer><p>Anthropic &amp; Claude 研究 &mdash; 持续更新中</p></footer>
+</body>
+</html>

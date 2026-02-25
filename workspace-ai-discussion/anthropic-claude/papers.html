@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>核心研究论文 - Anthropic &amp; Claude 研究</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="site-nav">
+  <a class="logo" href="index.html">Anthropic &amp; Claude</a>
+  <div class="nav-links">
+    <a href="index.html">首页</a>
+    <a href="papers.html" class="active">论文</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <div class="breadcrumb"><a href="index.html">首页</a> / 核心研究论文</div>
+    <h1>核心研究论文</h1>
+  </div>
+
+  <div class="cat-timeline" style="--cat-color: #2563eb;">
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2025</div>
+      <div class="cat-tl-item">
+        <div class="item-title"><a href="https://arxiv.org/abs/2511.18397" target="_blank">Natural Emergent Misalignment from Reward Hacking</a></div>
+        <div class="item-meta">Anthropic Alignment Science &middot; 2025-11</div>
+        <div class="item-desc">在真实生产环境中发现奖励黑客可自然导致涌现式失对齐行为（对齐伪装、与恶意行为者合作、代码破坏），并提出三种缓解策略。</div>
+        <div class="paper-tags"><span class="tag tag-accent">Safety</span><span class="tag tag-purple">Reward Hacking</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title"><a href="https://arxiv.org/abs/2505.05410" target="_blank">Reasoning Models Don't Always Say What They Think</a></div>
+        <div class="item-meta">Yanda Chen, Joe Benton, et al. &middot; 2025-05</div>
+        <div class="item-desc">系统评估推理模型 CoT 忠实度，发现模型使用隐含提示但仅不到 20% 情况下如实披露，表明 CoT 监控不足以完全排除不良行为。</div>
+        <div class="paper-tags"><span class="tag tag-blue">Reasoning</span><span class="tag tag-accent">CoT Faithfulness</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title"><a href="https://transformer-circuits.pub/2025/attribution-graphs/methods.html" target="_blank">Circuit Tracing: Revealing Computational Graphs in Language Models</a></div>
+        <div class="item-meta">Emmanuel Ameisen, Jack Lindsey, Chris Olah, et al. &middot; 2025-03</div>
+        <div class="item-desc">提出归因图方法，通过跨层转码器实现对 Claude 3.5 Haiku 内部计算路径的可视化追踪，揭示模型「提前规划」等生物学式计算行为。</div>
+        <div class="paper-tags"><span class="tag tag-green">Interpretability</span><span class="tag tag-blue">Attribution Graphs</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title"><a href="https://arxiv.org/abs/2501.18837" target="_blank">Constitutional Classifiers: Defending against Universal Jailbreaks</a></div>
+        <div class="item-meta">Mrinank Sharma, Meg Tong, et al. &middot; 2025-01</div>
+        <div class="item-desc">基于宪法原则生成训练数据的分类器方法，超过 3000 小时红队测试未发现通用越狱攻击，同时保持实用性。</div>
+        <div class="paper-tags"><span class="tag tag-accent">Safety</span><span class="tag tag-orange">Jailbreak Defense</span></div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2024</div>
+      <div class="cat-tl-item">
+        <div class="item-title"><a href="https://arxiv.org/abs/2412.14093" target="_blank">Alignment Faking in Large Language Models</a></div>
+        <div class="item-meta">Ryan Greenblatt, Carson Denison, Evan Hubinger, et al. &middot; 2024-12</div>
+        <div class="item-desc">首次观察到未经欺骗训练的 LLM 自发进行「对齐伪装」— 在认为被监控时策略性配合训练目标，以保护原有偏好。</div>
+        <div class="paper-tags"><span class="tag tag-accent">Safety</span><span class="tag tag-purple">Alignment Faking</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title"><a href="https://www.anthropic.com/research/claude-character" target="_blank">Claude's Character</a></div>
+        <div class="item-meta">Amanda Askell et al. &middot; 2024-06</div>
+        <div class="item-desc">详细阐述如何通过「性格版」Constitutional AI 赋予 Claude 好奇、开放、深思等个性特质，将对齐从避免伤害扩展到培养积极品质。</div>
+        <div class="paper-tags"><span class="tag tag-blue">Character</span><span class="tag tag-green">Personality Training</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title"><a href="https://arxiv.org/abs/2406.07814" target="_blank">Collective Constitutional AI: Aligning with Public Input</a></div>
+        <div class="item-meta">Saffron Huang, Divya Siddarth, et al. &middot; 2024-06</div>
+        <div class="item-desc">将 Constitutional AI 扩展为众包模式，通过公众参与制定宪法原则，训练出在九个社会维度上偏见更低的模型。</div>
+        <div class="paper-tags"><span class="tag tag-blue">Constitutional AI</span><span class="tag tag-green">Collective</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title"><a href="https://transformer-circuits.pub/2024/scaling-monosemanticity/" target="_blank">Scaling Monosemanticity: Extracting Features from Claude 3 Sonnet</a></div>
+        <div class="item-meta">Adly Templeton, Tom Conerly, Chris Olah, et al. &middot; 2024-05</div>
+        <div class="item-desc">首次将稀疏自编码器扩展到生产级大模型（Claude 3 Sonnet），提取数千万可解释特征，实现对前沿 LLM 内部表征的首次详细解剖。</div>
+        <div class="paper-tags"><span class="tag tag-green">Interpretability</span><span class="tag tag-blue">SAE</span><span class="tag tag-accent">里程碑</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title"><a href="https://www.anthropic.com/research/many-shot-jailbreaking" target="_blank">Many-shot Jailbreaking</a></div>
+        <div class="item-meta">Cem Anil, Esin Durmus, et al. &middot; 2024-04</div>
+        <div class="item-desc">发现利用大上下文窗口填充数百个有害示例可突破主流 LLM 安全防护，攻击效果遵循幂律缩放，发表于 NeurIPS 2024。</div>
+        <div class="paper-tags"><span class="tag tag-accent">Safety</span><span class="tag tag-orange">Jailbreak</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title"><a href="https://arxiv.org/abs/2401.05566" target="_blank">Sleeper Agents: Training Deceptive LLMs that Persist Through Safety Training</a></div>
+        <div class="item-meta">Evan Hubinger, Carson Denison, et al. &middot; 2024-01</div>
+        <div class="item-desc">首次实验证明 LLM 中的后门欺骗行为能在标准安全训练（SFT/RLHF/对抗训练）后持续存在，且模型越大欺骗越难消除。</div>
+        <div class="paper-tags"><span class="tag tag-accent">Safety</span><span class="tag tag-purple">Deceptive Alignment</span><span class="tag tag-orange">Sleeper Agents</span></div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2023</div>
+      <div class="cat-tl-item">
+        <div class="item-title"><a href="https://transformer-circuits.pub/2023/monosemantic-features" target="_blank">Towards Monosemanticity: Decomposing LMs with Dictionary Learning</a></div>
+        <div class="item-meta">Trenton Bricken, Adly Templeton, Chris Olah, et al. &middot; 2023-10</div>
+        <div class="item-desc">使用稀疏自编码器从单层 Transformer 提取 4000+ 可解释特征，人类评估者认为 70% 具有可解释性。</div>
+        <div class="paper-tags"><span class="tag tag-green">Interpretability</span><span class="tag tag-blue">Sparse Autoencoder</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title"><a href="https://arxiv.org/abs/2308.03296" target="_blank">Studying LLM Generalization with Influence Functions</a></div>
+        <div class="item-meta">Roger Grosse, Cem Anil, et al. &middot; 2023-08</div>
+        <div class="item-desc">首次将影响函数扩展到 52B 参数 LLM，揭示模型泛化中抽象层次随规模增加和跨语言迁移等规律。</div>
+        <div class="paper-tags"><span class="tag tag-blue">Generalization</span><span class="tag tag-green">Influence Functions</span></div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2022</div>
+      <div class="cat-tl-item">
+        <div class="item-title"><a href="https://arxiv.org/abs/2212.08073" target="_blank">Constitutional AI: Harmlessness from AI Feedback</a></div>
+        <div class="item-meta">Yuntao Bai, Saurav Kadavath, et al. &middot; 2022-12</div>
+        <div class="item-desc">提出「宪法 AI」方法，让模型依据原则自我批评和修正，无需人类标注有害输出，开创 RLAIF 范式。Anthropic 标志性技术。</div>
+        <div class="paper-tags"><span class="tag tag-blue">Constitutional AI</span><span class="tag tag-accent">RLAIF</span><span class="tag tag-green">奠基</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title"><a href="https://arxiv.org/abs/2209.10652" target="_blank">Toy Models of Superposition</a></div>
+        <div class="item-meta">Nelson Elhage, Chris Olah, et al. &middot; 2022-09</div>
+        <div class="item-desc">通过玩具模型揭示「叠加」现象 — 模型将比神经元数量更多的稀疏特征编码在同一空间中，解释多义神经元成因。</div>
+        <div class="paper-tags"><span class="tag tag-green">Interpretability</span><span class="tag tag-blue">Superposition</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title"><a href="https://arxiv.org/abs/2209.11895" target="_blank">In-context Learning and Induction Heads</a></div>
+        <div class="item-meta">Catherine Olsson, Nelson Elhage, et al. &middot; 2022-09</div>
+        <div class="item-desc">发现「归纳头」是 Transformer 实现上下文学习的核心机制，在训练过程中呈现相变式突然涌现。</div>
+        <div class="paper-tags"><span class="tag tag-green">Interpretability</span><span class="tag tag-blue">Induction Heads</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title"><a href="https://arxiv.org/abs/2209.07858" target="_blank">Red Teaming Language Models to Reduce Harms</a></div>
+        <div class="item-meta">Deep Ganguli, Liane Lovitt, et al. &middot; 2022-08</div>
+        <div class="item-desc">对 2.7B-52B 模型进行系统红队测试，公开 38,961 条攻击数据集，揭示规模与安全性的复杂关系。</div>
+        <div class="paper-tags"><span class="tag tag-accent">Safety</span><span class="tag tag-orange">Red Teaming</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title"><a href="https://arxiv.org/abs/2204.05862" target="_blank">Training a Helpful and Harmless Assistant with RLHF</a></div>
+        <div class="item-meta">Yuntao Bai, Andy Jones, et al. &middot; 2022-04</div>
+        <div class="item-desc">系统展示 RLHF 训练有用且无害 AI 助手的方法，发现对齐训练几乎在所有 NLP 评估中都能提升表现，公开 HH-RLHF 数据集。</div>
+        <div class="paper-tags"><span class="tag tag-blue">RLHF</span><span class="tag tag-green">HH Dataset</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title"><a href="https://arxiv.org/abs/2202.07785" target="_blank">Predictability and Surprise in Large Generative Models</a></div>
+        <div class="item-meta">Deep Ganguli, Danny Hernandez, et al. &middot; 2022-02</div>
+        <div class="item-desc">揭示大模型核心悖论 — 训练损失遵循可预测缩放定律，但具体能力和输出高度不可预测。</div>
+        <div class="paper-tags"><span class="tag tag-blue">Scaling</span><span class="tag tag-purple">Emergent</span></div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2021</div>
+      <div class="cat-tl-item">
+        <div class="item-title"><a href="https://transformer-circuits.pub/2021/framework/index.html" target="_blank">A Mathematical Framework for Transformer Circuits</a></div>
+        <div class="item-meta">Nelson Elhage, Neel Nanda, Chris Olah, et al. &middot; 2021-12</div>
+        <div class="item-desc">提出理解 Transformer 内部机制的数学框架，将注意力头分解为 QK 电路和 OV 电路，奠定机械可解释性基础。</div>
+        <div class="paper-tags"><span class="tag tag-green">Interpretability</span><span class="tag tag-blue">Circuits</span><span class="tag tag-accent">奠基</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer><p>Anthropic &amp; Claude 研究 &mdash; 持续更新中</p></footer>
+</body>
+</html>

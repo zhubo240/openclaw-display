@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Post-training / 后训练 - AI 论文阅读</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="site-nav">
+  <a class="logo" href="index.html">AI Papers</a>
+  <div class="nav-links">
+    <a href="index.html">首页</a>
+    <a href="timeline.html">时间线</a>
+    <a href="cat-post-training.html" class="active">Post-training</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <div class="breadcrumb"><a href="index.html">首页</a> / Post-training</div>
+    <h1>Post-training / 后训练</h1>
+  </div>
+
+  <div class="cat-timeline" style="--cat-color: #7c3aed;">
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2023</div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2305.18290" target="_blank">Direct Preference Optimization (DPO)</a></div>
+        <div class="paper-authors">Rafael Rafailov, Archit Sharma, Eric Mitchell, et al. &middot; Stanford &middot; 2023-05</div>
+        <div class="paper-brief">将 RLHF 中的奖励建模和 RL 优化合并为一个简单的分类损失函数，无需训练单独的奖励模型，大幅简化偏好对齐训练。</div>
+        <div class="paper-tags"><span class="tag tag-blue">DPO</span><span class="tag tag-green">Alignment</span></div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2022</div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2212.08073" target="_blank">Constitutional AI: Harmlessness from AI Feedback</a></div>
+        <div class="paper-authors">Yuntao Bai, Saurav Kadavath, Sandipan Kundu, et al. &middot; Anthropic &middot; 2022-12</div>
+        <div class="paper-brief">用一组明确原则引导 AI 自我批评和修订有害输出，再通过 AI 反馈（RLAIF）替代人类标注来训练无害性。</div>
+        <div class="paper-tags"><span class="tag tag-blue">Constitutional AI</span><span class="tag tag-orange">Safety</span><span class="tag tag-green">RLAIF</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2203.02155" target="_blank">InstructGPT: Training LMs to Follow Instructions with Human Feedback</a></div>
+        <div class="paper-authors">Long Ouyang, Jeff Wu, Xu Jiang, et al. &middot; OpenAI &middot; 2022-03</div>
+        <div class="paper-brief">SFT + 奖励模型 + PPO 三步法，1.3B 参数的 InstructGPT 在人类评估中优于 175B 的 GPT-3。</div>
+        <div class="paper-tags"><span class="tag tag-blue">InstructGPT</span><span class="tag tag-green">RLHF</span><span class="tag tag-purple">SFT</span></div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2021</div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2106.09685" target="_blank">LoRA: Low-Rank Adaptation of Large Language Models</a></div>
+        <div class="paper-authors">Edward J. Hu, Yelong Shen, Phillip Wallis, et al. &middot; Microsoft &middot; 2021-06</div>
+        <div class="paper-brief">冻结预训练权重，仅注入低秩分解矩阵，可训练参数降至万分之一，使大模型高效微调成为可能。</div>
+        <div class="paper-tags"><span class="tag tag-blue">LoRA</span><span class="tag tag-orange">Parameter-Efficient</span><span class="tag tag-green">Fine-tuning</span></div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2017</div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/1706.03741" target="_blank">Deep Reinforcement Learning from Human Preferences</a></div>
+        <div class="paper-authors">Paul Christiano, Jan Leike, Tom B. Brown, et al. &middot; OpenAI / DeepMind &middot; 2017-06</div>
+        <div class="paper-brief">提出 RLHF 框架，通过人类偏好对比学习奖励函数，奠定了所有 RLHF 对齐工作的理论基础。</div>
+        <div class="paper-tags"><span class="tag tag-blue">RLHF</span><span class="tag tag-purple">Foundation</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer><p>AI 论文阅读 &mdash; 持续更新中</p></footer>
+</body>
+</html>

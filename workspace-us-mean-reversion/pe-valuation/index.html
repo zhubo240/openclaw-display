@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>S&P 500 PE 高估值归因分析</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: #0a0e1a;
+    color: #e0e6ed;
+    line-height: 1.7;
+  }
+
+  .sidebar {
+    position: fixed; left: 0; top: 0; bottom: 0;
+    width: 230px;
+    background: rgba(10, 14, 26, 0.97);
+    border-right: 1px solid rgba(255,255,255,0.08);
+    padding: 20px 0;
+    overflow-y: auto;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+  .sidebar .logo {
+    padding: 0 16px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 12px;
+  }
+  .sidebar .logo h3 {
+    font-size: 0.85rem;
+    background: linear-gradient(135deg, #f472b6, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .sidebar .logo span { font-size: 0.68rem; color: #4a5568; }
+  .nav-group { padding: 0 8px; margin-bottom: 6px; }
+  .nav-group-title {
+    font-size: 0.62rem; color: #4a5568;
+    text-transform: uppercase; letter-spacing: 1.5px;
+    padding: 8px 8px 4px; font-weight: 600;
+  }
+  .nav-link {
+    display: block; padding: 6px 12px;
+    color: #6b7a8d; text-decoration: none;
+    font-size: 0.78rem; border-radius: 6px;
+    transition: all 0.2s; line-height: 1.4;
+  }
+  .nav-link:hover { background: rgba(167,139,250,0.1); color: #a5b4c6; }
+  .nav-link.active { background: rgba(167,139,250,0.15); color: #a78bfa; font-weight: 500; }
+
+  .main { margin-left: 230px; padding: 20px; max-width: 1100px; }
+
+  .header {
+    text-align: center; padding: 30px 0 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 24px;
+  }
+  .header h1 {
+    font-size: 1.8rem;
+    background: linear-gradient(135deg, #f472b6, #a78bfa, #60a5fa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 6px;
+  }
+  .header .subtitle { color: #6b7a8d; font-size: 0.88rem; }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px; margin-bottom: 24px;
+  }
+  .card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px; padding: 16px; text-align: center;
+  }
+  .card .label { font-size: 0.68rem; color: #6b7a8d; text-transform: uppercase; letter-spacing: 1px; }
+  .card .value { font-size: 1.5rem; font-weight: 700; margin-top: 4px; }
+  .card .sub { font-size: 0.72rem; color: #4a5568; margin-top: 2px; }
+  .green { color: #34d399; }
+  .blue { color: #60a5fa; }
+  .orange { color: #fbbf24; }
+  .pink { color: #f472b6; }
+  .purple { color: #a78bfa; }
+  .red { color: #f87171; }
+
+  .section {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px; padding: 24px;
+    margin-bottom: 20px; scroll-margin-top: 20px;
+  }
+  .section h2 { font-size: 1.15rem; color: #a5b4c6; margin-bottom: 4px; }
+  .section .desc { font-size: 0.82rem; color: #4a5568; margin-bottom: 14px; }
+  .chart-container { position: relative; width: 100%; height: 340px; }
+
+  .insight {
+    background: rgba(167, 139, 250, 0.06);
+    border-left: 3px solid #a78bfa;
+    padding: 12px 16px; border-radius: 0 6px 6px 0;
+    margin-top: 14px; font-size: 0.85rem; color: #8896a8;
+  }
+  .insight strong { color: #a78bfa; }
+  .insight.warn {
+    background: rgba(251,191,36,0.06);
+    border-left-color: #fbbf24;
+  }
+  .insight.warn strong { color: #fbbf24; }
+  .insight.danger {
+    background: rgba(248,113,113,0.06);
+    border-left-color: #f87171;
+  }
+  .insight.danger strong { color: #f87171; }
+
+  table {
+    width: 100%; border-collapse: collapse;
+    font-size: 0.82rem; margin: 10px 0;
+  }
+  th {
+    text-align: left; padding: 8px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+    color: #6b7a8d; font-weight: 600; font-size: 0.75rem;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  td {
+    padding: 7px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: #a5b4c6;
+  }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .flow-diagram {
+    display: flex; flex-direction: column; gap: 2px;
+    padding: 16px; font-size: 0.82rem;
+  }
+  .flow-step {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; border-radius: 8px;
+    background: rgba(255,255,255,0.03);
+    border-left: 3px solid;
+  }
+  .flow-step .icon { font-size: 1.1rem; min-width: 24px; text-align: center; }
+  .flow-step .text { flex: 1; color: #8896a8; }
+  .flow-step .text strong { color: #e0e6ed; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 800px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+    .two-col { grid-template-columns: 1fr; }
+    .summary-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .layer-stack {
+    display: flex; flex-direction: column; gap: 0;
+    margin: 14px 0; border-radius: 10px; overflow: hidden;
+  }
+  .layer {
+    padding: 14px 18px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .layer .name { font-weight: 600; font-size: 0.85rem; }
+  .layer .detail { font-size: 0.78rem; opacity: 0.8; }
+
+  .tag {
+    display: inline-block; padding: 2px 8px;
+    border-radius: 10px; font-size: 0.7rem; font-weight: 600;
+  }
+
+  .reason-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0;
+  }
+  .reason-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px; padding: 16px;
+    border-top: 3px solid;
+  }
+  .reason-card h4 { font-size: 0.85rem; margin-bottom: 4px; }
+  .reason-card p { font-size: 0.8rem; color: #8896a8; line-height: 1.5; }
+  @media (max-width: 800px) {
+    .reason-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="logo">
+    <h3>PE 高估值归因分析</h3>
+    <span>科技 vs 非科技 · 结构性因素拆解</span>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">估值拆解</div>
+    <a class="nav-link" href="#pe-history">科技PE演变</a>
+    <a class="nav-link" href="#tech-effect">科技推高效应</a>
+    <a class="nav-link" href="#earnings-growth">盈利增长对比</a>
+    <a class="nav-link" href="#peg">PEG估值</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">横向比较</div>
+    <a class="nav-link" href="#compare-2000">2000 vs 2024</a>
+    <a class="nav-link" href="#mag7">Mag7 vs 其余</a>
+    <a class="nav-link" href="#sector-pe">非科技行业PE</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">深层原因</div>
+    <a class="nav-link" href="#structural">结构性原因</a>
+    <a class="nav-link" href="#conclusion">结论</a>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="header">
+    <h1>S&P 500 PE 高估值归因分析</h1>
+    <div class="subtitle">科技 vs 非科技 · 结构性因素拆解</div>
+  </div>
+
+  <!-- ===== SUMMARY CARDS ===== -->
+  <div class="summary-grid">
+    <div class="card">
+      <div class="label">2024 S&P 500 PE</div>
+      <div class="value red">27.2</div>
+      <div class="sub">vs 历史均值 16.2 (+68%)</div>
+    </div>
+    <div class="card">
+      <div class="label">科技推高指数PE</div>
+      <div class="value orange">~5个PE点</div>
+      <div class="sub">广义科技 → 22.0 vs 27.2</div>
+    </div>
+    <div class="card">
+      <div class="label">广义科技 PEG</div>
+      <div class="value green">2.66</div>
+      <div class="sub">vs 非科技 5.38</div>
+    </div>
+    <div class="card">
+      <div class="label">Mag7 权重</div>
+      <div class="value purple">35.8%</div>
+      <div class="sub">盈利占比 29.2%</div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION: PE HISTORY ===== -->
+  <div class="section" id="pe-history">
+    <h2>科技 PE 与权重的历史演变</h2>
+    <div class="desc">GICS Info Tech 的 PE、权重与去 IT 后的指数 PE 对比 (1990-2024)</div>
+    <div class="chart-container" style="height:360px">
+      <canvas id="chartPEHistory"></canvas>
+    </div>
+    <table style="margin-top:16px">
+      <tr><th>年份</th><th>S&P 500 PE</th><th>IT PE</th><th>IT 权重</th><th>广义IT权重</th><th>去IT后PE</th><th>去广义IT后PE</th></tr>
+      <tr><td>1990</td><td class="num">14.9</td><td class="num">15.5</td><td class="num">6.7%</td><td class="num">6.7%</td><td class="num">14.9</td><td class="num">--</td></tr>
+      <tr><td style="color:#f87171;font-weight:600">2000</td><td class="num" style="color:#f87171">28.8</td><td class="num" style="color:#f87171">51.3</td><td class="num">26.5%</td><td class="num">26.5%</td><td class="num">25.2</td><td class="num">25.2</td></tr>
+      <tr><td>2010</td><td class="num">15.4</td><td class="num">15.0</td><td class="num">15.1%</td><td class="num">18.5%</td><td class="num">15.5</td><td class="num">15.3</td></tr>
+      <tr><td>2015</td><td class="num">22.2</td><td class="num">15.8</td><td class="num">13.2%</td><td class="num">20.1%</td><td class="num">23.6</td><td class="num">22.2</td></tr>
+      <tr><td>2020</td><td class="num">37.6</td><td class="num">31.1</td><td class="num">16.7%</td><td class="num">32.0%</td><td class="num">39.8</td><td class="num">38.7</td></tr>
+      <tr><td style="color:#a78bfa;font-weight:600">2024</td><td class="num" style="color:#a78bfa">27.2</td><td class="num" style="color:#a78bfa">41.5</td><td class="num">26.4%</td><td class="num">44.5%</td><td class="num">23.8</td><td class="num">22.0</td></tr>
+    </table>
+  </div>
+
+  <!-- ===== SECTION: TECH EFFECT ===== -->
+  <div class="section" id="tech-effect">
+    <h2>科技对 PE 的推高效应</h2>
+    <div class="desc">2024 年：去掉 GICS IT 后 PE 降 3.4 点；去掉广义科技降 5.2 点</div>
+    <div class="two-col">
+      <div>
+        <div class="chart-container" style="height:300px">
+          <canvas id="chartTechEffect"></canvas>
+        </div>
+      </div>
+      <div>
+        <table>
+          <tr><th>口径</th><th>2024 PE</th><th>差值</th></tr>
+          <tr><td>S&P 500 整体</td><td class="num" style="color:#a78bfa;font-weight:600">27.2</td><td class="num">--</td></tr>
+          <tr><td>去 GICS IT</td><td class="num">23.8</td><td class="num" style="color:#34d399">-3.4</td></tr>
+          <tr><td>去广义科技</td><td class="num">22.0</td><td class="num" style="color:#34d399">-5.2</td></tr>
+          <tr><td>历史均值</td><td class="num" style="color:#fbbf24">16.2</td><td class="num" style="color:#f87171">-11.0</td></tr>
+        </table>
+        <div class="insight" style="margin-top:14px">
+          <strong>科技确实推高了指数 PE 约 5 个点，但非科技 PE 22.0 仍高于历史均值 16.2（+36%），不全是科技的锅。</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION: EARNINGS GROWTH ===== -->
+  <div class="section" id="earnings-growth">
+    <h2>盈利增长对比 (CAGR)</h2>
+    <div class="desc">IT vs 非 IT 的盈利复合增速 — 科技持续领先</div>
+    <div class="two-col">
+      <div>
+        <div class="chart-container" style="height:280px">
+          <canvas id="chartEarnings"></canvas>
+        </div>
+      </div>
+      <div>
+        <table>
+          <tr><th>期间</th><th>IT CAGR</th><th>非IT CAGR</th><th>差值</th></tr>
+          <tr><td>2005-2015 (10yr)</td><td class="num" style="color:#60a5fa">8.7%</td><td class="num">2.2%</td><td class="num" style="color:#34d399">+6.5pp</td></tr>
+          <tr><td>2015-2024 (9yr)</td><td class="num" style="color:#60a5fa">10.4%</td><td class="num">9.4%</td><td class="num" style="color:#34d399">+1.0pp</td></tr>
+          <tr><td>2010-2024 (14yr)</td><td class="num" style="color:#60a5fa">8.5%</td><td class="num">6.8%</td><td class="num" style="color:#34d399">+1.7pp</td></tr>
+          <tr><td style="font-weight:600">2019-2024 (5yr)</td><td class="num" style="color:#60a5fa;font-weight:600">12.6%</td><td class="num" style="font-weight:600">8.5%</td><td class="num" style="color:#34d399;font-weight:600">+4.2pp</td></tr>
+        </table>
+        <div class="insight" style="margin-top:14px">
+          <strong>科技盈利增长持续快于非科技，尤其近 5 年优势明显（+4.2pp）。</strong>高 PE 有盈利增速支撑。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION: PEG ===== -->
+  <div class="section" id="peg">
+    <h2>PEG 估值比较 (2024)</h2>
+    <div class="desc">PEG = PE / 盈利 CAGR — 越低越"便宜"</div>
+    <div class="chart-container" style="height:300px">
+      <canvas id="chartPEG"></canvas>
+    </div>
+    <table style="margin-top:14px">
+      <tr><th>分类</th><th>PE</th><th>盈利 CAGR (19yr)</th><th>PEG</th></tr>
+      <tr><td style="color:#a78bfa;font-weight:600">广义科技</td><td class="num">35.8</td><td class="num">13.5%</td><td class="num" style="color:#34d399;font-weight:700">2.66</td></tr>
+      <tr><td>GICS Info Tech</td><td class="num">41.5</td><td class="num">9.5%</td><td class="num">4.36</td></tr>
+      <tr><td>非 GICS IT</td><td class="num">23.8</td><td class="num">5.5%</td><td class="num">4.30</td></tr>
+      <tr><td style="color:#f87171;font-weight:600">非广义科技</td><td class="num">22.0</td><td class="num">4.1%</td><td class="num" style="color:#f87171;font-weight:700">5.38</td></tr>
+    </table>
+    <div class="insight">
+      <strong>广义科技 PEG 2.66 远优于非科技 5.38</strong> -- 科技虽然 PE 高，但盈利增速也高，相对估值更合理。非科技板块增长慢但 PE 也不低，PEG 反而更贵。
+    </div>
+  </div>
+
+  <!-- ===== SECTION: 2000 vs 2024 ===== -->
+  <div class="section" id="compare-2000">
+    <h2>2000 vs 2024：两个 IT 高权重时代的对比</h2>
+    <div class="desc">IT 权重相当 (26.5% vs 26.4%)，但 2024 有真实盈利增长支撑</div>
+    <div class="two-col">
+      <div>
+        <table>
+          <tr><th>指标</th><th style="text-align:center;color:#f87171">2000</th><th style="text-align:center;color:#a78bfa">2024</th></tr>
+          <tr><td>IT PE</td><td class="num" style="color:#f87171;font-weight:600">51.3</td><td class="num" style="color:#a78bfa;font-weight:600">41.5</td></tr>
+          <tr><td>IT 权重</td><td class="num">26.5%</td><td class="num">26.4%</td></tr>
+          <tr><td>IT 盈利 CAGR (前10年)</td><td class="num" style="color:#4a5568">--</td><td class="num" style="color:#34d399">10.4%</td></tr>
+          <tr><td>整体 PE</td><td class="num" style="color:#f87171">28.8</td><td class="num" style="color:#a78bfa">27.2</td></tr>
+          <tr><td>去 IT 后 PE</td><td class="num">25.2</td><td class="num">23.8</td></tr>
+        </table>
+      </div>
+      <div>
+        <div class="chart-container" style="height:260px">
+          <canvas id="chartCompare2000"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="insight warn">
+      <strong>2024 vs 2000：IT 权重相当（26.4% vs 26.5%），但 PE 较低（41.5 vs 51.3），且有真实盈利增长支撑。</strong>不是 2000 年式泡沫。
+    </div>
+  </div>
+
+  <!-- ===== SECTION: MAG7 ===== -->
+  <div class="section" id="mag7">
+    <h2>Mag 7 vs 其余 ~493 家</h2>
+    <div class="desc">Mag7 以 35.8% 的权重贡献 29.2% 的盈利 -- 去掉后其余 PE 仍达 24.6</div>
+    <div class="two-col">
+      <div>
+        <h4 style="font-size:0.85rem;color:#6b7a8d;margin-bottom:8px">2024 市值与盈利分布</h4>
+        <div class="chart-container" style="height:280px">
+          <canvas id="chartMag7Bar"></canvas>
+        </div>
+      </div>
+      <div>
+        <h4 style="font-size:0.85rem;color:#6b7a8d;margin-bottom:8px">Mag7 vs 其余 PE 历史</h4>
+        <div class="chart-container" style="height:280px">
+          <canvas id="chartMag7Line"></canvas>
+        </div>
+      </div>
+    </div>
+    <table style="margin-top:14px">
+      <tr><th></th><th>市值 ($T)</th><th>权重</th><th>盈利 ($B)</th><th>PE</th><th>盈利占比</th></tr>
+      <tr><td style="color:#a78bfa;font-weight:600">Mag 7</td><td class="num">19.5</td><td class="num">35.8%</td><td class="num">584</td><td class="num" style="color:#a78bfa">33.4</td><td class="num">29.2%</td></tr>
+      <tr><td>其余 ~493</td><td class="num">34.9</td><td class="num">64.2%</td><td class="num">1,417</td><td class="num">24.6</td><td class="num">70.8%</td></tr>
+      <tr style="border-top:1px solid rgba(255,255,255,0.1)"><td style="font-weight:600">S&P 500</td><td class="num" style="font-weight:600">54.4</td><td class="num">100%</td><td class="num" style="font-weight:600">2,001</td><td class="num" style="font-weight:600">27.2</td><td class="num">100%</td></tr>
+    </table>
+    <div class="insight">
+      <strong>其余公司 PE 从 2010 年 15.3 升到 2024 年 24.6（+61%），是全面性的估值扩张，不只是 Mag 7 拉动。</strong>
+    </div>
+  </div>
+
+  <!-- ===== SECTION: SECTOR PE ===== -->
+  <div class="section" id="sector-pe">
+    <h2>非科技行业 PE 详情 (2024)</h2>
+    <div class="desc">按行业拆分的 PE -- Health Care、Consumer Staples 最贵，Financials 唯一接近合理</div>
+    <div class="chart-container" style="height:380px">
+      <canvas id="chartSectorPE"></canvas>
+    </div>
+    <table style="margin-top:14px">
+      <tr><th>行业</th><th>2024 PE</th><th>1990 PE</th><th>膨胀倍数</th><th>10年盈利CAGR</th><th>特点</th></tr>
+      <tr><td style="color:#f87171">Real Estate</td><td class="num" style="color:#f87171;font-weight:600">48.4</td><td class="num" style="color:#4a5568">--</td><td class="num">--</td><td class="num">3.8%</td><td>类债券资产，受利率影响大</td></tr>
+      <tr><td style="color:#f472b6">Health Care</td><td class="num" style="color:#f472b6;font-weight:600">34.3</td><td class="num">17.9</td><td class="num">1.9x</td><td class="num">2.9%</td><td>增长慢但PE最贵的非科技板块</td></tr>
+      <tr><td>Consumer Disc</td><td class="num">33.8</td><td class="num">22.8</td><td class="num">1.5x</td><td class="num">8.0%</td><td>含 Amazon/Tesla（GICS 分类）</td></tr>
+      <tr><td>Consumer Staples</td><td class="num">29.4</td><td class="num">17.5</td><td class="num">1.7x</td><td class="num">2.6%</td><td>防御型溢价，增长极慢</td></tr>
+      <tr><td>Industrials</td><td class="num">24.8</td><td class="num">13.8</td><td class="num">1.8x</td><td class="num">4.7%</td><td>周期性行业也享受高估值</td></tr>
+      <tr><td>Comm Svcs</td><td class="num">23.7</td><td class="num" style="color:#4a5568">--</td><td class="num">--</td><td class="num">14.8%</td><td>含 Google/Meta，增长最快</td></tr>
+      <tr><td>Utilities</td><td class="num">19.4</td><td class="num">12.8</td><td class="num">1.5x</td><td class="num">7.4%</td><td>AI 电力需求推动</td></tr>
+      <tr><td style="color:#34d399">Financials</td><td class="num" style="color:#34d399;font-weight:600">16.0</td><td class="num">10.6</td><td class="num">1.5x</td><td class="num">8.8%</td><td>唯一接近历史合理水平</td></tr>
+      <tr><td>Energy</td><td class="num">14.9</td><td class="num" style="color:#4a5568">--</td><td class="num">--</td><td class="num">1.2%</td><td>周期低点刚恢复</td></tr>
+    </table>
+    <div class="insight warn">
+      <strong>Health Care PE 34.3、Consumer Staples PE 29.4 -- 增长仅 2-3% 但享受高估值。</strong>投资者为稳定性支付溢价。Financials PE 16.0 是唯一接近历史合理水平的行业。
+    </div>
+  </div>
+
+  <!-- ===== SECTION: STRUCTURAL ===== -->
+  <div class="section" id="structural">
+    <h2>非 Mag7 高估值的 5 个结构性原因</h2>
+    <div class="desc">低利率、被动投资、利润率提升、安全资产溢价、Mag7 光环溢出</div>
+    <div class="reason-grid">
+      <div class="reason-card" style="border-top-color:#60a5fa">
+        <h4 style="color:#60a5fa">a) 低利率长周期 (2010-2021)</h4>
+        <p>联邦基金利率在 0-2.5% 维持十余年。折现率下降 → 未来现金流现值上升 → PE 均衡水平结构性抬高。利率从 5% 降到 2.5%，合理 PE 可从 20 升到 40。2022 后加息至 5%+，但 PE 未完全回落 -- 市场在定价未来降息。</p>
+      </div>
+      <div class="reason-card" style="border-top-color:#a78bfa">
+        <h4 style="color:#a78bfa">b) 被动投资 / 指数基金效应</h4>
+        <p>被动基金占美股交易量超 50%。资金流入 S&P 500 ETF → 不区分估值买入所有 500 家成分股 → 整体 PE 水涨船高。即使基本面不变，只要有资金净流入，PE 就会膨胀。</p>
+      </div>
+      <div class="reason-card" style="border-top-color:#34d399">
+        <h4 style="color:#34d399">c) 企业利润率结构性提升</h4>
+        <p>S&P 500 净利润率从 1990 年代 ~5% 提升到 2024 年 ~10%+。驱动力：科技赋能提效、全球化压低成本、行业集中度提升（垄断加深）。市场认为高利润率是永久性的 → 愿意给更高 PE。</p>
+      </div>
+      <div class="reason-card" style="border-top-color:#fbbf24">
+        <h4 style="color:#fbbf24">d) "安全资产溢价"</h4>
+        <p>全球不确定性增加（地缘政治、AI 颠覆），S&P 500 大盘股被视为安全资产。防御型板块溢价明显：Health Care PE 34.3、Consumer Staples PE 29.4。投资者为稳定性支付溢价 -- 宁可买贵但"确定"的现金流。</p>
+      </div>
+      <div class="reason-card" style="border-top-color:#f472b6;grid-column:1/-1">
+        <h4 style="color:#f472b6">e) Mag 7 光环的溢出效应</h4>
+        <p>Mag 7 的强劲表现带动整体市场情绪乐观。资金溢出到非科技板块 → 潮水涨，所有船都浮起来。例证：2020 年 COVID 后，Mag7 PE 39.1，但其余公司 PE 也达到 37.1 -- 几乎无差距。</p>
+      </div>
+    </div>
+    <div class="insight danger">
+      <strong>风险点：如果利率持续高位 + 盈利增速放缓，非科技板块的估值回调压力大于科技。</strong>因为科技至少有盈利增长支撑（PEG 2.66），而非科技的 PEG 5.38 意味着估值全靠信念。
+    </div>
+  </div>
+
+  <!-- ===== SECTION: CONCLUSION ===== -->
+  <div class="section" id="conclusion">
+    <h2>结论</h2>
+    <div class="desc">科技 PE 有增长兑现 · 非科技 PE 全面偏高 · 结构性因素是主因</div>
+    <div class="flow-diagram">
+      <div class="flow-step" style="border-left-color:#34d399"><div class="icon">1</div><div class="text"><strong>科技高 PE + 高权重是指数偏高的主因</strong>，贡献约 5 个 PE 点</div></div>
+      <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:2px">|</div>
+      <div class="flow-step" style="border-left-color:#60a5fa"><div class="icon">2</div><div class="text"><strong>科技估值有盈利支撑</strong>：广义科技 PEG 2.66 远优于非科技 5.38</div></div>
+      <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:2px">|</div>
+      <div class="flow-step" style="border-left-color:#a78bfa"><div class="icon">3</div><div class="text"><strong>不是 2000 年式泡沫</strong>：IT PE 41.5（vs 51.3），有 10%+ 盈利增速</div></div>
+      <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:2px">|</div>
+      <div class="flow-step" style="border-left-color:#fbbf24"><div class="icon">4</div><div class="text"><strong>非科技估值全面偏高</strong>：去 Mag7 后 PE 仍达 24.6（vs 历史 ~15），+61%</div></div>
+      <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:2px">|</div>
+      <div class="flow-step" style="border-left-color:#f472b6"><div class="icon">5</div><div class="text"><strong>Health Care、Consumer Staples 最贵</strong>：PE 高但盈利增长仅 2-3%</div></div>
+      <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:2px">|</div>
+      <div class="flow-step" style="border-left-color:#34d399"><div class="icon">6</div><div class="text"><strong>Financials PE 16.0</strong> -- 唯一接近历史合理水平的行业</div></div>
+      <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:2px">|</div>
+      <div class="flow-step" style="border-left-color:#f87171"><div class="icon">7</div><div class="text"><strong>结构性因素</strong>：低利率、被动投资、利润率提升、安全资产溢价共同推高非科技估值</div></div>
+      <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:2px">|</div>
+      <div class="flow-step" style="border-left-color:#f87171"><div class="icon">!</div><div class="text"><strong>风险</strong>：利率持续高位 + 盈利放缓 → 非科技板块回调压力 > 科技</div></div>
+    </div>
+    <div class="insight" style="font-size:0.95rem;padding:16px 20px;background:rgba(167,139,250,0.08)">
+      <strong style="font-size:1rem">一句话总结：</strong><br>
+      科技确实推高了指数 PE ~5 个点，但非科技 PE 22.0 仍远高于历史均值。<br>
+      科技 PE 有盈利增长兑现（PEG 2.66），非科技 PE 更多靠结构性信念支撑（PEG 5.38）。<br>
+      <strong>如果均值回归发生，非科技板块的估值回调压力反而大于科技。</strong>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:30px 0;color:#4a5568;font-size:0.75rem">
+    基于 Compustat / CRSP 财务数据 + GICS 行业分类 · 2025 年 2 月
+  </div>
+</div>
+
+<script>
+// === Chart defaults ===
+Chart.defaults.color = '#6b7a8d';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, PingFang SC, sans-serif';
+Chart.defaults.font.size = 11;
+
+// === DATA ===
+const PE_YEARS = ['1990','2000','2010','2015','2020','2024'];
+const SP500_PE = [14.9, 28.8, 15.4, 22.2, 37.6, 27.2];
+const IT_PE = [15.5, 51.3, 15.0, 15.8, 31.1, 41.5];
+const EX_IT_PE = [14.9, 25.2, 15.5, 23.6, 39.8, 23.8];
+
+// === 1. PE History Grouped Bar ===
+new Chart(document.getElementById('chartPEHistory'), {
+  type: 'bar',
+  data: {
+    labels: PE_YEARS,
+    datasets: [
+      { label: 'S&P 500 PE', data: SP500_PE, backgroundColor: '#a78bfa', borderRadius: 4 },
+      { label: 'IT PE', data: IT_PE, backgroundColor: '#60a5fa', borderRadius: 4 },
+      { label: '去IT后PE', data: EX_IT_PE, backgroundColor: '#4a5568', borderRadius: 4 },
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'bottom', labels: { padding: 12 } } },
+    scales: {
+      y: { title: { display: true, text: 'PE 倍数', color: '#4a5568' }, beginAtZero: true },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// === 2. Tech Effect — Waterfall-like bar ===
+new Chart(document.getElementById('chartTechEffect'), {
+  type: 'bar',
+  data: {
+    labels: ['S&P 500', '去 GICS IT', '去广义科技', '历史均值'],
+    datasets: [{
+      label: 'PE',
+      data: [27.2, 23.8, 22.0, 16.2],
+      backgroundColor: ['#a78bfa', '#60a5fa', '#34d399', '#fbbf24'],
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => `PE: ${ctx.raw}` } }
+    },
+    scales: {
+      y: { min: 10, max: 30, title: { display: true, text: 'PE', color: '#4a5568' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// === 3. Earnings CAGR Comparison ===
+new Chart(document.getElementById('chartEarnings'), {
+  type: 'bar',
+  data: {
+    labels: ['2005-2015', '2015-2024', '2010-2024', '2019-2024'],
+    datasets: [
+      { label: 'IT CAGR', data: [8.7, 10.4, 8.5, 12.6], backgroundColor: '#60a5fa', borderRadius: 4 },
+      { label: '非IT CAGR', data: [2.2, 9.4, 6.8, 8.5], backgroundColor: '#4a5568', borderRadius: 4 },
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { padding: 12 } },
+      tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw}%` } }
+    },
+    scales: {
+      y: { title: { display: true, text: 'CAGR %', color: '#4a5568' }, beginAtZero: true },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// === 4. PEG Horizontal Bar ===
+new Chart(document.getElementById('chartPEG'), {
+  type: 'bar',
+  data: {
+    labels: ['广义科技', 'GICS IT', '非 GICS IT', '非广义科技'],
+    datasets: [{
+      label: 'PEG',
+      data: [2.66, 4.36, 4.30, 5.38],
+      backgroundColor: ['#34d399', '#60a5fa', '#a78bfa', '#f87171'],
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => `PEG: ${ctx.raw}` } }
+    },
+    scales: {
+      x: { min: 0, max: 7, title: { display: true, text: 'PEG (PE / CAGR) — 越低越好', color: '#4a5568' } },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// === 5. 2000 vs 2024 Comparison Grouped Bar ===
+new Chart(document.getElementById('chartCompare2000'), {
+  type: 'bar',
+  data: {
+    labels: ['IT PE', '整体 PE', '去IT后PE'],
+    datasets: [
+      { label: '2000', data: [51.3, 28.8, 25.2], backgroundColor: '#f87171', borderRadius: 4 },
+      { label: '2024', data: [41.5, 27.2, 23.8], backgroundColor: '#a78bfa', borderRadius: 4 },
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'bottom', labels: { padding: 12 } } },
+    scales: {
+      y: { title: { display: true, text: 'PE', color: '#4a5568' }, beginAtZero: true },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// === 6a. Mag7 vs Rest — Stacked Bar (Market Cap & Earnings) ===
+new Chart(document.getElementById('chartMag7Bar'), {
+  type: 'bar',
+  data: {
+    labels: ['市值 ($T)', '盈利 ($B/10)'],
+    datasets: [
+      { label: 'Mag 7', data: [19.5, 58.4], backgroundColor: '#a78bfa', borderRadius: 2 },
+      { label: '其余 ~493', data: [34.9, 141.7], backgroundColor: '#4a5568', borderRadius: 2 },
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { padding: 12 } },
+      tooltip: {
+        callbacks: {
+          label: ctx => {
+            if (ctx.dataIndex === 1) return `${ctx.dataset.label}: $${(ctx.raw * 10).toFixed(0)}B`;
+            return `${ctx.dataset.label}: $${ctx.raw}T`;
+          }
+        }
+      }
+    },
+    scales: {
+      x: { stacked: true, grid: { display: false } },
+      y: { stacked: true }
+    }
+  }
+});
+
+// === 6b. Mag7 vs Rest PE Line ===
+new Chart(document.getElementById('chartMag7Line'), {
+  type: 'line',
+  data: {
+    labels: ['2010','2015','2018','2020','2022','2024'],
+    datasets: [
+      {
+        label: 'Mag7 PE',
+        data: [17.4, 25.9, 25.8, 39.1, 25.6, 33.4],
+        borderColor: '#a78bfa',
+        backgroundColor: 'rgba(167,139,250,0.1)',
+        fill: true, tension: 0.3,
+        pointRadius: 5, pointBackgroundColor: '#a78bfa',
+      },
+      {
+        label: '其余 PE',
+        data: [15.3, 21.7, 18.9, 37.1, 20.9, 24.6],
+        borderColor: '#4a5568',
+        backgroundColor: 'rgba(74,85,104,0.1)',
+        fill: true, tension: 0.3,
+        pointRadius: 5, pointBackgroundColor: '#4a5568',
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'bottom', labels: { padding: 12 } } },
+    scales: {
+      y: { title: { display: true, text: 'PE', color: '#4a5568' }, beginAtZero: false },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// === 7. Sector PE Horizontal Bar ===
+new Chart(document.getElementById('chartSectorPE'), {
+  type: 'bar',
+  data: {
+    labels: ['Real Estate', 'Health Care', 'Consumer Disc', 'Consumer Staples', 'Industrials', 'Comm Svcs', 'Utilities', 'Financials', 'Energy'],
+    datasets: [{
+      label: '2024 PE',
+      data: [48.4, 34.3, 33.8, 29.4, 24.8, 23.7, 19.4, 16.0, 14.9],
+      backgroundColor: ctx => {
+        const v = ctx.raw;
+        if (v >= 34) return '#f87171';
+        if (v >= 24) return '#fbbf24';
+        if (v >= 18) return '#60a5fa';
+        return '#34d399';
+      },
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => `PE: ${ctx.raw}` } }
+    },
+    scales: {
+      x: {
+        min: 0, max: 55,
+        title: { display: true, text: '2024 PE 倍数', color: '#4a5568' },
+      },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// === Sidebar active state ===
+const sections = document.querySelectorAll('.section');
+const navLinks = document.querySelectorAll('.nav-link');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const id = entry.target.id;
+      const link = document.querySelector(`.nav-link[href="#${id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

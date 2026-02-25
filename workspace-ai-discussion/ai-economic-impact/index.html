@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 经济影响分析 — 第一性原理推演</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: #0a0e1a;
+    color: #e0e6ed;
+    line-height: 1.7;
+  }
+
+  .sidebar {
+    position: fixed; left: 0; top: 0; bottom: 0;
+    width: 230px;
+    background: rgba(10, 14, 26, 0.97);
+    border-right: 1px solid rgba(255,255,255,0.08);
+    padding: 20px 0;
+    overflow-y: auto;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+  .sidebar .logo {
+    padding: 0 16px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 12px;
+  }
+  .sidebar .logo h3 {
+    font-size: 0.85rem;
+    background: linear-gradient(135deg, #f472b6, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .sidebar .logo span { font-size: 0.68rem; color: #4a5568; }
+  .nav-group { padding: 0 8px; margin-bottom: 6px; }
+  .nav-group-title {
+    font-size: 0.62rem; color: #4a5568;
+    text-transform: uppercase; letter-spacing: 1.5px;
+    padding: 8px 8px 4px; font-weight: 600;
+  }
+  .nav-link {
+    display: block; padding: 6px 12px;
+    color: #6b7a8d; text-decoration: none;
+    font-size: 0.78rem; border-radius: 6px;
+    transition: all 0.2s; line-height: 1.4;
+  }
+  .nav-link:hover { background: rgba(167,139,250,0.1); color: #a5b4c6; }
+  .nav-link.active { background: rgba(167,139,250,0.15); color: #a78bfa; font-weight: 500; }
+
+  .main { margin-left: 230px; padding: 20px; max-width: 1100px; }
+
+  .header {
+    text-align: center; padding: 30px 0 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 24px;
+  }
+  .header h1 {
+    font-size: 1.8rem;
+    background: linear-gradient(135deg, #f472b6, #a78bfa, #60a5fa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 6px;
+  }
+  .header .subtitle { color: #6b7a8d; font-size: 0.88rem; }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px; margin-bottom: 24px;
+  }
+  .card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px; padding: 16px; text-align: center;
+  }
+  .card .label { font-size: 0.68rem; color: #6b7a8d; text-transform: uppercase; letter-spacing: 1px; }
+  .card .value { font-size: 1.5rem; font-weight: 700; margin-top: 4px; }
+  .card .sub { font-size: 0.72rem; color: #4a5568; margin-top: 2px; }
+  .green { color: #34d399; }
+  .blue { color: #60a5fa; }
+  .orange { color: #fbbf24; }
+  .pink { color: #f472b6; }
+  .purple { color: #a78bfa; }
+  .red { color: #f87171; }
+
+  .section {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px; padding: 24px;
+    margin-bottom: 20px; scroll-margin-top: 20px;
+  }
+  .section h2 { font-size: 1.15rem; color: #a5b4c6; margin-bottom: 4px; }
+  .section .desc { font-size: 0.82rem; color: #4a5568; margin-bottom: 14px; }
+  .chart-container { position: relative; width: 100%; height: 340px; }
+
+  .insight {
+    background: rgba(167, 139, 250, 0.06);
+    border-left: 3px solid #a78bfa;
+    padding: 12px 16px; border-radius: 0 6px 6px 0;
+    margin-top: 14px; font-size: 0.85rem; color: #8896a8;
+  }
+  .insight strong { color: #a78bfa; }
+  .insight.warn {
+    background: rgba(251,191,36,0.06);
+    border-left-color: #fbbf24;
+  }
+  .insight.warn strong { color: #fbbf24; }
+  .insight.danger {
+    background: rgba(248,113,113,0.06);
+    border-left-color: #f87171;
+  }
+  .insight.danger strong { color: #f87171; }
+
+  table {
+    width: 100%; border-collapse: collapse;
+    font-size: 0.82rem; margin: 10px 0;
+  }
+  th {
+    text-align: left; padding: 8px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+    color: #6b7a8d; font-weight: 600; font-size: 0.75rem;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  td {
+    padding: 7px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: #a5b4c6;
+  }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .flow-diagram {
+    display: flex; flex-direction: column; gap: 2px;
+    padding: 16px; font-size: 0.82rem;
+  }
+  .flow-step {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; border-radius: 8px;
+    background: rgba(255,255,255,0.03);
+    border-left: 3px solid;
+  }
+  .flow-step .arrow { color: #4a5568; font-size: 0.7rem; text-align: center; padding: 2px 0; }
+  .flow-step .icon { font-size: 1.1rem; min-width: 24px; text-align: center; }
+  .flow-step .text { flex: 1; color: #8896a8; }
+  .flow-step .text strong { color: #e0e6ed; }
+
+  .phase-timeline {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 12px; margin: 14px 0;
+  }
+  .phase-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px; padding: 16px;
+    border-top: 3px solid;
+  }
+  .phase-card h4 { font-size: 0.85rem; margin-bottom: 4px; }
+  .phase-card .time { font-size: 0.72rem; color: #4a5568; margin-bottom: 8px; }
+  .phase-card p { font-size: 0.8rem; color: #8896a8; line-height: 1.5; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 800px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+    .two-col, .phase-timeline { grid-template-columns: 1fr; }
+    .summary-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .layer-stack {
+    display: flex; flex-direction: column; gap: 0;
+    margin: 14px 0; border-radius: 10px; overflow: hidden;
+  }
+  .layer {
+    padding: 14px 18px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .layer .name { font-weight: 600; font-size: 0.85rem; }
+  .layer .detail { font-size: 0.78rem; opacity: 0.8; }
+
+  .tag {
+    display: inline-block; padding: 2px 8px;
+    border-radius: 10px; font-size: 0.7rem; font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="logo">
+    <h3>AI 经济影响分析</h3>
+    <span>第一性原理推演 · 2025</span>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">基础框架</div>
+    <a class="nav-link" href="#thesis">核心论点</a>
+    <a class="nav-link" href="#efficiency">AI vs 人类效率</a>
+    <a class="nav-link" href="#labor">全球劳动力天花板</a>
+    <a class="nav-link" href="#tam">TAM 估算</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">需求与竞争</div>
+    <a class="nav-link" href="#demand">需求的三层结构</a>
+    <a class="nav-link" href="#competition">竞争 = 搜索问题</a>
+    <a class="nav-link" href="#asymmetry">生产者-消费者不对称</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">协作革命</div>
+    <a class="nav-link" href="#collaboration">协作瓶颈的消除</a>
+    <a class="nav-link" href="#devalue">积累的贬值</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">估值与归因</div>
+    <a class="nav-link" href="#mag7">Mag7 盈利 AI 归因</a>
+    <a class="nav-link" href="#ad">广告效率质疑</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">终局</div>
+    <a class="nav-link" href="#endgame">终局推演</a>
+    <a class="nav-link" href="#gold">黄金与法币信任</a>
+    <a class="nav-link" href="#conclusion">总结</a>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="header">
+    <h1>AI 经济影响的第一性原理分析</h1>
+    <div class="subtitle">从认知成本降低 → 需求饱和 → 竞争零和化 → 资本回报压缩 的完整推演</div>
+  </div>
+
+  <!-- ===== SUMMARY CARDS ===== -->
+  <div class="summary-grid">
+    <div class="card">
+      <div class="label">AI 当前效率比</div>
+      <div class="value purple">~2-3x</div>
+      <div class="sub">编程/写作加权平均</div>
+    </div>
+    <div class="card">
+      <div class="label">全球受 AI 直接影响</div>
+      <div class="value blue">~5 亿人</div>
+      <div class="sub">占全球劳动力 14%</div>
+    </div>
+    <div class="card">
+      <div class="label">Mag7 AI 盈利占比</div>
+      <div class="value orange">36%</div>
+      <div class="sub">$174B / $484B (2024)</div>
+    </div>
+    <div class="card">
+      <div class="label">其中可能暂时的</div>
+      <div class="value red">$74B</div>
+      <div class="sub">65% 集中在 Nvidia</div>
+    </div>
+    <div class="card">
+      <div class="label">AI 收入增长空间</div>
+      <div class="value green">~3x</div>
+      <div class="sub">不是 10x，也不是 0</div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION: THESIS ===== -->
+  <div class="section" id="thesis">
+    <h2>核心论点</h2>
+    <div class="desc">AI 本质上在降低什么成本？每一次通用技术革命的核心模式</div>
+    <table>
+      <tr><th>技术</th><th>降低的成本</th><th>经济效应</th></tr>
+      <tr><td>蒸汽机</td><td>机械力</td><td>工厂替代手工作坊</td></tr>
+      <tr><td>电力</td><td>动力传输</td><td>生产线、家用电器</td></tr>
+      <tr><td>互联网</td><td>信息分发</td><td>媒体/零售/社交重构</td></tr>
+      <tr><td style="color:#a78bfa;font-weight:600">AI</td><td style="color:#a78bfa;font-weight:600">认知劳动</td><td style="color:#a78bfa">预测/判断/生成边际成本 → 0</td></tr>
+    </table>
+    <div class="insight">
+      <strong>AI 的第一性原理：</strong>把预测、判断、生成的边际成本推向零。但这并不意味着无限的商业价值——因为价值的分配取决于需求端和竞争格局。
+    </div>
+  </div>
+
+  <!-- ===== SECTION: EFFICIENCY ===== -->
+  <div class="section" id="efficiency">
+    <h2>AI vs 人类效率</h2>
+    <div class="desc">当前 AI 在编程和写作任务上相对于人类的效率比</div>
+    <div class="two-col">
+      <div>
+        <h4 style="font-size:0.85rem;color:#60a5fa;margin-bottom:8px">编程</h4>
+        <div class="chart-container" style="height:240px">
+          <canvas id="chartCoding"></canvas>
+        </div>
+      </div>
+      <div>
+        <h4 style="font-size:0.85rem;color:#f472b6;margin-bottom:8px">写作</h4>
+        <div class="chart-container" style="height:240px">
+          <canvas id="chartWriting"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="insight">
+      <strong>关键瓶颈：生成快了，验证没快。</strong>AI 写代码 10 秒，你审核可能要 5 分钟。"审核瓶颈"限制了实际加速比。效率提升速度约 50-80%/年。
+    </div>
+  </div>
+
+  <!-- ===== SECTION: LABOR ===== -->
+  <div class="section" id="labor">
+    <h2>全球劳动力结构：AI 影响的天花板</h2>
+    <div class="desc">全球 35 亿劳动力中，AI 只能直接影响 ~14%</div>
+    <div class="two-col">
+      <div>
+        <div class="chart-container" style="height:280px">
+          <canvas id="chartLabor"></canvas>
+        </div>
+      </div>
+      <div>
+        <table>
+          <tr><th>部门</th><th>全球劳动力</th><th>AI 可替代性</th></tr>
+          <tr><td>农业</td><td class="num">~15 亿</td><td><span class="tag" style="background:rgba(52,211,153,0.15);color:#34d399">几乎为零</span></td></tr>
+          <tr><td>制造/建筑</td><td class="num">~10 亿</td><td><span class="tag" style="background:rgba(52,211,153,0.15);color:#34d399">极低（靠机器人）</span></td></tr>
+          <tr><td>低端服务</td><td class="num">~5 亿</td><td><span class="tag" style="background:rgba(251,191,36,0.15);color:#fbbf24">极低（需物理在场）</span></td></tr>
+          <tr><td style="color:#a78bfa;font-weight:600">知识工作</td><td class="num" style="color:#a78bfa;font-weight:600">~5 亿</td><td><span class="tag" style="background:rgba(167,139,250,0.2);color:#a78bfa">中-高</span></td></tr>
+        </table>
+        <div class="insight" style="margin-top:14px">
+          <strong>90% 的全球劳动力在做 AI 替代不了的事。</strong>AI 讨论的视角高度偏向硅谷/知识经济。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION: TAM ===== -->
+  <div class="section" id="tam">
+    <h2>AI 可寻址市场估算</h2>
+    <div class="desc">从任务替代率和采纳速度推算 Mag7 AI 收入的增长空间</div>
+    <div class="chart-container" style="height:300px">
+      <canvas id="chartTAM"></canvas>
+    </div>
+    <div class="insight">
+      <strong>Mag 7 的 AI 收入还有 ~3 倍空间，但不是 10 倍。</strong>因为全球大多数人在做 AI 做不了的事，且大部分价值以降价形式传递给消费者（~85-88%）。
+    </div>
+  </div>
+
+  <!-- ===== SECTION: DEMAND ===== -->
+  <div class="section" id="demand">
+    <h2>需求的三层结构</h2>
+    <div class="desc">发达经济体的自然需求已基本饱和，新增 GDP 主要来自位置竞争和构造需求</div>
+    <div class="layer-stack">
+      <div class="layer" style="background:rgba(52,211,153,0.12);border-left:4px solid #34d399">
+        <div>
+          <div class="name" style="color:#34d399">绝对需求（刚性）</div>
+          <div class="detail" style="color:#6b7a8d">食物、住所、医疗、基础教育 · 可满足、有上限</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:1.2rem;font-weight:700;color:#34d399">~20%</div>
+          <div style="font-size:0.7rem;color:#4a5568">发达国家 GDP</div>
+        </div>
+      </div>
+      <div class="layer" style="background:rgba(251,191,36,0.12);border-left:4px solid #fbbf24">
+        <div>
+          <div class="name" style="color:#fbbf24">位置需求（竞争性）</div>
+          <div class="detail" style="color:#6b7a8d">学历、职位、房产、国力 · 零和、无上限</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:1.2rem;font-weight:700;color:#fbbf24">~40%</div>
+          <div style="font-size:0.7rem;color:#4a5568">发达国家 GDP</div>
+        </div>
+      </div>
+      <div class="layer" style="background:rgba(248,113,113,0.12);border-left:4px solid #f87171">
+        <div>
+          <div class="name" style="color:#f87171">构造需求（人为创造）</div>
+          <div class="detail" style="color:#6b7a8d">品牌、奢侈品、社交媒体认同 · 被供给侧创造</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:1.2rem;font-weight:700;color:#f87171">~40%</div>
+          <div style="font-size:0.7rem;color:#4a5568">发达国家 GDP</div>
+        </div>
+      </div>
+    </div>
+    <table>
+      <tr><th></th><th>AI 的角色</th><th>真实价值</th><th>商业价值</th></tr>
+      <tr><td style="color:#34d399">绝对需求</td><td>降低医疗/教育成本</td><td><strong class="green">极高</strong></td><td>低（穷人付不起）</td></tr>
+      <tr><td style="color:#fbbf24">位置竞争</td><td>军备竞赛工具</td><td><strong class="orange">零（零和）</strong></td><td><strong class="orange">高（不买就输）</strong></td></tr>
+      <tr><td style="color:#f87171">构造需求</td><td>更精准的欲望制造</td><td><strong class="red">负</strong></td><td><strong class="red">极高（Meta 模式）</strong></td></tr>
+    </table>
+    <div class="insight warn">
+      <strong>讽刺之处：</strong>AI 真实价值最高的地方（帮穷人），商业价值最低；商业价值最高的地方（广告/军备），真实价值为零甚至为负。
+    </div>
+  </div>
+
+  <!-- ===== SECTION: COMPETITION ===== -->
+  <div class="section" id="competition">
+    <h2>竞争 = 搜索问题，AI 让竞争趋于确定</h2>
+    <div class="desc">国际象棋类比：当所有玩家都有引擎，结果几乎总是和棋</div>
+    <div class="phase-timeline">
+      <div class="phase-card" style="border-top-color:#34d399">
+        <h4 style="color:#34d399">阶段 1：不对称期</h4>
+        <div class="time">现在 → ~2027</div>
+        <p>少数先用 AI 的公司获得搜索优势 → 超额利润。<strong>这是 Mag 7 叙事的基础。</strong></p>
+      </div>
+      <div class="phase-card" style="border-top-color:#fbbf24">
+        <h4 style="color:#fbbf24">阶段 2：普及期</h4>
+        <div class="time">~2027 → ~2035</div>
+        <p>所有公司都用 AI → 搜索能力拉平 → 超额利润消失。就像所有棋手都用引擎。</p>
+      </div>
+      <div class="phase-card" style="border-top-color:#f87171">
+        <h4 style="color:#f87171">阶段 3：确定性均衡</h4>
+        <div class="time">~2035+</div>
+        <p>最优策略被所有人发现 → 利润率趋零 → AI 公用事业化。<strong>竞争从"谁更聪明"变成"谁成本更低"。</strong></p>
+      </div>
+    </div>
+    <div class="insight danger">
+      <strong>AI 最深层的悖论：</strong>AI 越成功地"解决"竞争，它作为竞争工具的商业价值就越低。就像 GPS——对所有人都有用，但正因如此，没人从中获得竞争优势。
+    </div>
+  </div>
+
+  <!-- ===== SECTION: ASYMMETRY ===== -->
+  <div class="section" id="asymmetry">
+    <h2>生产者-消费者 AI 渗透不对称</h2>
+    <div class="desc">理性的猎手 vs 非理性的猎物 → 平台收税</div>
+    <div class="layer-stack">
+      <div class="layer" style="background:rgba(248,113,113,0.1);border-left:4px solid #f87171">
+        <div>
+          <div class="name" style="color:#f87171">平台层（Meta/Google/Amazon）</div>
+          <div class="detail" style="color:#6b7a8d">注意力中介 + 行为数据垄断 → 两边收税</div>
+        </div>
+        <div><span class="tag" style="background:rgba(248,113,113,0.2);color:#f87171">AI 加强垄断</span></div>
+      </div>
+      <div class="layer" style="background:rgba(251,191,36,0.1);border-left:4px solid #fbbf24">
+        <div>
+          <div class="name" style="color:#fbbf24">生产者层（所有企业）</div>
+          <div class="detail" style="color:#6b7a8d">用 AI 优化一切 → 但省下的钱交给平台买注意力</div>
+        </div>
+        <div><span class="tag" style="background:rgba(251,191,36,0.2);color:#fbbf24">利润率回落</span></div>
+      </div>
+      <div class="layer" style="background:rgba(96,165,250,0.1);border-left:4px solid #60a5fa">
+        <div>
+          <div class="name" style="color:#60a5fa">消费者层（80 亿人）</div>
+          <div class="detail" style="color:#6b7a8d">社交共识驱动 · 路径依赖 · 被精准触发</div>
+        </div>
+        <div><span class="tag" style="background:rgba(96,165,250,0.2);color:#60a5fa">被高效管理</span></div>
+      </div>
+    </div>
+    <div class="insight">
+      <strong>供给侧通缩 + 注意力通胀：</strong>AI 让生产越来越便宜，但企业利润率未提升——省下来的钱都用来抢注意力了。赢家是卖注意力的平台。
+    </div>
+  </div>
+
+  <!-- ===== SECTION: COLLABORATION ===== -->
+  <div class="section" id="collaboration">
+    <h2>协作瓶颈的消除</h2>
+    <div class="desc">AI 不只提高个人效率——它消除了"协作"这个最大的隐性成本</div>
+    <div class="two-col">
+      <div>
+        <h4 style="font-size:0.85rem;color:#6b7a8d;margin-bottom:10px">复杂项目成本拆解</h4>
+        <div class="chart-container" style="height:260px">
+          <canvas id="chartCollab"></canvas>
+        </div>
+      </div>
+      <div>
+        <h4 style="font-size:0.85rem;color:#6b7a8d;margin-bottom:10px">AI 打通认知全链条</h4>
+        <table>
+          <tr><th>环节</th><th>AI 前 (摩擦)</th><th>AI 后</th></tr>
+          <tr><td style="color:#60a5fa">输入</td><td>~250字/分钟</td><td>秒级处理百万字</td></tr>
+          <tr><td style="color:#a78bfa">处理</td><td>需要"专家"(10年)</td><td>即时领域知识</td></tr>
+          <tr><td style="color:#f472b6">输出</td><td>人写/编码速度有限</td><td>秒级生成</td></tr>
+          <tr><td style="color:#fbbf24">记忆</td><td>人会忘/离职带走</td><td>完美持久化</td></tr>
+        </table>
+        <div class="insight" style="margin-top:12px">
+          <strong>成本下降不是 2x，而是 10-20x。</strong>因为消除了协作开销（70%），不只是提升个人效率（30%）。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION: DEVALUE ===== -->
+  <div class="section" id="devalue">
+    <h2>积累的大幅贬值</h2>
+    <div class="desc">"积累"有价值是因为认知链条有摩擦。摩擦消失了，积累就贬值了。</div>
+    <table>
+      <tr><th>积累类型</th><th>之前为什么有价值</th><th>AI 之后</th><th>贬值程度</th></tr>
+      <tr><td>10 年行业经验</td><td>模式识别需要时间积累</td><td>AI 即时提供等效模式识别</td><td><span class="tag" style="background:rgba(248,113,113,0.2);color:#f87171">高</span></td></tr>
+      <tr><td>专业知识/学位</td><td>认知门槛高</td><td>AI 降低门槛</td><td><span class="tag" style="background:rgba(248,113,113,0.2);color:#f87171">高</span></td></tr>
+      <tr><td>人脉网络</td><td>信息需要"认识谁"获取</td><td>AI 直接连接信息</td><td><span class="tag" style="background:rgba(251,191,36,0.2);color:#fbbf24">中</span></td></tr>
+      <tr><td>管理经验</td><td>协调大团队需要技能</td><td>团队规模缩小</td><td><span class="tag" style="background:rgba(248,113,113,0.2);color:#f87171">高</span></td></tr>
+      <tr><td>组织记忆</td><td>存在人脑中，离职就丢</td><td>AI 完美存储</td><td><span class="tag" style="background:rgba(248,113,113,0.2);color:#f87171">高</span></td></tr>
+      <tr><td>判断力/品味</td><td>知道"做什么"</td><td>AI 仍无法替代</td><td><span class="tag" style="background:rgba(52,211,153,0.2);color:#34d399">低</span></td></tr>
+      <tr><td>人际信任</td><td>高风险决策需要人对人</td><td>仍需人际关系</td><td><span class="tag" style="background:rgba(52,211,153,0.2);color:#34d399">低</span></td></tr>
+    </table>
+    <div class="insight warn">
+      <strong>未来的稀缺资源：</strong>不是"能力"（AI 提供），不是"知识"（AI 提供），甚至不是"协作"（不再需要那么多）——而是<strong>"方向"</strong>（判断该做什么）和<strong>"信任"</strong>（在不确定中做出承诺）。
+    </div>
+  </div>
+
+  <!-- ===== SECTION: MAG7 ===== -->
+  <div class="section" id="mag7">
+    <h2>Mag 7 盈利 AI 归因（2024, $484B）</h2>
+    <div class="desc">基于盈利增速变化和公开分部报告的定性估算</div>
+    <div class="chart-container" style="height:320px">
+      <canvas id="chartMag7"></canvas>
+    </div>
+    <div class="insight danger">
+      <strong>Nvidia 一家占"可能暂时"的 65%（$48B/$74B）。</strong>如果 AI 基建周期见顶，Nvidia NI 可能从 $73B 回落到 $20-25B。Meta 是 AI 受益最扎实的——AI 推荐系统提升广告 ROI 是真实且可持续的商业逻辑。
+    </div>
+  </div>
+
+  <!-- ===== SECTION: AD ===== -->
+  <div class="section" id="ad">
+    <h2>生成式 AI 广告效率质疑</h2>
+    <div class="desc">Meta 的 AI 广告故事核心是推荐系统（传统 ML），不是生成式 AI</div>
+    <h4 style="font-size:0.85rem;color:#6b7a8d;margin:12px 0 8px">Meta 2022→2024 盈利翻倍的真实归因</h4>
+    <div class="chart-container" style="height:260px">
+      <canvas id="chartMeta"></canvas>
+    </div>
+    <div class="insight">
+      <strong>广告转化的瓶颈从来不是素材质量。</strong>一个人不买跑鞋，不是因为广告文案不够好，而是因为他不需要跑鞋。品牌 A 和品牌 B 都用 AI → 市场份额不变 → 但都在 Meta 上花了更多钱。<strong>赢家是 Meta。</strong>
+    </div>
+  </div>
+
+  <!-- ===== SECTION: ENDGAME ===== -->
+  <div class="section" id="endgame">
+    <h2>终局推演：AI + 需求有限 + 成本递减</h2>
+    <div class="desc">AI 越成功，它创造的商业价值越少</div>
+    <div class="phase-timeline">
+      <div class="phase-card" style="border-top-color:#34d399">
+        <h4 style="color:#34d399">不对称优势期</h4>
+        <div class="time">现在 → ~2027</div>
+        <p>AI 供给稀缺，利润丰厚。Nvidia 卖镐头赚 $73B。</p>
+      </div>
+      <div class="phase-card" style="border-top-color:#fbbf24">
+        <h4 style="color:#fbbf24">均衡化</h4>
+        <div class="time">~2027 → ~2035</div>
+        <p>成本节约 → 传导为价格下降，不是利润提升。企业利润率被竞争压回去。</p>
+      </div>
+      <div class="phase-card" style="border-top-color:#f87171">
+        <h4 style="color:#f87171">公用事业化</h4>
+        <div class="time">~2035+</div>
+        <p>AI 像电力：无处不在，不可或缺，但利润率极低。没人因为用了电而获得持久竞争优势。</p>
+      </div>
+    </div>
+    <table>
+      <tr><th>指标</th><th>当前假设</th><th>终局情景</th></tr>
+      <tr><td>AI 持久增量</td><td class="num">$100B</td><td class="num" style="color:#fbbf24">$30-50B</td></tr>
+      <tr><td>AI 可能暂时</td><td class="num">$74B</td><td class="num" style="color:#f87171">大部分消失</td></tr>
+      <tr><td>非科技利润率</td><td class="num">10%+</td><td class="num" style="color:#fbbf24">回落（降本→降价）</td></tr>
+      <tr><td>S&P 500 名义盈利增速</td><td class="num">~8%</td><td class="num" style="color:#f87171">~4-5%</td></tr>
+    </table>
+    <div class="insight danger">
+      <strong>价值去了哪里？消费者剩余。</strong>AI 让所有东西更便宜更好，但这不体现在 GDP 或企业盈利中。GPS 创造了巨大社会价值，但几乎没有商业价值——因为它是免费的。
+    </div>
+  </div>
+
+  <!-- ===== SECTION: GOLD ===== -->
+  <div class="section" id="gold">
+    <h2>黄金与法币信任：正和 → 零和的定价</h2>
+    <div class="desc">金价从 $1,280 (2018) 涨到 $5,150 (2026.2)，4 倍。传统模型解释不了。</div>
+    <div class="chart-container" style="height:320px">
+      <canvas id="chartGold"></canvas>
+    </div>
+    <div class="two-col" style="margin-top:16px">
+      <div>
+        <h4 style="font-size:0.85rem;color:#fbbf24;margin-bottom:8px">央行购金量（吨/年）</h4>
+        <div class="chart-container" style="height:220px">
+          <canvas id="chartCB"></canvas>
+        </div>
+      </div>
+      <div>
+        <h4 style="font-size:0.85rem;color:#6b7a8d;margin-bottom:8px">美元储备占比下降</h4>
+        <table>
+          <tr><th>年份</th><th>USD 占全球储备</th><th>黄金占储备</th></tr>
+          <tr><td>2001</td><td class="num">72%</td><td class="num">—</td></tr>
+          <tr><td>2015</td><td class="num">66%</td><td class="num">&lt;10%</td></tr>
+          <tr><td>2020</td><td class="num">59%</td><td class="num">~15%</td></tr>
+          <tr><td>2025</td><td class="num" style="color:#f87171;font-weight:600">56.3%</td><td class="num" style="color:#fbbf24;font-weight:600">&gt;23%</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="insight warn" style="margin-top:14px">
+      <strong>金价在定价什么？</strong>不是通胀（CPI 已回落），不是利率（实际利率在高位），而是对"当前法币体系能否维持"的不信任度。两条路径——技术通缩→印钱→贬值，和地缘零和→武器化→去美元化——都指向黄金。
+    </div>
+  </div>
+
+  <!-- ===== SECTION: CONCLUSION ===== -->
+  <div class="section" id="conclusion">
+    <h2>总结：完整推演链</h2>
+    <div class="desc">从 AI 降低认知成本到资本回报压缩的闭环</div>
+    <div class="flow-diagram">
+      <div class="flow-step" style="border-left-color:#a78bfa"><div class="icon">🧠</div><div class="text"><strong>AI 降低认知劳动成本</strong> → 消除协作瓶颈 → 积累贬值</div></div>
+      <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:2px">↓</div>
+      <div class="flow-step" style="border-left-color:#60a5fa"><div class="icon">🌍</div><div class="text">但只影响全球 <strong>14% 的劳动力</strong>（知识工作者）</div></div>
+      <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:2px">↓</div>
+      <div class="flow-step" style="border-left-color:#fbbf24"><div class="icon">📉</div><div class="text">发达国家自然需求已饱和，<strong>新需求主要靠"构造"</strong></div></div>
+      <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:2px">↓</div>
+      <div class="flow-step" style="border-left-color:#f472b6"><div class="icon">⚔️</div><div class="text">AI 提高生产力 → 但<strong>竞争传导为价格下降</strong>，不是利润提升</div></div>
+      <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:2px">↓</div>
+      <div class="flow-step" style="border-left-color:#f87171"><div class="icon">💰</div><div class="text"><strong>企业利润率被压缩</strong> → AI 公用事业化 → 超额利润消失</div></div>
+      <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:2px">↓</div>
+      <div class="flow-step" style="border-left-color:#fbbf24"><div class="icon">🏛️</div><div class="text">政府印钱维持 → <strong>法币贬值</strong> → 黄金上涨</div></div>
+      <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:2px">↓</div>
+      <div class="flow-step" style="border-left-color:#34d399"><div class="icon">📊</div><div class="text">S&P 500 名义回报看似正常 → <strong>实际购买力回报均值回归</strong></div></div>
+    </div>
+    <div class="insight" style="font-size:0.95rem;padding:16px 20px;background:rgba(167,139,250,0.08)">
+      <strong style="font-size:1rem">一句话总结：</strong><br>
+      AI 可能是人类福利的巨大胜利，但同时是资本回报的敌人。<br>
+      生产力越高、成本越低，利润越薄。<br>
+      均值回归可能不以股价下跌的形式出现，而以<strong>货币贬值</strong>的形式出现——<br>
+      股票名义上不跌，但实际购买力在缩水。<strong>黄金是衡量这个"隐形贬值"的标尺。</strong>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:30px 0;color:#4a5568;font-size:0.75rem">
+    基于 Compustat / CRSP 财务数据 + 第一性原理推演 · 2025 年 2 月
+  </div>
+</div>
+
+<script>
+// === Chart defaults ===
+Chart.defaults.color = '#6b7a8d';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, PingFang SC, sans-serif';
+Chart.defaults.font.size = 11;
+
+// === Coding efficiency ===
+new Chart(document.getElementById('chartCoding'), {
+  type: 'bar',
+  data: {
+    labels: ['样板/CRUD', '功能模块', '架构设计', '调试 Bug', '加权均值'],
+    datasets: [{
+      label: 'AI/人 效率比',
+      data: [4, 1.75, 1.0, 1.25, 2.0],
+      backgroundColor: ['#60a5fa','#60a5fa','#60a5fa','#60a5fa','rgba(96,165,250,0.4)'],
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { min: 0, max: 5, title: { display: true, text: '效率倍数', color: '#4a5568' } },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// === Writing efficiency ===
+new Chart(document.getElementById('chartWriting'), {
+  type: 'bar',
+  data: {
+    labels: ['模板内容', '商业写作', '分析写作', '创意写作', '加权均值'],
+    datasets: [{
+      label: 'AI/人 效率比',
+      data: [7.5, 2.5, 1.75, 1.15, 2.5],
+      backgroundColor: ['#f472b6','#f472b6','#f472b6','#f472b6','rgba(244,114,182,0.4)'],
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { min: 0, max: 10, title: { display: true, text: '效率倍数', color: '#4a5568' } },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// === Labor structure ===
+new Chart(document.getElementById('chartLabor'), {
+  type: 'doughnut',
+  data: {
+    labels: ['农业 (~15亿)', '制造/建筑 (~10亿)', '低端服务 (~5亿)', '知识工作 (~5亿)'],
+    datasets: [{
+      data: [15, 10, 5, 5],
+      backgroundColor: ['#34d399','#60a5fa','#fbbf24','#a78bfa'],
+      borderWidth: 0,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    cutout: '55%',
+    plugins: {
+      legend: { position: 'bottom', labels: { padding: 12, font: { size: 11 } } }
+    }
+  }
+});
+
+// === TAM ===
+new Chart(document.getElementById('chartTAM'), {
+  type: 'bar',
+  data: {
+    labels: ['全球知识劳动', 'AI 可替代 (50%)', '采纳率 15% (2024)', 'Mag7 捕获 12%', '采纳率 40% (2028)', 'Mag7 捕获 12%'],
+    datasets: [{
+      label: '市场规模 ($T)',
+      data: [30, 15, 2.25, 0.27, 7.2, 0.86],
+      backgroundColor: ['#4a5568','#60a5fa','#a78bfa','#f472b6','#a78bfa','#f472b6'],
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { title: { display: true, text: '万亿美元', color: '#4a5568' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// === Collaboration cost ===
+new Chart(document.getElementById('chartCollab'), {
+  type: 'bar',
+  data: {
+    labels: ['AI 之前 (100人)', 'AI 之后 (10人+AI)'],
+    datasets: [
+      { label: '生产性工作', data: [30, 85], backgroundColor: '#34d399', borderRadius: 4 },
+      { label: '协作/沟通开销', data: [70, 15], backgroundColor: '#f87171', borderRadius: 4 },
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'bottom', labels: { padding: 12 } } },
+    scales: {
+      x: { stacked: true, grid: { display: false } },
+      y: { stacked: true, max: 100, title: { display: true, text: '成本占比 %', color: '#4a5568' } }
+    }
+  }
+});
+
+// === Mag7 Attribution ===
+new Chart(document.getElementById('chartMag7'), {
+  type: 'bar',
+  data: {
+    labels: ['Apple', 'Microsoft', 'Google', 'Nvidia', 'Amazon', 'Meta', 'Tesla'],
+    datasets: [
+      { label: 'AI 前业务', data: [92, 75, 75, 5, 25, 30, 7], backgroundColor: '#4a5568', borderRadius: 2 },
+      { label: 'AI 持久增量', data: [2, 10, 20, 20, 20, 28, 0], backgroundColor: '#34d399', borderRadius: 2 },
+      { label: 'AI 可能暂时', data: [0, 3, 5, 48, 14, 4, 0], backgroundColor: '#f87171', borderRadius: 2 },
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'bottom', labels: { padding: 12 } } },
+    scales: {
+      x: { stacked: true, grid: { display: false } },
+      y: { stacked: true, title: { display: true, text: '净利润 ($B)', color: '#4a5568' } }
+    }
+  }
+});
+
+// === Meta Attribution ===
+new Chart(document.getElementById('chartMeta'), {
+  type: 'doughnut',
+  data: {
+    labels: ['低基数恢复 (~40%)', '裁员降本 (~25%)', 'Reels 新库存 (~20%)', 'AI 推荐精度 (~10%)', '生成式 AI (~5%)'],
+    datasets: [{
+      data: [40, 25, 20, 10, 5],
+      backgroundColor: ['#4a5568','#60a5fa','#fbbf24','#a78bfa','#f472b6'],
+      borderWidth: 0,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    cutout: '50%',
+    plugins: { legend: { position: 'bottom', labels: { padding: 10, font: { size: 10.5 } } } }
+  }
+});
+
+// === Gold Price ===
+new Chart(document.getElementById('chartGold'), {
+  type: 'line',
+  data: {
+    labels: ['2018','2019','2020','2021','2022','2023','2024','2025','2026.2'],
+    datasets: [{
+      label: '金价 ($/oz)',
+      data: [1282, 1517, 1898, 1829, 1824, 2063, 2624, 4315, 5150],
+      borderColor: '#fbbf24',
+      backgroundColor: 'rgba(251,191,36,0.1)',
+      fill: true,
+      tension: 0.3,
+      pointRadius: 5,
+      pointBackgroundColor: '#fbbf24',
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => `$${ctx.raw.toLocaleString()}/oz`
+        }
+      }
+    },
+    scales: {
+      y: {
+        title: { display: true, text: '$/oz', color: '#4a5568' },
+        ticks: { callback: v => `$${v.toLocaleString()}` }
+      },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// === Central Bank Gold ===
+new Chart(document.getElementById('chartCB'), {
+  type: 'bar',
+  data: {
+    labels: ['2018','2019','2020','2021','2022','2023','2024','2025'],
+    datasets: [{
+      label: '央行购金 (吨)',
+      data: [656, 668, 273, 463, 1082, 1037, 1045, 863],
+      backgroundColor: ctx => ctx.raw > 800 ? '#fbbf24' : '#4a5568',
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { title: { display: true, text: '吨', color: '#4a5568' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// === Sidebar active state ===
+const sections = document.querySelectorAll('.section');
+const navLinks = document.querySelectorAll('.nav-link');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const id = entry.target.id;
+      const link = document.querySelector(`.nav-link[href="#${id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

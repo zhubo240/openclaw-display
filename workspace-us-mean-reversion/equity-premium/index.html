@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>风险溢价之谜与 EPS 低估假说</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: #0a0e1a;
+    color: #e0e6ed;
+    line-height: 1.7;
+  }
+
+  .sidebar {
+    position: fixed; left: 0; top: 0; bottom: 0;
+    width: 230px;
+    background: rgba(10, 14, 26, 0.97);
+    border-right: 1px solid rgba(255,255,255,0.08);
+    padding: 20px 0;
+    overflow-y: auto;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+  .sidebar .logo {
+    padding: 0 16px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 12px;
+  }
+  .sidebar .logo h3 {
+    font-size: 0.85rem;
+    background: linear-gradient(135deg, #f472b6, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .sidebar .logo span { font-size: 0.68rem; color: #4a5568; }
+  .nav-group { padding: 0 8px; margin-bottom: 6px; }
+  .nav-group-title {
+    font-size: 0.62rem; color: #4a5568;
+    text-transform: uppercase; letter-spacing: 1.5px;
+    padding: 8px 8px 4px; font-weight: 600;
+  }
+  .nav-link {
+    display: block; padding: 6px 12px;
+    color: #6b7a8d; text-decoration: none;
+    font-size: 0.78rem; border-radius: 6px;
+    transition: all 0.2s; line-height: 1.4;
+  }
+  .nav-link:hover { background: rgba(167,139,250,0.1); color: #a5b4c6; }
+  .nav-link.active { background: rgba(167,139,250,0.15); color: #a78bfa; font-weight: 500; }
+
+  .main { margin-left: 230px; padding: 20px; max-width: 1100px; }
+
+  .header {
+    text-align: center; padding: 30px 0 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 24px;
+  }
+  .header h1 {
+    font-size: 1.8rem;
+    background: linear-gradient(135deg, #f472b6, #a78bfa, #60a5fa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 6px;
+  }
+  .header .subtitle { color: #6b7a8d; font-size: 0.88rem; }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px; margin-bottom: 24px;
+  }
+  .card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px; padding: 16px; text-align: center;
+  }
+  .card .label { font-size: 0.68rem; color: #6b7a8d; text-transform: uppercase; letter-spacing: 1px; }
+  .card .value { font-size: 1.5rem; font-weight: 700; margin-top: 4px; }
+  .card .sub { font-size: 0.72rem; color: #4a5568; margin-top: 2px; }
+  .green { color: #34d399; }
+  .blue { color: #60a5fa; }
+  .orange { color: #fbbf24; }
+  .pink { color: #f472b6; }
+  .purple { color: #a78bfa; }
+  .red { color: #f87171; }
+
+  .section {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px; padding: 24px;
+    margin-bottom: 20px; scroll-margin-top: 20px;
+  }
+  .section h2 { font-size: 1.15rem; color: #a5b4c6; margin-bottom: 4px; }
+  .section .desc { font-size: 0.82rem; color: #4a5568; margin-bottom: 14px; }
+  .chart-container { position: relative; width: 100%; height: 340px; }
+
+  .insight {
+    background: rgba(167, 139, 250, 0.06);
+    border-left: 3px solid #a78bfa;
+    padding: 12px 16px; border-radius: 0 6px 6px 0;
+    margin-top: 14px; font-size: 0.85rem; color: #8896a8;
+  }
+  .insight strong { color: #a78bfa; }
+  .insight.warn {
+    background: rgba(251,191,36,0.06);
+    border-left-color: #fbbf24;
+  }
+  .insight.warn strong { color: #fbbf24; }
+  .insight.danger {
+    background: rgba(248,113,113,0.06);
+    border-left-color: #f87171;
+  }
+  .insight.danger strong { color: #f87171; }
+
+  table {
+    width: 100%; border-collapse: collapse;
+    font-size: 0.82rem; margin: 10px 0;
+  }
+  th {
+    text-align: left; padding: 8px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+    color: #6b7a8d; font-weight: 600; font-size: 0.75rem;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  td {
+    padding: 7px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: #a5b4c6;
+  }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .flow-diagram {
+    display: flex; flex-direction: column; gap: 2px;
+    padding: 16px; font-size: 0.82rem;
+  }
+  .flow-step {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; border-radius: 8px;
+    background: rgba(255,255,255,0.03);
+    border-left: 3px solid;
+  }
+  .flow-step .arrow { color: #4a5568; font-size: 0.7rem; text-align: center; padding: 2px 0; }
+  .flow-step .icon { font-size: 1.1rem; min-width: 24px; text-align: center; }
+  .flow-step .text { flex: 1; color: #8896a8; }
+  .flow-step .text strong { color: #e0e6ed; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 800px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+    .two-col { grid-template-columns: 1fr; }
+    .summary-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .layer-stack {
+    display: flex; flex-direction: column; gap: 0;
+    margin: 14px 0; border-radius: 10px; overflow: hidden;
+  }
+  .layer {
+    padding: 14px 18px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .layer .name { font-weight: 600; font-size: 0.85rem; }
+  .layer .detail { font-size: 0.78rem; opacity: 0.8; }
+
+  .tag {
+    display: inline-block; padding: 2px 8px;
+    border-radius: 10px; font-size: 0.7rem; font-weight: 600;
+  }
+
+  .formula-block {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px; padding: 16px 20px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 0.82rem; color: #a5b4c6;
+    line-height: 1.8; margin: 12px 0;
+  }
+  .formula-block .hl { color: #a78bfa; font-weight: 600; }
+  .formula-block .hl-green { color: #34d399; font-weight: 600; }
+  .formula-block .hl-orange { color: #fbbf24; font-weight: 600; }
+  .formula-block .hl-pink { color: #f472b6; font-weight: 600; }
+  .formula-block .hl-red { color: #f87171; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="logo">
+    <h3>风险溢价之谜与 EPS 低估假说</h3>
+    <span>从股息机制到系统性认知偏差 · 2026</span>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">基础理论</div>
+    <a class="nav-link" href="#dividends">股息的本质</a>
+    <a class="nav-link" href="#dcf">DCF 解释</a>
+    <a class="nav-link" href="#puzzle">风险溢价之谜</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">核心假说</div>
+    <a class="nav-link" href="#hypothesis">EPS 低估假说</a>
+    <a class="nav-link" href="#validation">数据验证</a>
+    <a class="nav-link" href="#attribution">修正后归因</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">交叉验证</div>
+    <a class="nav-link" href="#company">公司级验证</a>
+    <a class="nav-link" href="#conclusion">综合结论</a>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="header">
+    <h1>风险溢价之谜与 EPS 低估假说</h1>
+    <div class="subtitle">从股息机制到系统性认知偏差的完整推导</div>
+  </div>
+
+  <!-- ===== SUMMARY CARDS ===== -->
+  <div class="summary-grid">
+    <div class="card">
+      <div class="label">96 年名义回报</div>
+      <div class="value green">8.91%</div>
+      <div class="sub">S&P 500, 1928-2024</div>
+    </div>
+    <div class="card">
+      <div class="label">EPS 低估贡献</div>
+      <div class="value purple">1.66%/年</div>
+      <div class="sub">系统性认知偏差</div>
+    </div>
+    <div class="card">
+      <div class="label">低估频率</div>
+      <div class="value orange">65%</div>
+      <div class="sub">13/20 时段</div>
+    </div>
+    <div class="card">
+      <div class="label">修正后风险溢价</div>
+      <div class="value blue">2.37%</div>
+      <div class="sub">接近 Mehra-Prescott 合理水平</div>
+    </div>
+    <div class="card">
+      <div class="label">PE 年化扩张</div>
+      <div class="value pink">0.82%</div>
+      <div class="sub">11.1 &rarr; 24.0 (96 年)</div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 1: DIVIDENDS ===== -->
+  <div class="section" id="dividends">
+    <h2>股息的本质</h2>
+    <div class="desc">派息不影响 EPS，股价除息后的回升来自持续盈利能力</div>
+
+    <div class="two-col">
+      <div>
+        <h4 style="font-size:0.85rem;color:#6b7a8d;margin-bottom:10px">EPS 与派息是独立环节</h4>
+        <div class="formula-block">
+          <span class="hl">EPS</span> = 净利润 / 总股数 <span style="color:#4a5568">（利润表结果）</span><br>
+          <span class="hl-green">派息</span> = 从现金/留存收益支出 <span style="color:#4a5568">（资产负债表变动）</span>
+        </div>
+        <div class="formula-block">
+          派息前：业务价值 $98 + 现金 $2 = <span class="hl">$100</span>/股<br>
+          派息后：业务价值 $98 + 现金 $0 = <span class="hl-orange">$98</span>/股<br>
+          股东：$98 股票 + $2 现金 = <span class="hl">$100</span>
+        </div>
+      </div>
+      <div>
+        <h4 style="font-size:0.85rem;color:#6b7a8d;margin-bottom:10px">派多派少不影响总回报</h4>
+        <table>
+          <tr><th>策略</th><th>股息</th><th>EPS 增长</th><th>总回报</th></tr>
+          <tr><td style="color:#34d399">大方公司</td><td class="num">高 ($4)</td><td class="num">慢 (留 $1)</td><td class="num" style="color:#a78bfa">~相同</td></tr>
+          <tr><td style="color:#fbbf24">抠门公司</td><td class="num">低 ($1)</td><td class="num">快 (留 $4)</td><td class="num" style="color:#a78bfa">~相同</td></tr>
+        </table>
+        <div class="insight" style="margin-top:12px">
+          <strong>关键推论：</strong>~10% 名义回报中，扣除 PE 扩张约 1%，剩余 ~8.9% 全部来自企业盈利能力。股息和 EPS 增长只是同一盈利能力的不同表达形式。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 2: DCF ===== -->
+  <div class="section" id="dcf">
+    <h2>DCF 解释：为什么股价会上涨</h2>
+    <div class="desc">股价上涨不是因为"新信息"，而是折现率的兑现 -- 如同折价债券向面值靠拢</div>
+
+    <div class="formula-block">
+      今天：把未来所有盈利按 10% 折现 &rarr; 股价 <span class="hl">$100</span><br>
+      一年后：同样的未来盈利近了一年 &rarr; 股价 <span class="hl-green">$110</span><br><br>
+      <span class="hl-orange">折现率</span> &asymp; 无风险利率 + 风险溢价<br>
+      &nbsp;&nbsp;<span class="hl">~10%</span> &asymp; <span class="hl-green">~4-5%</span> + <span class="hl-pink">~5-6%</span>
+    </div>
+
+    <table>
+      <tr><th>组成部分</th><th>含义</th><th>数值</th></tr>
+      <tr><td style="color:#34d399">无风险利率</td><td>国债收益率，纯粹的时间价值补偿</td><td class="num" style="color:#34d399">~4-5%</td></tr>
+      <tr><td style="color:#f472b6">风险溢价</td><td>股票比国债多出的回报，补偿不确定性</td><td class="num" style="color:#f472b6">~5-6%</td></tr>
+    </table>
+
+    <div class="insight">
+      <strong>风险溢价是 residual：</strong>DCF 发现用无风险利率折现对不上实际股价，于是加了"风险溢价"参数。它打包了真实风险补偿、非理性恐惧、流动性偏好、行为偏差等一切。
+    </div>
+  </div>
+
+  <!-- ===== SECTION 3: PUZZLE ===== -->
+  <div class="section" id="puzzle">
+    <h2>风险溢价之谜 (Mehra-Prescott, 1985)</h2>
+    <div class="desc">按理性模型只能解释 ~1-2% 溢价，实际观察到 5-6%，高得离谱</div>
+
+    <div class="layer-stack">
+      <div class="layer" style="background:rgba(52,211,153,0.12);border-left:4px solid #34d399">
+        <div>
+          <div class="name" style="color:#34d399">理性模型预期</div>
+          <div class="detail" style="color:#6b7a8d">正常风险厌恶程度能解释的溢价</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:1.2rem;font-weight:700;color:#34d399">~1-2%</div>
+          <div style="font-size:0.7rem;color:#4a5568">Mehra-Prescott 水平</div>
+        </div>
+      </div>
+      <div class="layer" style="background:rgba(248,113,113,0.12);border-left:4px solid #f87171">
+        <div>
+          <div class="name" style="color:#f87171">实际观察值</div>
+          <div class="detail" style="color:#6b7a8d">S&P 500 相对国债的历史超额回报</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:1.2rem;font-weight:700;color:#f87171">~5-6%</div>
+          <div style="font-size:0.7rem;color:#4a5568">缺口 3-4%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="formula-block">
+      <span style="color:#4a5568">传统解释：</span><br>
+      &nbsp;&nbsp;<span style="color:#f87171">不是：</span>风险 &rarr; 市场给了溢价<br>
+      &nbsp;&nbsp;<span style="color:#34d399">而是：</span>观察到溢价 &rarr; 模型需要参数解释 &rarr; 叫它"风险补偿"
+    </div>
+
+    <div class="insight danger">
+      <strong>风险溢价之谜：</strong>按理性模型只能解释 ~1-2% 溢价，实际观察 5-6%。市场表现得比理论上应该的怕风险得多。这个 3-4% 的缺口困扰了金融学界 40 年。
+    </div>
+  </div>
+
+  <!-- ===== SECTION 4: HYPOTHESIS ===== -->
+  <div class="section" id="hypothesis">
+    <h2>EPS 低估假说</h2>
+    <div class="desc">核心论点：风险溢价的一部分，是市场长期低估盈利增速的系统性误差</div>
+
+    <div class="flow-diagram">
+      <div class="flow-step" style="border-left-color:#60a5fa"><div class="icon">1</div><div class="text">市场基于<strong>预期 E</strong> 定价</div></div>
+      <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:2px">&darr;</div>
+      <div class="flow-step" style="border-left-color:#a78bfa"><div class="icon">2</div><div class="text"><strong>实际 E 增长超预期</strong>（复合增长认知缺陷）</div></div>
+      <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:2px">&darr;</div>
+      <div class="flow-step" style="border-left-color:#fbbf24"><div class="icon">3</div><div class="text">PE 被<strong>压缩</strong>（价格没跟上盈利）</div></div>
+      <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:2px">&darr;</div>
+      <div class="flow-step" style="border-left-color:#f472b6"><div class="icon">4</div><div class="text">市场修正 P 向上<strong>恢复 PE</strong></div></div>
+      <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:2px">&darr;</div>
+      <div class="flow-step" style="border-left-color:#34d399"><div class="icon">5</div><div class="text">P 上涨 = <strong>额外收益</strong></div></div>
+      <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:2px">&darr;</div>
+      <div class="flow-step" style="border-left-color:#f87171"><div class="icon">6</div><div class="text">DCF 假设定价合理 &rarr; 额外收益被归入<strong>"风险溢价"</strong></div></div>
+    </div>
+
+    <h4 style="font-size:0.85rem;color:#6b7a8d;margin:16px 0 8px">为什么低估可以持续</h4>
+    <table>
+      <tr><th>原因</th><th>机制</th></tr>
+      <tr><td style="color:#a78bfa">复合增长认知缺陷</td><td>人类天生不擅长理解指数增长，直觉总是线性外推</td></tr>
+      <tr><td style="color:#fbbf24">可得性偏差</td><td>每一代人都经历过衰退和危机，对未来本能偏悲观</td></tr>
+      <tr><td style="color:#60a5fa">技术进步不可预测</td><td>生产率提升这类长期驱动力难以纳入预测模型</td></tr>
+    </table>
+
+    <div class="formula-block">
+      <span class="hl">假说分解：</span><br>
+      风险溢价 &asymp; 真实风险补偿 + 盈利增速低估补偿<br>
+      &nbsp;&nbsp;<span class="hl-red">5-6%</span> &asymp; <span class="hl-green">~2%</span> + <span class="hl">~1.7%</span> + <span class="hl-orange">~0.4% 残余</span>
+    </div>
+
+    <div class="insight">
+      <strong>EPS 低估假说解释了 1.66%，加入后风险溢价之谜基本消失</strong>（残余仅 0.37%）。修正后的风险溢价为 2.37%，接近 Mehra-Prescott 的理论合理值。
+    </div>
+  </div>
+
+  <!-- ===== SECTION 5: VALIDATION ===== -->
+  <div class="section" id="validation">
+    <h2>数据验证</h2>
+    <div class="desc">Gordon 模型检验 + 回报分解 (Shiller 数据, 1928-2024, 96 年)</div>
+
+    <div class="two-col">
+      <div>
+        <h4 style="font-size:0.85rem;color:#60a5fa;margin-bottom:8px">回报分解 (96 年)</h4>
+        <div class="chart-container" style="height:300px">
+          <canvas id="chartDecomp"></canvas>
+        </div>
+      </div>
+      <div>
+        <h4 style="font-size:0.85rem;color:#a78bfa;margin-bottom:8px">回报归因</h4>
+        <div class="chart-container" style="height:300px">
+          <canvas id="chartAttribution"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <h4 style="font-size:0.85rem;color:#6b7a8d;margin:18px 0 8px">Gordon 模型检验</h4>
+    <div class="formula-block">
+      <span class="hl">方法：</span>g_implied = r - D/P （r = 国债利率 + 2% 合理风险溢价）<br>
+      比较市场隐含增长预期 vs 实际 EPS 增长<br><br>
+      <span class="hl-green">结果：</span>低估次数 <span class="hl">13/20</span> 个时段（<span class="hl">65%</span>），平均低估幅度 <span class="hl">1.66%/年</span>
+    </div>
+
+    <table>
+      <tr><th>时代</th><th>特征</th><th>低估情况</th></tr>
+      <tr><td style="color:#34d399">低利率时代 (1935-1975)</td><td>经济起飞期</td><td><span class="tag" style="background:rgba(248,113,113,0.2);color:#f87171">几乎全部低估</span></td></tr>
+      <tr><td style="color:#fbbf24">高利率时代 (1980-2000)</td><td>利率高拉高隐含预期</td><td><span class="tag" style="background:rgba(52,211,153,0.2);color:#34d399">反而高估</span></td></tr>
+      <tr><td style="color:#60a5fa">2010 年后</td><td>低利率 + 科技盈利爆发</td><td><span class="tag" style="background:rgba(248,113,113,0.2);color:#f87171">又开始低估</span></td></tr>
+    </table>
+
+    <div class="insight warn">
+      <strong>EPS 低估给投资者额外带来 $278,844，占总财富的 77%。</strong>96 年里，仅 1.66% 的年化差异通过复利放大成了巨额财富差距。
+    </div>
+  </div>
+
+  <!-- ===== SECTION 6: ATTRIBUTION ===== -->
+  <div class="section" id="attribution">
+    <h2>修正后归因</h2>
+    <div class="desc">完整的 96 年回报归因分解 + 复利影响</div>
+
+    <div class="layer-stack">
+      <div class="layer" style="background:rgba(52,211,153,0.12);border-left:4px solid #34d399">
+        <div>
+          <div class="name" style="color:#34d399">无风险利率（时间价值）</div>
+          <div class="detail" style="color:#6b7a8d">国债平均收益率</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:1.2rem;font-weight:700;color:#34d399">4.88%</div>
+        </div>
+      </div>
+      <div class="layer" style="background:rgba(96,165,250,0.12);border-left:4px solid #60a5fa">
+        <div>
+          <div class="name" style="color:#60a5fa">合理风险补偿</div>
+          <div class="detail" style="color:#6b7a8d">理性承担风险的报酬 (Mehra-Prescott 水平)</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:1.2rem;font-weight:700;color:#60a5fa">2.00%</div>
+        </div>
+      </div>
+      <div class="layer" style="background:rgba(167,139,250,0.12);border-left:4px solid #a78bfa">
+        <div>
+          <div class="name" style="color:#a78bfa">EPS 低估修正</div>
+          <div class="detail" style="color:#6b7a8d">本假说 -- 系统性认知偏差带来的额外回报</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:1.2rem;font-weight:700;color:#a78bfa">1.66%</div>
+        </div>
+      </div>
+      <div class="layer" style="background:rgba(251,191,36,0.12);border-left:4px solid #fbbf24">
+        <div>
+          <div class="name" style="color:#fbbf24">残余（恐惧/偏差/幸存者）</div>
+          <div class="detail" style="color:#6b7a8d">其他行为偏差</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:1.2rem;font-weight:700;color:#fbbf24">0.37%</div>
+        </div>
+      </div>
+    </div>
+
+    <h4 style="font-size:0.85rem;color:#6b7a8d;margin:18px 0 8px">$100 经过 96 年的复利增长</h4>
+    <div class="chart-container" style="height:320px">
+      <canvas id="chartGrowth"></canvas>
+    </div>
+
+    <div class="insight danger">
+      <strong>长期投资者的超额回报，很大程度上来自人类对复合增长的认知缺陷和对风险的过度恐惧。</strong>1.66% 的年化差异，96 年后变成 $278,844 vs $0 的财富差距。
+    </div>
+  </div>
+
+  <!-- ===== SECTION 7: COMPANY ===== -->
+  <div class="section" id="company">
+    <h2>公司级验证 (CRSP/Compustat)</h2>
+    <div class="desc">使用 CRSP 月度回报 + Compustat 公司年度财务，覆盖 1962-2024 年 S&P 500 全部成分股</div>
+
+    <h4 style="font-size:0.85rem;color:#60a5fa;margin-bottom:8px">关键时段回报分解</h4>
+    <div class="chart-container" style="height:360px">
+      <canvas id="chartPeriods"></canvas>
+    </div>
+
+    <div class="two-col" style="margin-top:18px">
+      <div>
+        <h4 style="font-size:0.85rem;color:#6b7a8d;margin-bottom:8px">CRSP vs Shiller 对比</h4>
+        <table>
+          <tr><th>指标</th><th>公司级别 (CRSP)</th><th>Shiller 指数</th></tr>
+          <tr><td>年化总回报</td><td class="num" style="color:#60a5fa">10.58%</td><td class="num" style="color:#a78bfa">8.91%</td></tr>
+          <tr><td>盈利增长</td><td class="num" style="color:#60a5fa">8.14%</td><td class="num" style="color:#a78bfa">5.16%</td></tr>
+          <tr><td>PE 变化</td><td class="num" style="color:#60a5fa">0.82%</td><td class="num" style="color:#a78bfa">0.81%</td></tr>
+          <tr><td>平均股息率</td><td class="num" style="color:#60a5fa">2.83%</td><td class="num" style="color:#a78bfa">2.90%</td></tr>
+        </table>
+        <div class="insight" style="margin-top:12px">
+          <strong>公司级别盈利增长高出 ~3%：</strong>差异来自指数成分股新陈代谢 -- 新公司加入带来的总盈利膨胀。Shiller 的每单位指数 EPS 已排除此效应。
+        </div>
+      </div>
+      <div>
+        <h4 style="font-size:0.85rem;color:#6b7a8d;margin-bottom:8px">交叉验证</h4>
+        <div class="chart-container" style="height:220px">
+          <canvas id="chartCrossVal"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 8: CONCLUSION ===== -->
+  <div class="section" id="conclusion">
+    <h2>综合结论</h2>
+    <div class="desc">多数据源交叉验证 -- EPS 低估假说得到方向一致的支持</div>
+
+    <table>
+      <tr><th>数据源</th><th>方法</th><th>低估证据</th></tr>
+      <tr>
+        <td style="color:#a78bfa">Shiller (1928-2024)</td>
+        <td>Gordon 模型隐含增长 vs 实际</td>
+        <td><span class="tag" style="background:rgba(167,139,250,0.2);color:#a78bfa">65% 时段低估，平均 1.66%/年</span></td>
+      </tr>
+      <tr>
+        <td style="color:#60a5fa">CRSP+Compustat (1962-2024)</td>
+        <td>PE 变化趋势分析</td>
+        <td><span class="tag" style="background:rgba(96,165,250,0.2);color:#60a5fa">60% PE 扩张，平均 +1.11%/年</span></td>
+      </tr>
+      <tr>
+        <td style="color:#34d399">两者一致</td>
+        <td>PE 年化扩张</td>
+        <td><span class="tag" style="background:rgba(52,211,153,0.2);color:#34d399">~0.81-0.82%/年</span></td>
+      </tr>
+    </table>
+
+    <h4 style="font-size:0.85rem;color:#6b7a8d;margin:18px 0 8px">假说评估</h4>
+    <div class="layer-stack">
+      <div class="layer" style="background:rgba(52,211,153,0.08);border-left:4px solid #34d399">
+        <div>
+          <div class="name" style="color:#34d399">PE 持续扩张</div>
+          <div class="detail" style="color:#6b7a8d">0.82%/年，60% 的时段 -- 市场不断上修估值</div>
+        </div>
+        <div><span class="tag" style="background:rgba(52,211,153,0.2);color:#34d399">支持</span></div>
+      </div>
+      <div class="layer" style="background:rgba(96,165,250,0.08);border-left:4px solid #60a5fa">
+        <div>
+          <div class="name" style="color:#60a5fa">Gordon 模型</div>
+          <div class="detail" style="color:#6b7a8d">65% 时段隐含增长低于实际增长</div>
+        </div>
+        <div><span class="tag" style="background:rgba(96,165,250,0.2);color:#60a5fa">支持</span></div>
+      </div>
+      <div class="layer" style="background:rgba(167,139,250,0.08);border-left:4px solid #a78bfa">
+        <div>
+          <div class="name" style="color:#a78bfa">量级合理</div>
+          <div class="detail" style="color:#6b7a8d">~1-1.7% 低估修正填补了风险溢价之谜的大部分缺口</div>
+        </div>
+        <div><span class="tag" style="background:rgba(167,139,250,0.2);color:#a78bfa">支持</span></div>
+      </div>
+      <div class="layer" style="background:rgba(251,191,36,0.08);border-left:4px solid #fbbf24">
+        <div>
+          <div class="name" style="color:#fbbf24">证据性质</div>
+          <div class="detail" style="color:#6b7a8d">间接证据 -- PE 扩张可能有其他解释（利率下行、机构化等）</div>
+        </div>
+        <div><span class="tag" style="background:rgba(251,191,36,0.2);color:#fbbf24">有限</span></div>
+      </div>
+    </div>
+
+    <div class="insight" style="font-size:0.95rem;padding:16px 20px;background:rgba(167,139,250,0.08)">
+      <strong style="font-size:1rem">完整分解：</strong><br>
+      观察到的风险溢价 ~4-5% &asymp;<br>
+      &nbsp;&nbsp;真实风险补偿 <strong>~2%</strong>（理性的，Mehra-Prescott 水平）<br>
+      &nbsp;&nbsp;+ 盈利低估修正 <strong>~1.7%</strong>（系统性认知偏差）<br>
+      &nbsp;&nbsp;+ 行为偏差残余 <strong>~0.4%</strong>（恐惧、短视、幸存者偏差等）<br><br>
+      <strong>长期投资者的超额回报，很大程度上来自人类对复合增长的认知缺陷和对风险的过度恐惧。</strong>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:30px 0;color:#4a5568;font-size:0.75rem">
+    基于 Shiller 历史数据 + CRSP/Compustat 交叉验证 · 2026 年 2 月
+  </div>
+</div>
+
+<script>
+// === Chart defaults ===
+Chart.defaults.color = '#6b7a8d';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, PingFang SC, sans-serif';
+Chart.defaults.font.size = 11;
+
+// === Chart 1: Return Decomposition (stacked bar) ===
+new Chart(document.getElementById('chartDecomp'), {
+  type: 'bar',
+  data: {
+    labels: ['S&P 500 回报分解 (96 年)'],
+    datasets: [
+      { label: '股息收益率 2.90%', data: [2.90], backgroundColor: '#34d399', borderRadius: 2 },
+      { label: 'EPS 增长 5.16%', data: [5.16], backgroundColor: '#60a5fa', borderRadius: 2 },
+      { label: 'PE 扩张 0.81%', data: [0.81], backgroundColor: '#fbbf24', borderRadius: 2 },
+    ]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { padding: 12, font: { size: 11 } } },
+      tooltip: {
+        callbacks: {
+          afterBody: function() { return '合计: 8.91%'; }
+        }
+      }
+    },
+    scales: {
+      x: { stacked: true, max: 10, title: { display: true, text: '年化贡献 (%)', color: '#4a5568' } },
+      y: { stacked: true, grid: { display: false } }
+    }
+  }
+});
+
+// === Chart 2: Return Attribution (stacked bar) ===
+new Chart(document.getElementById('chartAttribution'), {
+  type: 'bar',
+  data: {
+    labels: ['回报归因'],
+    datasets: [
+      { label: '无风险利率 4.88%', data: [4.88], backgroundColor: '#34d399', borderRadius: 2 },
+      { label: '合理风险补偿 2.00%', data: [2.00], backgroundColor: '#60a5fa', borderRadius: 2 },
+      { label: 'EPS 低估修正 1.66%', data: [1.66], backgroundColor: '#a78bfa', borderRadius: 2 },
+      { label: '残余 0.37%', data: [0.37], backgroundColor: '#fbbf24', borderRadius: 2 },
+    ]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { padding: 12, font: { size: 11 } } },
+      tooltip: {
+        callbacks: {
+          afterBody: function() { return '合计: 8.91%'; }
+        }
+      }
+    },
+    scales: {
+      x: { stacked: true, max: 10, title: { display: true, text: '年化贡献 (%)', color: '#4a5568' } },
+      y: { stacked: true, grid: { display: false } }
+    }
+  }
+});
+
+// === Chart 3: $100 Growth (log scale bar) ===
+new Chart(document.getElementById('chartGrowth'), {
+  type: 'bar',
+  data: {
+    labels: ['实际回报 (8.91%)', '修正后 (7.25%)', '纯国债 (4.88%)'],
+    datasets: [{
+      label: '$100 增长到',
+      data: [361804, 82960, 9682],
+      backgroundColor: ['#f472b6', '#a78bfa', '#34d399'],
+      borderRadius: 6,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: function(ctx) { return '$' + ctx.raw.toLocaleString(); }
+        }
+      }
+    },
+    scales: {
+      y: {
+        type: 'logarithmic',
+        title: { display: true, text: '终值 ($, 对数刻度)', color: '#4a5568' },
+        ticks: {
+          callback: function(v) { return '$' + v.toLocaleString(); }
+        },
+        min: 1000,
+      },
+      x: { grid: { display: false } }
+    }
+  },
+  plugins: [{
+    afterDatasetsDraw: function(chart) {
+      var ctx = chart.ctx;
+      chart.data.datasets[0].data.forEach(function(value, index) {
+        var meta = chart.getDatasetMeta(0);
+        var bar = meta.data[index];
+        ctx.save();
+        ctx.fillStyle = '#e0e6ed';
+        ctx.font = 'bold 13px -apple-system, PingFang SC, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('$' + value.toLocaleString(), bar.x, bar.y - 8);
+        ctx.restore();
+      });
+    }
+  }]
+});
+
+// === Chart 4: Period Decomposition (grouped bar) ===
+new Chart(document.getElementById('chartPeriods'), {
+  type: 'bar',
+  data: {
+    labels: ['1963-73', '1970-80', '1980-90', '1990-00', '2000-10', '2010-20'],
+    datasets: [
+      { label: 'CRSP 回报', data: [6.04, 8.42, 13.78, 17.99, 1.80, 14.20], backgroundColor: '#60a5fa', borderRadius: 3 },
+      { label: '盈利 CAGR', data: [10.32, 14.52, 3.52, 11.09, 6.05, 1.70], backgroundColor: '#a78bfa', borderRadius: 3 },
+      { label: 'PE 变化', data: [-4.17, -6.64, 5.52, 6.82, -6.08, 9.34], backgroundColor: '#fbbf24', borderRadius: 3 },
+      { label: '股息收益率', data: [3.15, 4.15, 4.24, 2.25, 1.87, 1.92], backgroundColor: '#34d399', borderRadius: 3 },
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { padding: 12, font: { size: 11 } } },
+    },
+    scales: {
+      y: { title: { display: true, text: '年化 (%)', color: '#4a5568' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// === Chart 5: Cross-validation (horizontal bar) ===
+new Chart(document.getElementById('chartCrossVal'), {
+  type: 'bar',
+  data: {
+    labels: ['Shiller: 低估频率', 'Compustat: PE 扩张频率'],
+    datasets: [{
+      label: '频率 (%)',
+      data: [65, 60],
+      backgroundColor: ['#a78bfa', '#60a5fa'],
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: function(ctx) { return ctx.raw + '%'; }
+        }
+      }
+    },
+    scales: {
+      x: { min: 0, max: 100, title: { display: true, text: '频率 (%)', color: '#4a5568' },
+        ticks: { callback: function(v) { return v + '%'; } }
+      },
+      y: { grid: { display: false } }
+    }
+  },
+  plugins: [{
+    afterDatasetsDraw: function(chart) {
+      var ctx = chart.ctx;
+      chart.data.datasets[0].data.forEach(function(value, index) {
+        var meta = chart.getDatasetMeta(0);
+        var bar = meta.data[index];
+        ctx.save();
+        ctx.fillStyle = '#e0e6ed';
+        ctx.font = 'bold 12px -apple-system, PingFang SC, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(value + '%', bar.x + 8, bar.y);
+        ctx.restore();
+      });
+    }
+  }]
+});
+
+// === Sidebar active state ===
+const sections = document.querySelectorAll('.section');
+const navLinks = document.querySelectorAll('.nav-link');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const id = entry.target.id;
+      const link = document.querySelector(`.nav-link[href="#${id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

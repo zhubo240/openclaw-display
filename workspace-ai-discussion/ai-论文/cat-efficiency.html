@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Efficiency / 效率 - AI 论文阅读</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="site-nav">
+  <a class="logo" href="index.html">AI Papers</a>
+  <div class="nav-links">
+    <a href="index.html">首页</a>
+    <a href="timeline.html">时间线</a>
+    <a href="cat-efficiency.html" class="active">Efficiency</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <div class="breadcrumb"><a href="index.html">首页</a> / Efficiency</div>
+    <h1>Efficiency / 效率</h1>
+  </div>
+
+  <div class="cat-timeline" style="--cat-color: #ea580c;">
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2024</div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2405.04434" target="_blank">DeepSeek-V2: A Strong, Economical, and Efficient MoE Language Model</a></div>
+        <div class="paper-authors">DeepSeek-AI, Aixin Liu, Bei Feng, et al. &middot; 2024-05</div>
+        <div class="paper-brief">提出 Multi-head Latent Attention（MLA）机制，通过低秩键值联合压缩大幅降低 KV Cache 开销，推理吞吐量提升 5.76 倍，训练成本降低 57.5%。</div>
+        <div class="paper-tags"><span class="tag tag-blue">DeepSeek-V2</span><span class="tag tag-green">MLA</span><span class="tag tag-orange">KV Cache</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2401.06066" target="_blank">DeepSeekMoE: Towards Ultimate Expert Specialization</a></div>
+        <div class="paper-authors">Damai Dai, Chengqi Deng, Chenggang Zhao, et al. &middot; DeepSeek &middot; 2024-01</div>
+        <div class="paper-brief">通过细粒度专家分割和共享专家隔离实现极致 MoE 专业化，以极低参数激活量逼近密集模型性能。</div>
+        <div class="paper-tags"><span class="tag tag-blue">DeepSeekMoE</span><span class="tag tag-purple">Expert Specialization</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2401.04088" target="_blank">Mixtral of Experts</a></div>
+        <div class="paper-authors">Albert Q. Jiang, Alexandre Sablayrolles, et al. &middot; Mistral AI &middot; 2024-01</div>
+        <div class="paper-brief">8x7B 稀疏 MoE 模型，每 token 仅激活 2 个专家（13B 激活参数），性能匹配 Llama 2 70B 和 GPT-3.5，推理成本大幅降低。</div>
+        <div class="paper-tags"><span class="tag tag-blue">Mixtral</span><span class="tag tag-green">Sparse MoE</span></div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2023</div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2309.06180" target="_blank">PagedAttention / vLLM</a></div>
+        <div class="paper-authors">Woosuk Kwon, Zhuohan Li, Siyuan Zhuang, et al. &middot; UC Berkeley &middot; 2023-09</div>
+        <div class="paper-brief">用操作系统分页思想管理 KV Cache，推理吞吐量提升 2-4 倍。</div>
+        <div class="paper-tags"><span class="tag tag-blue">vLLM</span><span class="tag tag-green">KV Cache</span><span class="tag tag-orange">Serving</span></div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2022</div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2211.17192" target="_blank">Speculative Decoding</a></div>
+        <div class="paper-authors">Yaniv Leviathan, Matan Kalman, Yossi Matias &middot; Google Research &middot; 2022-11</div>
+        <div class="paper-brief">小模型猜测+大模型验证，保证输出分布不变的前提下推理加速 2-3 倍。</div>
+        <div class="paper-tags"><span class="tag tag-blue">Speculative Decoding</span><span class="tag tag-purple">Lossless</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2208.07339" target="_blank">LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale</a></div>
+        <div class="paper-authors">Tim Dettmers, Mike Lewis, Younes Belkada, et al. &middot; U of Washington &middot; 2022-08</div>
+        <div class="paper-brief">混合精度量化方案，首次在 175B 模型上实现无损 8 位推理，显存减半。</div>
+        <div class="paper-tags"><span class="tag tag-blue">Quantization</span><span class="tag tag-green">INT8</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2205.14135" target="_blank">FlashAttention: Fast and Memory-Efficient Exact Attention</a></div>
+        <div class="paper-authors">Tri Dao, Daniel Y. Fu, Stefano Ermon, et al. &middot; Stanford &middot; 2022-05</div>
+        <div class="paper-brief">IO 感知的分块注意力算法，训练速度 2-3 倍，内存从 O(n&sup2;) 降到 O(n)。</div>
+        <div class="paper-tags"><span class="tag tag-blue">FlashAttention</span><span class="tag tag-orange">IO-Aware</span></div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2015</div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/1503.02531" target="_blank">Distilling the Knowledge in a Neural Network</a></div>
+        <div class="paper-authors">Geoffrey Hinton, Oriol Vinyals, Jeff Dean &middot; Google &middot; 2015-03</div>
+        <div class="paper-brief">用教师模型的软目标训练学生模型，开创知识蒸馏领域。</div>
+        <div class="paper-tags"><span class="tag tag-blue">Knowledge Distillation</span><span class="tag tag-purple">Compression</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer><p>AI 论文阅读 &mdash; 持续更新中</p></footer>
+</body>
+</html>

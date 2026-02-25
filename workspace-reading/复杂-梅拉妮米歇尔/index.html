@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>复杂 - 梅拉妮·米歇尔</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: #0a0a0f;
+      color: #e0e0e0;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Animated background */
+    .bg-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .bg-canvas .node {
+      position: absolute;
+      width: 4px; height: 4px;
+      background: rgba(99, 179, 237, 0.4);
+      border-radius: 50%;
+      animation: float 8s ease-in-out infinite;
+    }
+
+    .bg-canvas .line {
+      position: absolute;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(99, 179, 237, 0.15), transparent);
+      animation: pulse-line 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(1); opacity: 0.3; }
+      50% { transform: translateY(-30px) scale(1.5); opacity: 0.7; }
+    }
+
+    @keyframes pulse-line {
+      0%, 100% { opacity: 0.1; }
+      50% { opacity: 0.3; }
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 60px 24px;
+    }
+
+    /* Hero section */
+    .hero {
+      display: flex;
+      gap: 48px;
+      align-items: flex-start;
+      margin-bottom: 64px;
+    }
+
+    .book-cover {
+      flex-shrink: 0;
+      width: 220px;
+      height: 310px;
+      background: linear-gradient(135deg, #1a365d 0%, #2d3748 40%, #1a202c 100%);
+      border-radius: 8px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(99, 179, 237, 0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 32px 24px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+
+    .book-cover:hover {
+      transform: translateY(-4px) rotateY(-3deg);
+    }
+
+    .book-cover::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(99, 179, 237, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 70% 80%, rgba(159, 122, 234, 0.1) 0%, transparent 50%);
+    }
+
+    .book-cover .series {
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: rgba(255,255,255,0.4);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .book-cover .title-zh {
+      font-size: 48px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 8px;
+      position: relative;
+      text-shadow: 0 0 30px rgba(99, 179, 237, 0.3);
+    }
+
+    .book-cover .title-en {
+      font-size: 12px;
+      letter-spacing: 3px;
+      color: rgba(255,255,255,0.35);
+      margin-top: 12px;
+      position: relative;
+    }
+
+    .book-cover .author-cover {
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+      margin-top: 24px;
+      position: relative;
+    }
+
+    .book-info {
+      flex: 1;
+      padding-top: 8px;
+    }
+
+    .book-info .tag {
+      display: inline-block;
+      padding: 4px 14px;
+      background: rgba(99, 179, 237, 0.12);
+      border: 1px solid rgba(99, 179, 237, 0.25);
+      border-radius: 20px;
+      font-size: 12px;
+      color: #63b3ed;
+      margin-bottom: 16px;
+    }
+
+    .book-info h1 {
+      font-size: 36px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.3;
+      margin-bottom: 8px;
+    }
+
+    .book-info .subtitle {
+      font-size: 15px;
+      color: #718096;
+      margin-bottom: 24px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .meta-item .label {
+      font-size: 11px;
+      color: #718096;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .meta-item .value {
+      font-size: 15px;
+      color: #e2e8f0;
+    }
+
+    .rating {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .stars {
+      color: #ecc94b;
+      font-size: 18px;
+      letter-spacing: 2px;
+    }
+
+    .rating-text {
+      font-size: 13px;
+      color: #a0aec0;
+    }
+
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 32px;
+      background: linear-gradient(135deg, #3182ce, #2b6cb0);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .action-btn:hover {
+      background: linear-gradient(135deg, #4299e1, #3182ce);
+      box-shadow: 0 4px 20px rgba(49, 130, 206, 0.4);
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(99, 179, 237, 0.2), transparent);
+      margin: 48px 0;
+    }
+
+    /* About section */
+    .section-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title::before {
+      content: '';
+      width: 3px;
+      height: 20px;
+      background: #63b3ed;
+      border-radius: 2px;
+    }
+
+    .about-text {
+      font-size: 15px;
+      line-height: 1.9;
+      color: #a0aec0;
+      margin-bottom: 32px;
+    }
+
+    /* Key concepts */
+    .concepts {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .concept-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 24px 20px;
+      transition: all 0.25s;
+    }
+
+    .concept-card:hover {
+      background: rgba(99, 179, 237, 0.05);
+      border-color: rgba(99, 179, 237, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .concept-card .icon {
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+
+    .concept-card h3 {
+      font-size: 15px;
+      color: #e2e8f0;
+      margin-bottom: 8px;
+    }
+
+    .concept-card p {
+      font-size: 13px;
+      color: #718096;
+      line-height: 1.7;
+    }
+
+    /* TOC */
+    .toc-list {
+      list-style: none;
+      counter-reset: toc;
+    }
+
+    .toc-list li {
+      counter-increment: toc;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: color 0.2s;
+      cursor: default;
+    }
+
+    .toc-list li:hover {
+      color: #63b3ed;
+    }
+
+    .toc-list li::before {
+      content: counter(toc, decimal-leading-zero);
+      font-size: 12px;
+      color: #4a5568;
+      font-family: monospace;
+      width: 24px;
+      flex-shrink: 0;
+    }
+
+    .toc-list li .ch-title {
+      font-size: 15px;
+      color: #cbd5e0;
+      flex: 1;
+    }
+
+    .toc-list li:hover .ch-title {
+      color: #63b3ed;
+    }
+
+    /* Author section */
+    .author-section {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 16px;
+      padding: 32px;
+    }
+
+    .author-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #4a5568, #2d3748);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      color: #a0aec0;
+      flex-shrink: 0;
+    }
+
+    .author-bio h3 {
+      font-size: 18px;
+      color: #e2e8f0;
+      margin-bottom: 4px;
+    }
+
+    .author-bio .en-name {
+      font-size: 13px;
+      color: #718096;
+      margin-bottom: 12px;
+    }
+
+    .author-bio p {
+      font-size: 14px;
+      color: #a0aec0;
+      line-height: 1.8;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 48px 0 24px;
+      font-size: 12px;
+      color: #4a5568;
+    }
+
+    @media (max-width: 768px) {
+      .hero { flex-direction: column; align-items: center; text-align: center; }
+      .meta-grid { grid-template-columns: 1fr; }
+      .concepts { grid-template-columns: 1fr; }
+      .author-section { flex-direction: column; align-items: center; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Animated network background -->
+  <div class="bg-canvas" id="bgCanvas"></div>
+
+  <div class="container">
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="book-cover">
+        <span class="series">First Push Series</span>
+        <span class="title-zh">复杂</span>
+        <span class="title-en">COMPLEXITY</span>
+        <span class="author-cover">Melanie Mitchell</span>
+      </div>
+
+      <div class="book-info">
+        <span class="tag">第一推动丛书 · 综合系列</span>
+        <h1>复杂</h1>
+        <p class="subtitle">Complexity: A Guided Tour</p>
+
+        <div class="meta-grid">
+          <div class="meta-item">
+            <span class="label">作者</span>
+            <span class="value">梅拉妮·米歇尔</span>
+          </div>
+          <div class="meta-item">
+            <span class="label">译者</span>
+            <span class="value">唐璐</span>
+          </div>
+          <div class="meta-item">
+            <span class="label">出版社</span>
+            <span class="value">湖南科学技术出版社</span>
+          </div>
+          <div class="meta-item">
+            <span class="label">出版时间</span>
+            <span class="value">2018-01-01</span>
+          </div>
+          <div class="meta-item">
+            <span class="label">ISBN</span>
+            <span class="value">9787535794369</span>
+          </div>
+          <div class="meta-item">
+            <span class="label">页数</span>
+            <span class="value">约 476 页</span>
+          </div>
+        </div>
+
+        <div class="rating">
+          <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
+          <span class="rating-text">豆瓣 8.2 · 复杂性科学经典入门</span>
+        </div>
+
+        <a class="action-btn" href="https://weread.qq.com/web/reader/96832be05e43f79683a050d" target="_blank">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          继续阅读
+        </a>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- About -->
+    <section>
+      <h2 class="section-title">关于本书</h2>
+      <p class="about-text">
+        复杂性科学是一门研究复杂适应系统的跨学科科学。从蚁群的集体智慧到免疫系统的精妙运作，从互联网的涌现行为到经济市场的自组织现象——复杂系统无处不在。本书以清晰生动的笔触，带领读者走进这个迷人的领域，探索混沌、信息、计算、进化和网络等核心概念如何交织在一起，揭示自然界和人类社会中复杂性的深层规律。
+      </p>
+    </section>
+
+    <!-- Key Concepts -->
+    <section>
+      <h2 class="section-title">核心概念</h2>
+      <div class="concepts">
+        <div class="concept-card">
+          <div class="icon">&#127744;</div>
+          <h3>混沌与动力学</h3>
+          <p>确定性系统如何产生看似随机的行为？蝴蝶效应背后的数学原理。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">&#128300;</div>
+          <h3>信息与计算</h3>
+          <p>从香农的信息论到图灵机，信息如何成为理解复杂性的关键。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">&#129516;</div>
+          <h3>进化与适应</h3>
+          <p>遗传算法与生物进化如何作为复杂适应系统的计算引擎。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">&#128376;</div>
+          <h3>网络科学</h3>
+          <p>小世界网络、无标度网络，以及网络结构如何影响系统行为。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">&#129302;</div>
+          <h3>元胞自动机</h3>
+          <p>简单规则如何生成复杂图案？从生命游戏到 Wolfram 的计算等价原理。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">&#127757;</div>
+          <h3>涌现与自组织</h3>
+          <p>蚁群、大脑、经济体——没有中央控制，秩序如何从混沌中自发产生。</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- TOC -->
+    <section>
+      <h2 class="section-title">目录结构</h2>
+      <ul class="toc-list">
+        <li><span class="ch-title">总序 / 再版序 / 前言</span></li>
+        <li><span class="ch-title">第一部分 — 背景与历史</span></li>
+        <li><span class="ch-title">什么是复杂性</span></li>
+        <li><span class="ch-title">动力学、混沌与预测</span></li>
+        <li><span class="ch-title">信息</span></li>
+        <li><span class="ch-title">计算</span></li>
+        <li><span class="ch-title">进化</span></li>
+        <li><span class="ch-title">第二部分 — 计算机中的生命与进化</span></li>
+        <li><span class="ch-title">遗传算法</span></li>
+        <li><span class="ch-title">元胞自动机、生命和宇宙</span></li>
+        <li><span class="ch-title">第三部分 — 大写的计算</span></li>
+        <li><span class="ch-title">粒子计算</span></li>
+        <li><span class="ch-title">生命系统中的信息处理</span></li>
+        <li><span class="ch-title">网络科学</span></li>
+        <li><span class="ch-title">第四部分 — 网络</span></li>
+        <li><span class="ch-title">真实世界中的网络</span></li>
+        <li><span class="ch-title">网络的度量与模型</span></li>
+        <li><span class="ch-title">第五部分 — 尾声</span></li>
+        <li><span class="ch-title">复杂性科学的前景与未来</span></li>
+      </ul>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Author -->
+    <section>
+      <h2 class="section-title">关于作者</h2>
+      <div class="author-section">
+        <div class="author-avatar">M</div>
+        <div class="author-bio">
+          <h3>梅拉妮·米歇尔</h3>
+          <p class="en-name">Melanie Mitchell</p>
+          <p>
+            波特兰州立大学计算机科学教授，圣塔菲研究所外聘教授。师从侯世达（Douglas Hofstadter），在复杂系统、遗传算法和类比推理领域有深入研究。她的写作以将深奥的科学概念转化为通俗易懂的叙述而著称，本书曾获 2010 年 Phi Beta Kappa 科学图书奖。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      <p>OpenClaw Reading · 复杂 · 2026</p>
+    </div>
+
+  </div>
+
+  <script>
+    // Generate animated network background
+    const canvas = document.getElementById('bgCanvas');
+    const nodeCount = 40;
+    const lineCount = 20;
+
+    for (let i = 0; i < nodeCount; i++) {
+      const node = document.createElement('div');
+      node.className = 'node';
+      node.style.left = Math.random() * 100 + '%';
+      node.style.top = Math.random() * 100 + '%';
+      node.style.animationDelay = Math.random() * 8 + 's';
+      node.style.animationDuration = (6 + Math.random() * 6) + 's';
+      canvas.appendChild(node);
+    }
+
+    for (let i = 0; i < lineCount; i++) {
+      const line = document.createElement('div');
+      line.className = 'line';
+      line.style.left = Math.random() * 80 + '%';
+      line.style.top = Math.random() * 100 + '%';
+      line.style.width = (50 + Math.random() * 200) + 'px';
+      line.style.transform = `rotate(${Math.random() * 360}deg)`;
+      line.style.animationDelay = Math.random() * 6 + 's';
+      line.style.animationDuration = (4 + Math.random() * 6) + 's';
+      canvas.appendChild(line);
+    }
+  </script>
+
+</body>
+</html>

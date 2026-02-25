@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>红利低波研究报告 | 2026年2月</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0f1117;
+    --card: #1a1d2e;
+    --card-alt: #212538;
+    --border: #2a2e42;
+    --text: #e4e4e7;
+    --text-dim: #9ca3af;
+    --accent: #f59e0b;
+    --accent2: #3b82f6;
+    --green: #22c55e;
+    --red: #ef4444;
+    --purple: #a78bfa;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    padding: 80px 40px 60px;
+    text-align: center;
+    background: linear-gradient(135deg, #1a1d2e 0%, #0f1117 50%, #1a1024 100%);
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at 30% 50%, rgba(245,158,11,0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 50%, rgba(59,130,246,0.05) 0%, transparent 50%);
+    animation: pulse 8s ease-in-out infinite alternate;
+  }
+  @keyframes pulse {
+    from { opacity: 0.6; transform: scale(1); }
+    to { opacity: 1; transform: scale(1.05); }
+  }
+  .hero-content { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
+  .hero h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), #fbbf24, var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+    letter-spacing: 2px;
+  }
+  .hero .subtitle {
+    font-size: 1.1rem;
+    color: var(--text-dim);
+    margin-bottom: 32px;
+  }
+
+  /* KPI Row */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .kpi {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 16px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .kpi:hover { transform: translateY(-4px); border-color: var(--accent); }
+  .kpi .value {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.2;
+  }
+  .kpi .label { font-size: 0.82rem; color: var(--text-dim); margin-top: 4px; }
+  .kpi .tag {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+  .tag-green { background: rgba(34,197,94,0.15); color: var(--green); }
+  .tag-amber { background: rgba(245,158,11,0.15); color: var(--accent); }
+
+  /* Container */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+
+  /* Section */
+  .section { margin-bottom: 56px; }
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title .icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+  }
+  .section-desc {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    margin-bottom: 24px;
+  }
+
+  /* Cards grid */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: rgba(245,158,11,0.3); }
+  .card-full { grid-column: 1 / -1; }
+  .card h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  /* Chart wrapper */
+  .chart-wrap {
+    position: relative;
+    width: 100%;
+    max-height: 340px;
+  }
+
+  /* Table */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+  .data-table th {
+    text-align: left;
+    padding: 10px 12px;
+    color: var(--text-dim);
+    font-weight: 500;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .data-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .data-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .pos { color: var(--green); font-weight: 600; }
+  .neg { color: var(--red); font-weight: 600; }
+
+  /* Progress bar */
+  .progress-bar {
+    height: 8px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .progress-bar .fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1s ease;
+  }
+
+  /* Gauge */
+  .gauge-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .gauge-label { width: 80px; font-size: 0.85rem; color: var(--text-dim); flex-shrink: 0; }
+  .gauge-track {
+    flex: 1;
+    height: 10px;
+    background: linear-gradient(90deg, var(--green), var(--accent), var(--red));
+    border-radius: 5px;
+    position: relative;
+  }
+  .gauge-marker {
+    position: absolute;
+    top: -4px;
+    width: 18px;
+    height: 18px;
+    background: #fff;
+    border: 3px solid var(--bg);
+    border-radius: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 0 8px rgba(255,255,255,0.3);
+  }
+  .gauge-val { width: 60px; text-align: right; font-weight: 700; font-size: 0.95rem; }
+
+  /* Recommendation box */
+  .rec-box {
+    background: linear-gradient(135deg, rgba(245,158,11,0.08), rgba(59,130,246,0.06));
+    border: 1px solid rgba(245,158,11,0.2);
+    border-radius: 16px;
+    padding: 32px;
+  }
+  .rec-box h3 {
+    font-size: 1.2rem;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+  .rec-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+  }
+  .rec-item { }
+  .rec-item .rec-label { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 4px; }
+  .rec-item .rec-value { font-size: 1.3rem; font-weight: 700; }
+
+  /* Risk list */
+  .risk-list { list-style: none; }
+  .risk-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .risk-list li:last-child { border-bottom: none; }
+  .risk-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 7px;
+  }
+  .risk-list .risk-title { font-weight: 600; font-size: 0.9rem; }
+  .risk-list .risk-desc { font-size: 0.82rem; color: var(--text-dim); margin-top: 2px; }
+
+  /* ETF compare */
+  .etf-card {
+    background: var(--card-alt);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+    border: 1px solid var(--border);
+    transition: border-color 0.2s;
+  }
+  .etf-card:hover { border-color: var(--accent); }
+  .etf-badge {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.7rem;
+    flex-shrink: 0;
+    line-height: 1.1;
+    text-align: center;
+  }
+  .etf-info { flex: 1; }
+  .etf-name { font-weight: 600; font-size: 0.95rem; }
+  .etf-code { font-size: 0.8rem; color: var(--text-dim); }
+  .etf-meta { display: flex; gap: 16px; margin-top: 6px; }
+  .etf-meta span { font-size: 0.78rem; color: var(--text-dim); }
+  .etf-meta strong { color: var(--text); }
+  .etf-tag {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 40px 24px;
+    color: var(--text-dim);
+    font-size: 0.78rem;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Tabs */
+  .tab-bar {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 10px;
+    padding: 4px;
+    overflow-x: auto;
+  }
+  .tab-btn {
+    padding: 8px 18px;
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    border-radius: 8px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .tab-btn.active { background: var(--accent); color: var(--bg); font-weight: 600; }
+  .tab-btn:hover:not(.active) { color: var(--text); }
+
+  /* Animate in */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.6s ease forwards;
+  }
+  @keyframes fadeIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .delay-1 { animation-delay: 0.1s; }
+  .delay-2 { animation-delay: 0.2s; }
+  .delay-3 { animation-delay: 0.3s; }
+  .delay-4 { animation-delay: 0.4s; }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 2rem; }
+    .hero { padding: 48px 20px 40px; }
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .cards { grid-template-columns: 1fr; }
+    .rec-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-content">
+    <h1>红利低波研究报告</h1>
+    <p class="subtitle">中证红利低波动指数 (H30269) 深度分析 &middot; 2026年2月</p>
+    <div class="kpi-row">
+      <div class="kpi fade-in delay-1">
+        <div class="value" style="color:var(--accent)">7.08</div>
+        <div class="label">PE (TTM)</div>
+        <span class="tag tag-green">历史20%分位</span>
+      </div>
+      <div class="kpi fade-in delay-2">
+        <div class="value" style="color:var(--green)">6.15%</div>
+        <div class="label">股息率</div>
+        <span class="tag tag-green">历史高位</span>
+      </div>
+      <div class="kpi fade-in delay-3">
+        <div class="value" style="color:var(--accent2)">0.79</div>
+        <div class="label">PB (市值加权)</div>
+        <span class="tag tag-amber">破净</span>
+      </div>
+      <div class="kpi fade-in delay-4">
+        <div class="value" style="color:var(--purple)">50</div>
+        <div class="label">成分股数量</div>
+        <span class="tag tag-amber">股息率加权</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- 历史收益 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(34,197,94,0.15)">&#9650;</span>
+      历史收益表现
+    </div>
+    <p class="section-desc">红利低波在熊市中展现极强防御力，2022-2024年逆势累计+42.61%</p>
+    <div class="cards">
+      <div class="card">
+        <h3>逐年收益对比（全收益指数）</h3>
+        <div class="chart-wrap"><canvas id="chartYearly"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>累计收益对比</h3>
+        <div class="chart-wrap"><canvas id="chartCumulative"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 512890 ETF -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(59,130,246,0.15)">&#9632;</span>
+      512890 ETF 历年收益
+    </div>
+    <p class="section-desc">华泰柏瑞红利低波ETF，成立以来年年正收益</p>
+    <div class="cards">
+      <div class="card">
+        <div class="chart-wrap"><canvas id="chart512890"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>关键数据</h3>
+        <table class="data-table">
+          <tr><th>指标</th><th class="num">数值</th></tr>
+          <tr><td>成立日期</td><td class="num">2018-12-19</td></tr>
+          <tr><td>最新规模</td><td class="num">~267亿</td></tr>
+          <tr><td>联接基金年化</td><td class="num pos">12.67%</td></tr>
+          <tr><td>连续月分红</td><td class="num">27个月</td></tr>
+          <tr><td>年度胜率</td><td class="num pos">100%</td></tr>
+          <tr><td>综合费率</td><td class="num">0.60%</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 最大回撤 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(239,68,68,0.15)">&#9660;</span>
+      最大回撤对比
+    </div>
+    <p class="section-desc">低波因子有效控制下行风险，各周期回撤均优于纯红利和宽基</p>
+    <div class="cards">
+      <div class="card card-full">
+        <div class="chart-wrap"><canvas id="chartDrawdown"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 估值仪表盘 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(245,158,11,0.15)">&#9673;</span>
+      估值仪表盘
+    </div>
+    <p class="section-desc">当前PE处于历史偏低分位，股息率处于历史极高水平</p>
+    <div class="cards">
+      <div class="card">
+        <h3>PE 历史分位</h3>
+        <div class="gauge-row">
+          <span class="gauge-label">当前PE</span>
+          <div class="gauge-track">
+            <div class="gauge-marker" style="left:20%"></div>
+          </div>
+          <span class="gauge-val" style="color:var(--green)">7.08</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--text-dim);margin-top:4px">
+          <span>低 5.43</span>
+          <span>20% → 7.05</span>
+          <span>50% → 8.68</span>
+          <span>高 17.29</span>
+        </div>
+
+        <h3 style="margin-top:28px">股息率 历史分位</h3>
+        <div class="gauge-row">
+          <span class="gauge-label">当前股息率</span>
+          <div class="gauge-track" style="background:linear-gradient(90deg, var(--red), var(--accent), var(--green))">
+            <div class="gauge-marker" style="left:85%"></div>
+          </div>
+          <span class="gauge-val" style="color:var(--green)">6.15%</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--text-dim);margin-top:4px">
+          <span>低 2.17%</span>
+          <span>50% → 4.66%</span>
+          <span>80% → 5.68%</span>
+          <span>高 7.35%</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>行业分布</h3>
+        <div class="chart-wrap"><canvas id="chartSector"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 策略对比 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(167,139,250,0.15)">&#9878;</span>
+      红利策略对比
+    </div>
+    <p class="section-desc">红利为矛，低波为盾——不同策略适配不同市场环境</p>
+    <div class="cards">
+      <div class="card card-full">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>维度</th>
+              <th>红利低波</th>
+              <th>中证红利</th>
+              <th>红利质量</th>
+              <th>红利低波100</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>选股逻辑</td>
+              <td>高股息+低波动</td>
+              <td>纯股息率排序</td>
+              <td>高股息+高ROE</td>
+              <td>股息率/波动率比值</td>
+            </tr>
+            <tr>
+              <td>成分股</td>
+              <td>50只</td>
+              <td>100只</td>
+              <td>50只</td>
+              <td>100只</td>
+            </tr>
+            <tr>
+              <td>年均股息率</td>
+              <td class="pos">5%~7%</td>
+              <td>4%~6%</td>
+              <td>2%~3%</td>
+              <td>5%~6%</td>
+            </tr>
+            <tr>
+              <td>熊市防御</td>
+              <td class="pos">极强</td>
+              <td>一般</td>
+              <td>较弱</td>
+              <td class="pos">强</td>
+            </tr>
+            <tr>
+              <td>牛市弹性</td>
+              <td>一般</td>
+              <td class="pos">较强</td>
+              <td class="pos">最强</td>
+              <td>一般</td>
+            </tr>
+            <tr>
+              <td>行业集中度</td>
+              <td class="neg">高（银行48%）</td>
+              <td>中等</td>
+              <td>中等</td>
+              <td class="pos">低（银行21%）</td>
+            </tr>
+            <tr>
+              <td>10年年化</td>
+              <td class="pos">~15%</td>
+              <td>~14%</td>
+              <td class="pos">~20%</td>
+              <td class="pos">~14.3%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 投资建议 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(245,158,11,0.15)">&#10070;</span>
+      投资建议
+    </div>
+    <p class="section-desc">2026年2月：值得配置，定投为主，降低收益预期，注重精选结构</p>
+
+    <div class="rec-box" style="margin-bottom:24px">
+      <h3>核心建议</h3>
+      <div class="rec-grid">
+        <div class="rec-item">
+          <div class="rec-label">投资方式</div>
+          <div class="rec-value" style="color:var(--accent)">定投为主</div>
+          <div style="font-size:0.82rem;color:var(--text-dim);margin-top:4px">60~70%资金分6~12月投入<br>30%等PE&lt;7时加仓</div>
+        </div>
+        <div class="rec-item">
+          <div class="rec-label">持有时间</div>
+          <div class="rec-value" style="color:var(--accent2)">5年以上</div>
+          <div style="font-size:0.82rem;color:var(--text-dim);margin-top:4px">最低3年<br>作为底仓长期持有</div>
+        </div>
+        <div class="rec-item">
+          <div class="rec-label">预期年化收益</div>
+          <div class="rec-value" style="color:var(--green)">7% ~ 12%</div>
+          <div style="font-size:0.82rem;color:var(--text-dim);margin-top:4px">股息5~6% + 资本增值2~6%</div>
+        </div>
+        <div class="rec-item">
+          <div class="rec-label">组合占比</div>
+          <div class="rec-value" style="color:var(--purple)">20% ~ 30%</div>
+          <div style="font-size:0.82rem;color:var(--text-dim);margin-top:4px">哑铃策略：红利防守+科技进攻</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 预期收益拆解 -->
+    <div class="cards">
+      <div class="card">
+        <h3>预期收益拆解</h3>
+        <div class="chart-wrap"><canvas id="chartReturn"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>主要风险</h3>
+        <ul class="risk-list">
+          <li>
+            <span class="risk-dot" style="background:var(--red)"></span>
+            <div>
+              <div class="risk-title">利率上行风险</div>
+              <div class="risk-desc">国债收益率意外上行 → 股债剪刀差收窄 → 红利吸引力下降</div>
+            </div>
+          </li>
+          <li>
+            <span class="risk-dot" style="background:var(--red)"></span>
+            <div>
+              <div class="risk-title">分红透支风险</div>
+              <div class="risk-desc">部分公司分红超过净利润或自由现金流，不可持续</div>
+            </div>
+          </li>
+          <li>
+            <span class="risk-dot" style="background:var(--accent)"></span>
+            <div>
+              <div class="risk-title">周期见顶风险</div>
+              <div class="risk-desc">煤炭等行业景气顶部高股息率可能大幅回落</div>
+            </div>
+          </li>
+          <li>
+            <span class="risk-dot" style="background:var(--accent)"></span>
+            <div>
+              <div class="risk-title">风格轮动风险</div>
+              <div class="risk-desc">成长风格持续强势时，红利相对收益可能持续跑输</div>
+            </div>
+          </li>
+          <li>
+            <span class="risk-dot" style="background:var(--accent2)"></span>
+            <div>
+              <div class="risk-title">中美贸易摩擦</div>
+              <div class="risk-desc">关税升级冲击出口导向型红利股盈利</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ETF 推荐 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(59,130,246,0.15)">&#9733;</span>
+      ETF 产品推荐
+    </div>
+    <p class="section-desc">费率差异显著，低费率产品长期可节省可观成本</p>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="showETFTab('h30269')">红利低波 (H30269)</button>
+      <button class="tab-btn" onclick="showETFTab('s930955')">红利低波100 (930955)</button>
+    </div>
+
+    <div id="tab-h30269">
+      <div class="etf-card">
+        <div class="etf-badge" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#000">最大<br>流动</div>
+        <div class="etf-info">
+          <div class="etf-name">华泰柏瑞红利低波ETF</div>
+          <div class="etf-code">512890 (沪市)</div>
+          <div class="etf-meta">
+            <span>规模 <strong>~267亿</strong></span>
+            <span>费率 <strong>0.60%</strong></span>
+          </div>
+        </div>
+        <span class="etf-tag" style="background:rgba(245,158,11,0.15);color:var(--accent)">流动性最佳</span>
+      </div>
+      <div class="etf-card">
+        <div class="etf-badge" style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#000">最低<br>费率</div>
+        <div class="etf-info">
+          <div class="etf-name">易方达红利低波动ETF</div>
+          <div class="etf-code">563020 (沪市)</div>
+          <div class="etf-meta">
+            <span>规模 <strong>~47亿</strong></span>
+            <span>费率 <strong style="color:var(--green)">0.20%</strong></span>
+          </div>
+        </div>
+        <span class="etf-tag" style="background:rgba(34,197,94,0.15);color:var(--green)">费率最低</span>
+      </div>
+      <div class="etf-card">
+        <div class="etf-badge" style="background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff">低费<br>深市</div>
+        <div class="etf-info">
+          <div class="etf-name">华夏红利低波动ETF</div>
+          <div class="etf-code">159547 (深市)</div>
+          <div class="etf-meta">
+            <span>规模 <strong>较小</strong></span>
+            <span>费率 <strong style="color:var(--green)">0.20%</strong></span>
+          </div>
+        </div>
+        <span class="etf-tag" style="background:rgba(59,130,246,0.15);color:var(--accent2)">深市交易</span>
+      </div>
+    </div>
+
+    <div id="tab-s930955" style="display:none">
+      <div class="etf-card">
+        <div class="etf-badge" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#000">最大<br>流动</div>
+        <div class="etf-info">
+          <div class="etf-name">景顺长城红利低波100ETF</div>
+          <div class="etf-code">515100 (沪市)</div>
+          <div class="etf-meta">
+            <span>规模 <strong>~64亿</strong></span>
+            <span>费率 <strong>0.60%</strong></span>
+          </div>
+        </div>
+        <span class="etf-tag" style="background:rgba(245,158,11,0.15);color:var(--accent)">规模最大</span>
+      </div>
+      <div class="etf-card">
+        <div class="etf-badge" style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#000">季度<br>分红</div>
+        <div class="etf-info">
+          <div class="etf-name">博时红利低波100ETF</div>
+          <div class="etf-code">159307 (深市)</div>
+          <div class="etf-meta">
+            <span>规模 <strong>中等</strong></span>
+            <span>费率 <strong style="color:var(--green)">0.20%</strong></span>
+          </div>
+        </div>
+        <span class="etf-tag" style="background:rgba(34,197,94,0.15);color:var(--green)">低费+季度分红</span>
+      </div>
+      <div class="etf-card">
+        <div class="etf-badge" style="background:linear-gradient(135deg,#a78bfa,#7c3aed);color:#fff">场外<br>定投</div>
+        <div class="etf-info">
+          <div class="etf-name">天弘红利低波100联接A</div>
+          <div class="etf-code">008114</div>
+          <div class="etf-meta">
+            <span>类型 <strong>联接基金</strong></span>
+            <span>适合 <strong>场外定投</strong></span>
+          </div>
+        </div>
+        <span class="etf-tag" style="background:rgba(167,139,250,0.15);color:var(--purple)">支付宝可买</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 宏观环境 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(59,130,246,0.15)">&#9788;</span>
+      宏观环境
+    </div>
+    <p class="section-desc">低利率环境持续，构成红利策略最重要的宏观支撑</p>
+    <div class="cards">
+      <div class="card">
+        <h3>有利因素</h3>
+        <ul class="risk-list">
+          <li>
+            <span class="risk-dot" style="background:var(--green)"></span>
+            <div><div class="risk-title">低利率环境延续</div><div class="risk-desc">1年期LPR降至3%，存款利率&lt;1%，股息率与国债利差约320bp</div></div>
+          </li>
+          <li>
+            <span class="risk-dot" style="background:var(--green)"></span>
+            <div><div class="risk-title">险资增配需求</div><div class="risk-desc">2026年保险公司全面实施新会计准则，高股息资产配置需求扩大</div></div>
+          </li>
+          <li>
+            <span class="risk-dot" style="background:var(--green)"></span>
+            <div><div class="risk-title">分红规模增长</div><div class="risk-desc">A股分红2025年达2.61万亿，监管持续鼓励上市公司分红</div></div>
+          </li>
+          <li>
+            <span class="risk-dot" style="background:var(--green)"></span>
+            <div><div class="risk-title">估值回落至合理区间</div><div class="risk-desc">2025年Q4回调后，PE重回历史20%分位附近</div></div>
+          </li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>不利因素</h3>
+        <ul class="risk-list">
+          <li>
+            <span class="risk-dot" style="background:var(--red)"></span>
+            <div><div class="risk-title">难以复制整体重估行情</div><div class="risk-desc">2024年式的整体估值修复难以再现，机会更多在结构分化</div></div>
+          </li>
+          <li>
+            <span class="risk-dot" style="background:var(--accent)"></span>
+            <div><div class="risk-title">成长风格可能继续占优</div><div class="risk-desc">AI驱动的科技行情在上半年可能持续，红利相对跑输</div></div>
+          </li>
+          <li>
+            <span class="risk-dot" style="background:var(--accent)"></span>
+            <div><div class="risk-title">投资性价比边际弱化</div><div class="risk-desc">经过2023-2024年连续上涨，绝对收益空间较此前收窄</div></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <p>免责声明：以上内容仅为公开信息整理和研究参考，不构成任何投资建议。投资有风险，入市需谨慎。</p>
+  <p style="margin-top:8px">数据来源：中证指数官网、上海证券报、中国基金报、东方财富、中金公司、嘉实基金等公开渠道 &middot; 研究日期 2026-02-25</p>
+</div>
+
+<script>
+// Chart defaults
+Chart.defaults.color = '#9ca3af';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.font.family = '-apple-system, "PingFang SC", sans-serif';
+
+// 1. Yearly comparison
+new Chart(document.getElementById('chartYearly'), {
+  type: 'bar',
+  data: {
+    labels: ['2015', '2016', '2018', '2021', '2022', '2023', '2024'],
+    datasets: [
+      {
+        label: '红利低波全收益',
+        data: [16.06, 0.08, -16.39, 16.34, 3.46, 12.23, 24.82],
+        backgroundColor: '#f59e0b',
+        borderRadius: 4,
+      },
+      {
+        label: '沪深300全收益',
+        data: [7.22, -9.26, -23.64, -3.52, -19.84, -9.14, 18.24],
+        backgroundColor: '#3b82f6',
+        borderRadius: 4,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'top', labels: { boxWidth: 12, padding: 16 } },
+      tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y + '%' } }
+    },
+    scales: {
+      y: {
+        ticks: { callback: v => v + '%' },
+        grid: { color: 'rgba(255,255,255,0.04)' }
+      },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// 2. Cumulative
+new Chart(document.getElementById('chartCumulative'), {
+  type: 'bar',
+  data: {
+    labels: ['近3年', '近5年', '近10年'],
+    datasets: [
+      {
+        label: '红利低波全收益',
+        data: [36.32, 97.53, 121.35],
+        backgroundColor: '#f59e0b',
+        borderRadius: 6,
+      },
+      {
+        label: '沪深300全收益',
+        data: [-0.23, 18.77, 19.74],
+        backgroundColor: '#3b82f6',
+        borderRadius: 6,
+      }
+    ]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'top', labels: { boxWidth: 12, padding: 16 } },
+      tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.x + '%' } }
+    },
+    scales: {
+      x: { ticks: { callback: v => v + '%' }, grid: { color: 'rgba(255,255,255,0.04)' } },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// 3. 512890
+new Chart(document.getElementById('chart512890'), {
+  type: 'bar',
+  data: {
+    labels: ['2019', '2020', '2021', '2022', '2023', '2024', '2025H1'],
+    datasets: [{
+      label: '512890 年收益率',
+      data: [21.57, 9.46, 19.56, 2.72, 11.91, 22.64, 5.69],
+      backgroundColor: ctx => {
+        const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 300);
+        g.addColorStop(0, 'rgba(34,197,94,0.7)');
+        g.addColorStop(1, 'rgba(34,197,94,0.1)');
+        return g;
+      },
+      borderRadius: 6,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => '+' + ctx.parsed.y + '%' } }
+    },
+    scales: {
+      y: { ticks: { callback: v => v + '%' }, grid: { color: 'rgba(255,255,255,0.04)' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// 4. Drawdown
+new Chart(document.getElementById('chartDrawdown'), {
+  type: 'bar',
+  data: {
+    labels: ['近1年', '近3年', '近5年', '近10年'],
+    datasets: [
+      {
+        label: '红利低波全收益',
+        data: [-13.49, -13.54, -16.92, -42.49],
+        backgroundColor: 'rgba(245,158,11,0.7)',
+        borderRadius: 4,
+      },
+      {
+        label: '中证红利全收益',
+        data: [-14.53, -14.53, -18.39, -45.66],
+        backgroundColor: 'rgba(239,68,68,0.5)',
+        borderRadius: 4,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'top', labels: { boxWidth: 12, padding: 16 } },
+      tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y + '%' } }
+    },
+    scales: {
+      y: { ticks: { callback: v => v + '%' }, grid: { color: 'rgba(255,255,255,0.04)' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// 5. Sector
+new Chart(document.getElementById('chartSector'), {
+  type: 'doughnut',
+  data: {
+    labels: ['银行', '煤炭', '交通运输', '建筑装饰', '石油石化', '钢铁', '传媒', '其他'],
+    datasets: [{
+      data: [42, 17, 12, 7, 5, 4, 4, 9],
+      backgroundColor: [
+        '#f59e0b', '#3b82f6', '#22c55e', '#a78bfa',
+        '#ef4444', '#06b6d4', '#f472b6', '#64748b'
+      ],
+      borderWidth: 0,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '60%',
+    plugins: {
+      legend: { position: 'right', labels: { boxWidth: 10, padding: 8, font: { size: 12 } } },
+      tooltip: { callbacks: { label: ctx => ctx.label + ': ' + ctx.parsed + '%' } }
+    }
+  }
+});
+
+// 6. Return breakdown
+new Chart(document.getElementById('chartReturn'), {
+  type: 'bar',
+  data: {
+    labels: ['悲观情景', '基准情景', '乐观情景'],
+    datasets: [
+      {
+        label: '股息收入',
+        data: [5, 5.5, 6],
+        backgroundColor: '#f59e0b',
+        borderRadius: 4,
+      },
+      {
+        label: '资本增值',
+        data: [2, 4, 6],
+        backgroundColor: '#3b82f6',
+        borderRadius: 4,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'top', labels: { boxWidth: 12, padding: 16 } },
+      tooltip: {
+        callbacks: {
+          afterBody: tooltipItems => {
+            const total = tooltipItems.reduce((s, t) => s + t.parsed.y, 0);
+            return '合计: ' + total + '%';
+          },
+          label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y + '%'
+        }
+      }
+    },
+    scales: {
+      x: { stacked: true, grid: { display: false } },
+      y: { stacked: true, ticks: { callback: v => v + '%' }, grid: { color: 'rgba(255,255,255,0.04)' }, max: 14 }
+    }
+  }
+});
+
+// Tab switching
+function showETFTab(id) {
+  document.getElementById('tab-h30269').style.display = id === 'h30269' ? 'block' : 'none';
+  document.getElementById('tab-s930955').style.display = id === 's930955' ? 'block' : 'none';
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent.includes(id === 'h30269' ? 'H30269' : '930955'));
+  });
+}
+
+// Scroll animation
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('fade-in');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.section').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

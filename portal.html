@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenClaw Portal</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --card: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text2: #8b949e;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --orange: #d29922;
+    --red: #f85149;
+    --purple: #bc8cff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font: 15px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    padding: 40px 20px;
+  }
+  .container { max-width: 960px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 40px; }
+  header h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+  header p { color: var(--text2); font-size: 14px; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    transition: border-color 0.2s, transform 0.15s;
+  }
+  .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .card-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: grid; place-items: center; font-size: 18px; flex-shrink: 0;
+  }
+  .card-title { font-size: 16px; font-weight: 600; }
+  .card-desc { color: var(--text2); font-size: 13px; margin-bottom: 14px; line-height: 1.5; }
+  .card-links { display: flex; flex-direction: column; gap: 6px; }
+  .card-links a {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 13px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background: rgba(88, 166, 255, 0.08);
+    transition: background 0.15s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .card-links a:hover { background: rgba(88, 166, 255, 0.18); }
+  .card-links a::before { content: "→"; opacity: 0.5; }
+  .tag {
+    display: inline-block; font-size: 11px; padding: 2px 8px;
+    border-radius: 10px; font-weight: 500;
+  }
+  .tag-active { background: rgba(63, 185, 80, 0.15); color: var(--green); }
+  .tag-rich { background: rgba(188, 140, 255, 0.15); color: var(--purple); }
+  .section-title {
+    font-size: 13px; font-weight: 600; color: var(--text2);
+    text-transform: uppercase; letter-spacing: 1px;
+    margin: 32px 0 14px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  footer { text-align: center; margin-top: 48px; color: var(--text2); font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>OpenClaw Portal</h1>
+    <p>All workspace dashboards in one place</p>
+  </header>
+
+  <div class="section-title">Investment & Finance</div>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(248,81,73,0.15)">📈</div>
+        <div>
+          <div class="card-title">A股研究</div>
+          <span class="tag tag-active">Active</span>
+        </div>
+      </div>
+      <div class="card-desc">中国A股红利低波策略研究：指数基本面、历史表现、投资建议</div>
+      <div class="card-links">
+        <a href="workspace-cn-stock/红利低波研究/index.html">红利低波研究报告</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(88,166,255,0.15)">🇺🇸</div>
+        <div>
+          <div class="card-title">美股-均值回归</div>
+          <span class="tag tag-rich">Rich</span>
+        </div>
+      </div>
+      <div class="card-desc">S&P 500 均值回归量化策略：回测报告、行业权重分析</div>
+      <div class="card-links">
+        <a href="workspace-us-mean-reversion/index.html">项目主页</a>
+        <a href="workspace-us-mean-reversion/sp500-mean-reversion/index.html">标普500均值回归验证 1928-2024</a>
+        <a href="workspace-us-mean-reversion/pe-valuation/index.html">S&P 500 PE 高估值归因</a>
+        <a href="workspace-us-mean-reversion/equity-premium/index.html">风险溢价之谜与 EPS 低估假说</a>
+        <a href="workspace-us-mean-reversion/mag7-ai-attribution/index.html">Mag 7 盈利 AI 归因</a>
+        <a href="workspace-us-mean-reversion/gold-zero-sum/index.html">黄金：正和→零和与法币信任危机</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(210,153,34,0.15)">🏦</div>
+        <div>
+          <div class="card-title">中国宏观经济</div>
+          <span class="tag tag-rich">Rich</span>
+        </div>
+      </div>
+      <div class="card-desc">47 问宏观分析框架：12 个维度覆盖总量结构、财政货币、地产金融等</div>
+      <div class="card-links">
+        <a href="workspace-cn-macro/index.html">宏观分析仪表盘</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section-title">Social Media</div>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(88,166,255,0.15)">📱</div>
+        <div>
+          <div class="card-title">社交媒体</div>
+          <span class="tag tag-active">Active</span>
+        </div>
+      </div>
+      <div class="card-desc">微信 / 小红书 / B站 / YouTube 每日内容汇总与趋势</div>
+      <div class="card-links">
+        <a href="workspace-social-media/每日汇总/index.html">社交媒体时间线</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(188,140,255,0.15)">📝</div>
+        <div>
+          <div class="card-title">自媒体</div>
+          <span class="tag tag-rich">Rich</span>
+        </div>
+      </div>
+      <div class="card-desc">AI 对自媒体行业的影响：供给冲击、注意力经济、创作者护城河、价值迁移</div>
+      <div class="card-links">
+        <a href="workspace-self-media/自媒体行业/index.html">AI 对自媒体行业的影响（调研）</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section-title">Research & Knowledge</div>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(188,140,255,0.15)">🤖</div>
+        <div>
+          <div class="card-title">AI讨论</div>
+          <span class="tag tag-rich">Rich</span>
+        </div>
+      </div>
+      <div class="card-desc">AI 研究追踪：论文分类、发展时间线、关键人物追踪（33位）</div>
+      <div class="card-links">
+        <a href="workspace-ai-discussion/ai-论文/index.html">论文库</a>
+        <a href="workspace-ai-discussion/anthropic-claude/index.html">Anthropic & Claude 研究</a>
+        <a href="workspace-ai-discussion/实体追踪/index.html">实体追踪</a>
+        <a href="workspace-ai-discussion/ai-economic-impact/index.html">AI 经济影响分析</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(63,185,80,0.15)">🏠</div>
+        <div>
+          <div class="card-title">西安房地产研究</div>
+          <span class="tag tag-active">Active</span>
+        </div>
+      </div>
+      <div class="card-desc">西安高新区房地产分析：楼盘数据、地图可视化、数据质量报告</div>
+      <div class="card-links">
+        <a href="workspace-realestate/xian-realestate/index.html">房产分析主页</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section-title">Lifestyle</div>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(63,185,80,0.15)">📚</div>
+        <div>
+          <div class="card-title">Reading</div>
+          <span class="tag tag-active">Active</span>
+        </div>
+      </div>
+      <div class="card-desc">读书笔记、书单推荐、阅读心得</div>
+      <div class="card-links">
+        <a href="workspace-reading/复杂-梅拉妮米歇尔/index.html">复杂 — 梅拉妮·米歇尔</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(210,153,34,0.15)">🍜</div>
+        <div>
+          <div class="card-title">吃喝玩乐</div>
+          <span class="tag tag-active">Active</span>
+        </div>
+      </div>
+      <div class="card-desc">美食、旅行、娱乐、生活日常</div>
+      <div class="card-links">
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section-title">System</div>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(88,166,255,0.15)">🦞</div>
+        <div>
+          <div class="card-title">OpenClaw</div>
+        </div>
+      </div>
+      <div class="card-desc">系统诊断、项目状态、Canvas 测试页</div>
+      <div class="card-links">
+        <a href="http://127.0.0.1:18789/" target="_blank">Gateway Dashboard</a>
+        <a href="workspace/docs/index.html">诊断页面</a>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>OpenClaw Portal &middot; file:// links &middot; open this file directly in browser</footer>
+</div>
+</body>
+</html>

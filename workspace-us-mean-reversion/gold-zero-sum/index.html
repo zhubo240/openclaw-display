@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>黄金上涨：正和 → 零和演变与法币信任危机</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: #0a0e1a;
+    color: #e0e6ed;
+    line-height: 1.7;
+  }
+
+  .sidebar {
+    position: fixed; left: 0; top: 0; bottom: 0;
+    width: 230px;
+    background: rgba(10, 14, 26, 0.97);
+    border-right: 1px solid rgba(255,255,255,0.08);
+    padding: 20px 0;
+    overflow-y: auto;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+  .sidebar .logo {
+    padding: 0 16px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 12px;
+  }
+  .sidebar .logo h3 {
+    font-size: 0.85rem;
+    background: linear-gradient(135deg, #fbbf24, #f87171);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .sidebar .logo span { font-size: 0.68rem; color: #4a5568; }
+  .nav-group { padding: 0 8px; margin-bottom: 6px; }
+  .nav-group-title {
+    font-size: 0.62rem; color: #4a5568;
+    text-transform: uppercase; letter-spacing: 1.5px;
+    padding: 8px 8px 4px; font-weight: 600;
+  }
+  .nav-link {
+    display: block; padding: 6px 12px;
+    color: #6b7a8d; text-decoration: none;
+    font-size: 0.78rem; border-radius: 6px;
+    transition: all 0.2s; line-height: 1.4;
+  }
+  .nav-link:hover { background: rgba(251,191,36,0.1); color: #a5b4c6; }
+  .nav-link.active { background: rgba(251,191,36,0.15); color: #fbbf24; font-weight: 500; }
+
+  .main { margin-left: 230px; padding: 20px; max-width: 1100px; }
+
+  .header {
+    text-align: center; padding: 30px 0 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 24px;
+  }
+  .header h1 {
+    font-size: 1.8rem;
+    background: linear-gradient(135deg, #fbbf24, #f87171, #f472b6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 6px;
+  }
+  .header .subtitle { color: #6b7a8d; font-size: 0.88rem; }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px; margin-bottom: 24px;
+  }
+  .card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px; padding: 16px; text-align: center;
+  }
+  .card .label { font-size: 0.68rem; color: #6b7a8d; text-transform: uppercase; letter-spacing: 1px; }
+  .card .value { font-size: 1.5rem; font-weight: 700; margin-top: 4px; }
+  .card .sub { font-size: 0.72rem; color: #4a5568; margin-top: 2px; }
+  .green { color: #34d399; }
+  .blue { color: #60a5fa; }
+  .orange { color: #fbbf24; }
+  .pink { color: #f472b6; }
+  .purple { color: #a78bfa; }
+  .red { color: #f87171; }
+
+  .section {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px; padding: 24px;
+    margin-bottom: 20px; scroll-margin-top: 20px;
+  }
+  .section h2 { font-size: 1.15rem; color: #a5b4c6; margin-bottom: 4px; }
+  .section .desc { font-size: 0.82rem; color: #4a5568; margin-bottom: 14px; }
+  .chart-container { position: relative; width: 100%; height: 340px; }
+
+  .insight {
+    background: rgba(167, 139, 250, 0.06);
+    border-left: 3px solid #a78bfa;
+    padding: 12px 16px; border-radius: 0 6px 6px 0;
+    margin-top: 14px; font-size: 0.85rem; color: #8896a8;
+  }
+  .insight strong { color: #a78bfa; }
+  .insight.warn {
+    background: rgba(251,191,36,0.06);
+    border-left-color: #fbbf24;
+  }
+  .insight.warn strong { color: #fbbf24; }
+  .insight.danger {
+    background: rgba(248,113,113,0.06);
+    border-left-color: #f87171;
+  }
+  .insight.danger strong { color: #f87171; }
+  .insight.gold {
+    background: rgba(251,191,36,0.08);
+    border-left-color: #fbbf24;
+  }
+  .insight.gold strong { color: #fbbf24; }
+
+  table {
+    width: 100%; border-collapse: collapse;
+    font-size: 0.82rem; margin: 10px 0;
+  }
+  th {
+    text-align: left; padding: 8px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+    color: #6b7a8d; font-weight: 600; font-size: 0.75rem;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  td {
+    padding: 7px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: #a5b4c6;
+  }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .flow-diagram {
+    display: flex; flex-direction: column; gap: 2px;
+    padding: 16px; font-size: 0.82rem;
+  }
+  .flow-step {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; border-radius: 8px;
+    background: rgba(255,255,255,0.03);
+    border-left: 3px solid;
+  }
+  .flow-step .arrow { color: #4a5568; font-size: 0.7rem; text-align: center; padding: 2px 0; }
+  .flow-step .icon { font-size: 1.1rem; min-width: 24px; text-align: center; }
+  .flow-step .text { flex: 1; color: #8896a8; }
+  .flow-step .text strong { color: #e0e6ed; }
+
+  .phase-timeline {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 12px; margin: 14px 0;
+  }
+  .phase-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px; padding: 16px;
+    border-top: 3px solid;
+  }
+  .phase-card h4 { font-size: 0.85rem; margin-bottom: 4px; }
+  .phase-card .time { font-size: 0.72rem; color: #4a5568; margin-bottom: 8px; }
+  .phase-card p { font-size: 0.8rem; color: #8896a8; line-height: 1.5; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 800px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+    .two-col, .phase-timeline { grid-template-columns: 1fr; }
+    .summary-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .layer-stack {
+    display: flex; flex-direction: column; gap: 0;
+    margin: 14px 0; border-radius: 10px; overflow: hidden;
+  }
+  .layer {
+    padding: 14px 18px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .layer .name { font-weight: 600; font-size: 0.85rem; }
+  .layer .detail { font-size: 0.78rem; opacity: 0.8; }
+
+  .tag {
+    display: inline-block; padding: 2px 8px;
+    border-radius: 10px; font-size: 0.7rem; font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="logo">
+    <h3>黄金与法币信任危机</h3>
+    <span>正和 → 零和演变 · 2026</span>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">价格与表现</div>
+    <a class="nav-link" href="#price">金价走势</a>
+    <a class="nav-link" href="#vs-sp500">黄金 vs S&P 500</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">四层分析框架</div>
+    <a class="nav-link" href="#traditional">传统因素（模型崩溃）</a>
+    <a class="nav-link" href="#central-bank">央行购金（结构断裂）</a>
+    <a class="nav-link" href="#fiscal">财政可持续性</a>
+    <a class="nav-link" href="#zero-sum">正和 → 零和（根本）</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">深层逻辑</div>
+    <a class="nav-link" href="#causal">完整因果链</a>
+    <a class="nav-link" href="#why-gold">为什么是黄金</a>
+    <a class="nav-link" href="#ai-link">AI 分析联系</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">总结</div>
+    <a class="nav-link" href="#conclusion">多层结论</a>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="header">
+    <h1>黄金上涨：正和 → 零和演变与法币信任危机</h1>
+    <div class="subtitle">从 $1,280 到 $5,150 · 四层分析框架</div>
+  </div>
+
+  <!-- ===== SUMMARY CARDS ===== -->
+  <div class="summary-grid">
+    <div class="card">
+      <div class="label">金价 (2026.2)</div>
+      <div class="value orange">$5,150</div>
+      <div class="sub">/oz · 近历史高点</div>
+    </div>
+    <div class="card">
+      <div class="label">涨幅 (2018→)</div>
+      <div class="value green">4x</div>
+      <div class="sub">+302%</div>
+    </div>
+    <div class="card">
+      <div class="label">央行购金</div>
+      <div class="value orange">1,000+</div>
+      <div class="sub">吨/年 (vs 之前 473)</div>
+    </div>
+    <div class="card">
+      <div class="label">美国联邦债务</div>
+      <div class="value red">$37.6T</div>
+      <div class="sub">10 年翻倍</div>
+    </div>
+    <div class="card">
+      <div class="label">USD 储备占比</div>
+      <div class="value blue">56.3%</div>
+      <div class="sub">from 72% (2001)</div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION: PRICE ===== -->
+  <div class="section" id="price">
+    <h2>金价走势 (2018-2026)</h2>
+    <div class="desc">从低迷到爆发：$1,282 → $5,150，传统模型无法解释的上涨</div>
+    <div class="chart-container" style="height:340px">
+      <canvas id="chartGoldPrice"></canvas>
+    </div>
+    <table style="margin-top:16px">
+      <tr><th>年份</th><th>金价 ($/oz)</th><th>年涨幅</th><th>阶段</th></tr>
+      <tr><td>2018</td><td class="num">$1,282</td><td class="num" style="color:#f87171">-1.6%</td><td>低迷期</td></tr>
+      <tr><td>2019</td><td class="num">$1,517</td><td class="num" style="color:#34d399">+18.3%</td><td>降息预期启动</td></tr>
+      <tr><td>2020</td><td class="num">$1,898</td><td class="num" style="color:#34d399">+25.1%</td><td>COVID 大放水</td></tr>
+      <tr><td>2021</td><td class="num">$1,829</td><td class="num" style="color:#f87171">-3.6%</td><td>加息预期压制</td></tr>
+      <tr><td>2022</td><td class="num">$1,824</td><td class="num" style="color:#f87171">-0.4%</td><td style="color:#fbbf24">异常：实际利率大涨但金价不跌</td></tr>
+      <tr><td>2023</td><td class="num">$2,063</td><td class="num" style="color:#34d399">+13.2%</td><td>央行购金 + 地缘风险</td></tr>
+      <tr><td>2024</td><td class="num">$2,624</td><td class="num" style="color:#34d399">+27.2%</td><td>加速突破</td></tr>
+      <tr><td style="color:#fbbf24;font-weight:600">2025</td><td class="num" style="color:#fbbf24;font-weight:600">$4,315</td><td class="num" style="color:#fbbf24;font-weight:600">+64%</td><td style="color:#fbbf24">爆发</td></tr>
+      <tr><td style="color:#fbbf24;font-weight:600">2026.2</td><td class="num" style="color:#fbbf24;font-weight:600">$5,150</td><td class="num" style="color:#fbbf24;font-weight:600">+74% YoY</td><td style="color:#fbbf24">持续创新高</td></tr>
+    </table>
+    <div class="insight gold">
+      <strong>关键里程碑：</strong>2020 年 8 月首破 $2,000，2026 年 1 月 28 日创 $5,602 纪录高点。8 年内价格翻了 4 倍。
+    </div>
+  </div>
+
+  <!-- ===== SECTION: VS SP500 ===== -->
+  <div class="section" id="vs-sp500">
+    <h2>黄金 vs S&P 500 年度回报</h2>
+    <div class="desc">2020-2025：黄金在多数年份跑赢或接近 S&P 500，2025 年大幅领先</div>
+    <div class="chart-container" style="height:340px">
+      <canvas id="chartGoldVsSP"></canvas>
+    </div>
+    <table style="margin-top:16px">
+      <tr><th>年份</th><th>黄金</th><th>S&P 500</th><th>差异</th></tr>
+      <tr><td>2020</td><td class="num" style="color:#34d399">+25.1%</td><td class="num" style="color:#34d399">+18.4%</td><td class="num" style="color:#fbbf24">黄金 +6.7pp</td></tr>
+      <tr><td>2021</td><td class="num" style="color:#f87171">-3.6%</td><td class="num" style="color:#34d399">+28.7%</td><td class="num" style="color:#60a5fa">S&P +32.3pp</td></tr>
+      <tr><td>2022</td><td class="num" style="color:#f87171">-0.4%</td><td class="num" style="color:#f87171">-18.1%</td><td class="num" style="color:#fbbf24">黄金 +17.7pp</td></tr>
+      <tr><td>2023</td><td class="num" style="color:#34d399">+13.2%</td><td class="num" style="color:#34d399">+26.3%</td><td class="num" style="color:#60a5fa">S&P +13.1pp</td></tr>
+      <tr><td>2024</td><td class="num" style="color:#34d399">+27.2%</td><td class="num" style="color:#34d399">+25.0%</td><td class="num" style="color:#fbbf24">黄金 +2.2pp</td></tr>
+      <tr><td style="color:#fbbf24;font-weight:600">2025</td><td class="num" style="color:#fbbf24;font-weight:600">+64%</td><td class="num" style="color:#34d399">~+25%</td><td class="num" style="color:#fbbf24;font-weight:600">黄金 +39pp</td></tr>
+    </table>
+    <div class="insight">
+      <strong>20 年视角（2004-2024）：</strong>黄金 +543%（~9.8% 年化） vs S&P 500 +482%（~9.2% 年化）。罕见的黄金长期跑赢股票时期。历史上 S&P 500 大约 70% 年份跑赢黄金，但近年显著逆转。
+    </div>
+  </div>
+
+  <!-- ===== SECTION: TRADITIONAL ===== -->
+  <div class="section" id="traditional">
+    <h2>第一层：传统因素（教科书模型已崩溃）</h2>
+    <div class="desc">黄金价格 = f(实际利率, 美元指数, 通胀预期, 地缘风险) —— 但 2022 年后失效</div>
+    <div class="two-col">
+      <div>
+        <h4 style="font-size:0.85rem;color:#6b7a8d;margin-bottom:8px">传统模型：实际利率 vs 金价</h4>
+        <table>
+          <tr><th>年份</th><th>10Y TIPS 收益率</th><th>金价走势</th><th>模型预测</th></tr>
+          <tr><td>2021</td><td class="num">-1.00%</td><td style="color:#f87171">下跌</td><td style="color:#34d399">符合</td></tr>
+          <tr><td>2022</td><td class="num">~0%</td><td>持平</td><td style="color:#34d399">大致符合</td></tr>
+          <tr><td style="color:#fbbf24">2023</td><td class="num" style="color:#fbbf24">+1.29%</td><td style="color:#34d399;font-weight:600">上涨!</td><td style="color:#f87171;font-weight:600">异常</td></tr>
+          <tr><td style="color:#fbbf24">2024</td><td class="num" style="color:#fbbf24">+1.79%</td><td style="color:#34d399;font-weight:600">大涨!</td><td style="color:#f87171;font-weight:600">严重异常</td></tr>
+          <tr><td style="color:#fbbf24">2025</td><td class="num" style="color:#fbbf24">+2.23%</td><td style="color:#34d399;font-weight:600">暴涨!</td><td style="color:#f87171;font-weight:600">模型崩溃</td></tr>
+        </table>
+      </div>
+      <div>
+        <h4 style="font-size:0.85rem;color:#6b7a8d;margin-bottom:8px">经典定价公式</h4>
+        <div style="background:rgba(255,255,255,0.03);border-radius:8px;padding:14px;font-size:0.82rem;color:#8896a8;font-family:monospace;line-height:1.8">
+          实际利率 ↓ → 黄金 ↑ <span style="color:#4a5568">(机会成本降低)</span><br>
+          美元 ↓ → 黄金 ↑ <span style="color:#4a5568">(美元计价变贵)</span><br>
+          通胀 ↑ → 黄金 ↑ <span style="color:#4a5568">(保值需求)</span><br>
+          地缘风险 ↑ → 黄金 ↑ <span style="color:#4a5568">(避险需求)</span><br><br>
+          <span style="color:#f87171;font-weight:600">2023-2025：实际利率 ↑↑↑</span><br>
+          <span style="color:#f87171;font-weight:600">但黄金 ↑↑↑↑↑</span><br>
+          <span style="color:#fbbf24;font-weight:600">→ 传统模型已崩溃</span>
+        </div>
+      </div>
+    </div>
+    <div class="insight danger" style="margin-top:16px">
+      <strong>实际利率从 -1% 飙升到 +2.23%，按传统模型黄金应大跌——但它涨了 180%。传统模型已崩溃。</strong>说明有比利率更强的力量在支撑金价。
+    </div>
+  </div>
+
+  <!-- ===== SECTION: CENTRAL BANK ===== -->
+  <div class="section" id="central-bank">
+    <h2>第二层：央行购金（结构性断裂）</h2>
+    <div class="desc">2022 年后全球央行购金量翻倍：从年均 473 吨跳到 1,000+ 吨</div>
+    <div class="two-col">
+      <div>
+        <h4 style="font-size:0.85rem;color:#fbbf24;margin-bottom:8px">全球央行购金量（吨/年）</h4>
+        <div class="chart-container" style="height:280px">
+          <canvas id="chartCBGold"></canvas>
+        </div>
+      </div>
+      <div>
+        <h4 style="font-size:0.85rem;color:#6b7a8d;margin-bottom:8px">主要买家（2020-2025 累计）</h4>
+        <table>
+          <tr><th>国家</th><th>黄金储备</th><th>特点</th></tr>
+          <tr><td style="color:#f87171">中国</td><td class="num">2,296 吨</td><td>连续 15 个月增持</td></tr>
+          <tr><td style="color:#60a5fa">波兰</td><td class="num">550 吨</td><td>2024-25 年最大买家</td></tr>
+          <tr><td style="color:#fbbf24">印度</td><td class="num">880 吨</td><td>自 2017 年累计 +320 吨</td></tr>
+          <tr><td style="color:#a78bfa">土耳其</td><td class="num">644 吨</td><td>持续增持</td></tr>
+          <tr><td style="color:#34d399">俄罗斯</td><td class="num">2,329 吨</td><td>全球第五，年补充 ~150 吨</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="insight danger" style="margin-top:16px">
+      <strong>2022 年美国冻结俄罗斯 ~$3,000 亿外汇储备——信号：美元储备在极端情况下可以被没收。</strong>所有非美盟友国家开始对冲。2021-2024 年中西方黄金 ETF 净卖出数百吨，但金价反而上涨——完全是央行购买在支撑。
+    </div>
+  </div>
+
+  <!-- ===== SECTION: FISCAL ===== -->
+  <div class="section" id="fiscal">
+    <h2>第三层：财政可持续性</h2>
+    <div class="desc">美国联邦赤字、债务与去美元化趋势</div>
+    <div class="two-col">
+      <div>
+        <h4 style="font-size:0.85rem;color:#f87171;margin-bottom:8px">美国联邦赤字 ($B)</h4>
+        <div class="chart-container" style="height:280px">
+          <canvas id="chartDeficit"></canvas>
+        </div>
+      </div>
+      <div>
+        <h4 style="font-size:0.85rem;color:#60a5fa;margin-bottom:8px">美元储备占比下降 (%)</h4>
+        <div class="chart-container" style="height:280px">
+          <canvas id="chartUSDShare"></canvas>
+        </div>
+      </div>
+    </div>
+    <table style="margin-top:16px">
+      <tr><th>财年</th><th>赤字</th><th>占 GDP</th><th>联邦债务</th><th>利息支出</th></tr>
+      <tr><td>2015</td><td class="num">$439B</td><td class="num">2.4%</td><td class="num">~$18T</td><td class="num">—</td></tr>
+      <tr><td>2019</td><td class="num">$984B</td><td class="num">4.6%</td><td class="num">~$23T</td><td class="num">—</td></tr>
+      <tr><td style="color:#f87171">2020</td><td class="num" style="color:#f87171;font-weight:600">$3,100B</td><td class="num" style="color:#f87171">15.0%</td><td class="num">~$27T</td><td class="num">—</td></tr>
+      <tr><td>2022</td><td class="num">$1,400B</td><td class="num">5.5%</td><td class="num">~$31T</td><td class="num">~$500B</td></tr>
+      <tr><td>2024</td><td class="num" style="color:#f87171">$1,800B</td><td class="num" style="color:#f87171">6.4%</td><td class="num">~$35T</td><td class="num" style="color:#f87171">~$900B</td></tr>
+      <tr><td style="color:#f87171;font-weight:600">2025</td><td class="num" style="color:#f87171;font-weight:600">~$1,800B</td><td class="num">—</td><td class="num" style="color:#f87171;font-weight:600">$37.6T</td><td class="num" style="color:#f87171;font-weight:600">~$1.0T</td></tr>
+    </table>
+    <div class="two-col" style="margin-top:16px">
+      <div class="insight danger">
+        <strong>债务 10 年翻倍：</strong>$18T → $37.6T。利息支出 3 年翻倍：~$500B (2022) → ~$1.0T (2025)——利息本身已超过国防支出。
+      </div>
+      <div class="insight warn">
+        <strong>去美元化持续：</strong>美元在全球外汇储备中占比从 72% (2001) 降到 56.3% (2025)，丢失 16 个百分点。黄金在官方储备占比从 &lt;10% → 超过 23%。
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION: ZERO-SUM ===== -->
+  <div class="section" id="zero-sum">
+    <h2>第四层：正和 → 零和的体系性变化</h2>
+    <div class="desc">传统金融分析不涉及的层面，但它是理解这轮黄金行情的根本框架</div>
+    <div class="phase-timeline">
+      <div class="phase-card" style="border-top-color:#34d399">
+        <h4 style="color:#34d399">正和时代</h4>
+        <div class="time">1990 - 2008</div>
+        <p>全球 GDP 增速 3-5%，贸易扩大所有人受益。美元是合作基础设施，各国乐意持有美元储备。<strong>不需要黄金</strong>——有更好的选择。金价低迷（1999 年跌到 $252）。</p>
+      </div>
+      <div class="phase-card" style="border-top-color:#fbbf24">
+        <h4 style="color:#fbbf24">过渡期</h4>
+        <div class="time">2008 - 2022</div>
+        <p>金融危机 → QE/放水。GDP 增速降到 1-2%（发达国家）。蛋糕增长放缓但还能维持合作。美元仍主导，但信任开始松动。<strong>黄金缓慢上涨</strong>（$800 → $1,800）。</p>
+      </div>
+      <div class="phase-card" style="border-top-color:#f87171">
+        <h4 style="color:#f87171">零和时代</h4>
+        <div class="time">2022 - 至今</div>
+        <p>蛋糕做不大了 → 分蛋糕成核心议题。美元从"合作基础设施"变成"对抗武器"。制裁、关税、芯片管制。<strong>信任崩塌 → 黄金爆发</strong>（$1,800 → $5,000+）。</p>
+      </div>
+    </div>
+    <div class="insight gold">
+      <strong>金价不是在定价通胀，也不是在定价利率，而是在定价：当前法币体系能否维持。</strong>
+    </div>
+    <div style="background:rgba(255,255,255,0.03);border-radius:8px;padding:14px;font-size:0.82rem;color:#8896a8;font-family:monospace;line-height:2;margin-top:14px">
+      <span style="color:#4a5568">$1,282 (2018):</span> <span style="color:#34d399">"一切正常，美元很好"</span><br>
+      <span style="color:#4a5568">$1,898 (2020):</span> <span style="color:#fbbf24">"央行在印钱，但是暂时性的"</span><br>
+      <span style="color:#4a5568">$2,624 (2024):</span> <span style="color:#f87171">"赤字不可持续，央行在去美元化"</span><br>
+      <span style="color:#4a5568">$5,150 (2026):</span> <span style="color:#f87171;font-weight:600">"体系在变了"</span>
+    </div>
+  </div>
+
+  <!-- ===== SECTION: CAUSAL ===== -->
+  <div class="section" id="causal">
+    <h2>完整因果链：从增长放缓到黄金上涨</h2>
+    <div class="desc">六步推演：需求饱和 → 零和博弈 → 美元武器化 → 信任崩塌 → 财政扩张 → 黄金上涨</div>
+    <div class="flow-diagram">
+      <div class="flow-step" style="border-left-color:#34d399"><div class="icon">1</div><div class="text"><strong>发达国家自然需求饱和</strong> → 真实 GDP 增速放缓（美国 3%+ → 2%，欧洲 → 1%，日本 → 0%）</div></div>
+      <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:2px">↓</div>
+      <div class="flow-step" style="border-left-color:#fbbf24"><div class="icon">2</div><div class="text"><strong>蛋糕做不大 → 零和博弈激化</strong> → 国内：贫富分化加剧；国际：贸易战/科技战/金融制裁</div></div>
+      <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:2px">↓</div>
+      <div class="flow-step" style="border-left-color:#f87171"><div class="icon">3</div><div class="text"><strong>零和博弈需要"武器"</strong> → 美元/SWIFT 被武器化，关税被武器化，技术被武器化（芯片管制）</div></div>
+      <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:2px">↓</div>
+      <div class="flow-step" style="border-left-color:#a78bfa"><div class="icon">4</div><div class="text"><strong>武器化破坏信任基础</strong> → 美元"中立储备资产"信誉受损 → 各国寻找替代：黄金（无交易对手风险）</div></div>
+      <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:2px">↓</div>
+      <div class="flow-step" style="border-left-color:#f472b6"><div class="icon">5</div><div class="text"><strong>维持零和博弈竞争力</strong> → 军费↑、产业补贴↑、福利↑ → 但税收跟不上 → 发更多债、印更多钱</div></div>
+      <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:2px">↓</div>
+      <div class="flow-step" style="border-left-color:#fbbf24"><div class="icon">6</div><div class="text"><strong>黄金是对以上所有趋势的定价</strong> → 法币贬值 + 信任危机 + 结构性央行买盘 → 金价持续上涨</div></div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION: WHY GOLD ===== -->
+  <div class="section" id="why-gold">
+    <h2>为什么是黄金（而不是其他资产）</h2>
+    <div class="desc">在法币信任侵蚀的环境下，黄金是唯一没有交易对手风险的"中立资产"</div>
+    <table>
+      <tr><th>资产</th><th>问题</th><th>评价</th></tr>
+      <tr><td style="color:#60a5fa">美元</td><td>被武器化了（可以冻结、制裁）</td><td><span class="tag" style="background:rgba(248,113,113,0.2);color:#f87171">信任受损</span></td></tr>
+      <tr><td style="color:#60a5fa">欧元</td><td>经济更弱，且跟着美国制裁</td><td><span class="tag" style="background:rgba(248,113,113,0.2);color:#f87171">不独立</span></td></tr>
+      <tr><td style="color:#f87171">人民币</td><td>不可自由兑换，中国自身也有风险</td><td><span class="tag" style="background:rgba(251,191,36,0.2);color:#fbbf24">受限</span></td></tr>
+      <tr><td style="color:#a78bfa">比特币</td><td>波动太大，监管不确定</td><td><span class="tag" style="background:rgba(251,191,36,0.2);color:#fbbf24">不成熟</span></td></tr>
+      <tr><td style="color:#f87171">国债</td><td>发行方就是在印钱的那个人</td><td><span class="tag" style="background:rgba(248,113,113,0.2);color:#f87171">自相矛盾</span></td></tr>
+      <tr><td style="color:#fbbf24;font-weight:700">黄金</td><td colspan="2">
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px">
+          <span class="tag" style="background:rgba(251,191,36,0.2);color:#fbbf24">无交易对手风险</span>
+          <span class="tag" style="background:rgba(251,191,36,0.2);color:#fbbf24">不可冻结</span>
+          <span class="tag" style="background:rgba(251,191,36,0.2);color:#fbbf24">5,000 年共识</span>
+          <span class="tag" style="background:rgba(251,191,36,0.2);color:#fbbf24">供给有限 &lt;2%/年</span>
+          <span class="tag" style="background:rgba(251,191,36,0.2);color:#fbbf24">不可印刷/制裁/违约</span>
+        </div>
+      </td></tr>
+    </table>
+    <div class="insight gold">
+      <strong>黄金的核心优势：</strong>不需要信任任何人。在一个信任被系统性破坏的世界里，这是唯一的"无信任成本"资产。
+    </div>
+  </div>
+
+  <!-- ===== SECTION: AI LINK ===== -->
+  <div class="section" id="ai-link">
+    <h2>与 AI 分析的两条联系路径</h2>
+    <div class="desc">AI 越成功（无论是提高生产力还是加剧竞争），黄金的逻辑越强</div>
+    <div class="two-col">
+      <div>
+        <h4 style="font-size:0.85rem;color:#60a5fa;margin-bottom:10px">路径一：技术性通缩 → 法币贬值</h4>
+        <div class="flow-diagram" style="padding:8px 0">
+          <div class="flow-step" style="border-left-color:#60a5fa;padding:8px 12px"><div class="text"><strong>AI 提高生产力</strong> → 但需求有限</div></div>
+          <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:1px">↓</div>
+          <div class="flow-step" style="border-left-color:#a78bfa;padding:8px 12px"><div class="text"><strong>通缩压力</strong> → 企业利润率压缩</div></div>
+          <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:1px">↓</div>
+          <div class="flow-step" style="border-left-color:#fbbf24;padding:8px 12px"><div class="text">政府为维持就业 → <strong>更多财政刺激</strong></div></div>
+          <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:1px">↓</div>
+          <div class="flow-step" style="border-left-color:#f87171;padding:8px 12px"><div class="text">赤字扩大 → 发债 → <strong>货币化（印钱）</strong></div></div>
+          <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:1px">↓</div>
+          <div class="flow-step" style="border-left-color:#fbbf24;padding:8px 12px"><div class="text">法币购买力长期贬值 → <strong style="color:#fbbf24">黄金上涨</strong></div></div>
+        </div>
+      </div>
+      <div>
+        <h4 style="font-size:0.85rem;color:#f472b6;margin-bottom:10px">路径二：AI 零和化 → 货币体系碎片化</h4>
+        <div class="flow-diagram" style="padding:8px 0">
+          <div class="flow-step" style="border-left-color:#f472b6;padding:8px 12px"><div class="text"><strong>AI 让竞争零和化</strong> → 国家间博弈加剧</div></div>
+          <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:1px">↓</div>
+          <div class="flow-step" style="border-left-color:#a78bfa;padding:8px 12px"><div class="text"><strong>贸易战/科技战/金融制裁</strong></div></div>
+          <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:1px">↓</div>
+          <div class="flow-step" style="border-left-color:#fbbf24;padding:8px 12px"><div class="text"><strong>国际货币体系碎片化</strong></div></div>
+          <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:1px">↓</div>
+          <div class="flow-step" style="border-left-color:#f87171;padding:8px 12px"><div class="text">美元储备地位被侵蚀 → <strong>央行增持黄金</strong></div></div>
+          <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:1px">↓</div>
+          <div class="flow-step" style="border-left-color:#fbbf24;padding:8px 12px"><div class="text">结构性买盘支撑 → <strong style="color:#fbbf24">黄金上涨</strong></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="insight warn" style="margin-top:14px">
+      <strong>两条路径——技术通缩 → 印钱 → 贬值，地缘零和 → 武器化 → 去美元化——都指向黄金。</strong>AI 越成功（无论是提高生产力还是加剧竞争），黄金的逻辑越强。
+    </div>
+  </div>
+
+  <!-- ===== SECTION: CONCLUSION ===== -->
+  <div class="section" id="conclusion">
+    <h2>结论：多层驱动与不可逆性</h2>
+    <div class="desc">从表层到根本——驱动因素的可逆性决定了黄金上涨的持久性</div>
+
+    <h4 style="font-size:0.85rem;color:#6b7a8d;margin-bottom:10px">四层驱动结构</h4>
+    <div class="layer-stack">
+      <div class="layer" style="background:rgba(96,165,250,0.1);border-left:4px solid #60a5fa">
+        <div>
+          <div class="name" style="color:#60a5fa">表层：通胀预期、实际利率</div>
+          <div class="detail" style="color:#6b7a8d">教科书因素 · 短期波动 · 2022 年后已与金价脱钩</div>
+        </div>
+        <div style="text-align:right">
+          <span class="tag" style="background:rgba(52,211,153,0.15);color:#34d399">可逆</span>
+        </div>
+      </div>
+      <div class="layer" style="background:rgba(251,191,36,0.1);border-left:4px solid #fbbf24">
+        <div>
+          <div class="name" style="color:#fbbf24">中层：央行购金、去美元化</div>
+          <div class="detail" style="color:#6b7a8d">结构性转向 · 1,000+ 吨/年 · 56.3% USD 储备占比</div>
+        </div>
+        <div style="text-align:right">
+          <span class="tag" style="background:rgba(251,191,36,0.2);color:#fbbf24">结构性，难逆</span>
+        </div>
+      </div>
+      <div class="layer" style="background:rgba(248,113,113,0.1);border-left:4px solid #f87171">
+        <div>
+          <div class="name" style="color:#f87171">深层：财政不可持续</div>
+          <div class="detail" style="color:#6b7a8d">赤字 $1.8T/年 · 利息 $1T+ · 债务/GDP 124%</div>
+        </div>
+        <div style="text-align:right">
+          <span class="tag" style="background:rgba(248,113,113,0.2);color:#f87171">长期恶化</span>
+        </div>
+      </div>
+      <div class="layer" style="background:rgba(167,139,250,0.12);border-left:4px solid #a78bfa">
+        <div>
+          <div class="name" style="color:#a78bfa">根本：正和 → 零和，法币信任侵蚀</div>
+          <div class="detail" style="color:#6b7a8d">全球经济体系性变化 · 蛋糕做不大 → 分蛋糕零和博弈</div>
+        </div>
+        <div style="text-align:right">
+          <span class="tag" style="background:rgba(167,139,250,0.2);color:#a78bfa">不可逆</span>
+        </div>
+      </div>
+    </div>
+
+    <h4 style="font-size:0.85rem;color:#6b7a8d;margin:18px 0 10px">上涨逻辑持续的条件</h4>
+    <table>
+      <tr><th>条件</th><th>当前状态</th><th>变化趋势</th></tr>
+      <tr><td>发达国家 GDP 增速维持低位</td><td>美国 ~2%，欧洲 ~1%，日本 ~0%</td><td><span class="tag" style="background:rgba(248,113,113,0.2);color:#f87171">长期固化</span></td></tr>
+      <tr><td>财政赤字持续扩大</td><td>利息支出 $1T+ 且增长中</td><td><span class="tag" style="background:rgba(248,113,113,0.2);color:#f87171">加速恶化</span></td></tr>
+      <tr><td>地缘博弈持续升级</td><td>制裁/关税/芯片管制</td><td><span class="tag" style="background:rgba(251,191,36,0.2);color:#fbbf24">持续升级</span></td></tr>
+      <tr><td>央行继续多元化储备</td><td>连续 3 年 1,000+ 吨/年</td><td><span class="tag" style="background:rgba(251,191,36,0.2);color:#fbbf24">结构性趋势</span></td></tr>
+    </table>
+
+    <div class="insight" style="font-size:0.95rem;padding:16px 20px;background:rgba(251,191,36,0.08);border-left-color:#fbbf24;margin-top:18px">
+      <strong style="font-size:1rem;color:#fbbf24">核心命题：</strong><br>
+      金价的长期上涨不是周期性的（不会像 2011-2018 那样回落），而是结构性的——因为驱动因素从"利率/通胀"（可逆）变成了"体系信任"（不可逆）。
+    </div>
+    <div class="insight" style="font-size:0.95rem;padding:16px 20px;background:rgba(167,139,250,0.08);margin-top:10px">
+      <strong style="font-size:1rem">与均值回归的闭环：</strong><br>
+      <strong>均值回归可能不以股价下跌出现，而以货币贬值出现——股票名义上不跌，但实际购买力在缩水。黄金是衡量这个隐形贬值的标尺。</strong>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:30px 0;color:#4a5568;font-size:0.75rem">
+    数据来源：World Gold Council, IMF COFER, FRED, CBO, Trading Economics · 2026 年 2 月
+  </div>
+</div>
+
+<script>
+// === Chart defaults ===
+Chart.defaults.color = '#6b7a8d';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, PingFang SC, sans-serif';
+Chart.defaults.font.size = 11;
+
+// === 1. Gold Price Trajectory ===
+new Chart(document.getElementById('chartGoldPrice'), {
+  type: 'line',
+  data: {
+    labels: ['2018','2019','2020','2021','2022','2023','2024','2025','2026.2'],
+    datasets: [{
+      label: '金价 ($/oz)',
+      data: [1282, 1517, 1898, 1829, 1824, 2063, 2624, 4315, 5150],
+      borderColor: '#fbbf24',
+      backgroundColor: 'rgba(251,191,36,0.1)',
+      fill: true,
+      tension: 0.3,
+      pointRadius: 5,
+      pointBackgroundColor: '#fbbf24',
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => `$${ctx.raw.toLocaleString()}/oz`
+        }
+      }
+    },
+    scales: {
+      y: {
+        title: { display: true, text: '$/oz', color: '#4a5568' },
+        ticks: { callback: v => `$${v.toLocaleString()}` }
+      },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// === 2. Gold vs S&P 500 Annual Returns ===
+new Chart(document.getElementById('chartGoldVsSP'), {
+  type: 'bar',
+  data: {
+    labels: ['2020','2021','2022','2023','2024','2025'],
+    datasets: [
+      {
+        label: '黄金',
+        data: [25.1, -3.6, -0.4, 13.2, 27.2, 64],
+        backgroundColor: '#fbbf24',
+        borderRadius: 4,
+      },
+      {
+        label: 'S&P 500',
+        data: [18.4, 28.7, -18.1, 26.3, 25.0, 25],
+        backgroundColor: '#60a5fa',
+        borderRadius: 4,
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { padding: 12 } },
+      tooltip: {
+        callbacks: {
+          label: ctx => `${ctx.dataset.label}: ${ctx.raw > 0 ? '+' : ''}${ctx.raw}%`
+        }
+      }
+    },
+    scales: {
+      y: {
+        title: { display: true, text: '年回报率 (%)', color: '#4a5568' },
+        ticks: { callback: v => `${v}%` }
+      },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// === 3. Central Bank Gold Buying ===
+new Chart(document.getElementById('chartCBGold'), {
+  type: 'bar',
+  data: {
+    labels: ['2018','2019','2020','2021','2022','2023','2024','2025'],
+    datasets: [{
+      label: '央行购金 (吨)',
+      data: [656, 668, 273, 463, 1082, 1037, 1045, 863],
+      backgroundColor: ctx => ctx.raw > 800 ? '#fbbf24' : '#4a5568',
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => `${ctx.raw} 吨`
+        }
+      }
+    },
+    scales: {
+      y: { title: { display: true, text: '吨', color: '#4a5568' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// === 4. US Federal Deficit ===
+new Chart(document.getElementById('chartDeficit'), {
+  type: 'bar',
+  data: {
+    labels: ['2015','2017','2019','2020','2021','2022','2023','2024'],
+    datasets: [{
+      label: '联邦赤字 ($B)',
+      data: [439, 666, 984, 3100, 2800, 1400, 1700, 1800],
+      backgroundColor: '#f87171',
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => `$${ctx.raw.toLocaleString()}B`
+        }
+      }
+    },
+    scales: {
+      y: {
+        title: { display: true, text: '$B', color: '#4a5568' },
+        ticks: { callback: v => `$${v.toLocaleString()}` }
+      },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// === 5. USD Share of Global Reserves ===
+new Chart(document.getElementById('chartUSDShare'), {
+  type: 'line',
+  data: {
+    labels: ['2001','2015','2020','2024 Q3','2025 Q2'],
+    datasets: [{
+      label: 'USD 储备占比 (%)',
+      data: [72, 66, 59, 57.4, 56.3],
+      borderColor: '#60a5fa',
+      backgroundColor: 'rgba(96,165,250,0.1)',
+      fill: true,
+      tension: 0.3,
+      pointRadius: 5,
+      pointBackgroundColor: '#60a5fa',
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => `${ctx.raw}%`
+        }
+      }
+    },
+    scales: {
+      y: {
+        title: { display: true, text: '%', color: '#4a5568' },
+        min: 50,
+        max: 75,
+        ticks: { callback: v => `${v}%` }
+      },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// === Sidebar active state ===
+const sections = document.querySelectorAll('.section');
+const navLinks = document.querySelectorAll('.nav-link');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const id = entry.target.id;
+      const link = document.querySelector(`.nav-link[href="#${id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

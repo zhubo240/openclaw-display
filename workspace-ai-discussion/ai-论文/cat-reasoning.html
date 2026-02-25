@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reasoning / 推理 - AI 论文阅读</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="site-nav">
+  <a class="logo" href="index.html">AI Papers</a>
+  <div class="nav-links">
+    <a href="index.html">首页</a>
+    <a href="timeline.html">时间线</a>
+    <a href="cat-reasoning.html" class="active">Reasoning</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <div class="breadcrumb"><a href="index.html">首页</a> / Reasoning</div>
+    <h1>Reasoning / 推理</h1>
+  </div>
+
+  <div class="cat-timeline" style="--cat-color: #059669;">
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2025</div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://www.anthropic.com/news/claude-3-7-sonnet" target="_blank">Claude 3.7 Sonnet &mdash; 业界首个混合推理模型</a></div>
+        <div class="paper-authors">Anthropic &middot; 2025-02-24</div>
+        <div class="paper-brief">同一模型既能快速响应也能扩展式逐步思考推理，用户可通过 API 控制"思考预算"（最高 128K token），编程和数学推理表现突出。</div>
+        <div class="paper-tags"><span class="tag tag-purple">Blog</span><span class="tag tag-blue">Hybrid Reasoning</span><span class="tag tag-green">Claude</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2501.12948" target="_blank">DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning</a></div>
+        <div class="paper-authors">DeepSeek-AI, Daya Guo, Dejian Yang, et al. &middot; 2025-01</div>
+        <div class="paper-brief">证明纯 RL（不依赖人工标注推理轨迹）可有效激发 LLM 推理能力，模型自发涌现自我反思和验证等高级推理模式，达到 OpenAI o1 级别。</div>
+        <div class="paper-tags"><span class="tag tag-blue">DeepSeek-R1</span><span class="tag tag-orange">Pure RL</span><span class="tag tag-green">Emergent</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2501.12599" target="_blank">Kimi k1.5: Scaling Reinforcement Learning with LLMs</a></div>
+        <div class="paper-authors">Kimi Team &middot; Moonshot AI &middot; 2025-01</div>
+        <div class="paper-brief">通过长上下文扩展和策略优化进行 RL 训练，无需 MCTS 或过程奖励模型，AIME 77.5、Codeforces 94th 百分位，达到 o1 级别。</div>
+        <div class="paper-tags"><span class="tag tag-blue">Kimi</span><span class="tag tag-orange">RL</span></div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2024 &ndash; 2025</div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://openai.com/index/introducing-o3-and-o4-mini/" target="_blank">OpenAI o3 &amp; o4-mini</a></div>
+        <div class="paper-authors">OpenAI &middot; 2025-04-16</div>
+        <div class="paper-brief">首批可代理式使用 ChatGPT 全部工具（搜索、Python、视觉、图像生成）的推理模型，o4-mini 在 AIME 2024/2025 上表现最佳。</div>
+        <div class="paper-tags"><span class="tag tag-purple">Blog</span><span class="tag tag-blue">o3</span><span class="tag tag-green">Agentic Reasoning</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2412.16720" target="_blank">OpenAI o1 System Card</a></div>
+        <div class="paper-authors">OpenAI &middot; 2024-09 preview / 2024-12 full release</div>
+        <div class="paper-brief">通过大规模 RL 训练链式思维推理能力，在数学、编程和科学推理上大幅超越 GPT-4o，开创"测试时计算扩展"新范式。</div>
+        <div class="paper-tags"><span class="tag tag-purple">Blog</span><span class="tag tag-blue">o1</span><span class="tag tag-green">Test-Time Compute</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2408.03314" target="_blank">Scaling LLM Test-Time Compute Optimally</a></div>
+        <div class="paper-authors">Charlie Snell, Jaehoon Lee, Kelvin Xu, Aviral Kumar &middot; UC Berkeley / Google DeepMind &middot; 2024-08</div>
+        <div class="paper-brief">首次系统研究推理时计算扩展规律，证明动态分配推理阶段计算资源比扩大模型参数更高效，为 o1 等推理模型提供理论基础。</div>
+        <div class="paper-tags"><span class="tag tag-blue">Test-Time Compute</span><span class="tag tag-orange">Scaling Laws</span></div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2023</div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2305.10601" target="_blank">Tree of Thoughts: Deliberate Problem Solving with LLMs</a></div>
+        <div class="paper-authors">Shunyu Yao, Dian Yu, Jeffrey Zhao, et al. &middot; Princeton / Google DeepMind &middot; 2023-05</div>
+        <div class="paper-brief">将思维链推广为树状搜索结构，支持多路径探索和回溯，GPT-4 在 24 点游戏中从 4% 提升至 74%。</div>
+        <div class="paper-tags"><span class="tag tag-blue">Tree of Thoughts</span><span class="tag tag-green">Search</span></div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2022</div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2205.11916" target="_blank">Large Language Models are Zero-Shot Reasoners</a></div>
+        <div class="paper-authors">Takeshi Kojima, Shixiang Shane Gu, Machel Reid, et al. &middot; Google / U of Tokyo &middot; 2022-05</div>
+        <div class="paper-brief">只需加"Let's think step by step"即可在零样本下激发 LLM 多步推理能力，具有任务无关性。</div>
+        <div class="paper-tags"><span class="tag tag-blue">Zero-Shot CoT</span><span class="tag tag-orange">Prompting</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2203.14465" target="_blank">STaR: Bootstrapping Reasoning With Reasoning</a></div>
+        <div class="paper-authors">Eric Zelikman, Yuhuai Wu, Jesse Mu, et al. &middot; Stanford &middot; 2022-03</div>
+        <div class="paper-brief">模型自我迭代生成推理链并在正确答案上微调，逐步习得推理能力，仅需少量推理示例。</div>
+        <div class="paper-tags"><span class="tag tag-blue">STaR</span><span class="tag tag-orange">Self-Improve</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2203.11171" target="_blank">Self-Consistency Improves Chain of Thought Reasoning</a></div>
+        <div class="paper-authors">Xuezhi Wang, Jason Wei, Dale Schuurmans, et al. &middot; Google &middot; 2022-03</div>
+        <div class="paper-brief">采样多条推理路径投票取最一致答案，GSM8K 准确率 +17.9%，无需额外训练。</div>
+        <div class="paper-tags"><span class="tag tag-blue">Self-Consistency</span><span class="tag tag-green">Decoding</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2201.11903" target="_blank">Chain-of-Thought Prompting Elicits Reasoning in LLMs</a></div>
+        <div class="paper-authors">Jason Wei, Xuezhi Wang, Dale Schuurmans, et al. &middot; Google &middot; 2022-01</div>
+        <div class="paper-brief">在提示中加入中间推理步骤示例，显著提升 LLM 的算术/常识/符号推理能力。</div>
+        <div class="paper-tags"><span class="tag tag-blue">Chain-of-Thought</span><span class="tag tag-purple">Emergent</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer><p>AI 论文阅读 &mdash; 持续更新中</p></footer>
+</body>
+</html>

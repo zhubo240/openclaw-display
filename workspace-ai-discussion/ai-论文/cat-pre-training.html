@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pre-training / 预训练 - AI 论文阅读</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="site-nav">
+  <a class="logo" href="index.html">AI Papers</a>
+  <div class="nav-links">
+    <a href="index.html">首页</a>
+    <a href="timeline.html">时间线</a>
+    <a href="cat-pre-training.html" class="active">Pre-training</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <div class="breadcrumb"><a href="index.html">首页</a> / Pre-training</div>
+    <h1>Pre-training / 预训练</h1>
+  </div>
+
+  <div class="cat-timeline" style="--cat-color: #2563eb;">
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2026</div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://www.anthropic.com/news/claude-opus-4-6" target="_blank">Claude Opus 4.6 &amp; Sonnet 4.6</a></div>
+        <div class="paper-authors">Anthropic &middot; 2026-02</div>
+        <div class="paper-brief">最新一代 Claude 模型，Opus 4.6 于 2 月 5 日发布，Sonnet 4.6 于 2 月 17 日跟进，持续迭代推理与编程能力。</div>
+        <div class="paper-tags"><span class="tag tag-purple">Blog</span><span class="tag tag-blue">Claude</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://blog.google/products/gemini/gemini-3/" target="_blank">Gemini 3.1 Pro Preview</a></div>
+        <div class="paper-authors">Google DeepMind &middot; 2026-02-19</div>
+        <div class="paper-brief">Gemini 3.1 Pro 在 ARC-AGI-2 推理分数较 3.0 翻倍，支持 Deep Think 并行假设探索模式。</div>
+        <div class="paper-tags"><span class="tag tag-purple">Blog</span><span class="tag tag-blue">Gemini 3.1</span><span class="tag tag-green">Deep Think</span></div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2025</div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2512.02556" target="_blank">DeepSeek-V3.2: Pushing the Frontier of Open LLMs</a></div>
+        <div class="paper-authors">DeepSeek-AI &middot; 2025-12</div>
+        <div class="paper-brief">引入 DeepSeek Sparse Attention（DSA）实现高效长上下文处理，可扩展 RL 后训练达到 GPT-5 级别，高计算变体在 IMO 和 IOI 获金牌。</div>
+        <div class="paper-tags"><span class="tag tag-blue">DeepSeek-V3.2</span><span class="tag tag-green">Open Source</span><span class="tag tag-orange">IMO Gold</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://openai.com/index/introducing-gpt-5/" target="_blank">GPT-5</a></div>
+        <div class="paper-authors">OpenAI &middot; 2025-08-07</div>
+        <div class="paper-brief">统一多模型架构（快速模型 + 深度推理模型 + 实时路由器），在编程、数学、写作和视觉感知上全面领先。</div>
+        <div class="paper-tags"><span class="tag tag-purple">Blog</span><span class="tag tag-blue">GPT-5</span><span class="tag tag-green">System of Models</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2505.09388" target="_blank">Qwen3 Technical Report</a></div>
+        <div class="paper-authors">Qwen Team &middot; Alibaba &middot; 2025-05</div>
+        <div class="paper-brief">0.6B 到 235B 参数的密集和 MoE 模型家族，统一思考模式和非思考模式于单一模型框架中。</div>
+        <div class="paper-tags"><span class="tag tag-blue">Qwen3</span><span class="tag tag-green">Open Source</span><span class="tag tag-orange">Hybrid Thinking</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://ai.meta.com/blog/llama-4-multimodal-intelligence/" target="_blank">Llama 4: Natively Multimodal AI</a></div>
+        <div class="paper-authors">Meta AI &middot; 2025-04-05</div>
+        <div class="paper-brief">首批采用 MoE 架构的 Llama 模型，原生多模态；Scout（17B 激活/109B 总参，10M 上下文）可运行在单卡 H100。</div>
+        <div class="paper-tags"><span class="tag tag-purple">Blog</span><span class="tag tag-blue">Llama 4</span><span class="tag tag-green">MoE</span><span class="tag tag-orange">10M Context</span></div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2024</div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2412.19437" target="_blank">DeepSeek-V3 Technical Report</a></div>
+        <div class="paper-authors">DeepSeek-AI, Aixin Liu, Bei Feng, et al. &middot; DeepSeek &middot; 2024-12</div>
+        <div class="paper-brief">671B 总参数的 MoE 模型（每 token 激活 37B），采用 MLA 和无辅助损失负载均衡策略，仅用 278.8 万 H800 GPU 小时完成训练，性能媲美领先闭源模型。</div>
+        <div class="paper-tags"><span class="tag tag-blue">DeepSeek</span><span class="tag tag-green">MoE</span><span class="tag tag-orange">Efficient Training</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2412.15115" target="_blank">Qwen2.5 Technical Report</a></div>
+        <div class="paper-authors">Qwen Team &middot; Alibaba &middot; 2024-12</div>
+        <div class="paper-brief">预训练数据从 7 万亿 token 扩展到 18 万亿，开源 72B 模型在多项基准上超越同级别模型，可与 5 倍大的 Llama-3-405B 竞争。</div>
+        <div class="paper-tags"><span class="tag tag-blue">Qwen</span><span class="tag tag-green">Open Source</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2407.21783" target="_blank">The Llama 3 Herd of Models</a></div>
+        <div class="paper-authors">Llama Team &middot; Meta AI &middot; 2024-07</div>
+        <div class="paper-brief">Llama 3 开源系列（8B/70B/405B），405B 旗舰模型多项基准可与 GPT-4 等闭源模型竞争，是当时最强开源大语言模型。</div>
+        <div class="paper-tags"><span class="tag tag-blue">Llama 3</span><span class="tag tag-green">Open Source</span><span class="tag tag-purple">405B</span></div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2023</div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2302.13971" target="_blank">LLaMA: Open and Efficient Foundation Language Models</a></div>
+        <div class="paper-authors">Hugo Touvron, Thibaut Lavril, Gautier Izacard, et al. &middot; Meta AI &middot; 2023-02</div>
+        <div class="paper-brief">发布了 7B 到 65B 参数的开源基础语言模型系列，证明用更多公开数据训练较小模型可达到甚至超越更大闭源模型的性能，极大推动了开源大模型生态发展。</div>
+        <div class="paper-tags">
+          <span class="tag tag-blue">Open Source</span>
+          <span class="tag tag-green">Foundation Model</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2020</div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2005.14165" target="_blank">Language Models are Few-Shot Learners (GPT-3)</a></div>
+        <div class="paper-authors">Tom B. Brown, Benjamin Mann, Nick Ryder, et al. &middot; OpenAI &middot; 2020-05</div>
+        <div class="paper-brief">训练了 1750 亿参数的 GPT-3，证明超大规模语言模型仅通过少量示例（few-shot）即可完成多种 NLP 任务，无需针对特定任务微调。</div>
+        <div class="paper-tags">
+          <span class="tag tag-blue">GPT</span>
+          <span class="tag tag-green">Few-Shot</span>
+          <span class="tag tag-purple">Scaling</span>
+        </div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2001.08361" target="_blank">Scaling Laws for Neural Language Models</a></div>
+        <div class="paper-authors">Jared Kaplan, Sam McCandlish, Tom Henighan, et al. &middot; OpenAI &middot; 2020-01</div>
+        <div class="paper-brief">系统性揭示了语言模型性能与模型规模、数据集大小和计算量之间的幂律关系（scaling laws），为大模型训练的资源分配提供了理论指导。</div>
+        <div class="paper-tags">
+          <span class="tag tag-blue">Scaling Laws</span>
+          <span class="tag tag-orange">Theory</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2018</div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/1810.04805" target="_blank">BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</a></div>
+        <div class="paper-authors">Jacob Devlin, Ming-Wei Chang, Kenton Lee, et al. &middot; Google &middot; 2018-10</div>
+        <div class="paper-brief">提出双向预训练语言模型 BERT，通过掩码语言模型（MLM）和下一句预测（NSP）任务进行预训练，开创了"预训练+微调"的 NLP 范式。</div>
+        <div class="paper-tags">
+          <span class="tag tag-blue">BERT</span>
+          <span class="tag tag-green">Bidirectional</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2017</div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/1706.03762" target="_blank">Attention Is All You Need</a></div>
+        <div class="paper-authors">Ashish Vaswani, Noam Shazeer, Niki Parmar, et al. &middot; Google &middot; 2017-06</div>
+        <div class="paper-brief">提出了 Transformer 架构，完全基于自注意力机制，摒弃传统的循环和卷积结构，成为后续几乎所有大语言模型的基础架构。</div>
+        <div class="paper-tags">
+          <span class="tag tag-blue">Transformer</span>
+          <span class="tag tag-purple">Attention</span>
+          <span class="tag tag-orange">Architecture</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer><p>AI 论文阅读 &mdash; 持续更新中</p></footer>
+</body>
+</html>

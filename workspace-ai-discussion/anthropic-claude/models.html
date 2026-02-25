@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude 模型演进 - Anthropic &amp; Claude 研究</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="site-nav">
+  <a class="logo" href="index.html">Anthropic &amp; Claude</a>
+  <div class="nav-links">
+    <a href="index.html">首页</a>
+    <a href="models.html" class="active">模型</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <div class="breadcrumb"><a href="index.html">首页</a> / Claude 模型演进</div>
+    <h1>Claude 模型演进</h1>
+  </div>
+
+  <div class="cat-timeline" style="--cat-color: #059669;">
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2026</div>
+      <div class="cat-tl-item">
+        <div class="item-title">Claude Sonnet 4.6</div>
+        <div class="item-meta">2026-02-17</div>
+        <div class="item-desc">Opus 级能力以 Sonnet 定价提供，成为 Pro 和免费用户的默认模型。Computer use 能力业界最强，SWE-bench 79.6%。</div>
+        <div class="paper-tags"><span class="tag tag-green">Sonnet</span><span class="tag tag-accent">默认模型</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title">Claude Opus 4.6</div>
+        <div class="item-meta">2026-02-05</div>
+        <div class="item-desc">1M 上下文窗口（beta），引入 Agent Teams 多智能体协作，Terminal-Bench 2.0 领先 65.4%。支持原生多模态输出。</div>
+        <div class="paper-tags"><span class="tag tag-purple">Opus</span><span class="tag tag-blue">1M Context</span><span class="tag tag-accent">Agent Teams</span></div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2025</div>
+      <div class="cat-tl-item">
+        <div class="item-title">Claude Opus 4.5</div>
+        <div class="item-meta">2025-11-24</div>
+        <div class="item-desc">定价下降 67%，首个突破 SWE-bench 80% 的模型（80.9%）。引入 effort 参数控制推理深度，实现成本与质量的灵活权衡。</div>
+        <div class="paper-tags"><span class="tag tag-purple">Opus</span><span class="tag tag-accent">SWE-bench 80.9%</span><span class="tag tag-blue">Effort 参数</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title">Claude Haiku 4.5</div>
+        <div class="item-meta">2025-10-15</div>
+        <div class="item-desc">预算级模型首次支持 extended thinking，SWE-bench 73.3%，在低成本场景下提供强大的代码与推理能力。</div>
+        <div class="paper-tags"><span class="tag tag-green">Haiku</span><span class="tag tag-blue">Extended Thinking</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title">Claude Sonnet 4.5</div>
+        <div class="item-meta">2025-09-29</div>
+        <div class="item-desc">Sonnet 定价达到前沿水平，SWE-bench 77.2%，AIME 2024 满分 100%。成为开发者最常用模型。</div>
+        <div class="paper-tags"><span class="tag tag-green">Sonnet</span><span class="tag tag-accent">AIME 100%</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title">Claude Opus 4.1</div>
+        <div class="item-meta">2025-08-05</div>
+        <div class="item-desc">渐进式 agentic 升级，SWE-bench 74.5%，优化长时间自主任务的可靠性和工具使用。</div>
+        <div class="paper-tags"><span class="tag tag-purple">Opus</span><span class="tag tag-blue">Agentic</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title">Claude Opus 4 &amp; Sonnet 4</div>
+        <div class="item-meta">2025-05-22</div>
+        <div class="item-desc">首批触发 ASL-3 安全部署标准的模型。同步推出 Claude Code，SWE-bench ~72.5%。Opus 4 成为最强推理模型。</div>
+        <div class="paper-tags"><span class="tag tag-purple">Opus</span><span class="tag tag-green">Sonnet</span><span class="tag tag-accent">ASL-3 首次激活</span><span class="tag tag-orange">Claude Code</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title">Claude 3.7 Sonnet</div>
+        <div class="item-meta">2025-02-24</div>
+        <div class="item-desc">引入 extended thinking（扩展思考），首个混合推理模型 — 可在快速响应和深度推理间灵活切换。SWE-bench 70.3%。</div>
+        <div class="paper-tags"><span class="tag tag-green">Sonnet</span><span class="tag tag-accent">Extended Thinking</span><span class="tag tag-blue">混合推理</span></div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2024</div>
+      <div class="cat-tl-item">
+        <div class="item-title">Claude 3.5 Sonnet v2 + Claude 3.5 Haiku</div>
+        <div class="item-meta">2024-10-22</div>
+        <div class="item-desc">推出 Computer Use（公开 beta），模型可直接操作计算机界面。3.5 Sonnet v2 SWE-bench 达 49%，大幅领先竞争对手。</div>
+        <div class="paper-tags"><span class="tag tag-green">Sonnet</span><span class="tag tag-accent">Computer Use</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title">Claude 3.5 Sonnet v1</div>
+        <div class="item-meta">2024-06-20</div>
+        <div class="item-desc">中端模型首次超越旗舰 Opus。推出 Artifacts 交互式内容生成，HumanEval 92%。确立「Sonnet 越级打 Opus」的产品节奏。</div>
+        <div class="paper-tags"><span class="tag tag-green">Sonnet</span><span class="tag tag-blue">Artifacts</span><span class="tag tag-accent">越级</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title">Claude 3 Haiku / Sonnet / Opus</div>
+        <div class="item-meta">2024-03-04</div>
+        <div class="item-desc">首次采用三层产品策略（Haiku 快 / Sonnet 均衡 / Opus 旗舰）。首次支持视觉输入，200K 上下文，ASL-2 安全等级。</div>
+        <div class="paper-tags"><span class="tag tag-purple">Opus</span><span class="tag tag-green">Sonnet</span><span class="tag tag-orange">Haiku</span><span class="tag tag-blue">Vision</span><span class="tag tag-accent">三层策略</span></div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2023</div>
+      <div class="cat-tl-item">
+        <div class="item-title">Claude 2.1</div>
+        <div class="item-meta">2023-11-21</div>
+        <div class="item-desc">上下文窗口扩展到 200K token，幻觉率降低 50%，引入早期工具调用能力（beta）。</div>
+        <div class="paper-tags"><span class="tag tag-blue">200K Context</span><span class="tag tag-green">Tool Use</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title">Claude 2</div>
+        <div class="item-meta">2023-07-11</div>
+        <div class="item-desc">首个公开可用模型，100K 上下文窗口。定价 $8/$24 per MTok（输入/输出），通过 claude.ai 和 API 同时提供。</div>
+        <div class="paper-tags"><span class="tag tag-blue">100K Context</span><span class="tag tag-accent">首次公开</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title">Claude 1 / Claude Instant</div>
+        <div class="item-meta">2023-03-14</div>
+        <div class="item-desc">Anthropic 首次发布 AI 助手，基于 Constitutional AI 训练。Claude 1 面向深度任务，Claude Instant 面向速度敏感场景。有限访问。</div>
+        <div class="paper-tags"><span class="tag tag-accent">初代</span><span class="tag tag-blue">Constitutional AI</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer><p>Anthropic &amp; Claude 研究 &mdash; 持续更新中</p></footer>
+</body>
+</html>

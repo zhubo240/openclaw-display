@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 对自媒体行业的影响 — 深度调研</title>
+    <style>
+        :root {
+            --bg: #0f1117;
+            --card: #1a1d28;
+            --border: #2a2d3a;
+            --text: #e4e4e7;
+            --text-dim: #9ca3af;
+            --accent: #6366f1;
+            --accent-light: #818cf8;
+            --green: #34d399;
+            --orange: #fb923c;
+            --red: #f87171;
+            --yellow: #fbbf24;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 80px 20px 60px;
+            background: linear-gradient(135deg, #1a1d28 0%, #0f1117 50%, #1a1025 100%);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-dim);
+            max-width: 700px;
+            margin: 0 auto 32px;
+        }
+
+        .hero .tagline {
+            display: inline-block;
+            padding: 8px 20px;
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 24px;
+            font-size: 0.9rem;
+            color: var(--accent-light);
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Key Findings */
+        .findings {
+            padding: 60px 0;
+        }
+
+        .section-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 32px;
+            padding-left: 16px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 48px;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent);
+        }
+
+        .stat-card .label {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+
+        .stat-card .value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-card .desc {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        .stat-card.purple .value { color: var(--accent-light); }
+        .stat-card.green .value { color: var(--green); }
+        .stat-card.orange .value { color: var(--orange); }
+        .stat-card.red .value { color: var(--red); }
+
+        /* Demand dimensions */
+        .demand-section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 48px;
+        }
+
+        .demand-section h3 {
+            font-size: 1.2rem;
+            margin-bottom: 24px;
+        }
+
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .bar-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .bar-label {
+            width: 90px;
+            font-size: 0.9rem;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .bar-track {
+            flex: 1;
+            height: 28px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            padding-left: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: width 1s ease;
+        }
+
+        .bar-pct {
+            width: 60px;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            flex-shrink: 0;
+        }
+
+        /* Reshaping layers */
+        .layers {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+
+        .layer-card {
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .layer-card.top {
+            background: linear-gradient(135deg, rgba(52, 211, 153, 0.1), rgba(52, 211, 153, 0.02));
+            border-color: rgba(52, 211, 153, 0.3);
+        }
+
+        .layer-card.mid {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(251, 191, 36, 0.02));
+            border-color: rgba(251, 191, 36, 0.3);
+        }
+
+        .layer-card.bottom {
+            background: linear-gradient(135deg, rgba(248, 113, 113, 0.1), rgba(248, 113, 113, 0.02));
+            border-color: rgba(248, 113, 113, 0.3);
+        }
+
+        .layer-card .layer-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .layer-card.top .layer-tag { background: rgba(52, 211, 153, 0.2); color: var(--green); }
+        .layer-card.mid .layer-tag { background: rgba(251, 191, 36, 0.2); color: var(--yellow); }
+        .layer-card.bottom .layer-tag { background: rgba(248, 113, 113, 0.2); color: var(--red); }
+
+        .layer-card h4 { font-size: 1.1rem; margin-bottom: 6px; }
+        .layer-card p { font-size: 0.9rem; color: var(--text-dim); }
+
+        /* Moat table */
+        .moat-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 48px;
+        }
+
+        .moat-table th, .moat-table td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .moat-table th {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .moat-table td { font-size: 0.95rem; }
+
+        .moat-table tr:hover td { background: rgba(99, 102, 241, 0.05); }
+
+        .difficulty {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .difficulty.high { background: rgba(52, 211, 153, 0.15); color: var(--green); }
+        .difficulty.med { background: rgba(251, 191, 36, 0.15); color: var(--yellow); }
+        .difficulty.low { background: rgba(248, 113, 113, 0.15); color: var(--red); }
+
+        /* Reports section */
+        .reports {
+            padding: 60px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .report-group-title {
+            font-size: 1rem;
+            color: var(--text-dim);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .report-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            cursor: default;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .report-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent);
+        }
+
+        .report-card .num {
+            font-size: 0.75rem;
+            color: var(--accent-light);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .report-card h4 {
+            font-size: 1.05rem;
+            margin-bottom: 8px;
+        }
+
+        .report-card p {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        .report-card .tags {
+            margin-top: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .report-card .tag {
+            padding: 3px 10px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: var(--accent-light);
+        }
+
+        /* Cost comparison */
+        .cost-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+
+        .cost-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .cost-card .type { font-size: 0.9rem; color: var(--text-dim); margin-bottom: 12px; }
+
+        .cost-card .comparison {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .cost-card .old {
+            font-size: 0.9rem;
+            color: var(--red);
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+
+        .cost-card .arrow { color: var(--text-dim); }
+
+        .cost-card .new {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--green);
+        }
+
+        .cost-card .ratio {
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: var(--accent-light);
+        }
+
+        /* Spectrum table */
+        .spectrum {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 48px;
+        }
+
+        .spectrum-col {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .spectrum-col h4 {
+            font-size: 1rem;
+            margin-bottom: 16px;
+        }
+
+        .spectrum-col.easy h4 { color: var(--red); }
+        .spectrum-col.hard h4 { color: var(--green); }
+
+        .spectrum-col ul {
+            list-style: none;
+        }
+
+        .spectrum-col li {
+            padding: 8px 0;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .spectrum-col li:last-child { border-bottom: none; }
+
+        /* Quote */
+        .quote-block {
+            background: var(--card);
+            border-left: 4px solid var(--accent);
+            border-radius: 0 12px 12px 0;
+            padding: 24px 32px;
+            margin: 48px 0;
+            font-size: 1.1rem;
+            font-style: italic;
+            color: var(--text-dim);
+        }
+
+        .quote-block strong { color: var(--text); font-style: normal; }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        /* Value shift */
+        .value-shift {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 48px;
+        }
+
+        .shift-col {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .shift-col h4 {
+            font-size: 1rem;
+            margin-bottom: 16px;
+            color: var(--text-dim);
+        }
+
+        .shift-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .shift-item .name {
+            width: 80px;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        .shift-item .shift-bar {
+            flex: 1;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .shift-item .shift-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+
+        .shift-item .pct {
+            width: 36px;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 1.8rem; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .spectrum { grid-template-columns: 1fr; }
+            .value-shift { grid-template-columns: 1fr; }
+            .cost-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .cost-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>AI 对自媒体行业的影响</h1>
+    <p class="subtitle">AI 降低了内容供给的边际成本，但人的注意力总量不变。当供给趋于无限而需求恒定时，单条内容的价值趋近于零。</p>
+    <span class="tagline">覆盖中国市场 + 全球视角 | 2026 年 2 月调研</span>
+</div>
+
+<div class="container">
+
+    <!-- Key Stats -->
+    <section class="findings">
+        <h2 class="section-title">关键数据</h2>
+        <div class="stats-grid">
+            <div class="stat-card red">
+                <div class="label">内容供给</div>
+                <div class="value">74.2%</div>
+                <div class="desc">新网页含 AI 生成内容</div>
+            </div>
+            <div class="stat-card orange">
+                <div class="label">注意力持续时长</div>
+                <div class="value">8.25 秒</div>
+                <div class="desc">单条帖子平均注意力（从 12.1 秒下降）</div>
+            </div>
+            <div class="stat-card purple">
+                <div class="label">ChatGPT 周活用户</div>
+                <div class="value">9 亿</div>
+                <div class="desc">不到两年增长 8 倍</div>
+            </div>
+            <div class="stat-card green">
+                <div class="label">创作者经济规模</div>
+                <div class="value">4800 亿</div>
+                <div class="desc">美元（Goldman Sachs 2027 年预测）</div>
+            </div>
+            <div class="stat-card orange">
+                <div class="label">Facebook 有机触达率</div>
+                <div class="value">1.37%</div>
+                <div class="desc">万粉页面仅 137 人能看到</div>
+            </div>
+            <div class="stat-card red">
+                <div class="label">中国受影响岗位</div>
+                <div class="value">750-1000 万</div>
+                <div class="desc">内容类岗位面临 3-5 年转型</div>
+            </div>
+            <div class="stat-card purple">
+                <div class="label">AI 音乐生成</div>
+                <div class="value">700 万首/天</div>
+                <div class="desc">Suno 每两周超 Spotify 全库</div>
+            </div>
+            <div class="stat-card green">
+                <div class="label">中国 AI 应用用户</div>
+                <div class="value">7.29 亿</div>
+                <div class="desc">57.4% 用户已养成 AI 使用习惯</div>
+            </div>
+        </div>
+
+        <!-- Cost Comparison -->
+        <h2 class="section-title">AI 内容生产成本对比</h2>
+        <div class="cost-grid">
+            <div class="cost-card">
+                <div class="type">文字（一篇博客）</div>
+                <div class="comparison">
+                    <span class="old">$611</span>
+                    <span class="arrow">→</span>
+                    <span class="new">$131</span>
+                </div>
+                <div class="ratio">降低 4.7 倍</div>
+            </div>
+            <div class="cost-card">
+                <div class="type">图片（一张）</div>
+                <div class="comparison">
+                    <span class="old">$500+</span>
+                    <span class="arrow">→</span>
+                    <span class="new">$0.04</span>
+                </div>
+                <div class="ratio">降低 10,000+ 倍</div>
+            </div>
+            <div class="cost-card">
+                <div class="type">配音（每分钟）</div>
+                <div class="comparison">
+                    <span class="old">$30-500</span>
+                    <span class="arrow">→</span>
+                    <span class="new">$0.01</span>
+                </div>
+                <div class="ratio">降低 90%+</div>
+            </div>
+            <div class="cost-card">
+                <div class="type">视频（2 分钟宣传片）</div>
+                <div class="comparison">
+                    <span class="old">$22,000+</span>
+                    <span class="arrow">→</span>
+                    <span class="new">$1,700</span>
+                </div>
+                <div class="ratio">降低 80-90%</div>
+            </div>
+        </div>
+
+        <!-- Demand Dimensions -->
+        <h2 class="section-title">内容消费六大需求 vs AI 替代度</h2>
+        <div class="demand-section">
+            <h3>人消费内容的本质需求中，AI 只在信息获取维度具有高替代性</h3>
+            <div class="bar-chart">
+                <div class="bar-row">
+                    <span class="bar-label">信息获取</span>
+                    <div class="bar-track">
+                        <div class="bar-fill" style="width: 75%; background: linear-gradient(90deg, var(--red), #ef4444);">AI 强项</div>
+                    </div>
+                    <span class="bar-pct">70-80%</span>
+                </div>
+                <div class="bar-row">
+                    <span class="bar-label">娱乐消遣</span>
+                    <div class="bar-track">
+                        <div class="bar-fill" style="width: 45%; background: linear-gradient(90deg, var(--orange), #f59e0b);"></div>
+                    </div>
+                    <span class="bar-pct">40-50%</span>
+                </div>
+                <div class="bar-row">
+                    <span class="bar-label">社交货币</span>
+                    <div class="bar-track">
+                        <div class="bar-fill" style="width: 35%; background: linear-gradient(90deg, var(--yellow), #eab308);"></div>
+                    </div>
+                    <span class="bar-pct">30-40%</span>
+                </div>
+                <div class="bar-row">
+                    <span class="bar-label">灵感启发</span>
+                    <div class="bar-track">
+                        <div class="bar-fill" style="width: 35%; background: linear-gradient(90deg, #a78bfa, #7c3aed);"></div>
+                    </div>
+                    <span class="bar-pct">30-40%</span>
+                </div>
+                <div class="bar-row">
+                    <span class="bar-label">情感陪伴</span>
+                    <div class="bar-track">
+                        <div class="bar-fill" style="width: 25%; background: linear-gradient(90deg, var(--accent-light), var(--accent));"></div>
+                    </div>
+                    <span class="bar-pct">20-30%</span>
+                </div>
+                <div class="bar-row">
+                    <span class="bar-label">身份认同</span>
+                    <div class="bar-track">
+                        <div class="bar-fill" style="width: 15%; background: linear-gradient(90deg, var(--green), #059669);">难以替代</div>
+                    </div>
+                    <span class="bar-pct">10-20%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Three Layer Reshaping -->
+        <h2 class="section-title">创作者三层重塑</h2>
+        <div class="layers">
+            <div class="layer-card top">
+                <span class="layer-tag">顶层 — 放大层</span>
+                <h4>头部创作者利用 AI 放大优势</h4>
+                <p>人格化和社区是终极壁垒。AI 成为生产力基础设施，人类判断力是核心资产。</p>
+            </div>
+            <div class="layer-card mid">
+                <span class="layer-tag">中间层 — 挤压层</span>
+                <h4>中等水平创作者面临最大压力</h4>
+                <p>AI 从下方拉低"及格线"内容价值，头部从上方吸走注意力和收入。这是最痛苦的一层。</p>
+            </div>
+            <div class="layer-card bottom">
+                <span class="layer-tag">底层 — 替代层</span>
+                <h4>模板化内容被 AI 大规模替代</h4>
+                <p>产品描述、SEO 文、新闻摘要、基础教程等重复性内容，AI 已能以极低成本批量生成。</p>
+            </div>
+        </div>
+
+        <!-- Moat Analysis -->
+        <h2 class="section-title">创作者护城河</h2>
+        <table class="moat-table">
+            <thead>
+                <tr>
+                    <th>护城河</th>
+                    <th>AI 替代难度</th>
+                    <th>说明</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>独特经历</td>
+                    <td><span class="difficulty high">极高</span></td>
+                    <td>真实生活体验不可数字化复制，物理世界无法模拟</td>
+                </tr>
+                <tr>
+                    <td>人格化</td>
+                    <td><span class="difficulty high">极高</span></td>
+                    <td>即兴反应、真实好奇心、不可预测性构成魅力</td>
+                </tr>
+                <tr>
+                    <td>社区</td>
+                    <td><span class="difficulty high">高</span></td>
+                    <td>围绕共同身份和价值观形成的网络效应</td>
+                </tr>
+                <tr>
+                    <td>信任感</td>
+                    <td><span class="difficulty med">高</span></td>
+                    <td>长期一致的行为和判断力展示，但也可能脆弱</td>
+                </tr>
+                <tr>
+                    <td>品味策展</td>
+                    <td><span class="difficulty med">中高</span></td>
+                    <td>Simon 预言：过滤能力比生产能力更稀缺</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Replacement Spectrum -->
+        <h2 class="section-title">赛道替代光谱</h2>
+        <div class="spectrum">
+            <div class="spectrum-col easy">
+                <h4>最易被 AI 替代</h4>
+                <ul>
+                    <li>产品描述 / SEO 填充文</li>
+                    <li>新闻摘要 / 简报</li>
+                    <li>基础教程 / How-to</li>
+                    <li>低端产品评测</li>
+                    <li>模板化营销文案</li>
+                </ul>
+            </div>
+            <div class="spectrum-col hard">
+                <h4>最难被 AI 替代</h4>
+                <ul>
+                    <li>个人故事 / 自传性内容</li>
+                    <li>深度调查报道</li>
+                    <li>现场体验（旅行/美食/极限运动）</li>
+                    <li>社区互动（直播/Q&A）</li>
+                    <li>跨领域深度分析</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Value Shift -->
+        <h2 class="section-title">自媒体价值重心迁移</h2>
+        <div class="value-shift">
+            <div class="shift-col">
+                <h4>AI 前</h4>
+                <div class="shift-item"><span class="name">信息搬运</span><div class="shift-bar"><div class="shift-fill" style="width:80%;background:var(--accent-light);"></div></div><span class="pct">40%</span></div>
+                <div class="shift-item"><span class="name">加工整理</span><div class="shift-bar"><div class="shift-fill" style="width:50%;background:var(--accent-light);"></div></div><span class="pct">25%</span></div>
+                <div class="shift-item"><span class="name">人格表达</span><div class="shift-bar"><div class="shift-fill" style="width:30%;background:var(--accent-light);"></div></div><span class="pct">15%</span></div>
+                <div class="shift-item"><span class="name">社群运营</span><div class="shift-bar"><div class="shift-fill" style="width:20%;background:var(--accent-light);"></div></div><span class="pct">10%</span></div>
+                <div class="shift-item"><span class="name">品味策展</span><div class="shift-bar"><div class="shift-fill" style="width:20%;background:var(--accent-light);"></div></div><span class="pct">10%</span></div>
+            </div>
+            <div class="shift-col">
+                <h4>AI 后（预测）</h4>
+                <div class="shift-item"><span class="name">人格表达</span><div class="shift-bar"><div class="shift-fill" style="width:70%;background:var(--green);"></div></div><span class="pct">35%</span></div>
+                <div class="shift-item"><span class="name">社群运营</span><div class="shift-bar"><div class="shift-fill" style="width:50%;background:var(--green);"></div></div><span class="pct">25%</span></div>
+                <div class="shift-item"><span class="name">品味策展</span><div class="shift-bar"><div class="shift-fill" style="width:50%;background:var(--green);"></div></div><span class="pct">25%</span></div>
+                <div class="shift-item"><span class="name">加工整理</span><div class="shift-bar"><div class="shift-fill" style="width:20%;background:var(--text-dim);"></div></div><span class="pct">10%</span></div>
+                <div class="shift-item"><span class="name">信息搬运</span><div class="shift-bar"><div class="shift-fill" style="width:10%;background:var(--text-dim);"></div></div><span class="pct">5%</span></div>
+            </div>
+        </div>
+
+        <div class="quote-block">
+            当"生产内容"不再稀缺，真正稀缺的变成了<strong>注意力、信任和原创性</strong>。自媒体行业正在从"生产驱动"转向"筛选驱动"和"信任驱动"的新范式。
+        </div>
+    </section>
+
+    <!-- Reports -->
+    <section class="reports">
+        <h2 class="section-title">调研报告</h2>
+
+        <p class="report-group-title">中国市场专项</p>
+        <div class="report-grid">
+            <div class="report-card">
+                <div class="num">01</div>
+                <h4>监管政策</h4>
+                <p>深度合成规定、生成式 AI 暂行办法、标识办法、清朗行动、各平台政策对比</p>
+                <div class="tags">
+                    <span class="tag">法规</span>
+                    <span class="tag">标识</span>
+                    <span class="tag">执法</span>
+                </div>
+            </div>
+            <div class="report-card">
+                <div class="num">02</div>
+                <h4>平台影响</h4>
+                <p>公众号、抖音、快手、小红书、B站、知乎 — 各平台对 AI 内容的态度与治理</p>
+                <div class="tags">
+                    <span class="tag">抖音</span>
+                    <span class="tag">小红书</span>
+                    <span class="tag">B站</span>
+                    <span class="tag">知乎</span>
+                </div>
+            </div>
+            <div class="report-card">
+                <div class="num">03</div>
+                <h4>商业模式</h4>
+                <p>广告 CPM 下行、知识付费冲击、数字人直播成本仅真人 1/10、MCN 变革</p>
+                <div class="tags">
+                    <span class="tag">广告</span>
+                    <span class="tag">知识付费</span>
+                    <span class="tag">数字人</span>
+                    <span class="tag">MCN</span>
+                </div>
+            </div>
+            <div class="report-card">
+                <div class="num">04</div>
+                <h4>注意力分配</h4>
+                <p>豆包 2.27 亿月活、DeepSeek 爆发、平台算法调整、内容同质化</p>
+                <div class="tags">
+                    <span class="tag">豆包</span>
+                    <span class="tag">DeepSeek</span>
+                    <span class="tag">算法</span>
+                </div>
+            </div>
+        </div>
+
+        <p class="report-group-title">全球视角深度调研</p>
+        <div class="report-grid">
+            <div class="report-card">
+                <div class="num">05</div>
+                <h4>供给侧冲击</h4>
+                <p>文字/图片/音频/视频成本全维度对比、同质化学术研究、行业通缩、AI 质量上限</p>
+                <div class="tags">
+                    <span class="tag">成本</span>
+                    <span class="tag">同质化</span>
+                    <span class="tag">裁员</span>
+                </div>
+            </div>
+            <div class="report-card">
+                <div class="num">06</div>
+                <h4>注意力经济学</h4>
+                <p>Simon/Goldhaber 理论、Content Shock、幂律分布、doom scrolling、行为迁移</p>
+                <div class="tags">
+                    <span class="tag">经济学</span>
+                    <span class="tag">幂律</span>
+                    <span class="tag">AI搜索</span>
+                </div>
+            </div>
+            <div class="report-card">
+                <div class="num">07</div>
+                <h4>创作者竞争</h4>
+                <p>2.07 亿创作者、护城河分析、赛道替代难度、新平台、Goldman Sachs 预测</p>
+                <div class="tags">
+                    <span class="tag">护城河</span>
+                    <span class="tag">赛道</span>
+                    <span class="tag">混合创作</span>
+                </div>
+            </div>
+            <div class="report-card">
+                <div class="num">08</div>
+                <h4>深层问题</h4>
+                <p>内容消费六维需求、准社会关系、中间人价值、真实性溢价、长期均衡状态</p>
+                <div class="tags">
+                    <span class="tag">需求本质</span>
+                    <span class="tag">中间人</span>
+                    <span class="tag">真实性</span>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div class="footer">
+    <p>AI 对自媒体行业的影响 — 深度调研 | 2026 年 2 月</p>
+    <p style="margin-top: 8px;">数据来源：学术论文、QuestMobile、麦肯锡、Goldman Sachs、克劳锐、国家网信办等</p>
+</div>
+
+</body>
+</html>

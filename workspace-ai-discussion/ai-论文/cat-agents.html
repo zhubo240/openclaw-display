@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agents / 智能体 - AI 论文阅读</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="site-nav">
+  <a class="logo" href="index.html">AI Papers</a>
+  <div class="nav-links">
+    <a href="index.html">首页</a>
+    <a href="timeline.html">时间线</a>
+    <a href="cat-agents.html" class="active">Agents</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <div class="breadcrumb"><a href="index.html">首页</a> / Agents</div>
+    <h1>Agents / 智能体</h1>
+  </div>
+
+  <div class="cat-timeline" style="--cat-color: #d97706;">
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2025</div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://github.com/anthropics/claude-code" target="_blank">Claude Code</a></div>
+        <div class="paper-authors">Anthropic &middot; 2025-05</div>
+        <div class="paper-brief">终端原生的代理式编程工具，理解多文件代码库，可执行代码、处理 Git 工作流并自主修复错误，年化收入超 10 亿美元。</div>
+        <div class="paper-tags"><span class="tag tag-purple">Blog</span><span class="tag tag-blue">Claude Code</span><span class="tag tag-green">Agentic Coding</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://openai.com/index/introducing-codex/" target="_blank">OpenAI Codex (2025)</a></div>
+        <div class="paper-authors">OpenAI &middot; 2025-04</div>
+        <div class="paper-brief">云端代理式编程 Agent，由专用 o3/o4-mini 驱动，支持同时处理多任务并联网检索，后续演进为 GPT-5-Codex 系列。</div>
+        <div class="paper-tags"><span class="tag tag-purple">Blog</span><span class="tag tag-blue">Codex</span><span class="tag tag-orange">Cloud Agent</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://modelcontextprotocol.io/specification/2025-11-25" target="_blank">Model Context Protocol (MCP)</a></div>
+        <div class="paper-authors">Anthropic (开放标准) &middot; 2024-11 发布 / 2025-11 修订</div>
+        <div class="paper-brief">标准化 LLM 应用连接外部数据源和工具的开放协议（JSON-RPC），被 OpenAI 等广泛采用，成为工具集成的事实标准。</div>
+        <div class="paper-tags"><span class="tag tag-blue">MCP</span><span class="tag tag-green">Open Standard</span><span class="tag tag-purple">Protocol</span></div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2023</div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2304.03442" target="_blank">Generative Agents: Interactive Simulacra of Human Behavior</a></div>
+        <div class="paper-authors">Joon Sung Park, Joseph C. O'Brien, Carrie J. Cai, et al. &middot; Stanford / Google &middot; 2023-04</div>
+        <div class="paper-brief">25 个 LLM 智能体在沙盒小镇自主社交，拥有记忆、反思与规划能力，开创多智能体社会模拟。</div>
+        <div class="paper-tags"><span class="tag tag-blue">Generative Agents</span><span class="tag tag-purple">Multi-Agent</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2303.17580" target="_blank">HuggingGPT: Solving AI Tasks with ChatGPT and Friends</a></div>
+        <div class="paper-authors">Yongliang Shen, Kaitao Song, Xu Tan, et al. &middot; Microsoft / Zhejiang U &middot; 2023-03</div>
+        <div class="paper-brief">以 LLM 为中枢，自动调度 HuggingFace 上的模型协作完成跨模态任务。</div>
+        <div class="paper-tags"><span class="tag tag-blue">HuggingGPT</span><span class="tag tag-orange">Orchestration</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2303.11366" target="_blank">Reflexion: Language Agents with Verbal Reinforcement Learning</a></div>
+        <div class="paper-authors">Noah Shinn, Federico Cassano, Edward Berman, et al. &middot; 2023-03</div>
+        <div class="paper-brief">Agent 通过自然语言自我反思从试错中学习，无需梯度更新，存入记忆指导后续决策。</div>
+        <div class="paper-tags"><span class="tag tag-blue">Reflexion</span><span class="tag tag-green">Self-Reflection</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2302.04761" target="_blank">Toolformer: Language Models Can Teach Themselves to Use Tools</a></div>
+        <div class="paper-authors">Timo Schick, Jane Dwivedi-Yu, Roberto Dessi, et al. &middot; Meta AI &middot; 2023-02</div>
+        <div class="paper-brief">自监督方法让模型自主学习何时及如何调用外部工具（搜索、计算器等），无需人工标注。</div>
+        <div class="paper-tags"><span class="tag tag-blue">Toolformer</span><span class="tag tag-green">Tool Use</span></div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2022</div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2210.03629" target="_blank">ReAct: Synergizing Reasoning and Acting in Language Models</a></div>
+        <div class="paper-authors">Shunyu Yao, Jeffrey Zhao, Dian Yu, et al. &middot; Princeton / Google &middot; 2022-10</div>
+        <div class="paper-brief">交替进行推理和行动，使 LLM 在思考过程中调用外部工具获取信息，Agent 领域奠基性工作。</div>
+        <div class="paper-tags"><span class="tag tag-blue">ReAct</span><span class="tag tag-purple">Reasoning + Acting</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer><p>AI 论文阅读 &mdash; 持续更新中</p></footer>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAG / Retrieval - AI 论文阅读</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="site-nav">
+  <a class="logo" href="index.html">AI Papers</a>
+  <div class="nav-links">
+    <a href="index.html">首页</a>
+    <a href="timeline.html">时间线</a>
+    <a href="cat-rag.html" class="active">RAG / Retrieval</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <div class="breadcrumb"><a href="index.html">首页</a> / RAG / Retrieval</div>
+    <h1>RAG / Retrieval</h1>
+  </div>
+
+  <div class="cat-timeline" style="--cat-color: #dc2626;">
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2023</div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2310.11511" target="_blank">Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection</a></div>
+        <div class="paper-authors">Akari Asai, Zeqiu Wu, Yizhong Wang, et al. &middot; U of Washington &middot; 2023-10</div>
+        <div class="paper-brief">模型通过自我反思标记自主决定何时检索、何时生成、何时批判，按需自适应检索。</div>
+        <div class="paper-tags"><span class="tag tag-blue">Self-RAG</span><span class="tag tag-green">Self-Reflection</span></div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">2020</div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2005.11401" target="_blank">Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks</a></div>
+        <div class="paper-authors">Patrick Lewis, Ethan Perez, Aleksandra Piktus, et al. &middot; Meta AI / UCL &middot; 2020-05</div>
+        <div class="paper-brief">将参数化模型与非参数化检索器结合，奠定"检索增强生成"范式基础。</div>
+        <div class="paper-tags"><span class="tag tag-blue">RAG</span><span class="tag tag-purple">Foundation</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2007.01282" target="_blank">Fusion-in-Decoder (FiD)</a></div>
+        <div class="paper-authors">Gautier Izacard, Edouard Grave &middot; Meta AI &middot; 2020-07</div>
+        <div class="paper-brief">多段落分别编码后在解码器中融合，段落越多性能越好。</div>
+        <div class="paper-tags"><span class="tag tag-blue">FiD</span><span class="tag tag-green">Multi-Passage</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2004.04906" target="_blank">Dense Passage Retrieval for Open-Domain QA (DPR)</a></div>
+        <div class="paper-authors">Vladimir Karpukhin, Barlas Oguz, Sewon Min, et al. &middot; Meta AI &middot; 2020-04</div>
+        <div class="paper-brief">双编码器密集检索，top-20 准确率比 BM25 高 9%-19%，为向量搜索奠定基础。</div>
+        <div class="paper-tags"><span class="tag tag-blue">DPR</span><span class="tag tag-orange">Dense Retrieval</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="paper-title"><a href="https://arxiv.org/abs/2002.08909" target="_blank">REALM: Retrieval-Augmented Language Model Pre-Training</a></div>
+        <div class="paper-authors">Kelvin Guu, Kenton Lee, Zora Tung, et al. &middot; Google &middot; 2020-02</div>
+        <div class="paper-brief">首次在预训练阶段引入可学习的知识检索器，端到端优化检索步骤。</div>
+        <div class="paper-tags"><span class="tag tag-blue">REALM</span><span class="tag tag-purple">Pre-training</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer><p>AI 论文阅读 &mdash; 持续更新中</p></footer>
+</body>
+</html>

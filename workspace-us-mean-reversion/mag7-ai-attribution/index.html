@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mag 7 盈利 AI 归因分析</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: #0a0e1a;
+    color: #e0e6ed;
+    line-height: 1.7;
+  }
+
+  .sidebar {
+    position: fixed; left: 0; top: 0; bottom: 0;
+    width: 230px;
+    background: rgba(10, 14, 26, 0.97);
+    border-right: 1px solid rgba(255,255,255,0.08);
+    padding: 20px 0;
+    overflow-y: auto;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+  .sidebar .logo {
+    padding: 0 16px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 12px;
+  }
+  .sidebar .logo h3 {
+    font-size: 0.85rem;
+    background: linear-gradient(135deg, #f472b6, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .sidebar .logo span { font-size: 0.68rem; color: #4a5568; }
+  .nav-group { padding: 0 8px; margin-bottom: 6px; }
+  .nav-group-title {
+    font-size: 0.62rem; color: #4a5568;
+    text-transform: uppercase; letter-spacing: 1.5px;
+    padding: 8px 8px 4px; font-weight: 600;
+  }
+  .nav-link {
+    display: block; padding: 6px 12px;
+    color: #6b7a8d; text-decoration: none;
+    font-size: 0.78rem; border-radius: 6px;
+    transition: all 0.2s; line-height: 1.4;
+  }
+  .nav-link:hover { background: rgba(167,139,250,0.1); color: #a5b4c6; }
+  .nav-link.active { background: rgba(167,139,250,0.15); color: #a78bfa; font-weight: 500; }
+
+  .main { margin-left: 230px; padding: 20px; max-width: 1100px; }
+
+  .header {
+    text-align: center; padding: 30px 0 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 24px;
+  }
+  .header h1 {
+    font-size: 1.8rem;
+    background: linear-gradient(135deg, #f472b6, #a78bfa, #60a5fa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 6px;
+  }
+  .header .subtitle { color: #6b7a8d; font-size: 0.88rem; }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px; margin-bottom: 24px;
+  }
+  .card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px; padding: 16px; text-align: center;
+  }
+  .card .label { font-size: 0.68rem; color: #6b7a8d; text-transform: uppercase; letter-spacing: 1px; }
+  .card .value { font-size: 1.5rem; font-weight: 700; margin-top: 4px; }
+  .card .sub { font-size: 0.72rem; color: #4a5568; margin-top: 2px; }
+  .green { color: #34d399; }
+  .blue { color: #60a5fa; }
+  .orange { color: #fbbf24; }
+  .pink { color: #f472b6; }
+  .purple { color: #a78bfa; }
+  .red { color: #f87171; }
+
+  .section {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px; padding: 24px;
+    margin-bottom: 20px; scroll-margin-top: 20px;
+  }
+  .section h2 { font-size: 1.15rem; color: #a5b4c6; margin-bottom: 4px; }
+  .section .desc { font-size: 0.82rem; color: #4a5568; margin-bottom: 14px; }
+  .chart-container { position: relative; width: 100%; height: 340px; }
+
+  .insight {
+    background: rgba(167, 139, 250, 0.06);
+    border-left: 3px solid #a78bfa;
+    padding: 12px 16px; border-radius: 0 6px 6px 0;
+    margin-top: 14px; font-size: 0.85rem; color: #8896a8;
+  }
+  .insight strong { color: #a78bfa; }
+  .insight.warn {
+    background: rgba(251,191,36,0.06);
+    border-left-color: #fbbf24;
+  }
+  .insight.warn strong { color: #fbbf24; }
+  .insight.danger {
+    background: rgba(248,113,113,0.06);
+    border-left-color: #f87171;
+  }
+  .insight.danger strong { color: #f87171; }
+
+  table {
+    width: 100%; border-collapse: collapse;
+    font-size: 0.82rem; margin: 10px 0;
+  }
+  th {
+    text-align: left; padding: 8px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+    color: #6b7a8d; font-weight: 600; font-size: 0.75rem;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  td {
+    padding: 7px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: #a5b4c6;
+  }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .flow-diagram {
+    display: flex; flex-direction: column; gap: 2px;
+    padding: 16px; font-size: 0.82rem;
+  }
+  .flow-step {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; border-radius: 8px;
+    background: rgba(255,255,255,0.03);
+    border-left: 3px solid;
+  }
+  .flow-step .arrow { color: #4a5568; font-size: 0.7rem; text-align: center; padding: 2px 0; }
+  .flow-step .icon { font-size: 1.1rem; min-width: 24px; text-align: center; }
+  .flow-step .text { flex: 1; color: #8896a8; }
+  .flow-step .text strong { color: #e0e6ed; }
+
+  .phase-timeline {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 12px; margin: 14px 0;
+  }
+  .phase-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px; padding: 16px;
+    border-top: 3px solid;
+  }
+  .phase-card h4 { font-size: 0.85rem; margin-bottom: 4px; }
+  .phase-card .time { font-size: 0.72rem; color: #4a5568; margin-bottom: 8px; }
+  .phase-card p { font-size: 0.8rem; color: #8896a8; line-height: 1.5; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 800px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+    .two-col, .phase-timeline { grid-template-columns: 1fr; }
+    .summary-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .layer-stack {
+    display: flex; flex-direction: column; gap: 0;
+    margin: 14px 0; border-radius: 10px; overflow: hidden;
+  }
+  .layer {
+    padding: 14px 18px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .layer .name { font-weight: 600; font-size: 0.85rem; }
+  .layer .detail { font-size: 0.78rem; opacity: 0.8; }
+
+  .tag {
+    display: inline-block; padding: 2px 8px;
+    border-radius: 10px; font-size: 0.7rem; font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="logo">
+    <h3>Mag 7 AI 归因分析</h3>
+    <span>$484B 盈利拆解 · 2025</span>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">盈利全景</div>
+    <a class="nav-link" href="#earnings">逐年盈利</a>
+    <a class="nav-link" href="#cagr">AI前vs后增速</a>
+    <a class="nav-link" href="#attribution">AI归因拆分</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">深度分析</div>
+    <a class="nav-link" href="#company">逐公司分析</a>
+    <a class="nav-link" href="#cloud">云收入价值链</a>
+    <a class="nav-link" href="#circular">循环依赖</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">风险与结论</div>
+    <a class="nav-link" href="#risk">风险情景</a>
+    <a class="nav-link" href="#conclusion">结论</a>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="header">
+    <h1>Mag 7 盈利 AI 归因分析</h1>
+    <div class="subtitle">$484B 盈利拆解 · AI 前业务 vs AI 持久 vs AI 暂时</div>
+  </div>
+
+  <!-- ===== SUMMARY CARDS ===== -->
+  <div class="summary-grid">
+    <div class="card">
+      <div class="label">Mag7 总盈利</div>
+      <div class="value blue">$484B</div>
+      <div class="sub">2024 合计净利润</div>
+    </div>
+    <div class="card">
+      <div class="label">AI 前业务</div>
+      <div class="value" style="color:#4a5568">64%</div>
+      <div class="sub">~$309B · 高持久性</div>
+    </div>
+    <div class="card">
+      <div class="label">AI 持久增量</div>
+      <div class="value green">21%</div>
+      <div class="sub">~$100B · 中高持久性</div>
+    </div>
+    <div class="card">
+      <div class="label">AI 可能暂时</div>
+      <div class="value red">15%</div>
+      <div class="sub">~$74B · 低持久性</div>
+    </div>
+    <div class="card">
+      <div class="label">"暂时"中 Nvidia占</div>
+      <div class="value orange">65%</div>
+      <div class="sub">$48B / $74B</div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 1: EARNINGS TABLE + CHART ===== -->
+  <div class="section" id="earnings">
+    <h2>Mag 7 逐年盈利 (2019-2024)</h2>
+    <div class="desc">Compustat 年度数据，单位 $B。2022 是 AI 前/后的分水岭。</div>
+    <table>
+      <tr>
+        <th>年份</th><th>Apple</th><th>MSFT</th><th>Nvidia</th><th>Google</th><th>Amazon</th><th>Meta</th><th>Tesla</th><th>合计</th>
+      </tr>
+      <tr><td>2019</td><td class="num">55.3</td><td class="num">39.2</td><td class="num">2.8</td><td class="num">34.3</td><td class="num">11.6</td><td class="num">18.5</td><td class="num">--</td><td class="num" style="color:#60a5fa;font-weight:600">161.7</td></tr>
+      <tr><td>2020</td><td class="num">57.4</td><td class="num">44.3</td><td class="num">4.3</td><td class="num">40.3</td><td class="num">21.3</td><td class="num">29.1</td><td class="num">0.7</td><td class="num" style="color:#60a5fa;font-weight:600">197.5</td></tr>
+      <tr><td>2021</td><td class="num">94.7</td><td class="num">61.3</td><td class="num">9.8</td><td class="num">76.0</td><td class="num">33.4</td><td class="num">39.4</td><td class="num">5.5</td><td class="num" style="color:#60a5fa;font-weight:600">320.0</td></tr>
+      <tr><td style="color:#fbbf24">2022</td><td class="num">99.8</td><td class="num">72.7</td><td class="num">4.4</td><td class="num">60.0</td><td class="num">-2.7</td><td class="num">23.2</td><td class="num">12.6</td><td class="num" style="color:#fbbf24;font-weight:600">269.9</td></tr>
+      <tr><td>2023</td><td class="num">97.0</td><td class="num">72.4</td><td class="num">29.8</td><td class="num">73.8</td><td class="num">30.4</td><td class="num">39.1</td><td class="num">15.0</td><td class="num" style="color:#60a5fa;font-weight:600">357.4</td></tr>
+      <tr><td style="color:#a78bfa;font-weight:600">2024</td><td class="num" style="color:#a78bfa">93.7</td><td class="num" style="color:#a78bfa">88.1</td><td class="num" style="color:#a78bfa">72.9</td><td class="num" style="color:#a78bfa">100.1</td><td class="num" style="color:#a78bfa">59.2</td><td class="num" style="color:#a78bfa">62.4</td><td class="num" style="color:#a78bfa">7.1</td><td class="num" style="color:#a78bfa;font-weight:600">483.6</td></tr>
+    </table>
+    <div class="chart-container" style="height:380px;margin-top:16px">
+      <canvas id="chartEarnings"></canvas>
+    </div>
+    <div class="insight">
+      <strong>2022 → 2024 盈利从 $270B 跃升至 $484B，增长 79%。</strong>但增长高度集中：Nvidia (+$68B)、Google (+$40B)、Meta (+$39B)、Amazon (+$62B) 贡献了绝大部分。Apple 和 Tesla 反而下滑。
+    </div>
+  </div>
+
+  <!-- ===== SECTION 2: CAGR COMPARISON ===== -->
+  <div class="section" id="cagr">
+    <h2>AI 前 vs AI 后盈利增速 (CAGR)</h2>
+    <div class="desc">以 2022 年为分界，比较 AI 前 (2019-2022) 和 AI 后 (2022-2024) 的复合增速</div>
+    <div class="chart-container" style="height:320px">
+      <canvas id="chartCAGR"></canvas>
+    </div>
+    <table style="margin-top:14px">
+      <tr><th>公司</th><th>CAGR 2019-2022</th><th>CAGR 2022-2024</th><th>变化</th><th>解读</th></tr>
+      <tr><td style="color:#76b900">Nvidia</td><td class="num">16.0%</td><td class="num" style="color:#34d399;font-weight:600">308.5%</td><td class="num" style="color:#34d399">+292pp</td><td>AI 芯片爆发</td></tr>
+      <tr><td style="color:#0668E1">Meta</td><td class="num">7.9%</td><td class="num" style="color:#34d399;font-weight:600">63.9%</td><td class="num" style="color:#34d399">+56pp</td><td>AI 推荐系统提升广告转化</td></tr>
+      <tr><td style="color:#4285F4">Google</td><td class="num">20.4%</td><td class="num" style="color:#34d399;font-weight:600">29.2%</td><td class="num" style="color:#34d399">+9pp</td><td>Cloud AI + 搜索增强</td></tr>
+      <tr><td style="color:#00A4EF">Microsoft</td><td class="num">22.8%</td><td class="num">10.1%</td><td class="num" style="color:#f87171">-13pp</td><td>AI 有贡献但整体增速反降</td></tr>
+      <tr><td style="color:#A2AAAD">Apple</td><td class="num">21.8%</td><td class="num" style="color:#f87171">-3.1%</td><td class="num" style="color:#f87171">-25pp</td><td>AI 尚未推动盈利</td></tr>
+    </table>
+    <div class="insight warn">
+      <strong>AI 的盈利加速效应极度集中。</strong>只有 Nvidia、Meta、Google 三家显著受益。Microsoft 增速反而放缓，Apple 甚至转负。Mag7 整体 CAGR 仅从 22.0% 微升至 24.8%（+2.7pp）。
+    </div>
+  </div>
+
+  <!-- ===== SECTION 3: AI ATTRIBUTION ===== -->
+  <div class="section" id="attribution">
+    <h2>AI 归因拆分：$484B 的三层结构</h2>
+    <div class="desc">基于盈利增速变化和公开分部报告的定性估算</div>
+    <div class="two-col">
+      <div>
+        <h4 style="font-size:0.85rem;color:#6b7a8d;margin-bottom:8px">$484B 盈利来源构成</h4>
+        <div class="chart-container" style="height:300px">
+          <canvas id="chartDoughnut"></canvas>
+        </div>
+      </div>
+      <div>
+        <h4 style="font-size:0.85rem;color:#6b7a8d;margin-bottom:8px">逐公司 AI 归因 ($B)</h4>
+        <div class="chart-container" style="height:300px">
+          <canvas id="chartStacked"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="layer-stack" style="margin-top:16px">
+      <div class="layer" style="background:rgba(74,85,104,0.2);border-left:4px solid #4a5568">
+        <div>
+          <div class="name" style="color:#a5b4c6">AI 前业务</div>
+          <div class="detail" style="color:#6b7a8d">iPhone、Windows、搜索广告、电商等成熟业务</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:1.2rem;font-weight:700;color:#a5b4c6">~$309B</div>
+          <div style="font-size:0.7rem;color:#4a5568">64% · 高持久性</div>
+        </div>
+      </div>
+      <div class="layer" style="background:rgba(52,211,153,0.1);border-left:4px solid #34d399">
+        <div>
+          <div class="name" style="color:#34d399">AI 持久增量</div>
+          <div class="detail" style="color:#6b7a8d">AI 推荐系统、云 AI 服务、推理芯片需求</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:1.2rem;font-weight:700;color:#34d399">~$100B</div>
+          <div style="font-size:0.7rem;color:#4a5568">21% · 中高持久性</div>
+        </div>
+      </div>
+      <div class="layer" style="background:rgba(248,113,113,0.1);border-left:4px solid #f87171">
+        <div>
+          <div class="name" style="color:#f87171">AI 可能暂时</div>
+          <div class="detail" style="color:#6b7a8d">训练基建高峰、一次性降本、VC 补贴的云消费</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:1.2rem;font-weight:700;color:#f87171">~$74B</div>
+          <div style="font-size:0.7rem;color:#4a5568">15% · 低持久性</div>
+        </div>
+      </div>
+    </div>
+    <div class="insight danger">
+      <strong>Nvidia 一家占"可能暂时"的 65%（$48B/$74B）。</strong>基建周期见顶则 NI 可能从 $73B 回落到 $20-25B。如果 $74B 暂时盈利全消失，Mag7 PE 从 33.4 升到 47.6——接近 2000 年泡沫水平。
+    </div>
+  </div>
+
+  <!-- ===== SECTION 4: PER COMPANY ===== -->
+  <div class="section" id="company">
+    <h2>逐公司 AI 归因分析</h2>
+    <div class="desc">每家公司的盈利构成和 AI 依赖度差异巨大</div>
+    <table>
+      <tr><th>公司</th><th>总NI ($B)</th><th>AI前</th><th>AI持久</th><th>AI暂时</th><th>AI占比</th><th>说明</th></tr>
+      <tr>
+        <td style="color:#76b900;font-weight:600">Nvidia</td>
+        <td class="num">72.9</td><td class="num">5</td><td class="num" style="color:#34d399">20</td><td class="num" style="color:#f87171;font-weight:600">48</td>
+        <td class="num" style="color:#f87171;font-weight:600">93%</td>
+        <td>持久：推理芯片需求；暂时：训练基建高峰</td>
+      </tr>
+      <tr>
+        <td style="color:#4285F4;font-weight:600">Google</td>
+        <td class="num">100.1</td><td class="num">75</td><td class="num" style="color:#34d399">20</td><td class="num" style="color:#f87171">5</td>
+        <td class="num">25%</td>
+        <td>持久：AI 增强搜索 + 云 AI</td>
+      </tr>
+      <tr>
+        <td style="color:#00A4EF;font-weight:600">Microsoft</td>
+        <td class="num">88.1</td><td class="num">75</td><td class="num" style="color:#34d399">10</td><td class="num" style="color:#f87171">3</td>
+        <td class="num">15%</td>
+        <td>持久：Copilot / Azure AI；整体增速反降</td>
+      </tr>
+      <tr>
+        <td style="color:#A2AAAD;font-weight:600">Apple</td>
+        <td class="num">93.7</td><td class="num">92</td><td class="num" style="color:#34d399">2</td><td class="num">0</td>
+        <td class="num">2%</td>
+        <td>AI 贡献极小，主要仍是 iPhone</td>
+      </tr>
+      <tr>
+        <td style="color:#0668E1;font-weight:600">Meta</td>
+        <td class="num">62.4</td><td class="num">30</td><td class="num" style="color:#34d399;font-weight:600">28</td><td class="num" style="color:#f87171">4</td>
+        <td class="num" style="color:#34d399;font-weight:600">51%</td>
+        <td>持久：AI 推荐/广告转化率提升</td>
+      </tr>
+      <tr>
+        <td style="color:#FF9900;font-weight:600">Amazon</td>
+        <td class="num">59.2</td><td class="num">25</td><td class="num" style="color:#34d399">20</td><td class="num" style="color:#f87171">14</td>
+        <td class="num">57%</td>
+        <td>持久：AWS AI；暂时：一次性降本</td>
+      </tr>
+      <tr>
+        <td style="color:#cc0000;font-weight:600">Tesla</td>
+        <td class="num">7.1</td><td class="num">7</td><td class="num">0</td><td class="num">0</td>
+        <td class="num">0%</td>
+        <td>AI (FSD) 尚未贡献利润</td>
+      </tr>
+    </table>
+    <div class="insight">
+      <strong>Meta 是 AI 受益最扎实的：</strong>推荐系统提升广告 ROI 是真实且可持续的商业逻辑。AI 持久增量 $28B 占其总盈利的 45%，且暂时部分仅 $4B。
+    </div>
+    <div class="insight warn" style="margin-top:8px">
+      <strong>Apple 和 Tesla 几乎没有 AI 盈利贡献，</strong>但仍享受 AI 估值叙事（Tesla PE 181）。如果 AI 叙事证伪，估值风险主要在 Nvidia（PE 40 但 93% 盈利靠 AI）。
+    </div>
+  </div>
+
+  <!-- ===== SECTION 5: CLOUD VALUE CHAIN ===== -->
+  <div class="section" id="cloud">
+    <h2>AI 云收入价值链</h2>
+    <div class="desc">AWS + Azure + GCP AI 约 $80-100B 收入的终端流向与时间滞后</div>
+    <div class="flow-diagram">
+      <div class="flow-step" style="border-left-color:#60a5fa">
+        <div class="icon">&#9729;</div>
+        <div class="text"><strong>AWS / Azure / GCP AI 收入</strong> · 2024 约 $80-100B · 利润率 ~20-30%</div>
+      </div>
+      <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:2px">&#8595; 谁在买单？</div>
+      <div class="flow-step" style="border-left-color:#a78bfa">
+        <div class="icon">&#128187;</div>
+        <div class="text"><strong>~50% 其他科技公司</strong>（AI startups、SaaS 公司）&#8594; 双重抽税：云厂商赚一层，SaaS 赚一层</div>
+      </div>
+      <div class="flow-step" style="border-left-color:#fbbf24">
+        <div class="icon">&#127970;</div>
+        <div class="text"><strong>~30% 大型非科技企业</strong>（银行/药企/制造业）&#8594; 关键问题：财报尚未体现 AI 效率提升</div>
+      </div>
+      <div class="flow-step" style="border-left-color:#f87171">
+        <div class="icon">&#129302;</div>
+        <div class="text"><strong>~20% AI 模型训练</strong>（大模型公司）&#8594; 最暂时：训练是一次性的，推理才是持续的</div>
+      </div>
+    </div>
+    <h4 style="font-size:0.85rem;color:#6b7a8d;margin:16px 0 8px">非科技企业受益时间线</h4>
+    <div class="phase-timeline">
+      <div class="phase-card" style="border-top-color:#f87171">
+        <h4 style="color:#f87171">投入期</h4>
+        <div class="time">2023-2024</div>
+        <p>买 AI 工具，IT 成本上升。企业在<strong>花钱</strong>，还没赚到钱。</p>
+      </div>
+      <div class="phase-card" style="border-top-color:#fbbf24">
+        <h4 style="color:#fbbf24">过渡期</h4>
+        <div class="time">2025-2026</div>
+        <p>部分场景见效，整体 ROI 不明。<strong>关键验证窗口。</strong></p>
+      </div>
+      <div class="phase-card" style="border-top-color:#34d399">
+        <h4 style="color:#34d399">收获期</h4>
+        <div class="time">2027+</div>
+        <p>如果 AI 有用，利润率提升会体现。<strong>但这还是"如果"。</strong></p>
+      </div>
+    </div>
+    <div class="insight warn">
+      <strong>AI 价值链的终端验证尚未发生：</strong>非科技企业还没有证明 AI 带来了利润率提升。云 AI 收入的持续性取决于下游企业能否真正从 AI 中获益。
+    </div>
+  </div>
+
+  <!-- ===== SECTION 6: CIRCULAR DEPENDENCY ===== -->
+  <div class="section" id="circular">
+    <h2>循环依赖：Mag 7 在互相买单</h2>
+    <div class="desc">当前 AI 收入链条存在循环依赖，最终得有人从 AI 中赚到实实在在的钱</div>
+    <div class="flow-diagram">
+      <div class="flow-step" style="border-left-color:#76b900">
+        <div class="icon">&#128992;</div>
+        <div class="text"><strong>Nvidia</strong> 卖芯片给云厂商（Microsoft / Google / Amazon）</div>
+      </div>
+      <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:2px">&#8595;</div>
+      <div class="flow-step" style="border-left-color:#60a5fa">
+        <div class="icon">&#9729;</div>
+        <div class="text"><strong>云厂商</strong> 卖 AI 服务给 startups 和企业</div>
+      </div>
+      <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:2px">&#8595;</div>
+      <div class="flow-step" style="border-left-color:#a78bfa">
+        <div class="icon">&#128640;</div>
+        <div class="text"><strong>AI startups</strong> 多数还没有稳定收入，靠 VC 融资买云</div>
+      </div>
+      <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:2px">&#8595;</div>
+      <div class="flow-step" style="border-left-color:#fbbf24">
+        <div class="icon">&#127970;</div>
+        <div class="text"><strong>非科技企业</strong> 在尝试 AI，但 2024 财报未见利润率提升</div>
+      </div>
+      <div style="text-align:center;color:#f87171;font-size:0.75rem;padding:6px;font-weight:600">&#9888; 价值链底部尚无盈利验证</div>
+    </div>
+    <div class="insight danger">
+      <strong>最终得有人从 AI 中赚到实实在在的钱。</strong>这个钱大概率要从非科技企业的效率提升中来（降低人力成本、提高产出）。但截至 2024 年底，这还没有在财报中系统性地体现。科技公司之间的收入循环不创造新价值。
+    </div>
+  </div>
+
+  <!-- ===== SECTION 7: RISK SCENARIOS ===== -->
+  <div class="section" id="risk">
+    <h2>风险情景分析</h2>
+    <div class="desc">四种情景下 Mag7 盈利的变化幅度（2027 vs 2024）</div>
+    <div class="two-col">
+      <div>
+        <table>
+          <tr><th>情景</th><th>概率</th><th>盈利影响</th></tr>
+          <tr>
+            <td style="color:#34d399;font-weight:600">AI 持续高速渗透</td>
+            <td class="num">30%</td>
+            <td class="num" style="color:#34d399;font-weight:600">+$50~100B</td>
+          </tr>
+          <tr>
+            <td style="color:#60a5fa">AI 稳步但放缓</td>
+            <td class="num">40%</td>
+            <td class="num">维持 &#177;$20B</td>
+          </tr>
+          <tr>
+            <td style="color:#fbbf24;font-weight:600">AI 基建过剩/见顶</td>
+            <td class="num">25%</td>
+            <td class="num" style="color:#fbbf24;font-weight:600">-$50~80B</td>
+          </tr>
+          <tr>
+            <td style="color:#f87171;font-weight:600">AI 泡沫破裂</td>
+            <td class="num">5%</td>
+            <td class="num" style="color:#f87171;font-weight:600">-$100B+</td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <div class="chart-container" style="height:260px">
+          <canvas id="chartRisk"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="insight danger" style="margin-top:14px">
+      <strong>如果 $74B 暂时盈利全消失，Mag7 PE 从 33.4 升到 47.6——接近 2000 年泡沫水平。</strong>期望值计算：30%*(+75) + 40%*(0) + 25%*(-65) + 5%*(-100) = +1.25B。市场隐含的是"持续高速"，但概率加权后 AI 盈利增量接近零。
+    </div>
+  </div>
+
+  <!-- ===== SECTION 8: CONCLUSION ===== -->
+  <div class="section" id="conclusion">
+    <h2>结论</h2>
+    <div class="desc">五个核心发现</div>
+    <div class="flow-diagram">
+      <div class="flow-step" style="border-left-color:#4a5568">
+        <div class="icon">1</div>
+        <div class="text"><strong>Mag 7 盈利的 64% 仍来自 AI 前的成熟业务</strong>——AI 不是主体，iPhone、Windows、搜索广告仍是基本盘</div>
+      </div>
+      <div class="flow-step" style="border-left-color:#34d399">
+        <div class="icon">2</div>
+        <div class="text"><strong>AI 持久增量约 21%（~$100B）</strong>——主要是 Meta 的推荐系统和云 AI 服务</div>
+      </div>
+      <div class="flow-step" style="border-left-color:#f87171">
+        <div class="icon">3</div>
+        <div class="text"><strong>AI 可能暂时的约 15%（~$74B）</strong>——集中在 Nvidia 的训练基建高峰</div>
+      </div>
+      <div class="flow-step" style="border-left-color:#fbbf24">
+        <div class="icon">4</div>
+        <div class="text"><strong>AI 价值链的终端验证尚未发生</strong>——非科技企业还没有在财报中证明 AI 带来了利润率提升</div>
+      </div>
+      <div class="flow-step" style="border-left-color:#a78bfa">
+        <div class="icon">5</div>
+        <div class="text"><strong>如果 AI 叙事证伪，估值风险主要在 Nvidia</strong>（PE 40 但 93% 盈利靠 AI）；Meta 和 Google 相对安全</div>
+      </div>
+    </div>
+    <div class="insight" style="font-size:0.95rem;padding:16px 20px;background:rgba(167,139,250,0.08)">
+      <strong style="font-size:1rem">核心判断：</strong><br>
+      AI 对 Mag 7 盈利的贡献是真实的，但远没有市场叙事暗示的那么大。<br>
+      64% 的盈利与 AI 无关，15% 可能是暂时的。<br>
+      <strong>真正的风险不在"AI 是否有用"，而在"当前价格是否已经 price in 了一个过于乐观的 AI 盈利路径"。</strong>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:30px 0;color:#4a5568;font-size:0.75rem">
+    基于 Compustat 年度财务数据 + 定性归因估算 · 2025 年 2 月
+  </div>
+</div>
+
+<script>
+// === Chart defaults ===
+Chart.defaults.color = '#6b7a8d';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, PingFang SC, sans-serif';
+Chart.defaults.font.size = 11;
+
+// === 1. Grouped Bar: Mag7 Earnings by Year ===
+new Chart(document.getElementById('chartEarnings'), {
+  type: 'bar',
+  data: {
+    labels: ['2019','2020','2021','2022','2023','2024'],
+    datasets: [
+      { label: 'Apple', data: [55.3,57.4,94.7,99.8,97.0,93.7], backgroundColor: '#A2AAAD', borderRadius: 2 },
+      { label: 'Microsoft', data: [39.2,44.3,61.3,72.7,72.4,88.1], backgroundColor: '#00A4EF', borderRadius: 2 },
+      { label: 'Nvidia', data: [2.8,4.3,9.8,4.4,29.8,72.9], backgroundColor: '#76b900', borderRadius: 2 },
+      { label: 'Google', data: [34.3,40.3,76.0,60.0,73.8,100.1], backgroundColor: '#4285F4', borderRadius: 2 },
+      { label: 'Amazon', data: [11.6,21.3,33.4,-2.7,30.4,59.2], backgroundColor: '#FF9900', borderRadius: 2 },
+      { label: 'Meta', data: [18.5,29.1,39.4,23.2,39.1,62.4], backgroundColor: '#0668E1', borderRadius: 2 },
+      { label: 'Tesla', data: [0,0.7,5.5,12.6,15.0,7.1], backgroundColor: '#cc0000', borderRadius: 2 },
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'bottom', labels: { padding: 10, font: { size: 10.5 } } } },
+    scales: {
+      y: { title: { display: true, text: '净利润 ($B)', color: '#4a5568' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// === 2. Horizontal Bar: CAGR Comparison ===
+new Chart(document.getElementById('chartCAGR'), {
+  type: 'bar',
+  data: {
+    labels: ['Nvidia','Meta','Google','Microsoft','Apple'],
+    datasets: [
+      { label: 'CAGR 2019-2022 (AI前)', data: [16.0, 7.9, 20.4, 22.8, 21.8], backgroundColor: '#4a5568', borderRadius: 4 },
+      { label: 'CAGR 2022-2024 (AI后)', data: [308.5, 63.9, 29.2, 10.1, -3.1], backgroundColor: '#a78bfa', borderRadius: 4 },
+    ]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { padding: 12, font: { size: 10.5 } } },
+      tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw}%` } }
+    },
+    scales: {
+      x: {
+        title: { display: true, text: 'CAGR %', color: '#4a5568' },
+        ticks: { callback: v => v + '%' }
+      },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// === 3. Doughnut: $484B Split ===
+new Chart(document.getElementById('chartDoughnut'), {
+  type: 'doughnut',
+  data: {
+    labels: ['AI前业务 $309B (64%)', 'AI持久增量 $100B (21%)', 'AI可能暂时 $74B (15%)'],
+    datasets: [{
+      data: [309, 100, 74],
+      backgroundColor: ['#4a5568','#34d399','#f87171'],
+      borderWidth: 0,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    cutout: '55%',
+    plugins: {
+      legend: { position: 'bottom', labels: { padding: 10, font: { size: 10.5 } } },
+      tooltip: {
+        callbacks: {
+          label: ctx => `$${ctx.raw}B (${Math.round(ctx.raw/484*100)}%)`
+        }
+      }
+    }
+  }
+});
+
+// === 4. Stacked Bar: Per-Company AI Attribution ===
+new Chart(document.getElementById('chartStacked'), {
+  type: 'bar',
+  data: {
+    labels: ['Apple','MSFT','Google','Nvidia','Amazon','Meta','Tesla'],
+    datasets: [
+      { label: 'AI前', data: [92,75,75,5,25,30,7], backgroundColor: '#4a5568', borderRadius: 2 },
+      { label: 'AI持久', data: [2,10,20,20,20,28,0], backgroundColor: '#34d399', borderRadius: 2 },
+      { label: 'AI暂时', data: [0,3,5,48,14,4,0], backgroundColor: '#f87171', borderRadius: 2 },
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'bottom', labels: { padding: 10, font: { size: 10.5 } } } },
+    scales: {
+      x: { stacked: true, grid: { display: false } },
+      y: { stacked: true, title: { display: true, text: '净利润 ($B)', color: '#4a5568' } }
+    }
+  }
+});
+
+// === 5. Bar Chart: Risk Scenarios ===
+new Chart(document.getElementById('chartRisk'), {
+  type: 'bar',
+  data: {
+    labels: ['持续高速','稳步放缓','基建过剩','泡沫破裂'],
+    datasets: [{
+      label: '盈利变化 ($B)',
+      data: [75, 0, -65, -100],
+      backgroundColor: ctx => {
+        const v = ctx.raw;
+        if (v > 0) return '#34d399';
+        if (v === 0) return '#60a5fa';
+        if (v > -80) return '#fbbf24';
+        return '#f87171';
+      },
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => {
+            const v = ctx.raw;
+            const probs = [30,40,25,5];
+            return `${v > 0 ? '+' : ''}$${v}B (概率 ${probs[ctx.dataIndex]}%)`;
+          }
+        }
+      }
+    },
+    scales: {
+      y: {
+        title: { display: true, text: '盈利变化 ($B)', color: '#4a5568' },
+        ticks: { callback: v => (v > 0 ? '+' : '') + v }
+      },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// === Sidebar active state ===
+const sections = document.querySelectorAll('.section');
+const navLinks = document.querySelectorAll('.nav-link');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const id = entry.target.id;
+      const link = document.querySelector(`.nav-link[href="#${id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>时间线 - AI 论文阅读</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .timeline-page { display: flex; gap: 2rem; padding: 1.5rem 0 3rem; }
+
+  /* ---- left: timeline ---- */
+  .timeline {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .tl-year {
+    position: relative;
+    padding-left: 2rem;
+    padding-bottom: 0.25rem;
+  }
+
+  .tl-year::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border);
+  }
+
+  .tl-year-label {
+    position: relative;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 0.6rem;
+    padding-top: 0.5rem;
+  }
+
+  .tl-year-label::before {
+    content: '';
+    position: absolute;
+    left: -2rem;
+    top: 50%;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 3px solid #fff;
+    box-shadow: 0 0 0 2px var(--accent);
+    transform: translate(0, -30%);
+  }
+
+  .tl-item {
+    position: relative;
+    margin-bottom: 0.85rem;
+    padding-left: 0.25rem;
+  }
+
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -1.65rem;
+    top: 8px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 2px solid var(--dot-color, #999);
+    background: #fff;
+  }
+
+  .tl-item-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--text);
+  }
+
+  .tl-item-title a { color: var(--text); }
+  .tl-item-title a:hover { color: var(--accent); }
+
+  .tl-date {
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: var(--text3);
+    margin-left: 0.4rem;
+  }
+
+  .tl-item-summary {
+    font-size: 0.78rem;
+    color: var(--text2);
+    line-height: 1.55;
+    margin-top: 0.15rem;
+  }
+
+  .tl-item-cat {
+    display: inline-block;
+    font-size: 0.62rem;
+    font-weight: 600;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    margin-top: 0.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  /* category colors */
+  .dot-pre       { --dot-color: #2563eb; }
+  .dot-post      { --dot-color: #7c3aed; }
+  .dot-prompt    { --dot-color: #0891b2; }
+  .dot-reasoning { --dot-color: #059669; }
+  .dot-agents    { --dot-color: #d97706; }
+  .dot-rag       { --dot-color: #dc2626; }
+  .dot-multi     { --dot-color: #db2777; }
+  .dot-eff       { --dot-color: #ea580c; }
+
+  .cat-pre       { background: #eef2ff; color: #2563eb; }
+  .cat-post      { background: #f5f3ff; color: #7c3aed; }
+  .cat-prompt    { background: #ecfeff; color: #0891b2; }
+  .cat-reasoning { background: #ecfdf5; color: #059669; }
+  .cat-agents    { background: #fffbeb; color: #d97706; }
+  .cat-rag       { background: #fef2f2; color: #dc2626; }
+  .cat-multi     { background: #fdf2f8; color: #db2777; }
+  .cat-eff       { background: #fff7ed; color: #ea580c; }
+
+  /* ---- right: legend ---- */
+  .tl-sidebar {
+    width: 180px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 60px;
+    align-self: flex-start;
+  }
+
+  .tl-sidebar h3 {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text3);
+    margin-bottom: 0.6rem;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.78rem;
+    color: var(--text2);
+    margin-bottom: 0.4rem;
+    text-decoration: none;
+  }
+
+  .legend-item:hover { color: var(--accent); }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .tl-stats {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.75rem;
+    color: var(--text3);
+    line-height: 1.8;
+  }
+
+  @media (max-width: 700px) {
+    .timeline-page { flex-direction: column-reverse; }
+    .tl-sidebar { width: 100%; position: static; display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; }
+    .tl-sidebar h3 { width: 100%; }
+    .tl-stats { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a class="logo" href="index.html">AI Papers</a>
+  <div class="nav-links">
+    <a href="index.html">首页</a>
+    <a href="timeline.html" class="active">时间线</a>
+  </div>
+</nav>
+
+<div class="container-wide">
+  <div class="page-header">
+    <h1>AI 论文时间线</h1>
+  </div>
+
+  <div class="timeline-page">
+
+    <!-- ===== Timeline ===== -->
+    <div class="timeline">
+
+      <!-- 2026 -->
+      <div class="tl-year">
+        <div class="tl-year-label">2026</div>
+        <div class="tl-item dot-pre">
+          <div class="tl-item-title"><a href="https://blog.google/products/gemini/gemini-3/" target="_blank">Gemini 3.1 Pro Preview</a> <span class="tl-date">2026-02-19</span></div>
+          <div class="tl-item-summary">ARC-AGI-2 推理分数较 3.0 翻倍，支持 Deep Think 并行假设探索。</div>
+          <span class="tl-item-cat cat-pre">Pre-training</span>
+        </div>
+        <div class="tl-item dot-pre">
+          <div class="tl-item-title"><a href="https://www.anthropic.com/news/claude-opus-4-6" target="_blank">Claude Opus 4.6 &amp; Sonnet 4.6</a> <span class="tl-date">2026-02</span></div>
+          <div class="tl-item-summary">最新一代 Claude 模型，持续迭代推理与编程能力。</div>
+          <span class="tl-item-cat cat-pre">Pre-training</span>
+        </div>
+      </div>
+
+      <!-- 2025 -->
+      <div class="tl-year">
+        <div class="tl-year-label">2025</div>
+        <div class="tl-item dot-pre">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2512.02556" target="_blank">DeepSeek-V3.2</a> <span class="tl-date">2025-12</span></div>
+          <div class="tl-item-summary">引入 DSA 稀疏注意力，可扩展 RL 后训练达 GPT-5 级别，IMO/IOI 获金牌。</div>
+          <span class="tl-item-cat cat-pre">Pre-training</span>
+        </div>
+        <div class="tl-item dot-pre">
+          <div class="tl-item-title"><a href="https://openai.com/index/introducing-gpt-5/" target="_blank">GPT-5</a> <span class="tl-date">2025-08</span></div>
+          <div class="tl-item-summary">统一多模型架构（快速 + 深度推理 + 路由器），全面领先编程、数学和视觉感知。</div>
+          <span class="tl-item-cat cat-pre">Pre-training</span>
+        </div>
+        <div class="tl-item dot-multi">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2507.06261" target="_blank">Gemini 2.5</a> <span class="tl-date">2025-07</span></div>
+          <div class="tl-item-summary">稀疏 MoE 思考模型，原生多模态，100 万+ token 上下文，可控思考预算。</div>
+          <span class="tl-item-cat cat-multi">Multimodal</span>
+        </div>
+        <div class="tl-item dot-pre">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2505.09388" target="_blank">Qwen3</a> <span class="tl-date">2025-05</span></div>
+          <div class="tl-item-summary">0.6B-235B 参数家族，统一思考模式和非思考模式于单一框架。</div>
+          <span class="tl-item-cat cat-pre">Pre-training</span>
+        </div>
+        <div class="tl-item dot-agents">
+          <div class="tl-item-title"><a href="https://github.com/anthropics/claude-code" target="_blank">Claude Code</a> <span class="tl-date">2025-05</span></div>
+          <div class="tl-item-summary">终端原生代理式编程工具，理解多文件代码库，自主修复错误。</div>
+          <span class="tl-item-cat cat-agents">Agents</span>
+        </div>
+        <div class="tl-item dot-reasoning">
+          <div class="tl-item-title"><a href="https://openai.com/index/introducing-o3-and-o4-mini/" target="_blank">OpenAI o3 &amp; o4-mini</a> <span class="tl-date">2025-04</span></div>
+          <div class="tl-item-summary">首批可代理式使用全部工具的推理模型，o4-mini AIME 表现最佳。</div>
+          <span class="tl-item-cat cat-reasoning">Reasoning</span>
+        </div>
+        <div class="tl-item dot-agents">
+          <div class="tl-item-title"><a href="https://openai.com/index/introducing-codex/" target="_blank">OpenAI Codex</a> <span class="tl-date">2025-04</span></div>
+          <div class="tl-item-summary">云端代理式编程 Agent，支持同时处理多任务并联网检索。</div>
+          <span class="tl-item-cat cat-agents">Agents</span>
+        </div>
+        <div class="tl-item dot-pre">
+          <div class="tl-item-title"><a href="https://ai.meta.com/blog/llama-4-multimodal-intelligence/" target="_blank">Llama 4</a> <span class="tl-date">2025-04</span></div>
+          <div class="tl-item-summary">首批 MoE 架构 Llama 模型，原生多模态，Scout 可运行在单卡 H100。</div>
+          <span class="tl-item-cat cat-pre">Pre-training</span>
+        </div>
+        <div class="tl-item dot-reasoning">
+          <div class="tl-item-title"><a href="https://www.anthropic.com/news/claude-3-7-sonnet" target="_blank">Claude 3.7 Sonnet</a> <span class="tl-date">2025-02-24</span></div>
+          <div class="tl-item-summary">业界首个混合推理模型，同一模型既能快速响应也能扩展式逐步思考。</div>
+          <span class="tl-item-cat cat-reasoning">Reasoning</span>
+        </div>
+        <div class="tl-item dot-prompt">
+          <div class="tl-item-title"><a href="papers/prompt-repetition/index.html">Prompt Repetition</a></div>
+          <div class="tl-item-summary">简单重复 prompt 即可提升非推理模式下 LLM 的准确率，零额外延迟。</div>
+          <span class="tl-item-cat cat-prompt">Prompt</span>
+        </div>
+        <div class="tl-item dot-reasoning">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2501.12948" target="_blank">DeepSeek-R1</a> <span class="tl-date">2025-01</span></div>
+          <div class="tl-item-summary">纯 RL 激发推理能力，模型自发涌现自我反思和验证，达到 o1 级别。</div>
+          <span class="tl-item-cat cat-reasoning">Reasoning</span>
+        </div>
+        <div class="tl-item dot-reasoning">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2501.12599" target="_blank">Kimi k1.5</a> <span class="tl-date">2025-01</span></div>
+          <div class="tl-item-summary">通过长上下文扩展和策略优化进行 RL 训练，无需 MCTS，达到 o1 级别。</div>
+          <span class="tl-item-cat cat-reasoning">Reasoning</span>
+        </div>
+      </div>
+
+      <!-- 2024 -->
+      <div class="tl-year">
+        <div class="tl-year-label">2024</div>
+        <div class="tl-item dot-pre">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2412.19437" target="_blank">DeepSeek-V3</a> <span class="tl-date">2024-12</span></div>
+          <div class="tl-item-summary">671B MoE 模型（激活 37B），仅用 278.8 万 GPU 小时，性能媲美领先闭源模型。</div>
+          <span class="tl-item-cat cat-pre">Pre-training</span>
+        </div>
+        <div class="tl-item dot-reasoning">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2412.16720" target="_blank">OpenAI o1</a> <span class="tl-date">2024-12</span></div>
+          <div class="tl-item-summary">大规模 RL 训练链式思维推理，开创"测试时计算扩展"新范式。</div>
+          <span class="tl-item-cat cat-reasoning">Reasoning</span>
+        </div>
+        <div class="tl-item dot-pre">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2412.15115" target="_blank">Qwen2.5</a> <span class="tl-date">2024-12</span></div>
+          <div class="tl-item-summary">18 万亿 token 预训练，72B 开源模型可与 5 倍大的 Llama-3-405B 竞争。</div>
+          <span class="tl-item-cat cat-pre">Pre-training</span>
+        </div>
+        <div class="tl-item dot-reasoning">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2408.03314" target="_blank">Scaling LLM Test-Time Compute</a> <span class="tl-date">2024-08</span></div>
+          <div class="tl-item-summary">首次系统研究推理时计算扩展规律，动态分配比扩大参数更高效。</div>
+          <span class="tl-item-cat cat-reasoning">Reasoning</span>
+        </div>
+        <div class="tl-item dot-pre">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2407.21783" target="_blank">Llama 3</a> <span class="tl-date">2024-07</span></div>
+          <div class="tl-item-summary">开源 8B/70B/405B 系列，405B 旗舰多项基准可与 GPT-4 竞争。</div>
+          <span class="tl-item-cat cat-pre">Pre-training</span>
+        </div>
+        <div class="tl-item dot-multi">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2410.21276" target="_blank">GPT-4o</a> <span class="tl-date">2024-05</span></div>
+          <div class="tl-item-summary">原生多模态自回归模型，统一接收和生成文本、音频、图像和视频。</div>
+          <span class="tl-item-cat cat-multi">Multimodal</span>
+        </div>
+        <div class="tl-item dot-eff">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2405.04434" target="_blank">DeepSeek-V2</a> <span class="tl-date">2024-05</span></div>
+          <div class="tl-item-summary">MLA 机制低秩键值联合压缩，推理吞吐量提升 5.76 倍，训练成本降低 57.5%。</div>
+          <span class="tl-item-cat cat-eff">Efficiency</span>
+        </div>
+        <div class="tl-item dot-multi">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2403.05530" target="_blank">Gemini 1.5</a> <span class="tl-date">2024-02</span></div>
+          <div class="tl-item-summary">首次实现 1000 万 token 超长上下文处理，检索精度 >99%。</div>
+          <span class="tl-item-cat cat-multi">Multimodal</span>
+        </div>
+        <div class="tl-item dot-eff">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2401.06066" target="_blank">DeepSeekMoE</a> <span class="tl-date">2024-01</span></div>
+          <div class="tl-item-summary">细粒度专家分割和共享专家隔离实现极致 MoE 专业化。</div>
+          <span class="tl-item-cat cat-eff">Efficiency</span>
+        </div>
+        <div class="tl-item dot-eff">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2401.04088" target="_blank">Mixtral of Experts</a> <span class="tl-date">2024-01</span></div>
+          <div class="tl-item-summary">8x7B 稀疏 MoE，每 token 仅激活 2 个专家，性能匹配 Llama 2 70B。</div>
+          <span class="tl-item-cat cat-eff">Efficiency</span>
+        </div>
+      </div>
+
+      <!-- 2023 -->
+      <div class="tl-year">
+        <div class="tl-year-label">2023</div>
+
+        <div class="tl-item dot-multi">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2312.11805" target="_blank">Gemini</a> <span class="tl-date">2023-12</span></div>
+          <div class="tl-item-summary">Google 原生多模态模型家族，支持图像/音频/视频/文本的统一理解与推理。</div>
+          <span class="tl-item-cat cat-multi">Multimodal</span>
+        </div>
+
+        <div class="tl-item dot-rag">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2310.11511" target="_blank">Self-RAG</a> <span class="tl-date">2023-10</span></div>
+          <div class="tl-item-summary">模型通过自我反思标记自主决定何时检索、何时生成、何时批判。</div>
+          <span class="tl-item-cat cat-rag">RAG</span>
+        </div>
+
+        <div class="tl-item dot-eff">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2309.06180" target="_blank">PagedAttention / vLLM</a> <span class="tl-date">2023-09</span></div>
+          <div class="tl-item-summary">用操作系统分页思想管理 KV Cache，推理吞吐量提升 2-4 倍。</div>
+          <span class="tl-item-cat cat-eff">Efficiency</span>
+        </div>
+
+        <div class="tl-item dot-post">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2305.18290" target="_blank">DPO</a> <span class="tl-date">2023-05</span></div>
+          <div class="tl-item-summary">将 RLHF 简化为一个分类损失函数，无需单独训练奖励模型。</div>
+          <span class="tl-item-cat cat-post">Post-training</span>
+        </div>
+
+        <div class="tl-item dot-reasoning">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2305.10601" target="_blank">Tree of Thoughts</a> <span class="tl-date">2023-05</span></div>
+          <div class="tl-item-summary">将思维链推广为树状搜索，支持多路径探索和回溯。</div>
+          <span class="tl-item-cat cat-reasoning">Reasoning</span>
+        </div>
+
+        <div class="tl-item dot-multi">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2304.08485" target="_blank">LLaVA</a> <span class="tl-date">2023-04</span></div>
+          <div class="tl-item-summary">用 GPT-4 生成多模态指令数据，开创视觉指令调优范式。</div>
+          <span class="tl-item-cat cat-multi">Multimodal</span>
+        </div>
+
+        <div class="tl-item dot-agents">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2304.03442" target="_blank">Generative Agents</a> <span class="tl-date">2023-04</span></div>
+          <div class="tl-item-summary">25 个 LLM 智能体在沙盒小镇中自主社交，拥有记忆、反思与规划能力。</div>
+          <span class="tl-item-cat cat-agents">Agents</span>
+        </div>
+
+        <div class="tl-item dot-agents">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2303.17580" target="_blank">HuggingGPT</a> <span class="tl-date">2023-03</span></div>
+          <div class="tl-item-summary">以 LLM 为中枢，自动调度 HuggingFace 上的模型协作完成跨模态任务。</div>
+          <span class="tl-item-cat cat-agents">Agents</span>
+        </div>
+
+        <div class="tl-item dot-agents">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2303.11366" target="_blank">Reflexion</a> <span class="tl-date">2023-03</span></div>
+          <div class="tl-item-summary">Agent 通过自然语言自我反思从试错中学习，无需梯度更新。</div>
+          <span class="tl-item-cat cat-agents">Agents</span>
+        </div>
+
+        <div class="tl-item dot-multi">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2303.08774" target="_blank">GPT-4</a> <span class="tl-date">2023-03</span></div>
+          <div class="tl-item-summary">OpenAI 多模态大模型，接受图像+文本输入，多项基准达到人类水平。</div>
+          <span class="tl-item-cat cat-multi">Multimodal</span>
+        </div>
+
+        <div class="tl-item dot-pre">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2302.13971" target="_blank">LLaMA</a> <span class="tl-date">2023-02</span></div>
+          <div class="tl-item-summary">开源 7B-65B 模型，证明小模型+更多数据可媲美大闭源模型。</div>
+          <span class="tl-item-cat cat-pre">Pre-training</span>
+        </div>
+
+        <div class="tl-item dot-agents">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2302.04761" target="_blank">Toolformer</a> <span class="tl-date">2023-02</span></div>
+          <div class="tl-item-summary">语言模型自监督学习何时及如何调用外部工具（搜索、计算器等）。</div>
+          <span class="tl-item-cat cat-agents">Agents</span>
+        </div>
+      </div>
+
+      <!-- 2022 -->
+      <div class="tl-year">
+        <div class="tl-year-label">2022</div>
+
+        <div class="tl-item dot-post">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2212.08073" target="_blank">Constitutional AI</a> <span class="tl-date">2022-12</span></div>
+          <div class="tl-item-summary">用一组原则引导 AI 自我修正有害输出，以 AI 反馈替代人类标注。</div>
+          <span class="tl-item-cat cat-post">Post-training</span>
+        </div>
+
+        <div class="tl-item dot-eff">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2211.17192" target="_blank">Speculative Decoding</a> <span class="tl-date">2022-11</span></div>
+          <div class="tl-item-summary">小模型猜测+大模型验证，保证输出分布不变的前提下推理加速 2-3 倍。</div>
+          <span class="tl-item-cat cat-eff">Efficiency</span>
+        </div>
+
+        <div class="tl-item dot-agents">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2210.03629" target="_blank">ReAct</a> <span class="tl-date">2022-10</span></div>
+          <div class="tl-item-summary">交替进行推理和行动，使 LLM 在思考过程中调用外部工具获取信息。</div>
+          <span class="tl-item-cat cat-agents">Agents</span>
+        </div>
+
+        <div class="tl-item dot-eff">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2208.07339" target="_blank">LLM.int8()</a> <span class="tl-date">2022-08</span></div>
+          <div class="tl-item-summary">混合精度量化方案，首次在 175B 模型上实现无损 8 位推理。</div>
+          <span class="tl-item-cat cat-eff">Efficiency</span>
+        </div>
+
+        <div class="tl-item dot-eff">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2205.14135" target="_blank">FlashAttention</a> <span class="tl-date">2022-05</span></div>
+          <div class="tl-item-summary">IO 感知的分块注意力算法，训练速度 2-3 倍、内存从 O(n²) 降到 O(n)。</div>
+          <span class="tl-item-cat cat-eff">Efficiency</span>
+        </div>
+
+        <div class="tl-item dot-reasoning">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2205.11916" target="_blank">Zero-Shot CoT</a> <span class="tl-date">2022-05</span></div>
+          <div class="tl-item-summary">只需加一句"Let's think step by step"即可激发零样本推理能力。</div>
+          <span class="tl-item-cat cat-reasoning">Reasoning</span>
+        </div>
+
+        <div class="tl-item dot-reasoning">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2203.14465" target="_blank">STaR</a> <span class="tl-date">2022-03</span></div>
+          <div class="tl-item-summary">模型自我迭代生成推理链并在正确答案上微调，逐步习得推理能力。</div>
+          <span class="tl-item-cat cat-reasoning">Reasoning</span>
+        </div>
+
+        <div class="tl-item dot-reasoning">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2203.11171" target="_blank">Self-Consistency</a> <span class="tl-date">2022-03</span></div>
+          <div class="tl-item-summary">采样多条推理路径投票取最一致答案，GSM8K 准确率 +17.9%。</div>
+          <span class="tl-item-cat cat-reasoning">Reasoning</span>
+        </div>
+
+        <div class="tl-item dot-post">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2203.02155" target="_blank">InstructGPT</a> <span class="tl-date">2022-03</span></div>
+          <div class="tl-item-summary">SFT + 奖励模型 + PPO 三步法，1.3B 模型胜过 175B GPT-3。</div>
+          <span class="tl-item-cat cat-post">Post-training</span>
+        </div>
+
+        <div class="tl-item dot-reasoning">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2201.11903" target="_blank">Chain-of-Thought</a> <span class="tl-date">2022-01</span></div>
+          <div class="tl-item-summary">在提示中加入中间推理步骤示例，显著提升 LLM 的复杂推理能力。</div>
+          <span class="tl-item-cat cat-reasoning">Reasoning</span>
+        </div>
+
+        <div class="tl-item dot-multi">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2112.10752" target="_blank">Latent Diffusion / Stable Diffusion</a> <span class="tl-date">2021-12</span></div>
+          <div class="tl-item-summary">在潜在空间运行扩散模型，大幅降低高分辨率图像生成的计算成本。</div>
+          <span class="tl-item-cat cat-multi">Multimodal</span>
+        </div>
+      </div>
+
+      <!-- 2021 -->
+      <div class="tl-year">
+        <div class="tl-year-label">2021</div>
+
+        <div class="tl-item dot-post">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2106.09685" target="_blank">LoRA</a> <span class="tl-date">2021-06</span></div>
+          <div class="tl-item-summary">冻结权重 + 低秩矩阵注入，可训练参数降至万分之一，高效微调大模型。</div>
+          <span class="tl-item-cat cat-post">Post-training</span>
+        </div>
+
+        <div class="tl-item dot-multi">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2103.00020" target="_blank">CLIP</a> <span class="tl-date">2021-02</span></div>
+          <div class="tl-item-summary">4 亿图文对对比学习，实现强大的零样本图像分类能力。</div>
+          <span class="tl-item-cat cat-multi">Multimodal</span>
+        </div>
+      </div>
+
+      <!-- 2020 -->
+      <div class="tl-year">
+        <div class="tl-year-label">2020</div>
+
+        <div class="tl-item dot-rag">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2007.01282" target="_blank">Fusion-in-Decoder (FiD)</a> <span class="tl-date">2020-07</span></div>
+          <div class="tl-item-summary">多段落分别编码后在解码器中融合，段落越多性能越好。</div>
+          <span class="tl-item-cat cat-rag">RAG</span>
+        </div>
+
+        <div class="tl-item dot-pre">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2005.14165" target="_blank">GPT-3</a> <span class="tl-date">2020-05</span></div>
+          <div class="tl-item-summary">1750 亿参数，证明 few-shot 即可完成多种任务无需微调。</div>
+          <span class="tl-item-cat cat-pre">Pre-training</span>
+        </div>
+
+        <div class="tl-item dot-rag">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2005.11401" target="_blank">RAG</a> <span class="tl-date">2020-05</span></div>
+          <div class="tl-item-summary">将参数化模型与非参数化检索器结合，奠定"检索增强生成"范式基础。</div>
+          <span class="tl-item-cat cat-rag">RAG</span>
+        </div>
+
+        <div class="tl-item dot-rag">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2004.04906" target="_blank">DPR</a> <span class="tl-date">2020-04</span></div>
+          <div class="tl-item-summary">双编码器密集检索，top-20 准确率比 BM25 高 9%-19%。</div>
+          <span class="tl-item-cat cat-rag">RAG</span>
+        </div>
+
+        <div class="tl-item dot-rag">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2002.08909" target="_blank">REALM</a> <span class="tl-date">2020-02</span></div>
+          <div class="tl-item-summary">首次在预训练阶段引入可学习的知识检索器，端到端优化检索步骤。</div>
+          <span class="tl-item-cat cat-rag">RAG</span>
+        </div>
+
+        <div class="tl-item dot-pre">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/2001.08361" target="_blank">Scaling Laws</a> <span class="tl-date">2020-01</span></div>
+          <div class="tl-item-summary">揭示模型性能与规模/数据/算力之间的幂律关系。</div>
+          <span class="tl-item-cat cat-pre">Pre-training</span>
+        </div>
+      </div>
+
+      <!-- 2018 -->
+      <div class="tl-year">
+        <div class="tl-year-label">2018</div>
+        <div class="tl-item dot-pre">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/1810.04805" target="_blank">BERT</a> <span class="tl-date">2018-10</span></div>
+          <div class="tl-item-summary">双向掩码预训练，开创"预训练+微调"的 NLP 范式。</div>
+          <span class="tl-item-cat cat-pre">Pre-training</span>
+        </div>
+      </div>
+
+      <!-- 2017 -->
+      <div class="tl-year">
+        <div class="tl-year-label">2017</div>
+
+        <div class="tl-item dot-pre">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/1706.03762" target="_blank">Attention Is All You Need</a> <span class="tl-date">2017-06</span></div>
+          <div class="tl-item-summary">提出 Transformer，纯自注意力架构，成为一切大模型的基石。</div>
+          <span class="tl-item-cat cat-pre">Pre-training</span>
+        </div>
+
+        <div class="tl-item dot-post">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/1706.03741" target="_blank">Deep RL from Human Preferences</a> <span class="tl-date">2017-06</span></div>
+          <div class="tl-item-summary">提出 RLHF 框架，通过人类偏好对比学习奖励函数，奠定对齐理论基础。</div>
+          <span class="tl-item-cat cat-post">Post-training</span>
+        </div>
+      </div>
+
+      <!-- 2015 -->
+      <div class="tl-year">
+        <div class="tl-year-label">2015</div>
+        <div class="tl-item dot-eff">
+          <div class="tl-item-title"><a href="https://arxiv.org/abs/1503.02531" target="_blank">Knowledge Distillation</a> <span class="tl-date">2015-03</span></div>
+          <div class="tl-item-summary">用教师模型的软目标训练学生模型，开创知识蒸馏领域。</div>
+          <span class="tl-item-cat cat-eff">Efficiency</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===== Sidebar ===== -->
+    <aside class="tl-sidebar">
+      <h3>分类图例</h3>
+      <a class="legend-item" href="cat-pre-training.html">
+        <span class="legend-dot" style="background:#2563eb"></span> Pre-training
+      </a>
+      <a class="legend-item" href="cat-post-training.html">
+        <span class="legend-dot" style="background:#7c3aed"></span> Post-training
+      </a>
+      <a class="legend-item" href="cat-prompt-engineering.html">
+        <span class="legend-dot" style="background:#0891b2"></span> Prompt Engineering
+      </a>
+      <a class="legend-item" href="cat-reasoning.html">
+        <span class="legend-dot" style="background:#059669"></span> Reasoning
+      </a>
+      <a class="legend-item" href="cat-agents.html">
+        <span class="legend-dot" style="background:#d97706"></span> Agents
+      </a>
+      <a class="legend-item" href="cat-rag.html">
+        <span class="legend-dot" style="background:#dc2626"></span> RAG / Retrieval
+      </a>
+      <a class="legend-item" href="cat-multimodal.html">
+        <span class="legend-dot" style="background:#db2777"></span> Multimodal
+      </a>
+      <a class="legend-item" href="cat-efficiency.html">
+        <span class="legend-dot" style="background:#ea580c"></span> Efficiency
+      </a>
+
+      <div class="tl-stats">
+        共 60 篇论文<br>
+        跨越 2015 — 2026<br>
+        覆盖 8 个领域
+      </div>
+    </aside>
+
+  </div>
+</div>
+
+<footer>
+  <p>AI 论文阅读 &mdash; 持续更新中</p>
+</footer>
+
+</body>
+</html>

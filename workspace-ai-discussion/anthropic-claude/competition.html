@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>竞争格局对比 - Anthropic &amp; Claude 研究</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="site-nav">
+  <a class="logo" href="index.html">Anthropic &amp; Claude</a>
+  <div class="nav-links">
+    <a href="index.html">首页</a>
+    <a href="competition.html" class="active">竞争格局</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <div class="breadcrumb"><a href="index.html">首页</a> / 竞争格局对比</div>
+    <h1>竞争格局对比</h1>
+  </div>
+
+  <div class="cat-timeline" style="--cat-color: #7c3aed;">
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">vs OpenAI</div>
+      <div class="cat-tl-item">
+        <div class="item-title">模型能力对比</div>
+        <div class="item-meta">GPT-4o / o1 / o3 / GPT-5 vs Claude 系列</div>
+        <div class="item-desc">OpenAI 在 reasoning 基准上率先推出 o1/o3 系列，但 Claude 在编码（SWE-bench）和 agentic 任务上持续领先。GPT-5（2025-04）首次整合多模态原生输出，Claude 4.6 以 Agent Teams 对标。两家在不同维度交替领先。</div>
+        <div class="paper-tags"><span class="tag tag-blue">模型</span><span class="tag tag-accent">交替领先</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title">安全路线差异</div>
+        <div class="item-meta">核心哲学分歧</div>
+        <div class="item-desc">Anthropic 采用 RSP/ASL 框架的「安全优先」路线，Claude Opus 4 触发 ASL-3 需额外安全审查。OpenAI 从「安全优先」逐步转向「快速部署」，2024 年多位安全团队成员离职引发争议。Anthropic 的安全投入约占研究资源 25-30%。</div>
+        <div class="paper-tags"><span class="tag tag-green">Safety</span><span class="tag tag-purple">哲学差异</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title">产品与商业模式</div>
+        <div class="item-meta">生态差异</div>
+        <div class="item-desc">OpenAI 构建广泛产品线（ChatGPT、DALL-E、Sora、GPT Store、Codex），用户超 4 亿。Anthropic 聚焦 API + Claude Code 的开发者生态，ARR 从 2024 年 $10 亿增长到 2026 年 $140 亿。OpenAI 年化收入约 $160 亿（2026 初）。</div>
+        <div class="paper-tags"><span class="tag tag-orange">收入</span><span class="tag tag-blue">产品策略</span></div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">vs Google</div>
+      <div class="cat-tl-item">
+        <div class="item-title">Gemini 系列对比</div>
+        <div class="item-meta">Gemini 2.0 / 2.5 / 3.0 vs Claude</div>
+        <div class="item-desc">Google 凭借自有 TPU 基础设施和海量数据优势持续推进 Gemini。Gemini 2.5 Pro 在长上下文（1M+ token）上领先，Claude 在编码和 agentic 任务上更强。Gemini 3.0（2025-12）缩小差距，3.1 Pro（2026-01）在多模态推理上接近 Claude Opus 4.6。</div>
+        <div class="paper-tags"><span class="tag tag-blue">Gemini</span><span class="tag tag-green">长上下文</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title">基础设施与分发</div>
+        <div class="item-meta">Cloud 平台</div>
+        <div class="item-desc">Google 通过 Android、Search、Workspace 拥有最大的 AI 分发渠道。Claude 通过 AWS Bedrock 和 GCP Vertex AI 同时在两个云平台提供，但缺乏消费端入口。Google 的 AI Overviews 每月触达数十亿用户。</div>
+        <div class="paper-tags"><span class="tag tag-purple">分发</span><span class="tag tag-orange">Cloud</span></div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">vs Meta</div>
+      <div class="cat-tl-item">
+        <div class="item-title">开源 vs 闭源</div>
+        <div class="item-meta">Llama 系列 vs Claude</div>
+        <div class="item-desc">Meta 的 Llama 系列（Llama 3.1/3.3/4）采用开放权重策略，允许社区微调部署。Claude 完全闭源，通过 API 提供服务。Llama 4 Scout（2025-04）引入 MoE 架构，10M 上下文窗口，但整体能力仍落后于 Claude 旗舰。</div>
+        <div class="paper-tags"><span class="tag tag-accent">开源 vs 闭源</span><span class="tag tag-blue">Llama</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title">安全与控制权争论</div>
+        <div class="item-meta">行业核心分歧</div>
+        <div class="item-desc">Meta 主张开源降低安全风险（更多眼睛发现问题），Anthropic 认为开放前沿模型权重可能使安全措施被绕过。两种路线在 AI 政策讨论中形成主要张力，影响各国监管方向。</div>
+        <div class="paper-tags"><span class="tag tag-green">Safety Debate</span><span class="tag tag-purple">开源安全</span></div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">vs DeepSeek</div>
+      <div class="cat-tl-item">
+        <div class="item-title">效率冲击</div>
+        <div class="item-meta">DeepSeek-V3 / R1</div>
+        <div class="item-desc">DeepSeek 以极低成本（训练成本约 $550 万）达到接近前沿的性能，震动整个行业。DeepSeek-R1（2025-01）在数学推理上接近 o1，API 定价仅为 Claude 的 1/10 到 1/50。引发「AI 是否需要万亿投入」的根本性讨论。</div>
+        <div class="paper-tags"><span class="tag tag-accent">成本冲击</span><span class="tag tag-orange">$5.5M 训练</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title">开源蒸馏与技术扩散</div>
+        <div class="item-meta">2025</div>
+        <div class="item-desc">DeepSeek-R1 发布开源蒸馏模型（1.5B-70B），社区在 Llama、Qwen 上微调出接近 R1 的版本。这种技术快速扩散对 Anthropic 等闭源公司的定价权和技术护城河构成挑战。</div>
+        <div class="paper-tags"><span class="tag tag-blue">蒸馏</span><span class="tag tag-purple">开源扩散</span></div>
+      </div>
+    </div>
+
+    <div class="cat-tl-year">
+      <div class="cat-tl-year-label">差异化定位</div>
+      <div class="cat-tl-item">
+        <div class="item-title">Anthropic 的护城河</div>
+        <div class="item-meta">核心竞争力分析</div>
+        <div class="item-desc">
+          <strong>安全品牌</strong>：RSP/ASL 框架在企业客户和政府中建立信任，尤其在金融、医疗、国防领域。
+          <strong>编码能力</strong>：Claude Code + SWE-bench 持续领先，开发者付费意愿最高。
+          <strong>可解释性</strong>：Circuits/Monosemanticity 研究领先数年，长期可能成为监管合规优势。
+          <strong>多云分发</strong>：同时在 AWS 和 GCP 提供，不绑定单一云厂商。
+        </div>
+        <div class="paper-tags"><span class="tag tag-accent">护城河</span><span class="tag tag-green">Safety Brand</span><span class="tag tag-blue">Coding</span></div>
+      </div>
+      <div class="cat-tl-item">
+        <div class="item-title">主要风险</div>
+        <div class="item-meta">挑战与不确定性</div>
+        <div class="item-desc">
+          <strong>商品化压力</strong>：DeepSeek 证明前沿性能可以低成本实现，定价权面临侵蚀。
+          <strong>分发劣势</strong>：缺乏消费端入口（无搜索引擎、社交平台、硬件设备）。
+          <strong>安全路线摩擦</strong>：ASL-3 限制可能在竞争中造成速度劣势。
+          <strong>资本需求</strong>：训练前沿模型需持续大规模融资，2026 年已累计融资超 $500 亿。
+        </div>
+        <div class="paper-tags"><span class="tag tag-orange">风险</span><span class="tag tag-purple">商品化</span><span class="tag tag-accent">分发劣势</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer><p>Anthropic &amp; Claude 研究 &mdash; 持续更新中</p></footer>
+</body>
+</html>

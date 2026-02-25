@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中国宏观经济分析框架</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a25;
+    --border: #2a2a3a;
+    --text: #e0e0e8;
+    --text2: #9090a0;
+    --accent: #f0c040;
+    --red: #e05050;
+    --green: #40c080;
+    --blue: #5080e0;
+    --orange: #e08040;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+  /* Hero */
+  .hero {
+    padding: 80px 0 60px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero h1 {
+    font-size: 2.4em;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+  }
+  .hero .subtitle {
+    font-size: 1.05em;
+    color: var(--text2);
+    margin-bottom: 32px;
+  }
+  .hero .tagline {
+    display: inline-block;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 28px;
+    font-size: 0.95em;
+    color: var(--text2);
+    line-height: 1.8;
+    max-width: 720px;
+    text-align: left;
+  }
+  .hero .tagline strong { color: var(--accent); font-weight: 600; }
+
+  /* Stats bar */
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    padding: 28px 0;
+    margin: 40px 0 0;
+  }
+  .stat-item { text-align: center; }
+  .stat-num { font-size: 2em; font-weight: 700; color: var(--accent); }
+  .stat-label { font-size: 0.82em; color: var(--text2); margin-top: 2px; }
+
+  /* Core contradiction */
+  .contradiction {
+    padding: 48px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .contradiction h2 {
+    text-align: center;
+    font-size: 1.3em;
+    font-weight: 600;
+    margin-bottom: 28px;
+    color: var(--text2);
+    letter-spacing: 0.08em;
+  }
+  .engines {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .engine-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px 28px;
+    min-width: 260px;
+    flex: 1;
+    max-width: 340px;
+  }
+  .engine-box h3 {
+    font-size: 0.9em;
+    color: var(--text2);
+    margin-bottom: 14px;
+    letter-spacing: 0.06em;
+  }
+  .engine-box.old { border-left: 3px solid var(--red); }
+  .engine-box.new { border-left: 3px solid var(--green); }
+  .engine-item {
+    padding: 5px 0;
+    font-size: 0.92em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .engine-item .dot {
+    width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+  }
+  .engine-box.old .dot { background: var(--red); }
+  .engine-box.new .dot { background: var(--green); }
+  .engine-box.new .dot.uncertain { background: var(--orange); }
+  .arrow {
+    font-size: 2em;
+    color: var(--text2);
+    flex-shrink: 0;
+  }
+
+  /* Five judgments */
+  .judgments {
+    padding: 48px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .judgments h2 {
+    text-align: center;
+    font-size: 1.3em;
+    font-weight: 600;
+    margin-bottom: 28px;
+    color: var(--text2);
+    letter-spacing: 0.08em;
+  }
+  .judgment-list {
+    display: grid;
+    gap: 12px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  .judgment-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 0.92em;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .judgment-num {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-weight: 700;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.82em;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .judgment-text strong { color: var(--accent); }
+
+  /* Dashboard */
+  .dashboard {
+    padding: 48px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .dashboard h2 {
+    text-align: center;
+    font-size: 1.3em;
+    font-weight: 600;
+    margin-bottom: 28px;
+    color: var(--text2);
+    letter-spacing: 0.08em;
+  }
+  .dash-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px;
+  }
+  .dash-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .dash-label { font-size: 0.78em; color: var(--text2); margin-bottom: 6px; }
+  .dash-value { font-size: 1.3em; font-weight: 700; }
+  .dash-trend { font-size: 0.75em; margin-top: 4px; }
+  .trend-down { color: var(--red); }
+  .trend-up { color: var(--green); }
+  .trend-warn { color: var(--orange); }
+  .trend-neutral { color: var(--text2); }
+
+  /* Dimensions */
+  .dimensions {
+    padding: 48px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .dimensions h2 {
+    text-align: center;
+    font-size: 1.3em;
+    font-weight: 600;
+    margin-bottom: 28px;
+    color: var(--text2);
+    letter-spacing: 0.08em;
+  }
+  .dim-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+  .dim-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .dim-card:hover { border-color: var(--accent); }
+  .dim-header {
+    padding: 18px 20px 14px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .dim-title {
+    font-size: 1em;
+    font-weight: 600;
+  }
+  .dim-num {
+    color: var(--accent);
+    font-weight: 700;
+    margin-right: 8px;
+    font-size: 0.85em;
+  }
+  .dim-toggle {
+    color: var(--text2);
+    font-size: 0.85em;
+    transition: transform 0.2s;
+  }
+  .dim-card.open .dim-toggle { transform: rotate(180deg); }
+  .dim-desc {
+    padding: 0 20px 6px;
+    font-size: 0.84em;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+  .dim-questions {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  .dim-card.open .dim-questions {
+    max-height: 600px;
+  }
+  .dim-q-list {
+    padding: 8px 20px 16px;
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+  }
+  .dim-q-item {
+    padding: 6px 0;
+    font-size: 0.85em;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dim-q-item::before {
+    content: '';
+    width: 4px; height: 4px;
+    background: var(--accent);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* Circulation diagram */
+  .circulation {
+    padding: 48px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .circulation h2 {
+    text-align: center;
+    font-size: 1.3em;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text2);
+    letter-spacing: 0.08em;
+  }
+  .circulation .sub {
+    text-align: center;
+    color: var(--text2);
+    font-size: 0.88em;
+    margin-bottom: 28px;
+  }
+  .cycle-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px;
+    max-width: 700px;
+    margin: 0 auto;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+    font-size: 0.88em;
+    line-height: 1.9;
+    color: var(--text2);
+    white-space: pre;
+    overflow-x: auto;
+  }
+  .cycle-box .hl { color: var(--accent); font-weight: 600; }
+  .cycle-box .r { color: var(--red); }
+  .cycle-box .g { color: var(--green); }
+
+  /* Footer */
+  .footer {
+    padding: 40px 0;
+    text-align: center;
+    color: var(--text2);
+    font-size: 0.82em;
+  }
+  .footer a { color: var(--accent); text-decoration: none; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 1.6em; }
+    .stats-bar { gap: 20px; flex-wrap: wrap; }
+    .engines { flex-direction: column; align-items: stretch; }
+    .arrow { text-align: center; transform: rotate(90deg); }
+    .dim-grid { grid-template-columns: 1fr; }
+    .dash-grid { grid-template-columns: repeat(2, 1fr); }
+    .cycle-box { font-size: 0.75em; padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Hero -->
+  <section class="hero">
+    <h1>中国宏观经济分析框架</h1>
+    <p class="subtitle">50 个关键问题 &middot; 12 个维度 &middot; 一幅完整的全景图</p>
+    <div class="tagline">
+      中国经济正处于从<strong>高速增长</strong>到<strong>中速增长</strong>的历史转折期，同时面临<strong>增长模式转型</strong>（投资驱动 &rarr; 消费和创新驱动）、<strong>人口结构逆转</strong>（红利 &rarr; 负担）、<strong>外部环境恶化</strong>（全球化红利 &rarr; 脱钩压力）三重叠加挑战。
+    </div>
+    <div class="stats-bar">
+      <div class="stat-item"><div class="stat-num">$18.7万亿</div><div class="stat-label">GDP 总量（全球第二）</div></div>
+      <div class="stat-item"><div class="stat-num">$13,300</div><div class="stat-label">人均 GDP</div></div>
+      <div class="stat-item"><div class="stat-num">5.0%</div><div class="stat-label">GDP 增速</div></div>
+      <div class="stat-item"><div class="stat-num">14.08亿</div><div class="stat-label">人口（负增长中）</div></div>
+    </div>
+  </section>
+
+  <!-- Core contradiction -->
+  <section class="contradiction">
+    <h2>核 心 矛 盾</h2>
+    <div class="engines">
+      <div class="engine-box old">
+        <h3>旧引擎熄火</h3>
+        <div class="engine-item"><span class="dot"></span>房地产 &mdash; 销量腰斩，房价仍跌</div>
+        <div class="engine-item"><span class="dot"></span>基建投资 &mdash; 边际回报骤降</div>
+        <div class="engine-item"><span class="dot"></span>出口加工 &mdash; 产业链外迁</div>
+        <div class="engine-item"><span class="dot"></span>土地财政 &mdash; 模式崩塌</div>
+      </div>
+      <div class="arrow">&rarr;</div>
+      <div class="engine-box new">
+        <h3>新引擎尚未充分启动</h3>
+        <div class="engine-item"><span class="dot"></span>新能源 / 电动车</div>
+        <div class="engine-item"><span class="dot"></span>AI / 数字经济</div>
+        <div class="engine-item"><span class="dot uncertain"></span>消费升级（?）</div>
+        <div class="engine-item"><span class="dot uncertain"></span>服务业（?）</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Five judgments -->
+  <section class="judgments">
+    <h2>五 大 关 键 判 断</h2>
+    <div class="judgment-list">
+      <div class="judgment-item">
+        <div class="judgment-num">1</div>
+        <div class="judgment-text"><strong>增长放缓是必然的</strong> &mdash; 未来 5-10 年 GDP 增速大概率 3.5-4.5%。关键不是增速本身，而是增长质量。</div>
+      </div>
+      <div class="judgment-item">
+        <div class="judgment-num">2</div>
+        <div class="judgment-text"><strong>最大的短期风险是需求不足和通缩</strong> &mdash; 房地产调整、消费低迷、信心不足构成负反馈循环。</div>
+      </div>
+      <div class="judgment-item">
+        <div class="judgment-num">3</div>
+        <div class="judgment-text"><strong>最大的长期风险是人口老龄化和制度僵化</strong> &mdash; 人口问题几乎不可逆，TFP 能否回升到 2% 以上决定能否跨越中等收入阶段。</div>
+      </div>
+      <div class="judgment-item">
+        <div class="judgment-num">4</div>
+        <div class="judgment-text"><strong>部分领域已建立全球领先优势</strong> &mdash; 光伏、锂电池、电动车、5G、部分 AI 应用。</div>
+      </div>
+      <div class="judgment-item">
+        <div class="judgment-num">5</div>
+        <div class="judgment-text"><strong>外部环境已根本改变</strong> &mdash; 全球化红利期结束，中美博弈是长期结构性趋势。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dashboard -->
+  <section class="dashboard">
+    <h2>关 键 数 据 仪 表 盘 &nbsp; 2024</h2>
+    <div class="dash-grid">
+      <div class="dash-item">
+        <div class="dash-label">GDP 总量</div>
+        <div class="dash-value">134.9 万亿</div>
+        <div class="dash-trend trend-down">&darr; 增速放缓</div>
+      </div>
+      <div class="dash-item">
+        <div class="dash-label">CPI</div>
+        <div class="dash-value">0.2%</div>
+        <div class="dash-trend trend-warn">通缩压力</div>
+      </div>
+      <div class="dash-item">
+        <div class="dash-label">人口增长</div>
+        <div class="dash-value">-139 万</div>
+        <div class="dash-trend trend-down">持续负增长</div>
+      </div>
+      <div class="dash-item">
+        <div class="dash-label">青年失业率（新口径）</div>
+        <div class="dash-value">15-17%</div>
+        <div class="dash-trend trend-warn">居高不下</div>
+      </div>
+      <div class="dash-item">
+        <div class="dash-label">贸易顺差</div>
+        <div class="dash-value">$9,900 亿</div>
+        <div class="dash-trend trend-up">历史高位</div>
+      </div>
+      <div class="dash-item">
+        <div class="dash-label">房地产投资增速</div>
+        <div class="dash-value">-10%</div>
+        <div class="dash-trend trend-down">持续负增长</div>
+      </div>
+      <div class="dash-item">
+        <div class="dash-label">居民消费率</div>
+        <div class="dash-value">38%</div>
+        <div class="dash-trend trend-warn">全球最低之列</div>
+      </div>
+      <div class="dash-item">
+        <div class="dash-label">居民可支配收入 / GDP</div>
+        <div class="dash-value">43%</div>
+        <div class="dash-trend trend-down">远低于发达国家 60-76%</div>
+      </div>
+      <div class="dash-item">
+        <div class="dash-label">居民杠杆率（债务/收入）</div>
+        <div class="dash-value">142%</div>
+        <div class="dash-trend trend-warn">真实偿债压力高于美国</div>
+      </div>
+      <div class="dash-item">
+        <div class="dash-label">居民储蓄率</div>
+        <div class="dash-value">33%</div>
+        <div class="dash-trend trend-neutral">居高不下</div>
+      </div>
+      <div class="dash-item">
+        <div class="dash-label">广义地方债</div>
+        <div class="dash-value">100-110 万亿</div>
+        <div class="dash-trend trend-warn">化债进行中</div>
+      </div>
+      <div class="dash-item">
+        <div class="dash-label">消费者信心指数</div>
+        <div class="dash-value">87</div>
+        <div class="dash-trend trend-down">历史低位</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 Dimensions -->
+  <section class="dimensions">
+    <h2>十 二 大 维 度</h2>
+    <div class="dim-grid" id="dimGrid"></div>
+  </section>
+
+  <!-- Circulation -->
+  <section class="circulation">
+    <h2>供 需 互 锁：核 心 循 环</h2>
+    <p class="sub">中国经济的核心问题不是"供给不足"也不是"需求不足"，而是供需之间的传导管道多处堵塞</p>
+    <div class="cycle-box"><span class="r">供给过剩</span> &larr;&larr;&larr;&larr;&larr;&larr;&larr;&larr;&larr;&larr;&larr;&larr;&larr;&larr;&larr;&larr;&larr;&larr;&larr;&larr;&larr;&larr;&larr;&larr;┐
+    │                                          │
+    &darr;                                          │
+<span class="r">价格下跌（通缩）</span>                    <span class="hl">投资错位</span>
+    │                                （钱去了不该去的地方）
+    &darr;                                          │
+<span class="r">企业利润下降</span>                              │
+    │                                          │
+    &darr;                                          │
+<span class="hl">劳动力技能错配</span> &rarr; 就业困难 &rarr; <span class="r">收入不足</span>     │
+                                    │         │
+                                    &darr;         │
+                              <span class="hl">储蓄困在银行</span>   │
+                            （投资渠道差）      │
+                                    │         │
+                                    &darr;         │
+                          <span class="r">消费不足</span> + 服务业短缺 │
+                                    │         │
+                                    &darr;         │
+                          <span class="r">需求不足</span> &rarr;&rarr;&rarr;&rarr;&rarr;&rarr;&rarr;&rarr;┘</div>
+  </section>
+
+  <!-- Footer -->
+  <section class="footer">
+    <p>数据基准：2024 年 &middot; 本框架为分析参考，数据以官方统计和权威机构发布为准</p>
+  </section>
+
+</div>
+
+<script>
+const dims = [
+  {
+    num: "一", title: "总量与结构",
+    desc: "GDP 全球第二，人均接近高收入门槛。核心矛盾：消费占比偏低（55%），投资偏高（42%）。民企贡献 60%+ GDP 但信心低位。",
+    qs: ["Q01 GDP总量与人均水平","Q02 三驾马车结构","Q03 三次产业结构","Q04 国有经济与民营经济"]
+  },
+  {
+    num: "二", title: "增长动力与转型",
+    desc: "从要素驱动到创新驱动的转型"半途中"。TFP 增速从 4% 降至约 1%，是增长放缓的核心原因。",
+    qs: ["Q05 经济增长驱动力","Q06 全要素生产率","Q07 新质生产力","Q08 人口红利替代"]
+  },
+  {
+    num: "三", title: "财政与货币",
+    desc: "土地财政不可持续，地方债务 100 万亿+。货币政策面临"推绳子"困境——流动性充裕但信贷需求不足。",
+    qs: ["Q09 财政收入与土地财政","Q10 地方政府债务","Q10b 总体债务与杠杆率","Q11 货币政策传导","Q12 利率市场化与LPR"]
+  },
+  {
+    num: "四", title: "房地产与金融",
+    desc: "房地产占 GDP 约 25-30%，是最大拖累。250-280 万亿住房"投资溢价"是居民最大的财富风险敞口。",
+    qs: ["Q13 房地产占GDP比重","Q14 房地产市场现状","Q15 银行不良贷款","Q16 影子银行"]
+  },
+  {
+    num: "五", title: "人口与就业",
+    desc: "2022年人口负增长，生育率约 1.0。青年失业率 18-19%（毕业季），学历错配严重。移民不是可行选项。",
+    qs: ["Q17 人口趋势","Q18 劳动年龄人口","Q19 青年失业率","Q20 城镇化空间","Q20b 移民政策可行性"]
+  },
+  {
+    num: "六", title: "贸易与国际收支",
+    desc: "全球第一大货物贸易国，出口从"老三样"到"新三样"。贸易顺差近 1 万亿美元引发国际摩擦。",
+    qs: ["Q21 贸易伙伴与出口结构","Q22 全球产业链定位","Q23 国际收支与外储","Q24 人民币国际化"]
+  },
+  {
+    num: "七", title: "科技与产业政策",
+    desc: "R&D/GDP 约 2.68%，但基础研究仅 6.8%。新能源全球领先，半导体是最大卡脖子。产能过剩是副作用。",
+    qs: ["Q25 研发投入","Q26 关键领域竞争力","Q27 卡脖子技术","Q28 产业政策效率"]
+  },
+  {
+    num: "八", title: "区域差异",
+    desc: "南北差距替代东西差距成为主要矛盾。四大城市群贡献约 50% GDP。东北困境是极端案例。",
+    qs: ["Q29 东中西部与南北差距","Q30 城市群特征","Q31 县域经济与乡村振兴"]
+  },
+  {
+    num: "九", title: "制度与治理",
+    desc: "产权保护和法治是影响民企信心的核心。外资流入显著下降。平台经济监管信心修复缓慢。",
+    qs: ["Q32 产权保护与民企信心","Q33 营商环境与外资","Q34 国企改革","Q35 反垄断与平台经济"]
+  },
+  {
+    num: "十", title: "风险与前景",
+    desc: "最大短期风险：需求不足+通缩循环。中美博弈年化拖累约 0.5-1 个百分点。潜在增长率 3.5-4.5%。",
+    qs: ["Q36 短期风险","Q37 中等收入陷阱","Q38 中美博弈","Q39 双碳目标","Q40 潜在增长率"]
+  },
+  {
+    num: "十一", title: "需求与消费",
+    desc: "居民可支配收入仅占 GDP 的 43%，消费率 38% 全球最低。151 万亿存款中超一半属最富 5%。高储蓄与高债务是同一枚硬币的两面。",
+    qs: ["Q41 居民收入分配","Q42 消费不足的根源","Q42b 高储蓄之谜","Q43 资产负债表衰退","Q44 社会保障缺口","Q45 收入分配与共同富裕"]
+  },
+  {
+    num: "十二", title: "供需互锁",
+    desc: "中国经济最深层的问题：供给和需求卡死在彼此身上。六大错配构成多处堵塞的循环系统。",
+    qs: ["Q46 方法论：供需不能分开看","Q47 六大供需错配"]
+  }
+];
+
+const grid = document.getElementById('dimGrid');
+dims.forEach((d, i) => {
+  const card = document.createElement('div');
+  card.className = 'dim-card';
+  card.innerHTML = `
+    <div class="dim-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="dim-title"><span class="dim-num">${d.num}</span>${d.title}</div>
+      <div class="dim-toggle">&#9660;</div>
+    </div>
+    <div class="dim-desc">${d.desc}</div>
+    <div class="dim-questions">
+      <div class="dim-q-list">
+        ${d.qs.map(q => `<div class="dim-q-item">${q}</div>`).join('')}
+      </div>
+    </div>
+  `;
+  grid.appendChild(card);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>社交媒体时间线</title>
+<style>
+  :root {
+    --bg: #0d1117; --card: #161b22; --border: #30363d;
+    --text: #e6edf3; --text2: #8b949e; --accent: #58a6ff;
+    --green: #3fb950; --red: #f85149; --orange: #d29922; --purple: #bc8cff;
+    --wechat: #07c160; --xhs: #fe2c55; --bili: #00a1d6; --yt: #ff0000;
+    --line: #30363d;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--text);
+    font: 15px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    padding: 32px 20px;
+  }
+  .container { max-width: 800px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 36px; }
+  header h1 { font-size: 24px; margin-bottom: 4px; }
+  header .sub { color: var(--text2); font-size: 13px; }
+
+  /* Platform filter bar */
+  .filters {
+    display: flex; justify-content: center; gap: 8px;
+    margin-bottom: 32px; flex-wrap: wrap;
+  }
+  .filter-btn {
+    appearance: none; background: var(--card); color: var(--text2);
+    border: 1px solid var(--border); padding: 6px 16px; border-radius: 20px;
+    font-size: 13px; cursor: pointer; font-weight: 500;
+    display: flex; align-items: center; gap: 6px; transition: all 0.2s;
+  }
+  .filter-btn:hover { border-color: var(--accent); color: var(--text); }
+  .filter-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+  .filter-btn .dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  }
+
+  /* Timeline */
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before {
+    content: ''; position: absolute; left: 11px; top: 0; bottom: 0;
+    width: 2px; background: var(--line);
+  }
+
+  /* Date node */
+  .date-node {
+    position: relative; margin-bottom: 32px;
+  }
+  .date-node::before {
+    content: ''; position: absolute;
+    left: -32px; top: 6px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--accent); border: 2px solid var(--bg);
+    z-index: 1;
+  }
+  .date-label {
+    font-size: 14px; font-weight: 700; color: var(--accent);
+    margin-bottom: 12px; letter-spacing: 0.5px;
+    cursor: pointer; user-select: none;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .date-label:hover { opacity: 0.8; }
+  .date-label .arrow {
+    font-size: 12px; transition: transform 0.2s;
+    display: inline-block; width: 14px;
+  }
+  .date-node.collapsed .arrow { transform: rotate(-90deg); }
+  .date-node.collapsed .platform-group { display: none; }
+  .date-label .weekday { color: var(--text2); font-weight: 400; margin-left: 8px; font-size: 12px; }
+  .date-label .entry-count { color: var(--text2); font-weight: 400; font-size: 12px; margin-left: auto; }
+
+  /* Platform-group cards within a date */
+  .platform-group {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; margin-bottom: 10px; overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .platform-group:hover { border-color: rgba(88,166,255,0.4); }
+  .platform-header {
+    display: flex; align-items: center; gap: 8px; padding: 10px 16px;
+    cursor: pointer; user-select: none;
+  }
+  .platform-header .arrow {
+    font-size: 12px; transition: transform 0.2s;
+    display: inline-block; width: 14px;
+  }
+  .platform-group.collapsed .arrow { transform: rotate(-90deg); }
+  .platform-group.collapsed .platform-content { display: none; }
+  .platform-content { padding: 0 16px 12px; }
+  .entry-platform {
+    font-size: 12px; font-weight: 600; padding: 2px 10px;
+    border-radius: 10px; white-space: nowrap;
+  }
+  .p-wechat { background: rgba(7,193,96,0.15); color: var(--wechat); }
+  .p-xhs { background: rgba(254,44,85,0.15); color: var(--xhs); }
+  .p-bili { background: rgba(0,161,214,0.15); color: var(--bili); }
+  .p-yt { background: rgba(255,0,0,0.15); color: var(--yt); }
+  .entry-title { font-size: 14px; font-weight: 600; flex: 1; }
+
+  .entry-body { font-size: 13px; color: var(--text); line-height: 1.7; }
+  .entry-body ul { padding-left: 18px; margin: 6px 0; }
+  .entry-body li { margin-bottom: 4px; }
+  .entry-body a { color: var(--accent); text-decoration: none; }
+  .entry-body a:hover { text-decoration: underline; }
+  .entry-body a strong { color: inherit; }
+  .entry-body strong { color: var(--text); }
+  .entry-body blockquote {
+    border-left: 3px solid var(--border); padding-left: 12px;
+    margin: 8px 0; color: var(--text2); font-style: italic;
+  }
+  .entry-body h4 { font-size: 13px; color: var(--accent); margin: 10px 0 4px; }
+
+  /* Expandable item cards */
+  .entry-body details { margin-bottom: 6px; }
+  .entry-body details summary {
+    cursor: pointer; list-style: none; font-size: 13px; line-height: 1.6;
+    padding: 4px 0;
+  }
+  .entry-body details summary::-webkit-details-marker { display: none; }
+  .entry-body details summary::before {
+    content: '▸ '; color: var(--text2); font-size: 11px;
+  }
+  .entry-body details[open] summary::before { content: '▾ '; }
+  .entry-body details .item-detail {
+    padding: 8px 12px; margin: 4px 0 8px 14px;
+    background: rgba(88,166,255,0.04); border-left: 2px solid var(--border);
+    border-radius: 0 6px 6px 0; font-size: 12px; color: var(--text2); line-height: 1.7;
+  }
+  .entry-body details .item-detail p { margin: 0 0 6px; }
+  .entry-body details .item-detail .source-link {
+    display: inline-block; margin-top: 4px; padding: 2px 10px;
+    background: var(--card); border: 1px solid var(--border); border-radius: 4px;
+    color: var(--accent); font-size: 11px; text-decoration: none;
+  }
+  .entry-body details .item-detail .source-link:hover {
+    border-color: var(--accent); background: rgba(88,166,255,0.1);
+  }
+
+  .empty-state {
+    text-align: center; padding: 80px 20px; color: var(--text2);
+  }
+  .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+
+  .load-more {
+    text-align: center; padding: 20px;
+  }
+  .load-more button {
+    appearance: none; background: var(--card); color: var(--accent);
+    border: 1px solid var(--border); padding: 8px 24px; border-radius: 8px;
+    font-size: 13px; cursor: pointer;
+  }
+  .load-more button:hover { border-color: var(--accent); }
+
+  @media (max-width: 600px) {
+    .timeline { padding-left: 24px; }
+    .date-node::before { left: -24px; }
+    .timeline::before { left: 3px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>📱 社交媒体时间线</h1>
+    <div class="sub">微信 · 小红书 · B站 · YouTube</div>
+  </header>
+
+  <div class="filters">
+    <button class="filter-btn active" onclick="setFilter('all')">全部</button>
+    <button class="filter-btn" data-f="wechat" onclick="setFilter('wechat')">
+      <span class="dot" style="background:var(--wechat)"></span>微信
+    </button>
+    <button class="filter-btn" data-f="xhs" onclick="setFilter('xhs')">
+      <span class="dot" style="background:var(--xhs)"></span>小红书
+    </button>
+    <button class="filter-btn" data-f="bili" onclick="setFilter('bili')">
+      <span class="dot" style="background:var(--bili)"></span>B站
+    </button>
+    <button class="filter-btn" data-f="yt" onclick="setFilter('yt')">
+      <span class="dot" style="background:var(--yt)"></span>YouTube
+    </button>
+  </div>
+
+  <div class="timeline" id="timeline"></div>
+  <div class="load-more" id="loadMore" style="display:none;">
+    <button onclick="loadMore()">加载更多</button>
+  </div>
+</div>
+
+<script>
+const DAILY_DIR = '';
+const WEEKDAYS = ['周日','周一','周二','周三','周四','周五','周六'];
+let allDays = [];
+let loadedDays = 0;
+const BATCH = 14;
+let filter = 'all';
+
+function fmt(d) {
+  return d.getFullYear() + '-' +
+    String(d.getMonth()+1).padStart(2,'0') + '-' +
+    String(d.getDate()).padStart(2,'0');
+}
+
+function setFilter(f) {
+  filter = f;
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    const bf = btn.dataset.f || 'all';
+    btn.classList.toggle('active', bf === f);
+  });
+  // Re-render with filter
+  renderAll();
+}
+
+// Simple markdown → HTML for entry bodies
+function md(text) {
+  // Pre-process: convert list items with links + optional summary into <details>
+  // Format: - [**title**](url) — metadata\n  > summary text
+  const lines = text.split('\n');
+  const out = [];
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const m = line.match(/^- \[(.+?)\]\((.+?)\)\s*(.*)$/);
+    if (m) {
+      const title = m[1].replace(/\*\*/g, '');
+      const url = m[2];
+      const meta = m[3];
+      // Collect indented summary lines (starting with "  >")
+      let summary = '';
+      while (i + 1 < lines.length && /^\s{2}>/.test(lines[i + 1])) {
+        i++;
+        summary += (summary ? ' ' : '') + lines[i].replace(/^\s{2}>\s?/, '');
+      }
+      let detail = '<details><summary><strong>' + title + '</strong>';
+      if (meta) detail += ' <span style="color:var(--text2);font-weight:400">' + meta + '</span>';
+      detail += '</summary><div class="item-detail">';
+      if (summary) detail += '<p>' + summary + '</p>';
+      detail += '<a class="source-link" href="' + url + '" target="_blank">查看原文 →</a>';
+      detail += '</div></details>';
+      out.push(detail);
+    } else {
+      out.push(line);
+    }
+  }
+  text = out.join('\n');
+
+  return text
+    .replace(/^#### (.+)$/gm, '<h4>$1</h4>')
+    .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank">$1</a>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>')
+    .replace(/^- (.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>\n?)+/gs, m => '<ul>' + m + '</ul>')
+    .replace(/\n{2,}/g, '<br>')
+    .replace(/\n/g, ' ');
+}
+
+// Parse a daily md file into platform entries
+function parseDay(text, dateStr) {
+  const platforms = {
+    wechat: { pattern: /^##\s*微信/i, label: '微信', cls: 'p-wechat' },
+    xhs: { pattern: /^##\s*小红书/i, label: '小红书', cls: 'p-xhs' },
+    bili: { pattern: /^##\s*[Bb]站/i, label: 'B站', cls: 'p-bili' },
+    yt: { pattern: /^##\s*[Yy]ou[Tt]ube/i, label: 'YouTube', cls: 'p-yt' },
+  };
+
+  const lines = text.split('\n');
+  const entries = [];
+  let currentPlatform = null;
+  let currentLines = [];
+  let currentTitle = '';
+
+  function flush() {
+    if (currentPlatform && currentLines.length > 0) {
+      const body = currentLines.join('\n').trim();
+      if (body && !body.match(/^[-\s]*暂无数据/)) {
+        entries.push({
+          platform: currentPlatform.key,
+          label: currentPlatform.label,
+          cls: currentPlatform.cls,
+          title: currentTitle,
+          body: body,
+          date: dateStr,
+        });
+      }
+    }
+    currentLines = [];
+  }
+
+  for (const line of lines) {
+    // Skip top-level title
+    if (/^#\s/.test(line) && !/^##/.test(line)) continue;
+
+    let matched = false;
+    for (const [key, p] of Object.entries(platforms)) {
+      if (p.pattern.test(line)) {
+        flush();
+        currentPlatform = { ...p, key };
+        currentTitle = line.replace(/^##\s*/, '');
+        matched = true;
+        break;
+      }
+    }
+    if (!matched && currentPlatform) {
+      currentLines.push(line);
+    }
+  }
+  flush();
+
+  return entries;
+}
+
+// Fetched data cache: dateStr → { raw, entries }
+const cache = {};
+
+async function fetchDay(dateStr) {
+  if (cache[dateStr]) return cache[dateStr];
+  try {
+    const resp = await fetch(DAILY_DIR + dateStr + '/index.md');
+    if (!resp.ok) { cache[dateStr] = null; return null; }
+    const raw = await resp.text();
+    const entries = parseDay(raw, dateStr);
+    cache[dateStr] = { raw, entries };
+    return cache[dateStr];
+  } catch {
+    cache[dateStr] = null;
+    return null;
+  }
+}
+
+function toggleDay(el) {
+  el.closest('.date-node').classList.toggle('collapsed');
+}
+
+function togglePlatform(el) {
+  el.closest('.platform-group').classList.toggle('collapsed');
+}
+
+let dayIndex = 0;
+
+function renderDay(dateStr, entries) {
+  const d = new Date(dateStr + 'T00:00:00');
+  const weekday = WEEKDAYS[d.getDay()];
+
+  const filtered = filter === 'all' ? entries : entries.filter(e => e.platform === filter);
+  if (filtered.length === 0) return '';
+
+  const isFirst = dayIndex === 0;
+  dayIndex++;
+  const collapsed = isFirst ? '' : ' collapsed';
+
+  let html = `<div class="date-node${collapsed}">`;
+  html += `<div class="date-label" onclick="toggleDay(this)">`;
+  html += `<span class="arrow">▾</span>`;
+  html += `${dateStr}<span class="weekday">${weekday}</span>`;
+  html += `<span class="entry-count">${filtered.length} 条</span>`;
+  html += `</div>`;
+
+  for (const e of filtered) {
+    html += `<div class="platform-group collapsed">`;
+    html += `<div class="platform-header" onclick="togglePlatform(this)">`;
+    html += `<span class="arrow">▾</span>`;
+    html += `<span class="entry-platform ${e.cls}">${e.label}</span>`;
+    html += `</div>`;
+    html += `<div class="platform-content">`;
+    html += `<div class="entry-body">${md(e.body)}</div>`;
+    html += `</div>`;
+    html += `</div>`;
+  }
+
+  html += `</div>`;
+  return html;
+}
+
+async function renderAll() {
+  const el = document.getElementById('timeline');
+  let html = '';
+  dayIndex = 0;
+
+  for (let i = 0; i < loadedDays; i++) {
+    const dateStr = allDays[i];
+    const data = cache[dateStr];
+    if (data && data.entries.length > 0) {
+      html += renderDay(dateStr, data.entries);
+    }
+  }
+
+  if (!html) {
+    html = `<div class="empty-state">
+      <div class="icon">📱</div>
+      <p>暂无内容<br>在 Discord 频道让 agent 开始监控你的社交媒体</p>
+    </div>`;
+  }
+
+  el.innerHTML = html;
+}
+
+async function loadMore() {
+  const end = Math.min(loadedDays + BATCH, allDays.length);
+  const promises = [];
+  for (let i = loadedDays; i < end; i++) {
+    promises.push(fetchDay(allDays[i]));
+  }
+  await Promise.all(promises);
+  loadedDays = end;
+
+  document.getElementById('loadMore').style.display =
+    loadedDays < allDays.length ? '' : 'none';
+
+  renderAll();
+}
+
+async function init() {
+  if (location.protocol === 'file:') {
+    document.getElementById('timeline').innerHTML = `<div class="empty-state">
+      <div class="icon">🔒</div>
+      <p>file:// 协议无法加载数据<br>
+      请通过 HTTP 服务访问：<br><br>
+      <code style="background:var(--card);padding:6px 12px;border-radius:6px;font-size:13px;">
+      cd 每日汇总 && python3 -m http.server 8765</code><br><br>
+      然后打开 <a href="http://localhost:8765/index.html">http://localhost:8765/index.html</a></p>
+    </div>`;
+    return;
+  }
+
+  // Generate date list for last 90 days
+  const today = new Date();
+  for (let i = 0; i < 90; i++) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    allDays.push(fmt(d));
+  }
+
+  // Scan which files exist (check first 30 days quickly)
+  const existing = [];
+  const checks = allDays.slice(0, 30).map(async ds => {
+    try {
+      const resp = await fetch(DAILY_DIR + ds + '/index.md', { method: 'HEAD' });
+      if (resp.ok) existing.push(ds);
+    } catch {}
+  });
+  await Promise.all(checks);
+
+  // Sort and use only existing days
+  existing.sort((a, b) => b.localeCompare(a));
+  if (existing.length > 0) {
+    allDays = existing;
+  } else {
+    // Keep all days so user can see empty state
+    allDays = allDays.slice(0, 7);
+  }
+
+  await loadMore();
+}
+
+init();
+</script>
+</body>
+</html>
