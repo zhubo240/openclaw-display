@@ -311,6 +311,23 @@
       cursor: default;
     }
 
+    .toc-list li a {
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      width: 100%;
+    }
+
+    .toc-list li a .ch-title {
+      transition: color 0.2s;
+    }
+
+    .toc-list li a:hover .ch-title {
+      color: #63b3ed;
+    }
+
     .toc-list li:hover {
       color: #63b3ed;
     }
@@ -506,23 +523,23 @@
       <h2 class="section-title">目录结构</h2>
       <ul class="toc-list">
         <li><span class="ch-title">总序 / 再版序 / 前言</span></li>
-        <li><span class="ch-title">第一部分 — 背景与历史</span></li>
-        <li><span class="ch-title">什么是复杂性</span></li>
-        <li><span class="ch-title">动力学、混沌与预测</span></li>
-        <li><span class="ch-title">信息</span></li>
+        <li><span class="ch-title" style="color:#63b3ed; font-weight:600;">第一部分 — 背景与历史</span></li>
+        <li><a href="ch01-什么是复杂性.html"><span class="ch-title">什么是复杂性</span></a></li>
+        <li><a href="ch02-动力学混沌与预测.html"><span class="ch-title">动力学、混沌与预测</span></a></li>
+        <li><a href="ch03-信息.html"><span class="ch-title">信息</span></a></li>
         <li><span class="ch-title">计算</span></li>
         <li><span class="ch-title">进化</span></li>
-        <li><span class="ch-title">第二部分 — 计算机中的生命与进化</span></li>
+        <li><span class="ch-title" style="color:#63b3ed; font-weight:600;">第二部分 — 计算机中的生命与进化</span></li>
         <li><span class="ch-title">遗传算法</span></li>
         <li><span class="ch-title">元胞自动机、生命和宇宙</span></li>
-        <li><span class="ch-title">第三部分 — 大写的计算</span></li>
+        <li><span class="ch-title" style="color:#63b3ed; font-weight:600;">第三部分 — 大写的计算</span></li>
         <li><span class="ch-title">粒子计算</span></li>
         <li><span class="ch-title">生命系统中的信息处理</span></li>
         <li><span class="ch-title">网络科学</span></li>
-        <li><span class="ch-title">第四部分 — 网络</span></li>
+        <li><span class="ch-title" style="color:#63b3ed; font-weight:600;">第四部分 — 网络</span></li>
         <li><span class="ch-title">真实世界中的网络</span></li>
         <li><span class="ch-title">网络的度量与模型</span></li>
-        <li><span class="ch-title">第五部分 — 尾声</span></li>
+        <li><span class="ch-title" style="color:#63b3ed; font-weight:600;">第五部分 — 尾声</span></li>
         <li><span class="ch-title">复杂性科学的前景与未来</span></li>
       </ul>
     </section>

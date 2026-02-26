@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第三章：信息 — 复杂</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: #0a0a0f;
+      color: #e0e0e0;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 48px 24px;
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 48px;
+      font-size: 13px;
+    }
+
+    .nav a {
+      color: #63b3ed;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+
+    .nav a:hover { color: #90cdf4; }
+
+    .nav .chapter-nav {
+      display: flex;
+      gap: 20px;
+    }
+
+    .chapter-header { margin-bottom: 48px; }
+
+    .chapter-label {
+      font-size: 12px;
+      letter-spacing: 3px;
+      color: #63b3ed;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .chapter-title {
+      font-size: 36px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    .chapter-subtitle {
+      font-size: 15px;
+      color: #718096;
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(99, 179, 237, 0.2), transparent);
+      margin: 40px 0;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title::before {
+      content: '';
+      width: 3px;
+      height: 18px;
+      background: #63b3ed;
+      border-radius: 2px;
+    }
+
+    .summary-text {
+      font-size: 15px;
+      line-height: 1.9;
+      color: #a0aec0;
+      margin-bottom: 20px;
+    }
+
+    .summary-text strong { color: #e2e8f0; }
+
+    .concepts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 24px 0 32px;
+    }
+
+    .concept-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 22px 18px;
+      transition: all 0.25s;
+    }
+
+    .concept-card:hover {
+      background: rgba(99, 179, 237, 0.05);
+      border-color: rgba(99, 179, 237, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .concept-card h4 {
+      font-size: 15px;
+      color: #e2e8f0;
+      margin-bottom: 8px;
+    }
+
+    .concept-card p {
+      font-size: 13px;
+      color: #718096;
+      line-height: 1.7;
+    }
+
+    .concept-card .icon {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .highlight-box {
+      background: rgba(99, 179, 237, 0.06);
+      border: 1px solid rgba(99, 179, 237, 0.15);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 28px 0;
+    }
+
+    .highlight-box .label {
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: #63b3ed;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .highlight-box p {
+      font-size: 15px;
+      line-height: 1.8;
+      color: #cbd5e0;
+    }
+
+    .highlight-box p + p { margin-top: 12px; }
+
+    .quote-block {
+      border-left: 3px solid rgba(99, 179, 237, 0.3);
+      padding: 16px 20px;
+      margin: 24px 0;
+      background: rgba(255,255,255,0.02);
+      border-radius: 0 8px 8px 0;
+    }
+
+    .quote-block p {
+      font-size: 14px;
+      line-height: 1.8;
+      color: #a0aec0;
+      font-style: italic;
+    }
+
+    .quote-block .source {
+      font-size: 12px;
+      color: #718096;
+      margin-top: 8px;
+      font-style: normal;
+    }
+
+    .formula {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 20px 0;
+      font-family: "SF Mono", Monaco, Consolas, monospace;
+      font-size: 14px;
+      color: #90cdf4;
+      text-align: center;
+      line-height: 1.8;
+    }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+      padding-left: 28px;
+      margin: 28px 0 36px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: 4px;
+      bottom: 4px;
+      width: 2px;
+      background: rgba(99, 179, 237, 0.15);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 24px;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -25px;
+      top: 7px;
+      width: 10px;
+      height: 10px;
+      background: #1a202c;
+      border: 2px solid #63b3ed;
+      border-radius: 50%;
+    }
+
+    .timeline-item h4 {
+      font-size: 14px;
+      color: #e2e8f0;
+      margin-bottom: 6px;
+    }
+
+    .timeline-item h4 .year {
+      color: #63b3ed;
+      font-family: "SF Mono", Monaco, Consolas, monospace;
+      font-size: 12px;
+      margin-right: 8px;
+    }
+
+    .timeline-item p {
+      font-size: 13px;
+      line-height: 1.8;
+      color: #718096;
+    }
+
+    /* Discussion placeholder */
+    .discussion-placeholder {
+      background: rgba(255,255,255,0.02);
+      border: 1px dashed rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 32px;
+      text-align: center;
+      color: #4a5568;
+      font-size: 14px;
+      margin-top: 24px;
+    }
+
+    .footer-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .footer-nav a {
+      color: #63b3ed;
+      text-decoration: none;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.2s;
+    }
+
+    .footer-nav a:hover { color: #90cdf4; }
+
+    .footer-nav .prev-chapter {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 12px 24px;
+      border-radius: 8px;
+    }
+
+    .footer-nav .prev-chapter:hover { background: rgba(255,255,255,0.06); }
+
+    .footer-nav .next-chapter {
+      background: rgba(99, 179, 237, 0.1);
+      border: 1px solid rgba(99, 179, 237, 0.2);
+      padding: 12px 24px;
+      border-radius: 8px;
+    }
+
+    .footer-nav .next-chapter:hover { background: rgba(99, 179, 237, 0.15); }
+
+    @media (max-width: 640px) {
+      .concepts { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Navigation -->
+    <nav class="nav">
+      <a href="index.html">← 返回书目</a>
+      <div class="chapter-nav">
+        <a href="ch02-动力学混沌与预测.html">← 上一章</a>
+        <a href="#">下一章 →</a>
+      </div>
+    </nav>
+
+    <!-- Chapter Header -->
+    <div class="chapter-header">
+      <div class="chapter-label">Chapter 03 · 第一部分：背景与历史</div>
+      <h1 class="chapter-title">信息</h1>
+      <p class="chapter-subtitle">Information</p>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Chapter Summary -->
+    <section>
+      <h2 class="section-title">章节概要</h2>
+
+      <p class="summary-text">
+        第二章讲了混沌——确定性系统可以不可预测。第三章换一个角度问：<strong>如果我们想描述一个系统的行为，需要多少信息？</strong> 这个问题看似简单，却引出了整个信息论，并最终成为理解复杂性的关键工具之一。
+      </p>
+
+      <h2 class="section-title">信息论的起源</h2>
+
+      <div class="timeline">
+        <div class="timeline-item">
+          <h4><span class="year">1948</span>香农的奠基论文</h4>
+          <p>克劳德·香农（Claude Shannon）在贝尔实验室发表《通信的数学理论》，创立了信息论。他的目标很实际：如何高效、可靠地通过有噪声的通信信道传输消息。但他给出的框架远远超出了通信工程的范畴。</p>
+        </div>
+        <div class="timeline-item">
+          <h4><span class="year">1940s</span>香农的背景</h4>
+          <p>香农同时是数学家和工程师。他 21 岁的硕士论文就证明了布尔代数可以用电路实现——这直接奠定了数字电路和现代计算机的理论基础。信息论是他第二个改变世界的贡献。</p>
+        </div>
+      </div>
+
+      <h2 class="section-title">香农的核心洞察</h2>
+
+      <p class="summary-text">
+        香农做了一件革命性的事：<strong>把"信息"从"意义"中剥离出来。</strong>
+      </p>
+
+      <p class="summary-text">
+        在香农之前，人们觉得信息和它的内容（意义、重要性）是绑定的。"今天要下雨"比"今天是星期三"更"有信息量"，因为它更有用。但香农说：不对。<strong>信息量和意义无关，它只和"意外程度"有关。</strong>
+      </p>
+
+      <div class="quote-block">
+        <p>"信息论中的'信息'不能和日常用语中的'信息'混为一谈。它是一个技术术语，和消息的语义内容无关。"</p>
+        <div class="source">— 克劳德·香农</div>
+      </div>
+
+      <p class="summary-text">
+        他的定义极其精确：<strong>一条消息的信息量 = 它消除了多少不确定性。</strong>
+      </p>
+
+      <p class="summary-text">
+        如果你已经知道明天太阳会升起，"明天太阳升起"这条消息的信息量就是零——它没有消除任何不确定性。但如果掷一枚硬币，告诉你结果是"正面"，这消除了一个二选一的不确定性——信息量是 1 bit。
+      </p>
+
+      <h2 class="section-title">熵：不确定性的度量</h2>
+
+      <p class="summary-text">
+        香农用一个公式来度量一个信源（message source）的平均不确定性，他借用了热力学的术语，把它叫做<strong>熵（entropy）</strong>：
+      </p>
+
+      <div class="formula">
+        H = −∑ p(x) · log₂ p(x)
+      </div>
+
+      <p class="summary-text">
+        其中 p(x) 是每个可能消息出现的概率。这个公式说的是：
+      </p>
+
+      <p class="summary-text">
+        <strong>如果所有结果等概率</strong>（比如公平硬币），熵最大——你最不确定会出什么，所以每条消息携带的信息量最大。<br><br>
+        <strong>如果某个结果几乎确定</strong>（比如一枚 99% 出正面的硬币），熵很低——你基本已经知道结果了，消息几乎不携带新信息。
+      </p>
+
+      <div class="highlight-box">
+        <div class="label">为什么叫"熵"</div>
+        <p>传说冯·诺依曼建议香农用"熵"这个词，理由是："第一，热力学里已经有一个类似的公式；第二，没人真正理解熵是什么，所以在辩论中你总是有优势的。"不管这个故事是否属实，信息熵和热力学熵确实有深刻的数学联系——两者在某种意义上度量的是同一件事：<strong>系统的无序度 / 不确定性。</strong></p>
+      </div>
+
+      <h2 class="section-title">核心概念</h2>
+
+      <div class="concepts">
+        <div class="concept-card">
+          <div class="icon">📡</div>
+          <h4>信道容量</h4>
+          <p>每个通信信道都有一个理论上限——信道容量（channel capacity）。香农证明了：只要传输速率不超过信道容量，就<strong>一定存在</strong>某种编码方式能实现几乎无误的传输。这是一个存在性定理，当时没人知道怎么做到，但香农证明了它必然可行。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">🗜️</div>
+          <h4>数据压缩的极限</h4>
+          <p>熵给出了数据压缩的理论下界。一个信源产生的消息，平均每个符号至少需要 H bit 来编码。低于这个值，信息必然丢失。这就是为什么 ZIP 文件不能无限压缩。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">🔐</div>
+          <h4>冗余与纠错</h4>
+          <p>自然语言有大量冗余（英语约 50%）。冗余看起来是"浪费"，但它允许纠错——你能读懂有错别字的句子，就是因为语言的冗余提供了纠错能力。香农证明了冗余和抗噪声能力之间的精确数学关系。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">🎲</div>
+          <h4>信息 ≠ 意义</h4>
+          <p>香农的框架刻意排除了语义。一段莎士比亚和一段等长的随机字母，如果出现概率相同，信息量就相同。这个抽象是信息论的力量来源，也是它的局限——复杂性科学需要的恰恰是把"意义"加回来。</p>
+        </div>
+      </div>
+
+      <h2 class="section-title">麦克斯韦妖：信息与物理的桥梁</h2>
+
+      <p class="summary-text">
+        米歇尔在这一章还讲了一个经典思想实验——<strong>麦克斯韦妖（Maxwell's Demon）</strong>。
+      </p>
+
+      <p class="summary-text">
+        想象一个盒子被隔板分成两半，隔板上有个小门，由一个"妖精"控制。妖精观察每个气体分子的速度：快分子放到左边，慢分子放到右边。结果左边变热、右边变冷——<strong>不做功就降低了熵</strong>，违反了热力学第二定律。
+      </p>
+
+      <p class="summary-text">
+        这个悖论困扰了物理学家一百多年。最终的解答来自信息论：**妖精获取分子速度的信息、以及擦除记忆的过程本身必然消耗能量、增加熵**。信息不是免费的——处理信息有热力学代价。
+      </p>
+
+      <p class="summary-text">
+        这建立了一个深刻的联系：<strong>信息是物理的。</strong>它不只是抽象概念，它和能量、熵有真实的物理关联。兰道尔原理（Landauer's Principle）给出了精确的数值：擦除 1 bit 信息至少产生 kT·ln2 的热量。
+      </p>
+
+      <h2 class="section-title">与前两章的连接</h2>
+
+      <p class="summary-text">
+        <strong>和第二章（混沌）的连接：</strong>混沌系统不断产生信息——因为微小差异被指数级放大，你需要越来越多的 bit 来描述系统的精确状态。混沌系统的<strong>李雅普诺夫指数</strong>（衡量轨迹分离速度）直接对应着系统产生信息的速率。混沌越强，信息产生越快，长期预测越不可能。
+      </p>
+
+      <p class="summary-text">
+        <strong>和第一章（复杂性）的连接：</strong>信息论给了我们一种度量复杂性的候选方案——一个系统的行为需要多少 bit 来描述？完全有序的系统（如静止不动）需要很少的 bit；完全随机的系统需要最多的 bit（因为无法压缩）。而<strong>复杂系统恰恰处在中间</strong>——它既不完全有序也不完全随机，有结构但不可完全压缩。
+      </p>
+
+      <div class="highlight-box">
+        <div class="label">这章的核心信息</div>
+        <p>信息不是一个模糊的日常概念，它有精确的数学定义。香农的框架让我们能够量化不确定性、压缩的极限、通信的极限。但香农刻意排除了"意义"——而复杂性科学的野心恰恰是把意义加回来：不只问"需要多少 bit"，还要问"这些 bit 在做什么"。</p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Discussion -->
+    <section>
+      <h2 class="section-title">读书讨论</h2>
+      <div class="discussion-placeholder">
+        尚无讨论 · 读完这一章后来聊聊？
+      </div>
+    </section>
+
+    <!-- Footer navigation -->
+    <div class="footer-nav">
+      <a class="prev-chapter" href="ch02-动力学混沌与预测.html">← 第二章：动力学、混沌与预测</a>
+      <a class="next-chapter" href="#">第四章：计算 →</a>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -213,6 +213,11 @@
     <a class="nav-link" href="#zero-sum">正和 → 零和（根本）</a>
   </div>
   <div class="nav-group">
+    <div class="nav-group-title">定量分析</div>
+    <a class="nav-link" href="#attribution">央行贡献归因</a>
+    <a class="nav-link" href="#flash-crash">2月闪崩事件</a>
+  </div>
+  <div class="nav-group">
     <div class="nav-group-title">深层逻辑</div>
     <a class="nav-link" href="#causal">完整因果链</a>
     <a class="nav-link" href="#why-gold">为什么是黄金</a>
@@ -432,6 +437,91 @@
       <span style="color:#4a5568">$1,898 (2020):</span> <span style="color:#fbbf24">"央行在印钱，但是暂时性的"</span><br>
       <span style="color:#4a5568">$2,624 (2024):</span> <span style="color:#f87171">"赤字不可持续，央行在去美元化"</span><br>
       <span style="color:#4a5568">$5,150 (2026):</span> <span style="color:#f87171;font-weight:600">"体系在变了"</span>
+    </div>
+  </div>
+
+  <!-- ===== SECTION: ATTRIBUTION ===== -->
+  <div class="section" id="attribution">
+    <h2>定量归因：央行购金贡献了多少？</h2>
+    <div class="desc">供需模型推算：央行超额需求占总供给 ~12%，是 2022-2024 年金价上涨的主要驱动力</div>
+    <div class="two-col">
+      <div>
+        <h4 style="font-size:0.85rem;color:#fbbf24;margin-bottom:8px">涨幅归因分解（2018→2026, +302%）</h4>
+        <div class="chart-container" style="height:300px">
+          <canvas id="chartAttribution"></canvas>
+        </div>
+      </div>
+      <div>
+        <h4 style="font-size:0.85rem;color:#6b7a8d;margin-bottom:8px">供需失衡数据</h4>
+        <table>
+          <tr><th>指标</th><th>基准 (2010-21)</th><th>当前 (2022-24)</th><th>差异</th></tr>
+          <tr><td>央行购金</td><td class="num">473 吨/年</td><td class="num" style="color:#fbbf24;font-weight:600">1,055 吨/年</td><td class="num" style="color:#fbbf24">+582 吨</td></tr>
+          <tr><td>总供给</td><td class="num">~4,700 吨</td><td class="num">~4,900 吨</td><td class="num" style="color:#4a5568">+200 吨</td></tr>
+          <tr><td>超额需求占比</td><td class="num">—</td><td class="num" style="color:#f87171;font-weight:600">~12%</td><td class="num">—</td></tr>
+        </table>
+        <div style="background:rgba(255,255,255,0.03);border-radius:8px;padding:12px;font-size:0.8rem;color:#8896a8;margin-top:12px;line-height:1.7">
+          <div style="color:#6b7a8d;font-weight:600;margin-bottom:4px">价格弹性模型</div>
+          <span style="font-family:monospace">价格影响 ≈ 超额需求 / |弹性|</span><br>
+          弹性 -0.5（保守）→ 年化 <span style="color:#fbbf24">+24%</span><br>
+          弹性 -1.0（宽松）→ 年化 <span style="color:#fbbf24">+12%</span>
+        </div>
+      </div>
+    </div>
+    <div class="two-col" style="margin-top:16px">
+      <div>
+        <h4 style="font-size:0.85rem;color:#6b7a8d;margin-bottom:8px">阶段一：2021→2024 (+43%)</h4>
+        <div class="chart-container" style="height:220px">
+          <canvas id="chartPhase1"></canvas>
+        </div>
+        <div class="insight gold" style="margin-top:8px;font-size:0.8rem">
+          <strong>西方 ETF 净卖出数百吨，央行几乎是唯一买方。</strong>央行购金可解释 70-100% 的涨幅。
+        </div>
+      </div>
+      <div>
+        <h4 style="font-size:0.85rem;color:#6b7a8d;margin-bottom:8px">阶段二：2024→2026 (+96%)</h4>
+        <div class="chart-container" style="height:220px">
+          <canvas id="chartPhase2"></canvas>
+        </div>
+        <div class="insight" style="margin-top:8px;font-size:0.8rem">
+          <strong>接力棒交接：</strong>央行购金放缓至 ~863 吨，但 ETF 资金涌入 801 吨（$890 亿），投机动量放大价格。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION: FLASH CRASH ===== -->
+  <div class="section" id="flash-crash">
+    <h2>2026 年 2 月闪崩事件</h2>
+    <div class="desc">从 $5,602 历史新高到 $4,545 最低点，最大回撤 ~19%，随后快速反弹</div>
+    <div class="chart-container" style="height:320px">
+      <canvas id="chartFlashCrash"></canvas>
+    </div>
+    <div class="two-col" style="margin-top:16px">
+      <div>
+        <h4 style="font-size:0.85rem;color:#f87171;margin-bottom:8px">下跌原因</h4>
+        <div class="flow-diagram" style="padding:8px 0">
+          <div class="flow-step" style="border-left-color:#f87171;padding:8px 12px"><div class="text"><strong>多头仓位拥挤</strong> → 获利了结触发止损连锁</div></div>
+          <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:1px">+</div>
+          <div class="flow-step" style="border-left-color:#f87171;padding:8px 12px"><div class="text"><strong>非农数据超预期</strong> → 美联储推迟降息预期</div></div>
+          <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:1px">+</div>
+          <div class="flow-step" style="border-left-color:#f87171;padding:8px 12px"><div class="text"><strong>程序化止损</strong> → 突破支撑位后加剧跌幅</div></div>
+        </div>
+      </div>
+      <div>
+        <h4 style="font-size:0.85rem;color:#34d399;margin-bottom:8px">判断：技术性调整，非趋势逆转</h4>
+        <table>
+          <tr><th>指标</th><th>数据</th></tr>
+          <tr><td>最大回撤</td><td class="num" style="color:#f87171;font-weight:600">-19% ($5,602→$4,545)</td></tr>
+          <tr><td>恢复周期</td><td class="num" style="color:#34d399">&lt; 1 个月</td></tr>
+          <tr><td>当前价格</td><td class="num" style="color:#fbbf24;font-weight:600">~$5,181</td></tr>
+          <tr><td>距高点</td><td class="num">-7.5%</td></tr>
+          <tr><td>年初至今</td><td class="num" style="color:#34d399">+8%</td></tr>
+          <tr><td>JP Morgan 目标</td><td class="num" style="color:#fbbf24">$6,300 (年底)</td></tr>
+        </table>
+        <div class="insight" style="margin-top:8px;font-size:0.8rem;background:rgba(52,211,153,0.06);border-left-color:#34d399">
+          <strong style="color:#34d399">结构性驱动因素未变。</strong>类似 2020 年 3 月 COVID 闪崩后的快速恢复模式。
+        </div>
+      </div>
     </div>
   </div>
 
@@ -766,6 +856,158 @@ new Chart(document.getElementById('chartUSDShare'), {
         ticks: { callback: v => `${v}%` }
       },
       x: { grid: { display: false } }
+    }
+  }
+});
+
+// === 6. Attribution Donut Chart ===
+new Chart(document.getElementById('chartAttribution'), {
+  type: 'doughnut',
+  data: {
+    labels: ['央行购金 + 去美元化', '财政恶化 / 法币贬值预期', 'ETF / 投机资金', '传统因素（利率/通胀）'],
+    datasets: [{
+      data: [45, 22.5, 22.5, 10],
+      backgroundColor: ['#fbbf24', '#f87171', '#a78bfa', '#4a5568'],
+      borderColor: '#0a0e1a',
+      borderWidth: 3,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    cutout: '55%',
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: { padding: 10, font: { size: 11 }, usePointStyle: true, pointStyleWidth: 10 }
+      },
+      tooltip: {
+        callbacks: {
+          label: ctx => `${ctx.label}: ~${ctx.raw}%`
+        }
+      }
+    }
+  }
+});
+
+// === 7. Phase 1 Horizontal Bar ===
+new Chart(document.getElementById('chartPhase1'), {
+  type: 'bar',
+  data: {
+    labels: ['央行购金', 'ETF（净卖出）', '珠宝', '其他'],
+    datasets: [{
+      label: '需求变化 (吨/年)',
+      data: [582, -200, -150, -50],
+      backgroundColor: ctx => ctx.raw >= 0 ? '#fbbf24' : '#f87171',
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => `${ctx.raw > 0 ? '+' : ''}${ctx.raw} 吨/年`
+        }
+      }
+    },
+    scales: {
+      x: {
+        title: { display: true, text: '吨/年 vs 基准期', color: '#4a5568' },
+        grid: { color: 'rgba(255,255,255,0.04)' }
+      },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// === 8. Phase 2 Horizontal Bar ===
+new Chart(document.getElementById('chartPhase2'), {
+  type: 'bar',
+  data: {
+    labels: ['ETF 净流入', '央行购金', '投机/动量', '珠宝（下降）'],
+    datasets: [{
+      label: '需求驱动',
+      data: [801, 863, 400, -300],
+      backgroundColor: ctx => ctx.raw >= 0 ? '#a78bfa' : '#f87171',
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => `${ctx.raw > 0 ? '+' : ''}${ctx.raw} 吨`
+        }
+      }
+    },
+    scales: {
+      x: {
+        title: { display: true, text: '吨 (2025 年)', color: '#4a5568' },
+        grid: { color: 'rgba(255,255,255,0.04)' }
+      },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// === 9. Flash Crash Timeline ===
+new Chart(document.getElementById('chartFlashCrash'), {
+  type: 'line',
+  data: {
+    labels: ['1/20','1/22','1/24','1/26','1/28\n历史新高','1/30\n闪崩','2/2\n最低点','2/5','2/8','2/12\n非农打压','2/15','2/18','2/21','2/24','2/26\n今天'],
+    datasets: [{
+      label: '金价 ($/oz)',
+      data: [4950, 5100, 5250, 5400, 5602, 5100, 4545, 4700, 4850, 4916, 4980, 5050, 5100, 5120, 5181],
+      borderColor: '#fbbf24',
+      backgroundColor: 'rgba(251,191,36,0.08)',
+      fill: true,
+      tension: 0.3,
+      pointRadius: ctx => [4,5,6,8,9].includes(ctx.dataIndex) ? 7 : 4,
+      pointBackgroundColor: ctx => {
+        if (ctx.dataIndex === 4) return '#34d399';  // ATH
+        if (ctx.dataIndex === 5 || ctx.dataIndex === 6) return '#f87171';  // crash
+        if (ctx.dataIndex === 9) return '#f87171';  // jobs
+        if (ctx.dataIndex === 14) return '#fbbf24';  // today
+        return '#fbbf24';
+      },
+      pointBorderColor: ctx => {
+        if (ctx.dataIndex === 4) return '#34d399';
+        if (ctx.dataIndex === 5 || ctx.dataIndex === 6) return '#f87171';
+        if (ctx.dataIndex === 9) return '#f87171';
+        return '#fbbf24';
+      },
+      segment: {
+        borderColor: ctx => ctx.p0DataIndex >= 4 && ctx.p0DataIndex <= 5 ? '#f87171' : '#fbbf24',
+      }
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => `$${ctx.raw.toLocaleString()}/oz`
+        }
+      },
+      annotation: undefined
+    },
+    scales: {
+      y: {
+        title: { display: true, text: '$/oz', color: '#4a5568' },
+        ticks: { callback: v => `$${v.toLocaleString()}` },
+        min: 4300,
+        max: 5800
+      },
+      x: {
+        grid: { display: false },
+        ticks: { maxRotation: 0, font: { size: 9 } }
+      }
     }
   }
 });

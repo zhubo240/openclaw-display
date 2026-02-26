@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>全球半导体行业全景研究</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --card: #111827;
+    --border: #1e293b;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --accent: #3b82f6;
+    --green: #22c55e;
+    --red: #ef4444;
+    --amber: #f59e0b;
+    --purple: #a855f7;
+    --cyan: #06b6d4;
+    --pink: #ec4899;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .hero {
+    text-align: center;
+    padding: 60px 20px 40px;
+    background: linear-gradient(135deg, #0a0e1a 0%, #1a1a3e 50%, #0a0e1a 100%);
+    border-bottom: 1px solid var(--border);
+  }
+  .hero h1 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #60a5fa, #a78bfa, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+  }
+  .hero .subtitle {
+    color: var(--muted);
+    font-size: 1rem;
+  }
+  .kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    max-width: 1400px;
+    margin: -30px auto 0;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+  .kpi {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+  }
+  .kpi .value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--accent);
+  }
+  .kpi .value.green { color: var(--green); }
+  .kpi .value.amber { color: var(--amber); }
+  .kpi .value.purple { color: var(--purple); }
+  .kpi .value.cyan { color: var(--cyan); }
+  .kpi .label {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .kpi .change {
+    font-size: 0.8rem;
+    color: var(--green);
+    margin-top: 4px;
+  }
+  .kpi .change.neg { color: var(--red); }
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+  .section-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-title .num {
+    background: var(--accent);
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    transition: border-color 0.2s;
+  }
+  .card:hover {
+    border-color: var(--accent);
+  }
+  .card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+  .chart-container {
+    position: relative;
+    height: 300px;
+  }
+  .chart-container.tall {
+    height: 380px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+  th {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 2px solid var(--border);
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(59,130,246,0.04); }
+  .tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .tag-green { background: rgba(34,197,94,0.15); color: var(--green); }
+  .tag-amber { background: rgba(245,158,11,0.15); color: var(--amber); }
+  .tag-red { background: rgba(239,68,68,0.15); color: var(--red); }
+  .tag-blue { background: rgba(59,130,246,0.15); color: var(--accent); }
+  .tag-purple { background: rgba(168,85,247,0.15); color: var(--purple); }
+  .bar-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .bar-track {
+    height: 8px;
+    border-radius: 4px;
+    background: var(--border);
+    flex: 1;
+    max-width: 120px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: var(--accent);
+  }
+  .region-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+  }
+  .region-card {
+    background: rgba(30,41,59,0.5);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .region-card .flag {
+    font-size: 2rem;
+    margin-bottom: 8px;
+  }
+  .region-card h4 {
+    font-size: 1rem;
+    margin-bottom: 4px;
+  }
+  .region-card .role {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+  }
+  .region-card p {
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  .timeline {
+    position: relative;
+    padding-left: 30px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--accent), var(--purple));
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 24px;
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -26px;
+    top: 6px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 3px solid var(--bg);
+  }
+  .timeline-item .year {
+    font-size: 0.8rem;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .timeline-item .desc {
+    font-size: 0.9rem;
+    color: var(--text);
+  }
+  .timeline-item .detail {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .cycle-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+  .cycle-card {
+    background: rgba(30,41,59,0.5);
+    border-radius: 12px;
+    padding: 20px;
+    border-left: 4px solid var(--green);
+    text-align: center;
+  }
+  .cycle-card.warn { border-left-color: var(--amber); }
+  .cycle-card.neutral { border-left-color: var(--muted); }
+  .cycle-card h4 { font-size: 0.95rem; margin-bottom: 8px; }
+  .cycle-card .phase {
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .cycle-card .phase.up { color: var(--green); }
+  .cycle-card .phase.mid { color: var(--amber); }
+  .cycle-card .note {
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+  .invest-card {
+    background: rgba(30,41,59,0.5);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .invest-card h4 {
+    font-size: 1rem;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .invest-card .verdict {
+    font-size: 0.88rem;
+    margin-bottom: 8px;
+  }
+  .invest-card .tickers {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .ticker {
+    background: rgba(59,130,246,0.12);
+    color: var(--accent);
+    padding: 2px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-family: monospace;
+  }
+  .risk-list {
+    display: grid;
+    gap: 12px;
+  }
+  .risk-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    background: rgba(30,41,59,0.5);
+    border-radius: 12px;
+    padding: 16px 20px;
+    border-left: 4px solid var(--red);
+  }
+  .risk-item .icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+  .risk-item h4 { font-size: 0.95rem; margin-bottom: 4px; }
+  .risk-item p { font-size: 0.82rem; color: var(--muted); }
+  .footer {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+    font-size: 0.8rem;
+    border-top: 1px solid var(--border);
+  }
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 1.8rem; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .kpi-strip { grid-template-columns: repeat(2, 1fr); }
+    .kpi .value { font-size: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+  <h1>全球半导体行业全景研究</h1>
+  <p class="subtitle">数据截至 2026年2月 | 来源：SIA, SEMI, Gartner, TrendForce, 各公司财报</p>
+</div>
+
+<!-- KPI Strip -->
+<div class="kpi-strip">
+  <div class="kpi">
+    <div class="value">$7,917亿</div>
+    <div class="label">2025年全球销售额</div>
+    <div class="change">+25.6% YoY 历史新高</div>
+  </div>
+  <div class="kpi">
+    <div class="value green">~$9,750亿</div>
+    <div class="label">2026年预测</div>
+    <div class="change">逼近万亿美元</div>
+  </div>
+  <div class="kpi">
+    <div class="value purple">33%</div>
+    <div class="label">AI芯片占总销售额</div>
+    <div class="change">+36% 增长最猛</div>
+  </div>
+  <div class="kpi">
+    <div class="value cyan">8,145</div>
+    <div class="label">SOX 费城半导体指数</div>
+    <div class="change">52周最高 8,400</div>
+  </div>
+  <div class="kpi">
+    <div class="value amber">上行中段</div>
+    <div class="label">AI超级周期</div>
+    <div class="change">传统芯片去库存尾声</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Section 1: 产业链 -->
+  <div class="section-title"><span class="num">1</span> 产业链全景</div>
+  <div class="grid-2">
+    <!-- 下游应用占比 -->
+    <div class="card">
+      <h3>下游终端应用占比</h3>
+      <div class="chart-container">
+        <canvas id="chartDownstream"></canvas>
+      </div>
+    </div>
+    <!-- EDA -->
+    <div class="card">
+      <h3>EDA 工具市场（双寡头垄断）</h3>
+      <div class="chart-container">
+        <canvas id="chartEDA"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="grid-2">
+    <!-- 设备商 -->
+    <div class="card">
+      <h3>半导体设备 TOP4 营收（FY2025，十亿美元）</h3>
+      <div class="chart-container">
+        <canvas id="chartEquipment"></canvas>
+      </div>
+    </div>
+    <!-- ASML -->
+    <div class="card">
+      <h3>ASML 光刻机 — 绝对垄断</h3>
+      <table>
+        <tr><td>2025年营收</td><td style="text-align:right;font-weight:700;color:var(--accent)">327亿欧元</td></tr>
+        <tr><td>EUV系统销售</td><td style="text-align:right;font-weight:700;">116亿欧元 (+39%)</td></tr>
+        <tr><td>全年交付EUV台数</td><td style="text-align:right;font-weight:700;">48台</td></tr>
+        <tr><td>订单积压</td><td style="text-align:right;font-weight:700;color:var(--amber)">388亿欧元</td></tr>
+        <tr><td>EUV市场份额</td><td style="text-align:right;font-weight:700;color:var(--green)">100%</td></tr>
+        <tr><td>High-NA EUV单价</td><td style="text-align:right;">3.7-4亿美元</td></tr>
+        <tr><td>High-NA已交付</td><td style="text-align:right;">3台</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="grid-3">
+    <div class="card">
+      <h3>材料：硅片</h3>
+      <p style="font-size:0.9rem;color:var(--muted);margin-bottom:12px;">Top5 占 <b style="color:var(--text)">82%</b></p>
+      <table>
+        <tr><td>信越化学</td><td style="text-align:right">第一</td></tr>
+        <tr><td>SUMCO</td><td style="text-align:right">第二</td></tr>
+        <tr><td>环球晶圆</td><td style="text-align:right">第三</td></tr>
+        <tr><td>Siltronic</td><td style="text-align:right">第四</td></tr>
+        <tr><td>SK Siltron</td><td style="text-align:right">第五</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>材料：光刻胶</h3>
+      <p style="font-size:0.9rem;color:var(--muted);margin-bottom:12px;">日本四家占 <b style="color:var(--text)">87%</b></p>
+      <table>
+        <tr><td>信越化学</td></tr>
+        <tr><td>JSR</td></tr>
+        <tr><td>TOK</td></tr>
+        <tr><td>富士胶片</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>三种商业模式</h3>
+      <table>
+        <thead><tr><th>模式</th><th>代表</th><th>特点</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag tag-blue">Fabless</span></td><td>NVDA, AMD</td><td>轻资产</td></tr>
+          <tr><td><span class="tag tag-purple">IDM</span></td><td>Intel, TI</td><td>垂直整合</td></tr>
+          <tr><td><span class="tag tag-green">Foundry</span></td><td>TSMC, GFS</td><td>规模效应</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Section 2: 竞争格局 -->
+  <div class="section-title"><span class="num">2</span> 竞争格局</div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>各赛道龙头市占率</h3>
+      <div class="chart-container tall">
+        <canvas id="chartMarketShare"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <h3>HBM 市场争夺</h3>
+      <div class="chart-container" style="height:200px">
+        <canvas id="chartHBM"></canvas>
+      </div>
+      <div style="margin-top:20px">
+        <table>
+          <thead><tr><th>赛道</th><th>#1</th><th>#2</th><th>#3</th><th>集中度</th></tr></thead>
+          <tbody>
+            <tr><td>GPU</td><td>NVDA 92%</td><td>AMD 7%</td><td>INTC 1%</td><td><span class="tag tag-red">极高</span></td></tr>
+            <tr><td>代工</td><td>TSM 71%</td><td>SAMG 8%</td><td>SMIC 6%</td><td><span class="tag tag-red">垄断</span></td></tr>
+            <tr><td>DRAM</td><td>SK 34%</td><td>SAMG 33%</td><td>MU 26%</td><td><span class="tag tag-amber">三寡头</span></td></tr>
+            <tr><td>EDA</td><td>SNPS 31%</td><td>CDNS 30%</td><td>SIEM 13%</td><td><span class="tag tag-amber">双寡头</span></td></tr>
+            <tr><td>EUV</td><td colspan="3">ASML 100%</td><td><span class="tag tag-red">绝对垄断</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 区域产业定位 -->
+  <div class="region-grid" style="margin-bottom:40px">
+    <div class="region-card">
+      <div class="flag">&#127482;&#127480;</div>
+      <h4>美国</h4>
+      <div class="role">设计 + 设备 + EDA</div>
+      <p>NVIDIA/AMD/QCOM 占 75%+ AI芯片<br>AMAT/Lam/KLA 主导设备</p>
+    </div>
+    <div class="region-card">
+      <div class="flag">&#127481;&#127484;</div>
+      <h4>台湾</h4>
+      <div class="role">代工之王</div>
+      <p>TSMC 占 71% 代工份额<br>先进制程 >90%，ASE 领跑封测</p>
+    </div>
+    <div class="region-card">
+      <div class="flag">&#127472;&#127479;</div>
+      <h4>韩国</h4>
+      <div class="role">存储王国</div>
+      <p>Samsung + SK Hynix 占 70% DRAM<br>SK Hynix HBM 全球第一</p>
+    </div>
+    <div class="region-card">
+      <div class="flag">&#127464;&#127475;</div>
+      <h4>中国</h4>
+      <div class="role">追赶者</div>
+      <p>自给率仅 14-30%<br>成熟制程快速扩产，设备自给率 35%</p>
+    </div>
+    <div class="region-card">
+      <div class="flag">&#127466;&#127482;</div>
+      <h4>欧洲</h4>
+      <div class="role">汽车/功率 + 光刻</div>
+      <p>生产 90% 汽车MCU<br>ASML 是唯一 EUV 供应商</p>
+    </div>
+  </div>
+
+  <!-- Section 3: 周期与 CapEx -->
+  <div class="section-title"><span class="num">3</span> 周期与资本开支</div>
+  <div class="cycle-grid" style="margin-bottom:24px">
+    <div class="cycle-card">
+      <h4>AI芯片/HBM</h4>
+      <div class="phase up">上行中段</div>
+      <div class="note">GPU、HBM产能满载<br>2026年>90%被预订</div>
+    </div>
+    <div class="cycle-card">
+      <h4>存储 DRAM/NAND</h4>
+      <div class="phase up">景气上行</div>
+      <div class="note">DRAM价格企稳<br>HBM拉动需求</div>
+    </div>
+    <div class="cycle-card warn">
+      <h4>模拟/MCU</h4>
+      <div class="phase mid">去库存尾声</div>
+      <div class="note">库存仍高位<br>交货周期13-14周</div>
+    </div>
+    <div class="cycle-card warn">
+      <h4>功率/汽车</h4>
+      <div class="phase mid">底部回升</div>
+      <div class="note">EV需求回暖<br>SiC/GaN增长强劲</div>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>三巨头资本开支（十亿美元）</h3>
+      <div class="chart-container">
+        <canvas id="chartCapex"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <h3>产能扩张数据</h3>
+      <table>
+        <tr><td>2025年全球产能增长</td><td style="text-align:right;font-weight:700;color:var(--green)">+6.0%</td></tr>
+        <tr><td>2026年全球产能增长</td><td style="text-align:right;font-weight:700;color:var(--green)">+5.5%</td></tr>
+        <tr><td>先进制程(5nm以下) CAGR</td><td style="text-align:right;font-weight:700;color:var(--accent)">14%</td></tr>
+        <tr><td>2028年全球月产能</td><td style="text-align:right;font-weight:700;">1,110万片</td></tr>
+        <tr><td>先进制程利用率</td><td style="text-align:right;font-weight:700;color:var(--green)">>90%</td></tr>
+        <tr><td>成熟制程利用率</td><td style="text-align:right;font-weight:700;color:var(--amber)">75-90%</td></tr>
+      </table>
+      <div style="margin-top:20px">
+        <h3>全球建厂热潮</h3>
+        <table>
+          <tr><td>2025年新厂启动</td><td style="text-align:right;font-weight:700;">18座</td></tr>
+          <tr><td>美洲设备支出2026增幅</td><td style="text-align:right;font-weight:700;color:var(--green)">+56.4%</td></tr>
+          <tr><td>最大装机产能</td><td style="text-align:right;font-weight:700;">中国（至2026年）</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4: 技术趋势 -->
+  <div class="section-title"><span class="num">4</span> 技术趋势</div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>先进制程路线图</h3>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="year">2025</div>
+          <div class="desc">TSMC N2 (2nm GAA) 量产</div>
+          <div class="detail">月产能 4万片 | Intel 18A 量产（首个集成 BSPDN）</div>
+        </div>
+        <div class="timeline-item">
+          <div class="year">2025</div>
+          <div class="desc">Samsung SF2 (2nm) 试产</div>
+          <div class="detail">良率 30% → 目标 70%</div>
+        </div>
+        <div class="timeline-item">
+          <div class="year">2026 H2</div>
+          <div class="desc">TSMC A16 (GAA + BSPDN)</div>
+          <div class="detail">背面供电网络 | 性能与功耗再突破</div>
+        </div>
+        <div class="timeline-item">
+          <div class="year">2027</div>
+          <div class="desc">TSMC A14 (1.4nm)</div>
+          <div class="detail">月产能 20万片 | Intel 14A 同期</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>HBM 路线图</h3>
+      <div class="chart-container" style="height:200px">
+        <canvas id="chartHBMBandwidth"></canvas>
+      </div>
+      <div style="margin-top:16px">
+        <table>
+          <thead><tr><th>规格</th><th>带宽</th><th>时间</th><th>领跑者</th></tr></thead>
+          <tbody>
+            <tr><td><b>HBM3E</b></td><td>1.2 TB/s</td><td>2025-2026主流</td><td>SK Hynix</td></tr>
+            <tr><td><b>HBM4</b></td><td>1.6+ TB/s</td><td>2026中</td><td>SK Hynix</td></tr>
+            <tr><td>HBM4E</td><td>更高</td><td>2028+</td><td>Micron</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>化合物半导体增长</h3>
+      <div class="chart-container">
+        <canvas id="chartCompound"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <h3>其他关键技术</h3>
+      <table>
+        <thead><tr><th>技术</th><th>进展</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag tag-blue">Chiplet/UCIe 3.0</span></td><td>2025.8发布，64 GT/s，玻璃基板试产</td></tr>
+          <tr><td><span class="tag tag-purple">CXL 4.0</span></td><td>2025.11发布，128 GT/s，Azure已商用</td></tr>
+          <tr><td><span class="tag tag-green">GAA晶体管</span></td><td>2025年TSMC N2量产，取代FinFET</td></tr>
+          <tr><td><span class="tag tag-amber">BSPDN</span></td><td>背面供电，Intel 18A首发，TSMC A16跟进</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:20px">
+        <h3>SiC 五巨头（合计>90%）</h3>
+        <table>
+          <tr><td>Infineon</td><td style="text-align:right"><span class="tag tag-green">#1</span></td></tr>
+          <tr><td>STMicro</td><td style="text-align:right"><span class="tag tag-blue">#2</span></td></tr>
+          <tr><td>Wolfspeed</td><td style="text-align:right"><span class="tag tag-purple">#3</span></td></tr>
+          <tr><td>onsemi</td><td style="text-align:right"><span class="tag tag-amber">#4</span></td></tr>
+          <tr><td>ROHM</td><td style="text-align:right">#5</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 5: 地缘政治 -->
+  <div class="section-title"><span class="num">5</span> 地缘政治与政策</div>
+  <div class="grid-2">
+    <div class="card">
+      <h3>各国补贴战（十亿美元）</h3>
+      <div class="chart-container">
+        <canvas id="chartSubsidy"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <h3>美国对华管制演变</h3>
+      <table>
+        <thead><tr><th>时间</th><th>政策</th></tr></thead>
+        <tbody>
+          <tr><td><b>2025</b></td><td>新增65家中国实体至出口管制清单</td></tr>
+          <tr><td><b>2026.1</b></td><td>BIS调整：H200/MI325X对华从"推定拒绝"→"逐案审查"</td></tr>
+          <tr><td><b>2026.1</b></td><td>对中国半导体加征 <b style="color:var(--red)">25%关税</b></td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:20px">
+        <h3>中国自主化进度</h3>
+        <table>
+          <thead><tr><th>指标</th><th>实际</th><th>目标</th></tr></thead>
+          <tbody>
+            <tr><td>芯片自给率</td><td style="color:var(--red);font-weight:700">14-30%</td><td>50%</td></tr>
+            <tr><td>设备自给率</td><td style="color:var(--amber);font-weight:700">35%</td><td>持续提升</td></tr>
+            <tr><td>SMIC先进制程</td><td>已量产7nm</td><td>开发5nm</td></tr>
+            <tr><td>长江存储</td><td>232层NAND</td><td>进军DRAM</td></tr>
+            <tr><td>华为Ascend</td><td>2026目标160万颗</td><td>AI国产替代</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 6: 估值 -->
+  <div class="section-title"><span class="num">6</span> 关键公司财务对比</div>
+  <div class="card" style="margin-bottom:24px;overflow-x:auto">
+    <table>
+      <thead>
+        <tr>
+          <th>公司</th>
+          <th>毛利率</th>
+          <th style="min-width:100px">毛利率可视化</th>
+          <th>研发占比</th>
+          <th>P/E</th>
+          <th>P/S</th>
+          <th>核心看点</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b>NVIDIA</b></td>
+          <td style="color:var(--green);font-weight:700">75%</td>
+          <td><div class="bar-cell"><div class="bar-track"><div class="bar-fill" style="width:75%;background:var(--green)"></div></div></div></td>
+          <td>~13%</td>
+          <td>47.5x</td>
+          <td>~30x</td>
+          <td>AI芯片垄断，GPU 92%</td>
+        </tr>
+        <tr>
+          <td><b>TSMC</b></td>
+          <td style="color:var(--green);font-weight:700">60%</td>
+          <td><div class="bar-cell"><div class="bar-track"><div class="bar-fill" style="width:60%;background:var(--accent)"></div></div></div></td>
+          <td>~8%</td>
+          <td>29.7x</td>
+          <td>~13x</td>
+          <td>代工之王，估值合理</td>
+        </tr>
+        <tr>
+          <td><b>ASML</b></td>
+          <td style="font-weight:700">51%</td>
+          <td><div class="bar-cell"><div class="bar-track"><div class="bar-fill" style="width:51%;background:var(--purple)"></div></div></div></td>
+          <td>~15%</td>
+          <td>~35x</td>
+          <td>~12x</td>
+          <td>EUV垄断，积压388亿欧</td>
+        </tr>
+        <tr>
+          <td><b>AMD</b></td>
+          <td style="font-weight:700">50%</td>
+          <td><div class="bar-cell"><div class="bar-track"><div class="bar-fill" style="width:50%;background:var(--cyan)"></div></div></div></td>
+          <td>~23%</td>
+          <td style="color:var(--amber)">80.7x</td>
+          <td>~9x</td>
+          <td>AI GPU第二极</td>
+        </tr>
+        <tr>
+          <td><b>AMAT</b></td>
+          <td style="font-weight:700">47%</td>
+          <td><div class="bar-cell"><div class="bar-track"><div class="bar-fill" style="width:47%;background:var(--amber)"></div></div></div></td>
+          <td>~15%</td>
+          <td>~22x</td>
+          <td>~7x</td>
+          <td>设备龙头，估值低点</td>
+        </tr>
+        <tr>
+          <td><b>Intel</b></td>
+          <td style="color:var(--red);font-weight:700">35%</td>
+          <td><div class="bar-cell"><div class="bar-track"><div class="bar-fill" style="width:35%;background:var(--red)"></div></div></div></td>
+          <td>~30%</td>
+          <td style="color:var(--red)">亏损</td>
+          <td>~2x</td>
+          <td>转型代工，18A是赌注</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="grid-2" style="margin-bottom:40px">
+    <div class="card">
+      <h3>毛利率 vs P/E 气泡图</h3>
+      <div class="chart-container">
+        <canvas id="chartBubble"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <h3>AI 芯片经济学</h3>
+      <table>
+        <thead><tr><th>产品</th><th>ASP</th><th>毛利率(估)</th><th>状态</th></tr></thead>
+        <tbody>
+          <tr><td><b>H100</b></td><td>$25,000-40,000</td><td style="color:var(--green)">~85%+</td><td><span class="tag tag-blue">在售</span></td></tr>
+          <tr><td><b>B200</b></td><td>$30,000-35,000</td><td style="color:var(--green)">~80%</td><td><span class="tag tag-green">主力</span></td></tr>
+          <tr><td><b>B300</b></td><td>更高</td><td style="color:var(--green)">~80%</td><td><span class="tag tag-purple">2026.1出货</span></td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:16px;font-size:0.85rem;color:var(--muted)">
+        HBM内存占制造成本近半。NVIDIA单家贡献超过 <b style="color:var(--text)">35%</b> 的行业增长。
+      </p>
+    </div>
+  </div>
+
+  <!-- Section 7: 投资主题 -->
+  <div class="section-title"><span class="num">7</span> 投资主题</div>
+  <div class="grid-3" style="margin-bottom:40px">
+    <div class="invest-card">
+      <h4>AI 算力</h4>
+      <div class="verdict">超级周期持续，2026需求不减</div>
+      <div class="tickers">
+        <span class="ticker">NVDA</span><span class="ticker">AMD</span><span class="ticker">AVGO</span><span class="ticker">MRVL</span>
+      </div>
+    </div>
+    <div class="invest-card">
+      <h4>代工龙头</h4>
+      <div class="verdict">TSMC一超独大，先进制程满载</div>
+      <div class="tickers"><span class="ticker">TSM</span></div>
+    </div>
+    <div class="invest-card">
+      <h4>HBM/存储</h4>
+      <div class="verdict">SK Hynix领跑，DRAM景气上行</div>
+      <div class="tickers"><span class="ticker">MU</span><span class="ticker">SK Hynix</span></div>
+    </div>
+    <div class="invest-card">
+      <h4>设备周期</h4>
+      <div class="verdict">CapEx上行期，设备商受益</div>
+      <div class="tickers">
+        <span class="ticker">ASML</span><span class="ticker">AMAT</span><span class="ticker">LRCX</span><span class="ticker">KLAC</span>
+      </div>
+    </div>
+    <div class="invest-card">
+      <h4>SiC/GaN</h4>
+      <div class="verdict">高增长但公司盈利待验证</div>
+      <div class="tickers"><span class="ticker">ON</span><span class="ticker">WOLF</span><span class="ticker">MCHP</span></div>
+    </div>
+    <div class="invest-card">
+      <h4>Intel 转型</h4>
+      <div class="verdict">高风险高回报，18A成败关键</div>
+      <div class="tickers"><span class="ticker">INTC</span></div>
+    </div>
+  </div>
+
+  <!-- Section 8: 风险 -->
+  <div class="section-title"><span class="num">8</span> 风险提示</div>
+  <div class="risk-list" style="margin-bottom:40px">
+    <div class="risk-item">
+      <div class="icon">&#9888;&#65039;</div>
+      <div>
+        <h4>AI 泡沫风险</h4>
+        <p>TSMC CEO 自称"对AI泡沫担忧非常紧张"，29% 受访者认为库存已过剩</p>
+      </div>
+    </div>
+    <div class="risk-item">
+      <div class="icon">&#127758;</div>
+      <div>
+        <h4>地缘冲突升级</h4>
+        <p>台海局势、对华管制进一步收紧可能扰乱全球供应链</p>
+      </div>
+    </div>
+    <div class="risk-item">
+      <div class="icon">&#128200;</div>
+      <div>
+        <h4>周期反转</h4>
+        <p>传统芯片（模拟/MCU）去库存慢于预期，可能拖累整体复苏</p>
+      </div>
+    </div>
+    <div class="risk-item">
+      <div class="icon">&#128176;</div>
+      <div>
+        <h4>估值过高</h4>
+        <p>AMD P/E 80x、NVDA P/E 47x，高估值需AI持续高增长验证</p>
+      </div>
+    </div>
+    <div class="risk-item">
+      <div class="icon">&#128268;</div>
+      <div>
+        <h4>技术路线不确定性</h4>
+        <p>Intel 18A客户进度、Samsung代工良率、Rapidus量产均存变数</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  报告生成时间：2026年2月26日 | 数据来源：SIA, SEMI, Gartner, TrendForce, 各公司财报及公开资料<br>
+  本报告仅供研究参考，不构成投资建议
+</div>
+
+<script>
+const COLORS = {
+  blue: '#3b82f6', green: '#22c55e', red: '#ef4444', amber: '#f59e0b',
+  purple: '#a855f7', cyan: '#06b6d4', pink: '#ec4899', teal: '#14b8a6',
+  indigo: '#6366f1', orange: '#f97316'
+};
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.borderColor = '#1e293b';
+Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, sans-serif';
+
+// 下游应用
+new Chart(document.getElementById('chartDownstream'), {
+  type: 'doughnut',
+  data: {
+    labels: ['AI/数据中心', '手机', '汽车', '工业/IoT', '消费电子'],
+    datasets: [{
+      data: [34, 27, 14, 13, 11],
+      backgroundColor: [COLORS.blue, COLORS.green, COLORS.amber, COLORS.purple, COLORS.cyan],
+      borderWidth: 0
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'right', labels: { padding: 16, usePointStyle: true, pointStyle: 'circle' } },
+      tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.raw}%` } }
+    }
+  }
+});
+
+// EDA
+new Chart(document.getElementById('chartEDA'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Synopsys (31%)', 'Cadence (30%)', 'Siemens EDA (13%)', '其他 (26%)'],
+    datasets: [{
+      data: [31, 30, 13, 26],
+      backgroundColor: [COLORS.blue, COLORS.purple, COLORS.amber, '#334155'],
+      borderWidth: 0
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'right', labels: { padding: 16, usePointStyle: true, pointStyle: 'circle' } } }
+  }
+});
+
+// 设备商
+new Chart(document.getElementById('chartEquipment'), {
+  type: 'bar',
+  data: {
+    labels: ['AMAT', 'LAM Research', 'TEL', 'KLA'],
+    datasets: [{
+      data: [28.37, 20.6, 16, 10],
+      backgroundColor: [COLORS.blue, COLORS.green, COLORS.amber, COLORS.purple],
+      borderRadius: 8,
+      barThickness: 50
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    indexAxis: 'y',
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { color: '#1e293b33' }, ticks: { callback: v => `$${v}B` } },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// 市场份额 - 横向条
+new Chart(document.getElementById('chartMarketShare'), {
+  type: 'bar',
+  data: {
+    labels: ['GPU - NVIDIA', '代工 - TSMC', 'EUV - ASML', 'DRAM - SK Hynix', 'NAND - Samsung', 'EDA - Synopsys', '功率 - Infineon'],
+    datasets: [{
+      label: '市占率 %',
+      data: [92, 71, 100, 34, 32, 31, 17.4],
+      backgroundColor: [COLORS.blue, COLORS.green, COLORS.red, COLORS.purple, COLORS.amber, COLORS.cyan, COLORS.orange],
+      borderRadius: 6,
+      barThickness: 32
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    indexAxis: 'y',
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => `${ctx.raw}%` } }
+    },
+    scales: {
+      x: { max: 100, grid: { color: '#1e293b33' }, ticks: { callback: v => `${v}%` } },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// HBM 市场份额
+new Chart(document.getElementById('chartHBM'), {
+  type: 'doughnut',
+  data: {
+    labels: ['SK Hynix (53-62%)', 'Samsung (17-35%)', 'Micron (11-21%)'],
+    datasets: [{
+      data: [57, 26, 17],
+      backgroundColor: [COLORS.purple, COLORS.blue, COLORS.amber],
+      borderWidth: 0
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'right', labels: { padding: 12, usePointStyle: true, pointStyle: 'circle' } } }
+  }
+});
+
+// CapEx
+new Chart(document.getElementById('chartCapex'), {
+  type: 'bar',
+  data: {
+    labels: ['2024', '2025', '2026E'],
+    datasets: [
+      { label: 'TSMC', data: [28.9, 40.9, 54], backgroundColor: COLORS.green, borderRadius: 6, barPercentage: 0.7 },
+      { label: 'Samsung', data: [24, 39.8, 38], backgroundColor: COLORS.blue, borderRadius: 6, barPercentage: 0.7 },
+      { label: 'Intel', data: [26.2, 15, 14], backgroundColor: COLORS.amber, borderRadius: 6, barPercentage: 0.7 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', padding: 16 } } },
+    scales: {
+      x: { grid: { display: false } },
+      y: { grid: { color: '#1e293b33' }, ticks: { callback: v => `$${v}B` } }
+    }
+  }
+});
+
+// HBM 带宽
+new Chart(document.getElementById('chartHBMBandwidth'), {
+  type: 'bar',
+  data: {
+    labels: ['HBM3', 'HBM3E', 'HBM4', 'HBM4E'],
+    datasets: [{
+      label: '带宽 (TB/s)',
+      data: [0.82, 1.2, 1.6, 2.0],
+      backgroundColor: [COLORS.blue, COLORS.green, COLORS.purple, COLORS.pink],
+      borderRadius: 8,
+      barThickness: 40
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { display: false } },
+      y: { grid: { color: '#1e293b33' }, ticks: { callback: v => `${v} TB/s` } }
+    }
+  }
+});
+
+// 化合物半导体
+new Chart(document.getElementById('chartCompound'), {
+  type: 'bar',
+  data: {
+    labels: ['SiC 2025', 'SiC 2030E', 'GaN 2025', 'GaN 2030E'],
+    datasets: [{
+      data: [4.3, 12, 0.36, 3],
+      backgroundColor: [COLORS.amber, COLORS.amber + '99', COLORS.cyan, COLORS.cyan + '99'],
+      borderRadius: 8,
+      barThickness: 50
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => `$${ctx.raw}B` } }
+    },
+    scales: {
+      x: { grid: { display: false } },
+      y: { grid: { color: '#1e293b33' }, ticks: { callback: v => `$${v}B` } }
+    }
+  }
+});
+
+// 补贴
+new Chart(document.getElementById('chartSubsidy'), {
+  type: 'bar',
+  data: {
+    labels: ['Intel', 'TSMC', 'Samsung', '欧洲芯片法案', '日本 Rapidus'],
+    datasets: [{
+      label: 'CHIPS Act补贴',
+      data: [7.86, 6.57, 4.75, 0, 0],
+      backgroundColor: COLORS.blue,
+      borderRadius: 6,
+      barPercentage: 0.6
+    }, {
+      label: '各国/地区投资',
+      data: [0, 0, 0, 69, 3.6],
+      backgroundColor: COLORS.purple,
+      borderRadius: 6,
+      barPercentage: 0.6
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', padding: 16 } } },
+    scales: {
+      x: { grid: { display: false }, stacked: true },
+      y: { grid: { color: '#1e293b33' }, stacked: true, ticks: { callback: v => `$${v}B` } }
+    }
+  }
+});
+
+// 气泡图
+new Chart(document.getElementById('chartBubble'), {
+  type: 'bubble',
+  data: {
+    datasets: [
+      { label: 'NVIDIA', data: [{ x: 75, y: 47.5, r: 30 }], backgroundColor: COLORS.green + 'aa' },
+      { label: 'TSMC', data: [{ x: 60, y: 29.7, r: 20 }], backgroundColor: COLORS.blue + 'aa' },
+      { label: 'ASML', data: [{ x: 51, y: 35, r: 16 }], backgroundColor: COLORS.purple + 'aa' },
+      { label: 'AMD', data: [{ x: 50, y: 80.7, r: 14 }], backgroundColor: COLORS.cyan + 'aa' },
+      { label: 'AMAT', data: [{ x: 47, y: 22, r: 12 }], backgroundColor: COLORS.amber + 'aa' },
+      { label: 'Intel', data: [{ x: 35, y: 0, r: 10 }], backgroundColor: COLORS.red + 'aa' }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', padding: 12, font: { size: 11 } } } },
+    scales: {
+      x: { title: { display: true, text: '毛利率 %' }, grid: { color: '#1e293b33' }, min: 25, max: 85 },
+      y: { title: { display: true, text: 'P/E 倍数' }, grid: { color: '#1e293b33' }, min: 0, max: 100 }
+    }
+  }
+});
+</script>
+</body>
+</html>
