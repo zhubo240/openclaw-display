@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 自媒体自动化工具全景图 — 2026</title>
+    <style>
+        :root {
+            --bg: #0f1117;
+            --card: #1a1d28;
+            --border: #2a2d3a;
+            --text: #e4e4e7;
+            --text-dim: #9ca3af;
+            --accent: #6366f1;
+            --accent-light: #818cf8;
+            --green: #34d399;
+            --orange: #fb923c;
+            --red: #f87171;
+            --yellow: #fbbf24;
+            --cyan: #22d3ee;
+            --pink: #f472b6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 80px 20px 50px;
+            background: linear-gradient(135deg, #0f1117 0%, #1a1040 50%, #0f1117 100%);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero h1 {
+            font-size: 2.8em;
+            background: linear-gradient(135deg, var(--accent-light), var(--cyan), var(--green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+        }
+
+        .hero p {
+            color: var(--text-dim);
+            font-size: 1.15em;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .hero .update-badge {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 6px 16px;
+            background: rgba(99,102,241,0.15);
+            border: 1px solid rgba(99,102,241,0.3);
+            border-radius: 20px;
+            font-size: 0.85em;
+            color: var(--accent-light);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Workflow Pipeline */
+        .pipeline {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 40px 20px;
+            overflow-x: auto;
+            flex-wrap: wrap;
+        }
+
+        .pipeline-step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pipeline-node {
+            padding: 10px 20px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 0.9em;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+
+        .pipeline-node:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .pipeline-arrow {
+            color: var(--accent);
+            font-size: 1.2em;
+        }
+
+        /* Section */
+        .section {
+            margin-bottom: 60px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-icon {
+            font-size: 1.6em;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            flex-shrink: 0;
+        }
+
+        .section-header h2 {
+            font-size: 1.5em;
+            letter-spacing: -0.01em;
+        }
+
+        .section-header .section-desc {
+            color: var(--text-dim);
+            font-size: 0.9em;
+            margin-left: auto;
+        }
+
+        /* Tool Cards Grid */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 16px;
+        }
+
+        .tool-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(99,102,241,0.1);
+        }
+
+        .tool-card .card-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .tool-card h3 {
+            font-size: 1.15em;
+            color: var(--text);
+        }
+
+        .tool-card h3 a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .tool-card h3 a:hover {
+            color: var(--accent-light);
+        }
+
+        .tool-card .desc {
+            color: var(--text-dim);
+            font-size: 0.9em;
+            margin-bottom: 14px;
+            line-height: 1.6;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 0.75em;
+            font-weight: 500;
+        }
+
+        .tag-free { background: rgba(52,211,153,0.15); color: var(--green); }
+        .tag-paid { background: rgba(251,191,36,0.15); color: var(--yellow); }
+        .tag-opensource { background: rgba(99,102,241,0.15); color: var(--accent-light); }
+        .tag-china { background: rgba(248,113,113,0.15); color: var(--red); }
+        .tag-hot { background: rgba(244,114,182,0.15); color: var(--pink); }
+
+        .tool-card .tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .tool-card .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 12px;
+        }
+
+        .feature-chip {
+            padding: 3px 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+            font-size: 0.78em;
+            color: var(--text-dim);
+        }
+
+        .tool-card .pricing {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+            font-size: 0.85em;
+            color: var(--text-dim);
+        }
+
+        .pricing strong {
+            color: var(--green);
+        }
+
+        /* Automation Workflow Section */
+        .workflow-box {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .workflow-box h3 {
+            font-size: 1.2em;
+            margin-bottom: 16px;
+            color: var(--accent-light);
+        }
+
+        .workflow-steps {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .workflow-step {
+            flex: 1;
+            min-width: 200px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+        }
+
+        .workflow-step .step-num {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            line-height: 28px;
+            text-align: center;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .workflow-step h4 {
+            font-size: 0.95em;
+            margin-bottom: 6px;
+        }
+
+        .workflow-step p {
+            font-size: 0.83em;
+            color: var(--text-dim);
+        }
+
+        /* Comparison Table */
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+        }
+
+        .compare-table th,
+        .compare-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .compare-table th {
+            background: rgba(99,102,241,0.1);
+            color: var(--accent-light);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        .compare-table tr:hover td {
+            background: rgba(255,255,255,0.02);
+        }
+
+        .compare-table .check { color: var(--green); }
+        .compare-table .cross { color: var(--red); opacity: 0.5; }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid var(--border);
+            color: var(--text-dim);
+            font-size: 0.85em;
+        }
+
+        .footer a {
+            color: var(--accent-light);
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 1.8em; }
+            .tools-grid { grid-template-columns: 1fr; }
+            .pipeline { flex-direction: column; }
+            .pipeline-arrow { transform: rotate(90deg); }
+            .section-header .section-desc { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>AI 自媒体自动化工具全景图</h1>
+    <p>从选题、创作、生成到分发 —— 用 AI 打通自媒体全流程自动化，让一个人也能拥有团队级产能</p>
+    <div class="update-badge">2026.02 持续更新</div>
+</div>
+
+<!-- Automation Pipeline -->
+<div class="container">
+    <div class="pipeline">
+        <div class="pipeline-step">
+            <div class="pipeline-node">选题策划</div>
+            <span class="pipeline-arrow">→</span>
+        </div>
+        <div class="pipeline-step">
+            <div class="pipeline-node">脚本生成</div>
+            <span class="pipeline-arrow">→</span>
+        </div>
+        <div class="pipeline-step">
+            <div class="pipeline-node">视觉素材</div>
+            <span class="pipeline-arrow">→</span>
+        </div>
+        <div class="pipeline-step">
+            <div class="pipeline-node">配音合成</div>
+            <span class="pipeline-arrow">→</span>
+        </div>
+        <div class="pipeline-step">
+            <div class="pipeline-node">视频合成</div>
+            <span class="pipeline-arrow">→</span>
+        </div>
+        <div class="pipeline-step">
+            <div class="pipeline-node">多平台分发</div>
+            <span class="pipeline-arrow">→</span>
+        </div>
+        <div class="pipeline-step">
+            <div class="pipeline-node">数据分析</div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- ===== 一、文案与脚本 ===== -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-icon" style="background:rgba(99,102,241,0.12);">📝</div>
+            <div>
+                <h2>文案与脚本生成</h2>
+                <div style="color:var(--text-dim);font-size:0.88em;margin-top:2px;">从选题到完整脚本，AI 大模型是核心引擎</div>
+            </div>
+            <span class="section-desc">自动化程度: 90%+</span>
+        </div>
+        <div class="tools-grid">
+            <div class="tool-card">
+                <div class="card-top">
+                    <h3><a href="https://claude.ai" target="_blank">Claude (Anthropic)</a></h3>
+                    <div class="tags">
+                        <span class="tag tag-hot">推荐</span>
+                        <span class="tag tag-paid">付费</span>
+                    </div>
+                </div>
+                <div class="desc">深度写作能力突出，擅长长文脚本、人物对话、深度分析文章。支持 200K 上下文，适合处理长篇内容策划。</div>
+                <div class="features">
+                    <span class="feature-chip">长文写作</span>
+                    <span class="feature-chip">脚本策划</span>
+                    <span class="feature-chip">多语言</span>
+                    <span class="feature-chip">Artifacts</span>
+                </div>
+                <div class="pricing"><strong>免费</strong> 基础用量 / Pro $20/月 / Max $100-200/月</div>
+            </div>
+
+            <div class="tool-card">
+                <div class="card-top">
+                    <h3><a href="https://chat.openai.com" target="_blank">ChatGPT (OpenAI)</a></h3>
+                    <div class="tags">
+                        <span class="tag tag-hot">主流</span>
+                        <span class="tag tag-paid">付费</span>
+                    </div>
+                </div>
+                <div class="desc">全能型 AI 助手，适合内容日历规划、标题优化、脚本撰写、SEO 关键词研究。GPT-4o 多模态能力强大。</div>
+                <div class="features">
+                    <span class="feature-chip">多模态</span>
+                    <span class="feature-chip">插件生态</span>
+                    <span class="feature-chip">代码执行</span>
+                    <span class="feature-chip">联网搜索</span>
+                </div>
+                <div class="pricing"><strong>免费</strong> GPT-4o mini / Plus $20/月 / Pro $200/月</div>
+            </div>
+
+            <div class="tool-card">
+                <div class="card-top">
+                    <h3><a href="https://chat.deepseek.com" target="_blank">DeepSeek</a></h3>
+                    <div class="tags">
+                        <span class="tag tag-free">免费</span>
+                        <span class="tag tag-china">国产</span>
+                    </div>
+                </div>
+                <div class="desc">国产开源大模型，中文理解能力优秀，推理能力强。DeepSeek-R1 在复杂推理任务上表现出色，完全免费使用。</div>
+                <div class="features">
+                    <span class="feature-chip">深度推理</span>
+                    <span class="feature-chip">中文优化</span>
+                    <span class="feature-chip">开源</span>
+                    <span class="feature-chip">免费</span>
+                </div>
+                <div class="pricing"><strong>免费</strong> / API 极低价</div>
+            </div>
+
+            <div class="tool-card">
+                <div class="card-top">
+                    <h3><a href="https://notebooklm.google.com" target="_blank">NotebookLM (Google)</a></h3>
+                    <div class="tags">
+                        <span class="tag tag-free">免费</span>
+                    </div>
+                </div>
+                <div class="desc">上传资料后 AI 自动整理成知识库，支持问答互动和生成播客音频。非常适合做深度内容的前期调研。</div>
+                <div class="features">
+                    <span class="feature-chip">资料整理</span>
+                    <span class="feature-chip">知识问答</span>
+                    <span class="feature-chip">播客生成</span>
+                </div>
+                <div class="pricing"><strong>免费</strong></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 二、AI 视频生成 ===== -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-icon" style="background:rgba(34,211,238,0.12);">🎬</div>
+            <div>
+                <h2>AI 视频生成</h2>
+                <div style="color:var(--text-dim);font-size:0.88em;margin-top:2px;">文字/图片一键生成视频，2026年最热赛道</div>
+            </div>
+            <span class="section-desc">自动化程度: 70-85%</span>
+        </div>
+        <div class="tools-grid">
+            <div class="tool-card">
+                <div class="card-top">
+                    <h3><a href="https://openai.com/sora" target="_blank">Sora (OpenAI)</a></h3>
+                    <div class="tags">
+                        <span class="tag tag-hot">标杆</span>
+                        <span class="tag tag-paid">付费</span>
+                    </div>
+                </div>
+                <div class="desc">OpenAI 的视频生成模型，物理世界理解能力领先。可从文本、图片生成高质量视频，时长可达 1 分钟。</div>
+                <div class="features">
+                    <span class="feature-chip">文生视频</span>
+                    <span class="feature-chip">图生视频</span>
+                    <span class="feature-chip">物理模拟</span>
+                    <span class="feature-chip">1080p</span>
+                </div>
+                <div class="pricing">ChatGPT Plus $20/月起</div>
+            </div>
+
+            <div class="tool-card">
+                <div class="card-top">
+                    <h3><a href="https://klingai.com" target="_blank">可灵 Kling (快手)</a></h3>
+                    <div class="tags">
+                        <span class="tag tag-hot">国产之光</span>
+                        <span class="tag tag-china">国产</span>
+                    </div>
+                </div>
+                <div class="desc">快手旗下 AI 视频模型，支持最长 2 分钟生成，运动控制精细。国产视频模型中综合实力最强之一。</div>
+                <div class="features">
+                    <span class="feature-chip">文生视频</span>
+                    <span class="feature-chip">图生视频</span>
+                    <span class="feature-chip">运动控制</span>
+                    <span class="feature-chip">2 分钟</span>
+                </div>
+                <div class="pricing"><strong>免费</strong>额度 / 会员 ¥66/月</div>
+            </div>
+
+            <div class="tool-card">
+                <div class="card-top">
+                    <h3><a href="https://pixverse.ai" target="_blank">PixVerse 拍我 AI (爱诗科技)</a></h3>
+                    <div class="tags">
+                        <span class="tag tag-china">国产</span>
+                        <span class="tag tag-hot">分镜+音频</span>
+                    </div>
+                </div>
+                <div class="desc">V5.5 版本成为国内首款支持「分镜 + 声音」一次生成的模型。在提示词中直接控制音效、台词、音色、镜头。</div>
+                <div class="features">
+                    <span class="feature-chip">分镜生成</span>
+                    <span class="feature-chip">音频一体化</span>
+                    <span class="feature-chip">4 视频并行</span>
+                    <span class="feature-chip">4K</span>
+                </div>
+                <div class="pricing"><strong>免费</strong>基础用量 / Pro 付费</div>
+            </div>
+
+            <div class="tool-card">
+                <div class="card-top">
+                    <h3><a href="https://runwayml.com" target="_blank">Runway Gen-3 Alpha</a></h3>
+                    <div class="tags">
+                        <span class="tag tag-hot">先驱</span>
+                        <span class="tag tag-paid">付费</span>
+                    </div>
+                </div>
+                <div class="desc">AI 视频生成先驱，Gen-3 Alpha 在运动一致性和风格化方面表现优异。专业创作者的首选。</div>
+                <div class="features">
+                    <span class="feature-chip">文/图生视频</span>
+                    <span class="feature-chip">运动笔刷</span>
+                    <span class="feature-chip">风格转换</span>
+                    <span class="feature-chip">API</span>
+                </div>
+                <div class="pricing">Standard $12/月 / Pro $28/月</div>
+            </div>
+
+            <div class="tool-card">
+                <div class="card-top">
+                    <h3><a href="https://www.vidu.com" target="_blank">Vidu (生数科技)</a></h3>
+                    <div class="tags">
+                        <span class="tag tag-china">国产</span>
+                        <span class="tag tag-free">免费体验</span>
+                    </div>
+                </div>
+                <div class="desc">清华联合开发，生成速度快，支持文本、图像到视频及参考视频生成。中文场景理解好。</div>
+                <div class="features">
+                    <span class="feature-chip">文生视频</span>
+                    <span class="feature-chip">图生视频</span>
+                    <span class="feature-chip">参考视频</span>
+                    <span class="feature-chip">快速生成</span>
+                </div>
+                <div class="pricing"><strong>免费</strong>体验 / 付费订阅</div>
+            </div>
+
+            <div class="tool-card">
+                <div class="card-top">
+                    <h3><a href="https://pika.art" target="_blank">Pika</a></h3>
+                    <div class="tags">
+                        <span class="tag tag-paid">付费</span>
+                    </div>
+                </div>
+                <div class="desc">界面简洁易用，专注短视频生成。特色功能包括视频修改（换衣服、换背景）和特效生成。</div>
+                <div class="features">
+                    <span class="feature-chip">视频编辑</span>
+                    <span class="feature-chip">特效生成</span>
+                    <span class="feature-chip">易上手</span>
+                </div>
+                <div class="pricing"><strong>免费</strong>体验 / Standard $8/月</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 三、AI 图像生成 ===== -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-icon" style="background:rgba(244,114,182,0.12);">🎨</div>
+            <div>
+                <h2>AI 图像生成</h2>
+                <div style="color:var(--text-dim);font-size:0.88em;margin-top:2px;">封面、插图、素材一键生成</div>
+            </div>
+            <span class="section-desc">自动化程度: 85%+</span>
+        </div>
+
+        <!-- Mini comparison -->
+        <div style="overflow-x:auto;margin-bottom:24px;">
+            <table class="compare-table">
+                <thead>
+                    <tr>
+                        <th>工具</th>
+                        <th>最佳场景</th>
+                        <th>开源</th>
+                        <th>中文理解</th>
+                        <th>写实照片</th>
+                        <th>艺术风格</th>
+                        <th>价格</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Midjourney</strong></td>
+                        <td>艺术创作 / 封面设计</td>
+                        <td class="cross">✗</td>
+                        <td>一般</td>
+                        <td>★★★★</td>
+                        <td>★★★★★</td>
+                        <td>$10/月起</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Flux (Black Forest Labs)</strong></td>
+                        <td>写实照片 / 产品图</td>
+                        <td class="check">✓</td>
+                        <td>一般</td>
+                        <td>★★★★★</td>
+                        <td>★★★★</td>
+                        <td>免费(开源)/API付费</td>
+                    </tr>
+                    <tr>
+                        <td><strong>DALL-E 3 (ChatGPT)</strong></td>
+                        <td>精确指令 / 复杂提示</td>
+                        <td class="cross">✗</td>
+                        <td>好</td>
+                        <td>★★★★</td>
+                        <td>★★★★</td>
+                        <td>ChatGPT Plus 含</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Stable Diffusion 3.5</strong></td>
+                        <td>本地部署 / 定制化</td>
+                        <td class="check">✓</td>
+                        <td>一般</td>
+                        <td>★★★★</td>
+                        <td>★★★★</td>
+                        <td>免费(开源)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>智谱清影 / 通义万相</strong></td>
+                        <td>中文场景 / 国内可用</td>
+                        <td>部分</td>
+                        <td>优秀</td>
+                        <td>★★★★</td>
+                        <td>★★★</td>
+                        <td>免费额度</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ===== 四、AI 配音 ===== -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-icon" style="background:rgba(251,191,36,0.12);">🎙️</div>
+            <div>
+                <h2>AI 配音与声音克隆</h2>
+                <div style="color:var(--text-dim);font-size:0.88em;margin-top:2px;">真人级配音，无需录音棚</div>
+            </div>
+            <span class="section-desc">自动化程度: 95%</span>
+        </div>
+        <div class="tools-grid">
+            <div class="tool-card">
+                <div class="card-top">
+                    <h3><a href="https://elevenlabs.io" target="_blank">ElevenLabs</a></h3>
+                    <div class="tags">
+                        <span class="tag tag-hot">行业标杆</span>
+                        <span class="tag tag-paid">付费</span>
+                    </div>
+                </div>
+                <div class="desc">最自然的 AI 语音合成平台，支持 29+ 语言。声音克隆只需几分钟音频样本，情感表达极其到位。</div>
+                <div class="features">
+                    <span class="feature-chip">声音克隆</span>
+                    <span class="feature-chip">29+ 语言</span>
+                    <span class="feature-chip">情感控制</span>
+                    <span class="feature-chip">API</span>
+                </div>
+                <div class="pricing"><strong>免费</strong>10K 字符/月 / Starter $5/月</div>
+            </div>
+
+            <div class="tool-card">
+                <div class="card-top">
+                    <h3><a href="https://fish.audio" target="_blank">Fish Audio</a></h3>
+                    <div class="tags">
+                        <span class="tag tag-hot">性价比</span>
+                        <span class="tag tag-free">免费体验</span>
+                    </div>
+                </div>
+                <div class="desc">仅需 15 秒音频即可克隆声音，多语言支持好，价格远低于 ElevenLabs。中文语音质量突出。</div>
+                <div class="features">
+                    <span class="feature-chip">15 秒克隆</span>
+                    <span class="feature-chip">多语言</span>
+                    <span class="feature-chip">低价格</span>
+                    <span class="feature-chip">中文优秀</span>
+                </div>
+                <div class="pricing"><strong>免费</strong>基础 / 付费按量</div>
+            </div>
+
+            <div class="tool-card">
+                <div class="card-top">
+                    <h3><a href="https://www.hume.ai" target="_blank">Hume AI</a></h3>
+                    <div class="tags">
+                        <span class="tag tag-paid">付费</span>
+                    </div>
+                </div>
+                <div class="desc">独特的情感智能语音生成，可用文字描述创建全新声音。能理解和表达细腻情感，适合有情绪要求的内容。</div>
+                <div class="features">
+                    <span class="feature-chip">情感智能</span>
+                    <span class="feature-chip">文字创建声音</span>
+                    <span class="feature-chip">表达细腻</span>
+                </div>
+                <div class="pricing">付费订阅</div>
+            </div>
+
+            <div class="tool-card">
+                <div class="card-top">
+                    <h3>开源方案</h3>
+                    <div class="tags">
+                        <span class="tag tag-opensource">开源</span>
+                        <span class="tag tag-free">免费</span>
+                    </div>
+                </div>
+                <div class="desc">Coqui XTTS、ChatTTS、GPT-SoVITS 等开源模型可本地部署，零成本实现声音克隆与 TTS，但需要一定技术能力。</div>
+                <div class="features">
+                    <span class="feature-chip">本地部署</span>
+                    <span class="feature-chip">零成本</span>
+                    <span class="feature-chip">可定制</span>
+                    <span class="feature-chip">隐私安全</span>
+                </div>
+                <div class="pricing"><strong>免费</strong>（需自有 GPU）</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 五、全自动视频流水线 ===== -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-icon" style="background:rgba(52,211,153,0.12);">🏭</div>
+            <div>
+                <h2>全自动视频流水线（一键成片）</h2>
+                <div style="color:var(--text-dim);font-size:0.88em;margin-top:2px;">输入关键词 → 输出完整视频，真正的一键自动化</div>
+            </div>
+            <span class="section-desc">自动化程度: 95%+</span>
+        </div>
+        <div class="tools-grid">
+            <div class="tool-card">
+                <div class="card-top">
+                    <h3><a href="https://github.com/harry0703/MoneyPrinterTurbo" target="_blank">MoneyPrinterTurbo</a></h3>
+                    <div class="tags">
+                        <span class="tag tag-opensource">开源</span>
+                        <span class="tag tag-hot">22K+ Stars</span>
+                        <span class="tag tag-free">免费</span>
+                    </div>
+                </div>
+                <div class="desc">GitHub 超 2.2 万 Star 的开源项目。输入关键词，自动完成：AI 写文案 → 素材采集 → 字幕生成 → 配音 → 合成输出。支持批量生成。</div>
+                <div class="features">
+                    <span class="feature-chip">全流程自动</span>
+                    <span class="feature-chip">批量生成</span>
+                    <span class="feature-chip">竖屏/横屏</span>
+                    <span class="feature-chip">Docker 部署</span>
+                    <span class="feature-chip">自定义字幕</span>
+                </div>
+                <div class="pricing"><strong>完全免费</strong>（开源）</div>
+            </div>
+
+            <div class="tool-card">
+                <div class="card-top">
+                    <h3><a href="https://www.chanjing.cc" target="_blank">白日梦 AI (蝉镜)</a></h3>
+                    <div class="tags">
+                        <span class="tag tag-china">国产</span>
+                        <span class="tag tag-hot">中长视频</span>
+                    </div>
+                </div>
+                <div class="desc">3000 字文案 → 最长 10 分钟视频。封装了文生图、图生视频、配音字幕、后期剪辑全流程，专注原创故事视频。</div>
+                <div class="features">
+                    <span class="feature-chip">10 分钟视频</span>
+                    <span class="feature-chip">故事视频</span>
+                    <span class="feature-chip">全流程封装</span>
+                    <span class="feature-chip">数字人</span>
+                </div>
+                <div class="pricing">付费订阅</div>
+            </div>
+
+            <div class="tool-card">
+                <div class="card-top">
+                    <h3><a href="https://www.synthesia.io" target="_blank">Synthesia</a></h3>
+                    <div class="tags">
+                        <span class="tag tag-hot">数字人</span>
+                        <span class="tag tag-paid">付费</span>
+                    </div>
+                </div>
+                <div class="desc">AI 数字人视频生成平台，输入文字脚本即可生成真人级数字人视频，支持 140+ 语言，可连接 Zapier 实现自动化。</div>
+                <div class="features">
+                    <span class="feature-chip">数字人</span>
+                    <span class="feature-chip">140+ 语言</span>
+                    <span class="feature-chip">Zapier 集成</span>
+                    <span class="feature-chip">自定义形象</span>
+                </div>
+                <div class="pricing"><strong>免费</strong>10 分钟/月 / Starter $29/月</div>
+            </div>
+
+            <div class="tool-card">
+                <div class="card-top">
+                    <h3><a href="https://www.capcut.com" target="_blank">剪映/CapCut</a></h3>
+                    <div class="tags">
+                        <span class="tag tag-free">免费</span>
+                        <span class="tag tag-china">国产</span>
+                        <span class="tag tag-hot">主流</span>
+                    </div>
+                </div>
+                <div class="desc">字节跳动旗下，内置 AI 视频生成、智能模板、自动字幕、AI 配音。一站式轻量编辑器，新手友好。</div>
+                <div class="features">
+                    <span class="feature-chip">AI 成片</span>
+                    <span class="feature-chip">智能模板</span>
+                    <span class="feature-chip">自动字幕</span>
+                    <span class="feature-chip">跨平台</span>
+                </div>
+                <div class="pricing"><strong>免费</strong>基础功能 / Pro 付费</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 六、自动化工作流 ===== -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-icon" style="background:rgba(99,102,241,0.12);">⚡</div>
+            <div>
+                <h2>自动化工作流引擎</h2>
+                <div style="color:var(--text-dim);font-size:0.88em;margin-top:2px;">连接所有工具，搭建自动发布流水线</div>
+            </div>
+            <span class="section-desc">核心基础设施</span>
+        </div>
+
+        <!-- Workflow example -->
+        <div class="workflow-box">
+            <h3>示例：自动化内容发布流水线</h3>
+            <div class="workflow-steps">
+                <div class="workflow-step">
+                    <div class="step-num">1</div>
+                    <h4>触发</h4>
+                    <p>RSS / 定时 / Webhook 触发新内容生产任务</p>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-num">2</div>
+                    <h4>AI 生成</h4>
+                    <p>调用 LLM API 生成文案、配图提示词</p>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-num">3</div>
+                    <h4>素材生成</h4>
+                    <p>调用 Midjourney/Flux API 生成配图</p>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-num">4</div>
+                    <h4>多平台发布</h4>
+                    <p>自动发布到小红书、公众号、Twitter 等</p>
+                </div>
+                <div class="workflow-step">
+                    <div class="step-num">5</div>
+                    <h4>数据回收</h4>
+                    <p>采集阅读量、互动数据写入表格</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="tools-grid">
+            <div class="tool-card">
+                <div class="card-top">
+                    <h3><a href="https://n8n.io" target="_blank">n8n</a></h3>
+                    <div class="tags">
+                        <span class="tag tag-opensource">开源</span>
+                        <span class="tag tag-hot">AI 原生</span>
+                    </div>
+                </div>
+                <div class="desc">AI 原生的自动化平台，70+ AI 专用节点，内置 LangChain 集成。可自建服务器，数据完全掌控。适合技术型创作者搭建复杂工作流。</div>
+                <div class="features">
+                    <span class="feature-chip">LangChain</span>
+                    <span class="feature-chip">自托管</span>
+                    <span class="feature-chip">400+ 集成</span>
+                    <span class="feature-chip">可视化编排</span>
+                </div>
+                <div class="pricing"><strong>免费</strong>自托管 / Cloud €20/月起</div>
+            </div>
+
+            <div class="tool-card">
+                <div class="card-top">
+                    <h3><a href="https://www.make.com" target="_blank">Make (原 Integromat)</a></h3>
+                    <div class="tags">
+                        <span class="tag tag-paid">付费</span>
+                    </div>
+                </div>
+                <div class="desc">可视化拖拽搭建自动化流程，比 Zapier 更灵活。适合非技术用户搭建中等复杂度的内容自动化流水线。</div>
+                <div class="features">
+                    <span class="feature-chip">可视化画布</span>
+                    <span class="feature-chip">灵活分支</span>
+                    <span class="feature-chip">1000+ 应用</span>
+                </div>
+                <div class="pricing"><strong>免费</strong>1000 ops/月 / Core $9/月</div>
+            </div>
+
+            <div class="tool-card">
+                <div class="card-top">
+                    <h3><a href="https://zapier.com" target="_blank">Zapier</a></h3>
+                    <div class="tags">
+                        <span class="tag tag-paid">付费</span>
+                        <span class="tag tag-hot">最多集成</span>
+                    </div>
+                </div>
+                <div class="desc">7000+ 应用集成，最易上手。非技术团队首选，5 分钟即可搭建自动发布流程。AI 功能持续增强。</div>
+                <div class="features">
+                    <span class="feature-chip">7000+ 应用</span>
+                    <span class="feature-chip">最易上手</span>
+                    <span class="feature-chip">AI 动作</span>
+                </div>
+                <div class="pricing"><strong>免费</strong>100 tasks/月 / Starter $19.99/月</div>
+            </div>
+
+            <div class="tool-card">
+                <div class="card-top">
+                    <h3><a href="https://dify.ai" target="_blank">Dify</a></h3>
+                    <div class="tags">
+                        <span class="tag tag-opensource">开源</span>
+                        <span class="tag tag-china">国产</span>
+                    </div>
+                </div>
+                <div class="desc">开源 LLM 应用开发平台，可快速搭建 AI Agent 工作流。支持多模型切换，RAG 知识库，适合构建定制化内容生产 Agent。</div>
+                <div class="features">
+                    <span class="feature-chip">AI Agent</span>
+                    <span class="feature-chip">RAG 知识库</span>
+                    <span class="feature-chip">多模型</span>
+                    <span class="feature-chip">自托管</span>
+                </div>
+                <div class="pricing"><strong>免费</strong>自托管 / Cloud 免费起</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 七、剪辑与后期 ===== -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-icon" style="background:rgba(248,113,113,0.12);">✂️</div>
+            <div>
+                <h2>AI 剪辑与后期</h2>
+                <div style="color:var(--text-dim);font-size:0.88em;margin-top:2px;">自动剪辑、字幕、降噪、抠像</div>
+            </div>
+            <span class="section-desc">自动化程度: 80%</span>
+        </div>
+        <div class="tools-grid">
+            <div class="tool-card">
+                <div class="card-top">
+                    <h3><a href="https://www.descript.com" target="_blank">Descript</a></h3>
+                    <div class="tags">
+                        <span class="tag tag-hot">革命性</span>
+                        <span class="tag tag-paid">付费</span>
+                    </div>
+                </div>
+                <div class="desc">像编辑文档一样编辑视频——转录文字后，删除文字即删除对应视频片段。支持 AI 去口误、AI 换声。</div>
+                <div class="features">
+                    <span class="feature-chip">文字编辑视频</span>
+                    <span class="feature-chip">AI 去口误</span>
+                    <span class="feature-chip">声音克隆</span>
+                    <span class="feature-chip">屏幕录制</span>
+                </div>
+                <div class="pricing"><strong>免费</strong>基础 / Pro $24/月</div>
+            </div>
+
+            <div class="tool-card">
+                <div class="card-top">
+                    <h3><a href="https://opus.pro" target="_blank">Opus Clip</a></h3>
+                    <div class="tags">
+                        <span class="tag tag-hot">长变短</span>
+                        <span class="tag tag-paid">付费</span>
+                    </div>
+                </div>
+                <div class="desc">AI 自动将长视频切割为多条短视频，自动识别高光片段、添加字幕、调整构图。YouTube → 抖音的最佳搭档。</div>
+                <div class="features">
+                    <span class="feature-chip">长视频切片</span>
+                    <span class="feature-chip">高光识别</span>
+                    <span class="feature-chip">自动字幕</span>
+                    <span class="feature-chip">竖屏裁切</span>
+                </div>
+                <div class="pricing"><strong>免费</strong>试用 / Starter $15/月</div>
+            </div>
+
+            <div class="tool-card">
+                <div class="card-top">
+                    <h3>Whisper (OpenAI)</h3>
+                    <div class="tags">
+                        <span class="tag tag-opensource">开源</span>
+                        <span class="tag tag-free">免费</span>
+                    </div>
+                </div>
+                <div class="desc">OpenAI 开源的语音识别模型，99 种语言转录。本地运行完全免费，是做字幕的终极工具。</div>
+                <div class="features">
+                    <span class="feature-chip">语音转文字</span>
+                    <span class="feature-chip">99 种语言</span>
+                    <span class="feature-chip">本地运行</span>
+                    <span class="feature-chip">时间戳</span>
+                </div>
+                <div class="pricing"><strong>完全免费</strong>（开源）</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 八、运营与数据 ===== -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-icon" style="background:rgba(251,191,36,0.12);">📊</div>
+            <div>
+                <h2>运营分析与多平台管理</h2>
+                <div style="color:var(--text-dim);font-size:0.88em;margin-top:2px;">数据驱动优化，一处管理多平台</div>
+            </div>
+        </div>
+        <div class="tools-grid">
+            <div class="tool-card">
+                <div class="card-top">
+                    <h3>新榜 / 蝉妈妈 / 灰豚</h3>
+                    <div class="tags">
+                        <span class="tag tag-china">国产</span>
+                        <span class="tag tag-paid">付费</span>
+                    </div>
+                </div>
+                <div class="desc">国内自媒体数据分析三巨头。追踪爆款、分析竞品、监控数据趋势，是内容选题和运营决策的数据基础。</div>
+                <div class="features">
+                    <span class="feature-chip">爆款追踪</span>
+                    <span class="feature-chip">竞品分析</span>
+                    <span class="feature-chip">趋势监控</span>
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <div class="card-top">
+                    <h3>Notion / 飞书多维表格</h3>
+                    <div class="tags">
+                        <span class="tag tag-free">免费起</span>
+                    </div>
+                </div>
+                <div class="desc">内容日历、素材库、选题库、数据看板。配合 API 可实现自动化数据回收和内容排期。</div>
+                <div class="features">
+                    <span class="feature-chip">内容日历</span>
+                    <span class="feature-chip">数据库</span>
+                    <span class="feature-chip">协作</span>
+                    <span class="feature-chip">API</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Summary: Automation Level ===== -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-icon" style="background:rgba(52,211,153,0.12);">🤖</div>
+            <h2>自动化程度总览</h2>
+        </div>
+        <div style="overflow-x:auto;">
+            <table class="compare-table">
+                <thead>
+                    <tr>
+                        <th>环节</th>
+                        <th>自动化程度</th>
+                        <th>核心工具</th>
+                        <th>人工介入</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>选题策划</td>
+                        <td>★★★★☆ 80%</td>
+                        <td>LLM + 数据工具</td>
+                        <td>最终选题判断</td>
+                    </tr>
+                    <tr>
+                        <td>脚本生成</td>
+                        <td>★★★★★ 90%</td>
+                        <td>Claude / ChatGPT / DeepSeek</td>
+                        <td>审核与调性把控</td>
+                    </tr>
+                    <tr>
+                        <td>图像素材</td>
+                        <td>★★★★☆ 85%</td>
+                        <td>Midjourney / Flux / DALL-E 3</td>
+                        <td>提示词优化</td>
+                    </tr>
+                    <tr>
+                        <td>配音合成</td>
+                        <td>★★★★★ 95%</td>
+                        <td>ElevenLabs / Fish Audio</td>
+                        <td>几乎不需要</td>
+                    </tr>
+                    <tr>
+                        <td>视频生成</td>
+                        <td>★★★★☆ 75%</td>
+                        <td>Sora / 可灵 / PixVerse</td>
+                        <td>镜头筛选与拼接</td>
+                    </tr>
+                    <tr>
+                        <td>剪辑后期</td>
+                        <td>★★★★☆ 80%</td>
+                        <td>Descript / 剪映 / Opus Clip</td>
+                        <td>节奏与风格调整</td>
+                    </tr>
+                    <tr>
+                        <td>多平台发布</td>
+                        <td>★★★★★ 95%</td>
+                        <td>n8n / Make / Zapier</td>
+                        <td>几乎不需要</td>
+                    </tr>
+                    <tr>
+                        <td>数据分析</td>
+                        <td>★★★★☆ 80%</td>
+                        <td>新榜 + Notion + AI 分析</td>
+                        <td>策略解读</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<div class="footer">
+    <p>AI 自媒体自动化工具全景图 — 持续更新中</p>
+    <p style="margin-top:8px;">数据来源：<a href="https://zapier.com/blog/best-ai-video-generator/">Zapier</a> · <a href="https://blog.n8n.io/best-ai-workflow-automation-tools/">n8n Blog</a> · <a href="https://github.com/harry0703/MoneyPrinterTurbo">MoneyPrinterTurbo</a> · <a href="https://zhuanlan.zhihu.com/p/1891514534876921950">知乎</a> · <a href="https://freeacademy.ai/blog/midjourney-vs-dalle-vs-stable-diffusion-vs-flux-comparison-2026">FreeAcademy</a></p>
+</div>
+
+</body>
+</html>
