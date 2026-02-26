@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高新区 525 小区深度分析仪表盘</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; background: #0f1923; color: #e0e6ed; }
+        .header { background: linear-gradient(135deg, #1a2a3a, #2c3e50); padding: 28px 24px 20px; border-bottom: 2px solid #3498db; }
+        .header h1 { font-size: 24px; color: #3498db; margin-bottom: 4px; }
+        .header p { font-size: 13px; color: #7f8c8d; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
+
+        /* KPI strip */
+        .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 20px 0; }
+        .kpi { background: #1a2a3a; border: 1px solid #2c3e50; border-radius: 8px; padding: 14px 16px; text-align: center; }
+        .kpi .num { font-size: 28px; font-weight: 700; color: #3498db; }
+        .kpi .lbl { font-size: 12px; color: #7f8c8d; margin-top: 2px; }
+
+        /* Section */
+        .section { margin: 24px 0; }
+        .section-title { font-size: 16px; font-weight: 700; color: #ecf0f1; margin-bottom: 12px; padding-left: 10px; border-left: 3px solid #3498db; }
+        .card { background: #1a2a3a; border: 1px solid #2c3e50; border-radius: 8px; padding: 18px; margin-bottom: 16px; }
+
+        /* Horizontal bar chart */
+        .hbar-row { display: flex; align-items: center; margin: 5px 0; }
+        .hbar-label { width: 100px; font-size: 12px; text-align: right; padding-right: 10px; flex-shrink: 0; color: #bdc3c7; }
+        .hbar-track { flex: 1; height: 20px; background: #0f1923; border-radius: 3px; overflow: hidden; position: relative; }
+        .hbar-fill { height: 100%; border-radius: 3px; display: flex; align-items: center; padding-left: 8px; font-size: 10px; color: white; font-weight: 600; }
+        .hbar-extra { width: 60px; font-size: 11px; color: #7f8c8d; padding-left: 8px; flex-shrink: 0; }
+
+        /* District table */
+        .dtable { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .dtable th { background: #0f1923; padding: 8px 10px; text-align: left; font-weight: 600; color: #3498db; border-bottom: 2px solid #2c3e50; }
+        .dtable td { padding: 8px 10px; border-bottom: 1px solid #1f2f3f; }
+        .dtable tr:hover td { background: #1f2f3f; }
+        .dtable .num-cell { text-align: right; font-variant-numeric: tabular-nums; }
+        .tag { display: inline-block; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600; }
+        .tag-hot { background: #e74c3c33; color: #e74c3c; }
+        .tag-value { background: #2ecc7033; color: #2ecc70; }
+        .tag-premium { background: #f39c1233; color: #f39c12; }
+
+        /* Year chart */
+        .year-chart { display: flex; align-items: flex-end; gap: 2px; height: 160px; padding-top: 10px; }
+        .year-bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; min-width: 0; }
+        .year-bar { width: 100%; border-radius: 2px 2px 0 0; background: #3498db; transition: background 0.2s; cursor: default; position: relative; }
+        .year-bar:hover { background: #2ecc70; }
+        .year-label { font-size: 9px; color: #7f8c8d; margin-top: 4px; transform: rotate(-45deg); white-space: nowrap; }
+        .year-tooltip { display: none; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: #2c3e50; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; white-space: nowrap; z-index: 10; }
+        .year-bar:hover .year-tooltip { display: block; }
+
+        /* Price histogram */
+        .hist-bar { display: flex; align-items: center; margin: 6px 0; }
+        .hist-label { width: 80px; font-size: 12px; text-align: right; padding-right: 10px; color: #bdc3c7; }
+        .hist-track { flex: 1; height: 24px; background: #0f1923; border-radius: 3px; overflow: hidden; }
+        .hist-fill { height: 100%; border-radius: 3px; display: flex; align-items: center; padding-left: 8px; font-size: 11px; color: white; font-weight: 600; }
+
+        /* Insights */
+        .insight { padding: 10px 0; border-bottom: 1px solid #1f2f3f; font-size: 14px; line-height: 1.7; }
+        .insight:last-child { border-bottom: none; }
+        .insight .highlight { color: #e74c3c; font-weight: 700; }
+        .insight .good { color: #2ecc70; font-weight: 700; }
+        .insight .warn { color: #f39c12; font-weight: 700; }
+
+        /* Top list */
+        .top-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #1f2f3f; font-size: 13px; }
+        .top-item:last-child { border-bottom: none; }
+        .top-rank { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; margin-right: 10px; flex-shrink: 0; }
+        .rank-1 { background: #f39c12; color: #1a2a3a; }
+        .rank-2 { background: #bdc3c7; color: #1a2a3a; }
+        .rank-3 { background: #cd7f32; color: #1a2a3a; }
+        .rank-n { background: #2c3e50; color: #7f8c8d; }
+        .top-name { flex: 1; }
+        .top-value { font-weight: 700; color: #3498db; margin-left: 10px; }
+        .top-sub { font-size: 11px; color: #7f8c8d; margin-left: 10px; width: 70px; text-align: right; }
+
+        .footer { text-align: center; padding: 24px; font-size: 11px; color: #34495e; }
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } .hbar-label { width: 70px; } }
+    </style>
+</head>
+<body>
+<div class="header">
+    <div class="container">
+        <h1>高新区 525 小区 — 深度数据分析</h1>
+        <p>数据来源：房天下 | 采集 2026-02-09 | 402 个有价格 · 240 个在售 · 覆盖 18 个板块</p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- KPI -->
+    <div class="kpi-strip">
+        <div class="kpi"><div class="num">525</div><div class="lbl">总小区数</div></div>
+        <div class="kpi"><div class="num">402</div><div class="lbl">有价格数据</div></div>
+        <div class="kpi"><div class="num">4,923</div><div class="lbl">在售总套数</div></div>
+        <div class="kpi"><div class="num" style="color:#2ecc70">15,302</div><div class="lbl">中位价 (元/㎡)</div></div>
+        <div class="kpi"><div class="num">17,315</div><div class="lbl">平均价 (元/㎡)</div></div>
+        <div class="kpi"><div class="num" style="color:#e74c3c">89,622</div><div class="lbl">最高 (中大国际九号)</div></div>
+    </div>
+
+    <!-- 价格分布直方图 -->
+    <div class="section">
+        <h2 class="section-title">价格分布 — 402 个有价小区</h2>
+        <div class="card" id="price-hist"></div>
+    </div>
+
+    <!-- 板块分析 -->
+    <div class="section">
+        <h2 class="section-title">18 个板块全景</h2>
+        <div class="card" style="overflow-x: auto;">
+            <table class="dtable" id="district-table">
+                <thead>
+                    <tr>
+                        <th>板块</th>
+                        <th class="num-cell">小区数</th>
+                        <th class="num-cell">中位价</th>
+                        <th class="num-cell">均价</th>
+                        <th class="num-cell">最低</th>
+                        <th class="num-cell">最高</th>
+                        <th class="num-cell">在售套数</th>
+                        <th>标签</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 板块中位价 bar chart -->
+    <div class="section">
+        <h2 class="section-title">板块中位价排名</h2>
+        <div class="card" id="district-bars"></div>
+    </div>
+
+    <!-- 建成年份 vs 均价 -->
+    <div class="section">
+        <h2 class="section-title">建成年份 vs 均价 (1990-2026)</h2>
+        <div class="card">
+            <div class="year-chart" id="year-chart"></div>
+            <div style="margin-top: 18px; font-size: 12px; color: #7f8c8d; text-align: center;">
+                柱高 = 该年份小区平均价 | 悬停查看详情 | 颜色越亮价格越高
+            </div>
+        </div>
+    </div>
+
+    <!-- 双列：TOP15在售 + 价值洼地 -->
+    <div class="two-col">
+        <div class="section">
+            <h2 class="section-title">在售 TOP 15</h2>
+            <div class="card" id="top-sale"></div>
+        </div>
+        <div class="section">
+            <h2 class="section-title">价值洼地 & 高端板块</h2>
+            <div class="card" id="value-zones"></div>
+        </div>
+    </div>
+
+    <!-- 关键发现 -->
+    <div class="section">
+        <h2 class="section-title">关键发现</h2>
+        <div class="card" id="insights">
+            <div class="insight"><span class="highlight">科技六路是最大交易池</span> — 1,090 套在售，中位价 22,103 元/㎡，是高新区流动性最强的高端板块，适合关注二手房置换客群。</div>
+            <div class="insight"><span class="good">大寨路是最大价值洼地</span> — 中位价仅 10,324 元/㎡，但在售 956 套，是高新区存量最大的刚需区，2005-2016 年老盘集中，适合首次置业。</div>
+            <div class="insight"><span class="warn">2019 年建成楼盘均价最高</span> — 达 30,276 元/㎡（含万达长安龙胤 8 万、紫薇公园时光 4.3 万），对应高新二期科技六路集中交付期。</div>
+            <div class="insight">高新区呈现<span class="highlight">明显的"东贵西便"格局</span> — 高新一中/科技六路中位价 2 万+，大寨路/徐家庄/公交五公司 1 万左右，同区域价差可达 8 倍。</div>
+            <div class="insight"><span class="good">软件新城是新兴高端板块</span> — 中位价 22,199 元/㎡，在售 284 套，2022-2026 新交付楼盘多，价格坚挺，潜力值得关注。</div>
+            <div class="insight">高新区 <span class="warn">47% 小区无在售房源</span>（285/525），多为老旧家属院或未交付新盘。真正活跃交易的约 240 个小区。</div>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    自动生成于 2026-02-26 21:00 GMT+8 | Claude Code 自主推进 | 数据来源 fang.com
+</div>
+
+<script>
+// === DATA ===
+const districtData = [
+    {name:"科技六路", count:53, median:22103, avg:23992, min:7704, max:80694, sale:1090, tag:"hot"},
+    {name:"大寨路", count:46, median:10324, avg:10914, min:5890, max:16350, sale:956, tag:"value"},
+    {name:"科技路西口", count:51, median:12991, avg:14206, min:6989, max:31404, sale:720, tag:"value"},
+    {name:"锦业路", count:77, median:15377, avg:17571, min:7406, max:40047, sale:586, tag:""},
+    {name:"西万路口", count:29, median:16401, avg:17299, min:10523, max:43322, sale:390, tag:""},
+    {name:"高新一中", count:60, median:20792, avg:23092, min:9302, max:89622, sale:296, tag:"premium"},
+    {name:"软件新城", count:23, median:22199, avg:21252, min:10659, max:30291, sale:284, tag:"premium"},
+    {name:"软件园", count:24, median:13238, avg:14698, min:6024, max:27110, sale:156, tag:"value"},
+    {name:"鱼化寨", count:22, median:15729, avg:15083, min:9863, max:22344, sale:141, tag:""},
+    {name:"高新四路", count:45, median:13376, avg:15683, min:6598, max:43317, sale:132, tag:"value"},
+    {name:"CID中央创新区", count:4, median:20988, avg:21915, min:17406, max:28278, sale:56, tag:"premium"},
+    {name:"大学城", count:9, median:24965, avg:24316, min:18104, max:29777, sale:44, tag:"premium"},
+    {name:"郭杜", count:3, median:26969, avg:26018, min:23355, max:27731, sale:36, tag:"premium"},
+    {name:"徐家庄", count:47, median:10720, avg:12074, min:7308, max:29166, sale:28, tag:""},
+    {name:"电子城", count:3, median:27036, avg:27036, min:27036, max:27036, sale:22, tag:"premium"},
+    {name:"唐延路", count:9, median:17826, avg:19106, min:13135, max:27638, sale:12, tag:""},
+    {name:"西沣路", count:1, median:18819, avg:18819, min:18819, max:18819, sale:7, tag:""},
+    {name:"公交五公司", count:6, median:10241, avg:10216, min:8539, max:12090, sale:0, tag:""}
+];
+
+const yearData = [
+    {year:1990,count:2,avg:8180},{year:1993,count:1,avg:13206},{year:1995,count:3,avg:7759},
+    {year:1996,count:3,avg:15584},{year:1997,count:3,avg:12877},{year:1998,count:16,avg:11362},
+    {year:1999,count:6,avg:12763},{year:2000,count:18,avg:15420},{year:2001,count:8,avg:16798},
+    {year:2002,count:9,avg:16598},{year:2003,count:8,avg:16910},{year:2004,count:15,avg:16078},
+    {year:2005,count:20,avg:15840},{year:2006,count:12,avg:13572},{year:2007,count:16,avg:15706},
+    {year:2008,count:12,avg:16116},{year:2009,count:28,avg:17475},{year:2010,count:19,avg:14599},
+    {year:2011,count:21,avg:14110},{year:2012,count:15,avg:21305},{year:2013,count:13,avg:17930},
+    {year:2014,count:17,avg:14780},{year:2015,count:26,avg:17545},{year:2016,count:19,avg:17568},
+    {year:2017,count:11,avg:24375},{year:2018,count:8,avg:19855},{year:2019,count:6,avg:30276},
+    {year:2020,count:7,avg:26836},{year:2021,count:4,avg:19314},{year:2022,count:4,avg:17415},
+    {year:2023,count:8,avg:19649},{year:2024,count:4,avg:19695},{year:2025,count:7,avg:22955},
+    {year:2026,count:3,avg:19444}
+];
+
+const priceBins = [
+    {label:"< 1万", count:61, color:"#27ae60"},
+    {label:"1~1.5万", count:128, color:"#2ecc71"},
+    {label:"1.5~2万", count:99, color:"#3498db"},
+    {label:"2~2.5万", count:54, color:"#2980b9"},
+    {label:"2.5~3万", count:37, color:"#f39c12"},
+    {label:"3~4万", count:13, color:"#e67e22"},
+    {label:"> 4万", count:10, color:"#e74c3c"}
+];
+
+const topSale = [
+    {name:"保利天悦悦峰",units:168,price:"—",district:"科技六路"},
+    {name:"香榭御澄",units:130,price:"33,439",district:"科技六路"},
+    {name:"万达天樾",units:127,price:"27,297",district:"科技六路"},
+    {name:"中华世纪城",units:124,price:"15,022",district:"科技路西口"},
+    {name:"融侨城",units:122,price:"15,081",district:"大寨路"},
+    {name:"万熙天地",units:111,price:"18,036",district:"西万路口"},
+    {name:"紫薇田园都市",units:101,price:"17,120",district:"锦业路"},
+    {name:"恒大城",units:98,price:"11,046",district:"大寨路"},
+    {name:"宏府麒麟山",units:97,price:"10,254",district:"大寨路"},
+    {name:"天地源枫林绿洲",units:93,price:"24,971",district:"科技六路"},
+    {name:"中建国熙台",units:91,price:"19,937",district:"科技路西口"},
+    {name:"逸翠园四期",units:87,price:"29,750",district:"锦业路"},
+    {name:"逸翠园",units:84,price:"26,635",district:"锦业路"},
+    {name:"中航华府",units:83,price:"14,480",district:"大寨路"},
+    {name:"苏宁云著",units:82,price:"16,331",district:"软件新城"}
+];
+
+// === RENDER ===
+
+// Price histogram
+const histEl = document.getElementById("price-hist");
+const maxBin = Math.max(...priceBins.map(b => b.count));
+priceBins.forEach(b => {
+    const pct = (b.count / maxBin * 100).toFixed(1);
+    histEl.innerHTML += `<div class="hist-bar">
+        <div class="hist-label">${b.label}</div>
+        <div class="hist-track"><div class="hist-fill" style="width:${pct}%;background:${b.color}">${b.count} 个</div></div>
+    </div>`;
+});
+
+// District table
+const tbody = document.querySelector("#district-table tbody");
+districtData.forEach(d => {
+    const tagHtml = d.tag === "hot" ? '<span class="tag tag-hot">热门</span>' :
+                    d.tag === "value" ? '<span class="tag tag-value">洼地</span>' :
+                    d.tag === "premium" ? '<span class="tag tag-premium">高端</span>' : "—";
+    tbody.innerHTML += `<tr>
+        <td>${d.name}</td>
+        <td class="num-cell">${d.count}</td>
+        <td class="num-cell">${d.median.toLocaleString()}</td>
+        <td class="num-cell">${d.avg.toLocaleString()}</td>
+        <td class="num-cell">${d.min.toLocaleString()}</td>
+        <td class="num-cell">${d.max.toLocaleString()}</td>
+        <td class="num-cell">${d.sale.toLocaleString()}</td>
+        <td>${tagHtml}</td>
+    </tr>`;
+});
+
+// District bar chart (sorted by median)
+const distBarsEl = document.getElementById("district-bars");
+const sortedDist = [...districtData].sort((a, b) => b.median - a.median);
+const maxMedian = sortedDist[0].median;
+sortedDist.forEach(d => {
+    const pct = (d.median / maxMedian * 100).toFixed(1);
+    const color = d.median >= 20000 ? "#e74c3c" : d.median >= 15000 ? "#f39c12" : "#2ecc70";
+    distBarsEl.innerHTML += `<div class="hbar-row">
+        <div class="hbar-label">${d.name}</div>
+        <div class="hbar-track"><div class="hbar-fill" style="width:${pct}%;background:${color}">${d.median.toLocaleString()}</div></div>
+        <div class="hbar-extra">${d.sale}套</div>
+    </div>`;
+});
+
+// Year chart
+const yearEl = document.getElementById("year-chart");
+const maxAvg = Math.max(...yearData.map(y => y.avg));
+yearData.forEach(y => {
+    const hPct = (y.avg / maxAvg * 140).toFixed(0);
+    const hue = Math.min(120, Math.max(0, 120 - (y.avg - 7000) / 250));
+    yearEl.innerHTML += `<div class="year-bar-group">
+        <div class="year-bar" style="height:${hPct}px;background:hsl(${hue},65%,50%)">
+            <div class="year-tooltip">${y.year}年 | ${y.count}个小区<br>均价 ${y.avg.toLocaleString()}</div>
+        </div>
+        <div class="year-label">${String(y.year).slice(2)}</div>
+    </div>`;
+});
+
+// Top sale list
+const topEl = document.getElementById("top-sale");
+topSale.forEach((t, i) => {
+    const rankCls = i === 0 ? "rank-1" : i === 1 ? "rank-2" : i === 2 ? "rank-3" : "rank-n";
+    topEl.innerHTML += `<div class="top-item">
+        <div class="top-rank ${rankCls}">${i + 1}</div>
+        <div class="top-name">${t.name}</div>
+        <div class="top-value">${t.units}套</div>
+        <div class="top-sub">${t.price}元</div>
+    </div>`;
+});
+
+// Value zones
+const vzEl = document.getElementById("value-zones");
+vzEl.innerHTML = `
+    <div style="margin-bottom:12px;font-size:13px;color:#2ecc70;font-weight:700;">价值洼地（中位价 < 1.5万 + 高供应）</div>
+    <div class="top-item"><div class="top-rank rank-1" style="background:#2ecc70">1</div><div class="top-name">大寨路</div><div class="top-value" style="color:#2ecc70">10,324</div><div class="top-sub">956套</div></div>
+    <div class="top-item"><div class="top-rank rank-2" style="background:#2ecc70">2</div><div class="top-name">科技路西口</div><div class="top-value" style="color:#2ecc70">12,991</div><div class="top-sub">720套</div></div>
+    <div class="top-item"><div class="top-rank rank-3" style="background:#2ecc70">3</div><div class="top-name">软件园</div><div class="top-value" style="color:#2ecc70">13,238</div><div class="top-sub">156套</div></div>
+    <div class="top-item"><div class="top-rank rank-n" style="background:#2ecc70">4</div><div class="top-name">高新四路</div><div class="top-value" style="color:#2ecc70">13,376</div><div class="top-sub">132套</div></div>
+    <div style="margin:16px 0 12px;font-size:13px;color:#e74c3c;font-weight:700;">高端板块（中位价 > 2万）</div>
+    <div class="top-item"><div class="top-rank rank-1" style="background:#e74c3c">1</div><div class="top-name">电子城</div><div class="top-value" style="color:#e74c3c">27,036</div><div class="top-sub">22套</div></div>
+    <div class="top-item"><div class="top-rank rank-2" style="background:#e74c3c">2</div><div class="top-name">郭杜</div><div class="top-value" style="color:#e74c3c">26,969</div><div class="top-sub">36套</div></div>
+    <div class="top-item"><div class="top-rank rank-3" style="background:#e74c3c">3</div><div class="top-name">大学城</div><div class="top-value" style="color:#e74c3c">24,965</div><div class="top-sub">44套</div></div>
+    <div class="top-item"><div class="top-rank rank-n" style="background:#e74c3c">4</div><div class="top-name">软件新城</div><div class="top-value" style="color:#e74c3c">22,199</div><div class="top-sub">284套</div></div>
+    <div class="top-item"><div class="top-rank rank-n" style="background:#e74c3c">5</div><div class="top-name">科技六路</div><div class="top-value" style="color:#e74c3c">22,103</div><div class="top-sub">1,090套</div></div>
+    <div class="top-item"><div class="top-rank rank-n" style="background:#e74c3c">6</div><div class="top-name">CID</div><div class="top-value" style="color:#e74c3c">20,988</div><div class="top-sub">56套</div></div>
+    <div class="top-item"><div class="top-rank rank-n" style="background:#e74c3c">7</div><div class="top-name">高新一中</div><div class="top-value" style="color:#e74c3c">20,792</div><div class="top-sub">296套</div></div>
+`;
+</script>
+</body>
+</html>

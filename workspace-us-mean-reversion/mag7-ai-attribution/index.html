@@ -204,6 +204,8 @@
   <div class="nav-group">
     <div class="nav-group-title">深度分析</div>
     <a class="nav-link" href="#company">逐公司分析</a>
+    <a class="nav-link" href="#valuation-risk">依赖度vs估值风险</a>
+    <a class="nav-link" href="#ev-waterfall">概率加权分析</a>
     <a class="nav-link" href="#cloud">云收入价值链</a>
     <a class="nav-link" href="#circular">循环依赖</a>
   </div>
@@ -401,6 +403,38 @@
     </div>
     <div class="insight warn" style="margin-top:8px">
       <strong>Apple 和 Tesla 几乎没有 AI 盈利贡献，</strong>但仍享受 AI 估值叙事（Tesla PE 181）。如果 AI 叙事证伪，估值风险主要在 Nvidia（PE 40 但 93% 盈利靠 AI）。
+    </div>
+  </div>
+
+  <!-- ===== SECTION 4b: AI DEPENDENCY vs VALUATION RISK ===== -->
+  <div class="section" id="valuation-risk">
+    <h2>AI 依赖度 vs 估值风险矩阵</h2>
+    <div class="desc">气泡大小 = 市值（$T）。右上角 = 高 AI 依赖 + 高估值 = 最高风险区</div>
+    <div class="chart-container" style="height:400px">
+      <canvas id="chartBubble"></canvas>
+    </div>
+    <div class="two-col" style="margin-top:16px">
+      <div class="insight danger">
+        <strong>Nvidia：</strong>93% 盈利依赖 AI，PE 40，市值 $3.5T。AI 基建周期见顶 = 盈利腰斩风险。单点风险最大。
+      </div>
+      <div class="insight warn">
+        <strong>Tesla：</strong>PE 181 但 AI 盈利贡献为 0%。高估值完全建立在 FSD 叙事上，而非已实现盈利。叙事风险最大。
+      </div>
+    </div>
+    <div class="insight" style="margin-top:8px">
+      <strong>安全区（左下）：</strong>Google（PE 22，AI 占 25%）和 Meta（PE 25，AI 持久占比高）。即使 AI 叙事降温，成熟业务支撑估值。
+    </div>
+  </div>
+
+  <!-- ===== SECTION 4c: EXPECTED VALUE WATERFALL ===== -->
+  <div class="section" id="ev-waterfall">
+    <h2>概率加权：市场在 Price In 什么？</h2>
+    <div class="desc">四种情景的概率加权盈利影响 — 期望值接近零，但市场隐含的是"持续高速"</div>
+    <div class="chart-container" style="height:320px">
+      <canvas id="chartWaterfall"></canvas>
+    </div>
+    <div class="insight danger" style="margin-top:14px">
+      <strong>期望值 = +$1.25B（几乎为零）。</strong>30%*(+$75B) + 40%*(0) + 25%*(-$65B) + 5%*(-$100B) = +$1.25B。然而 Mag7 当前市值 $19.5T 隐含的是"持续高速渗透"这个仅 30% 概率的情景。市场定价与概率加权现实之间存在巨大缺口。
     </div>
   </div>
 
@@ -704,6 +738,97 @@ new Chart(document.getElementById('chartRisk'), {
         ticks: { callback: v => (v > 0 ? '+' : '') + v }
       },
       x: { grid: { display: false } }
+    }
+  }
+});
+
+// === 6. Bubble Chart: AI Dependency vs PE ===
+new Chart(document.getElementById('chartBubble'), {
+  type: 'bubble',
+  data: {
+    datasets: [
+      { label: 'Apple',     data: [{ x: 2,  y: 30,  r: 18 }], backgroundColor: 'rgba(162,170,173,0.6)', borderColor: '#A2AAAD' },
+      { label: 'Microsoft', data: [{ x: 15, y: 35,  r: 17 }], backgroundColor: 'rgba(0,164,239,0.6)',   borderColor: '#00A4EF' },
+      { label: 'Google',    data: [{ x: 25, y: 22,  r: 14 }], backgroundColor: 'rgba(66,133,244,0.6)',  borderColor: '#4285F4' },
+      { label: 'Meta',      data: [{ x: 51, y: 25,  r: 13 }], backgroundColor: 'rgba(6,104,225,0.6)',   borderColor: '#0668E1' },
+      { label: 'Amazon',    data: [{ x: 57, y: 35,  r: 13 }], backgroundColor: 'rgba(255,153,0,0.6)',   borderColor: '#FF9900' },
+      { label: 'Nvidia',    data: [{ x: 93, y: 40,  r: 18 }], backgroundColor: 'rgba(118,185,0,0.6)',   borderColor: '#76b900' },
+      { label: 'Tesla',     data: [{ x: 0,  y: 120, r: 10 }], backgroundColor: 'rgba(204,0,0,0.6)',     borderColor: '#cc0000' },
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { padding: 10, font: { size: 10.5 }, usePointStyle: true } },
+      tooltip: {
+        callbacks: {
+          label: ctx => {
+            const d = ctx.raw;
+            return `${ctx.dataset.label}: AI依赖 ${d.x}%, PE ${d.y}`;
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        title: { display: true, text: 'AI 盈利依赖度 (%)', color: '#4a5568' },
+        min: -5, max: 100,
+        ticks: { callback: v => v + '%' },
+        grid: { color: 'rgba(255,255,255,0.04)' }
+      },
+      y: {
+        title: { display: true, text: 'P/E 倍数', color: '#4a5568' },
+        min: 0, max: 140,
+        grid: { color: 'rgba(255,255,255,0.04)' }
+      }
+    }
+  }
+});
+
+// === 7. Waterfall: Expected Value by Scenario ===
+new Chart(document.getElementById('chartWaterfall'), {
+  type: 'bar',
+  data: {
+    labels: ['高速渗透\n(30%)', '稳步放缓\n(40%)', '基建过剩\n(25%)', '泡沫破裂\n(5%)', '概率加权\n期望值'],
+    datasets: [{
+      label: '概率加权盈利影响 ($B)',
+      data: [22.5, 0, -16.25, -5.0, 1.25],
+      backgroundColor: ctx => {
+        const v = ctx.raw;
+        if (ctx.dataIndex === 4) return '#a78bfa';
+        if (v > 0) return '#34d399';
+        if (v === 0) return '#60a5fa';
+        return '#f87171';
+      },
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => {
+            const raw = [75, 0, -65, -100, 1.25];
+            const prob = ['30%', '40%', '25%', '5%', ''];
+            const v = ctx.raw;
+            if (ctx.dataIndex === 4) return `期望值: ${v > 0 ? '+' : ''}$${v}B`;
+            return `原始: ${raw[ctx.dataIndex] > 0 ? '+' : ''}$${raw[ctx.dataIndex]}B × ${prob[ctx.dataIndex]} = ${v > 0 ? '+' : ''}$${v}B`;
+          }
+        }
+      }
+    },
+    scales: {
+      y: {
+        title: { display: true, text: '概率加权影响 ($B)', color: '#4a5568' },
+        ticks: { callback: v => (v > 0 ? '+' : '') + '$' + v + 'B' },
+        grid: { color: 'rgba(255,255,255,0.04)' }
+      },
+      x: {
+        grid: { display: false },
+        ticks: { font: { size: 10 }, maxRotation: 0 }
+      }
     }
   }
 });

@@ -18,12 +18,11 @@
     font: 15px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
     padding: 32px 20px;
   }
-  .container { max-width: 800px; margin: 0 auto; }
+  .container { max-width: 860px; margin: 0 auto; }
   header { text-align: center; margin-bottom: 36px; }
   header h1 { font-size: 24px; margin-bottom: 4px; }
   header .sub { color: var(--text2); font-size: 13px; }
 
-  /* Platform filter bar */
   .filters {
     display: flex; justify-content: center; gap: 8px;
     margin-bottom: 32px; flex-wrap: wrap;
@@ -36,27 +35,19 @@
   }
   .filter-btn:hover { border-color: var(--accent); color: var(--text); }
   .filter-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
-  .filter-btn .dot {
-    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-  }
+  .filter-btn .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
-  /* Timeline */
   .timeline { position: relative; padding-left: 32px; }
   .timeline::before {
     content: ''; position: absolute; left: 11px; top: 0; bottom: 0;
     width: 2px; background: var(--line);
   }
 
-  /* Date node */
-  .date-node {
-    position: relative; margin-bottom: 32px;
-  }
+  .date-node { position: relative; margin-bottom: 32px; }
   .date-node::before {
-    content: ''; position: absolute;
-    left: -32px; top: 6px;
+    content: ''; position: absolute; left: -32px; top: 6px;
     width: 12px; height: 12px; border-radius: 50%;
-    background: var(--accent); border: 2px solid var(--bg);
-    z-index: 1;
+    background: var(--accent); border: 2px solid var(--bg); z-index: 1;
   }
   .date-label {
     font-size: 14px; font-weight: 700; color: var(--accent);
@@ -65,16 +56,12 @@
     display: flex; align-items: center; gap: 6px;
   }
   .date-label:hover { opacity: 0.8; }
-  .date-label .arrow {
-    font-size: 12px; transition: transform 0.2s;
-    display: inline-block; width: 14px;
-  }
+  .date-label .arrow { font-size: 12px; transition: transform 0.2s; display: inline-block; width: 14px; }
   .date-node.collapsed .arrow { transform: rotate(-90deg); }
   .date-node.collapsed .platform-group { display: none; }
   .date-label .weekday { color: var(--text2); font-weight: 400; margin-left: 8px; font-size: 12px; }
   .date-label .entry-count { color: var(--text2); font-weight: 400; font-size: 12px; margin-left: auto; }
 
-  /* Platform-group cards within a date */
   .platform-group {
     background: var(--card); border: 1px solid var(--border);
     border-radius: 10px; margin-bottom: 10px; overflow: hidden;
@@ -85,10 +72,7 @@
     display: flex; align-items: center; gap: 8px; padding: 10px 16px;
     cursor: pointer; user-select: none;
   }
-  .platform-header .arrow {
-    font-size: 12px; transition: transform 0.2s;
-    display: inline-block; width: 14px;
-  }
+  .platform-header .arrow { font-size: 12px; transition: transform 0.2s; display: inline-block; width: 14px; }
   .platform-group.collapsed .arrow { transform: rotate(-90deg); }
   .platform-group.collapsed .platform-content { display: none; }
   .platform-content { padding: 0 16px 12px; }
@@ -100,67 +84,59 @@
   .p-xhs { background: rgba(254,44,85,0.15); color: var(--xhs); }
   .p-bili { background: rgba(0,161,214,0.15); color: var(--bili); }
   .p-yt { background: rgba(255,0,0,0.15); color: var(--yt); }
-  .entry-title { font-size: 14px; font-weight: 600; flex: 1; }
 
-  .entry-body { font-size: 13px; color: var(--text); line-height: 1.7; }
-  .entry-body ul { padding-left: 18px; margin: 6px 0; }
-  .entry-body li { margin-bottom: 4px; }
-  .entry-body a { color: var(--accent); text-decoration: none; }
-  .entry-body a:hover { text-decoration: underline; }
-  .entry-body a strong { color: inherit; }
-  .entry-body strong { color: var(--text); }
-  .entry-body blockquote {
-    border-left: 3px solid var(--border); padding-left: 12px;
-    margin: 8px 0; color: var(--text2); font-style: italic;
+  /* Item cards */
+  .item-card {
+    display: flex; gap: 12px; padding: 10px 0;
+    border-bottom: 1px solid var(--border);
   }
-  .entry-body h4 { font-size: 13px; color: var(--accent); margin: 10px 0 4px; }
-
-  /* Expandable item cards */
-  .entry-body details { margin-bottom: 6px; }
-  .entry-body details summary {
-    cursor: pointer; list-style: none; font-size: 13px; line-height: 1.6;
-    padding: 4px 0;
+  .item-card:last-child { border-bottom: none; }
+  .item-thumb {
+    width: 120px; height: 80px; border-radius: 6px;
+    object-fit: cover; flex-shrink: 0; background: var(--border);
   }
-  .entry-body details summary::-webkit-details-marker { display: none; }
-  .entry-body details summary::before {
-    content: '▸ '; color: var(--text2); font-size: 11px;
+  .item-body { flex: 1; min-width: 0; }
+  .item-title {
+    font-size: 14px; font-weight: 600; line-height: 1.4;
+    margin-bottom: 4px;
   }
-  .entry-body details[open] summary::before { content: '▾ '; }
-  .entry-body details .item-detail {
-    padding: 8px 12px; margin: 4px 0 8px 14px;
-    background: rgba(88,166,255,0.04); border-left: 2px solid var(--border);
-    border-radius: 0 6px 6px 0; font-size: 12px; color: var(--text2); line-height: 1.7;
+  .item-title a { color: var(--text); text-decoration: none; }
+  .item-title a:hover { color: var(--accent); }
+  .item-meta {
+    font-size: 12px; color: var(--text2); margin-bottom: 4px;
+    display: flex; gap: 8px; flex-wrap: wrap;
   }
-  .entry-body details .item-detail p { margin: 0 0 6px; }
-  .entry-body details .item-detail .source-link {
-    display: inline-block; margin-top: 4px; padding: 2px 10px;
-    background: var(--card); border: 1px solid var(--border); border-radius: 4px;
-    color: var(--accent); font-size: 11px; text-decoration: none;
+  .item-meta .source { color: var(--accent); }
+  .item-summary {
+    font-size: 12px; color: var(--text2); line-height: 1.6;
   }
-  .entry-body details .item-detail .source-link:hover {
-    border-color: var(--accent); background: rgba(88,166,255,0.1);
+  .item-summary.full-text {
+    color: var(--text); font-size: 13px; white-space: pre-wrap;
   }
 
-  .empty-state {
-    text-align: center; padding: 80px 20px; color: var(--text2);
+  /* Section headers inside platform */
+  .section-title {
+    font-size: 12px; color: var(--accent); font-weight: 600;
+    margin: 12px 0 4px; padding-bottom: 4px;
+    border-bottom: 1px solid rgba(88,166,255,0.15);
   }
+  .section-title:first-child { margin-top: 4px; }
+
+  /* Trends block */
+  .trends {
+    font-size: 12px; color: var(--text2); line-height: 1.7;
+    padding: 8px 0; margin-top: 4px;
+  }
+  .trends strong { color: var(--text); }
+
+  .empty-state { text-align: center; padding: 80px 20px; color: var(--text2); }
   .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
-  .empty-state p { font-size: 14px; }
-
-  .load-more {
-    text-align: center; padding: 20px;
-  }
-  .load-more button {
-    appearance: none; background: var(--card); color: var(--accent);
-    border: 1px solid var(--border); padding: 8px 24px; border-radius: 8px;
-    font-size: 13px; cursor: pointer;
-  }
-  .load-more button:hover { border-color: var(--accent); }
 
   @media (max-width: 600px) {
     .timeline { padding-left: 24px; }
     .date-node::before { left: -24px; }
     .timeline::before { left: 3px; }
+    .item-thumb { width: 80px; height: 54px; }
   }
 </style>
 </head>
@@ -188,277 +164,288 @@
   </div>
 
   <div class="timeline" id="timeline"></div>
-  <div class="load-more" id="loadMore" style="display:none;">
-    <button onclick="loadMore()">加载更多</button>
-  </div>
 </div>
 
 <script>
-const DAILY_DIR = '';
+/* ===== DATA ===== */
+const DATA = {
+  "2026-02-26": {
+    wechat: {
+      sections: [
+        {
+          title: "新智元",
+          items: [
+            { title: "别了，OpenClaw！19个顶尖AI夜袭硅谷，3万刀金融终端变「废铁」", summary: "OpenClaw被谷歌封禁后，Perplexity重磅上线Perplexity Computer，让全球19个顶尖AI集体打工，全程不用动手" },
+            { title: "北大ProAct：首个双系统「主动社交」智能体，不做提线木偶", summary: "北大VCL实验室针对当前具身智能体「被动响应」的局限，提出让机器人拥有「主动性」的新框架" },
+            { title: "AI除幻第一股诞生，高瓴君联赚疯！这家公司，押中OpenClaw万亿美元赛道", summary: "港股AI认购王海致科技押注「流程自动化」：企业真正需要的，不是会聊天的AI，而是能把业务跑通的AI" }
+          ]
+        },
+        {
+          title: "36氪热榜",
+          items: [
+            { title: "苹果打破16年「祖训」：触屏MacBook虽迟但到", summary: "苹果准备两款全新触屏MacBook Pro，代号K114/K116，最快2026年底发布" }
+          ]
+        },
+        {
+          title: "V2EX 热门",
+          items: [
+            { title: "34岁大龄失业程序员的迷茫", summary: "93年iOS开发者失业后的职业困境讨论" },
+            { title: "春节回老家一趟，想回县城创业", summary: "大城市vs小县城的生活抉择讨论" },
+            { title: "做了一张AI录音卡", summary: "开发者将AI语音产品做成实体卡片的尝试" }
+          ]
+        },
+        {
+          title: "晚间要闻",
+          items: [
+            { title: '英伟达Q4财报超预期，黄仁勋宣布"智能体AI拐点已到"', summary: "2026财年Q4营收681.27亿美元（+73%），超市场预期658亿；下季指引780亿美元。全年营收2159.4亿美元（+65%）" },
+            { title: '"2028全球智能危机"报告引发美股恐慌', summary: "西特里尼研究公司发布AI末日情景报告，多家科技金融公司股价大幅下跌" },
+            { title: "特朗普要求科技巨头AI数据中心自备电力", summary: "亚马逊、谷歌、Meta、微软、xAI、甲骨文、OpenAI将于3月4日签署协议" }
+          ]
+        }
+      ]
+    },
+    xhs: {
+      items: [
+        { title: "华人真的不觉得美国现在贵到离谱吗？", author: "岛上的夏奈", likes: "3991", url: "https://www.xiaohongshu.com/explore/699c288e000000001d0242dd", text: "回国后才能好好整理一下这次去美国这一个月的所想所感。\n这次来美国接近一个月，去了西雅图，洛杉矶自驾到旧金山，丹佛和纽约，最大的感受真的就是美国的物价再这么发展下去，再过几年就真的来不起了。\n其实这次来也相对有点吃力，朋友来出差我能蹭个酒店，但只要出去超市或者吃饭就感受到物价真的很夸张，现在吃碗pho加完小费25刀，随便买点零食45刀，缺德舅买做两顿饭的食材110刀；机场打车基本70刀起\n而且很多人就一直在说按照美国工资来算其实并不贵，但事实就是不是每个人都可以拿美国工资对吗？\n在西雅图吃的全记面食，粥粉面，广州十几块钱一碗的云吞面四人吃了106刀，小费给15刀阿姨只是勉强OK的表情。\n真的很庆幸自己12年前来过美国，那个年代哪怕银行账户只有20万我都不觉得来美国很吃力，29刀美国航空的机票坐过还包行李，60刀住过曼哈顿的希尔顿欢朋。想到那些刚毕业可能想要旅行的人，真的替他们感到悲愤，美国真的完全不是一个可以来穷游的目的地了。" },
+        { title: "带山西女朋友回东北的一天", author: "杨同学", likes: "2177", url: "https://www.xiaohongshu.com/explore/699d7d19000000001d02636a", text: "情侣日常vlog，过年回家" },
+        { title: "Gemini team happy hour in SG", author: "Yitay", likes: "793", url: "https://www.xiaohongshu.com/explore/699ececf000000002a038fb7", text: "It was great fun hosting Pang Wei's partial UW group for the first GDM Gemini team happy hour in the Singapore office." },
+        { title: "从纽约回亚洲，体会到我们的时代红利", author: "黛安娜看世界", likes: "680", url: "https://www.xiaohongshu.com/explore/699d707a00000000150336f1", text: "从纽约调香港工作一年半了。真的觉得中国普通中产家庭的生活节奏，其实比纽约很多条件不错的人家还要从容。区别不在收入数字，而在于城市本身供给的丰富度。很多东西在纽约就算愿意花三五倍价钱也不一定买得到。\n我们Gen Z的红利可能藏在别处，就叫地理套利和信息套利。以前要亲身飞到纽约或者香港才知道这里的生活是什么样，现在远在四川的姐妹刷小红书就能看到。\n地理套利：内地制造业特别强，在国内就该多消费；若身在香港，周末两小时飞亚洲各大城市；香港挣钱深圳花，已经成为最大的区位优势。\n对于还在美国的年轻朋友，建议努力工作好好挣钱，趁早多积累硬实力。美国的顶尖学历、纽约的工作经验、人脉网络，都是硬通货。" },
+        { title: "2026会对于新入场的投资者非常不友好", author: "考拉Ay", likes: "413", url: "https://www.xiaohongshu.com/explore/699cb6db000000001a0317b6", text: "1.史诗级牛市告一段落，各板块走势分化，并不存在永涨的说法。有些标的相较于2025高点已经回调30-50%\n2.从不建议在国内盲目买美指，这不是无风险套利，也不会永涨\n3.今年消息会很多，但波动不会很大，大部分已经消化/兑现\n4.如果去年的收益期待是翻倍，今年的合理目标应该是去年的四分之一左右，也就是25%。我去年是+283%，今年60%就会很满意，仓位也已经大批转移到防御/稳健板块\n5.如果去年可以1-10，那今年最容易的应该是10-15，没有充足资本的建议不要参与，在美国银行存一些安心吃利息" },
+        { title: '加州湾区大部分城市实际是个中产"贫民窟"', author: "象AI", likes: "354", url: "https://www.xiaohongshu.com/explore/699ea269000000002802030a", text: "加州湾区海、山、阳光，环境不错，气候温暖宜人，一切看上去不错。\n我可能太底层了，看到的住宅社区里，很多房子本身简单、潦草、老旧，地势高低起伏，没多少平坦地块，房子稠密，前后院狭小。价格动辄200万，在硅谷拿着的高收入，购买也很沉重啊，在宇宙中心硅谷做码农，听着不错，但是生活真的好吗？" },
+        { title: "美股疯了", author: "满山猴子我腚最红", likes: "276", url: "https://www.xiaohongshu.com/explore/699f4749000000000d00baad", text: "好消息：BRAI涨了66%\n坏消息：一分钱没买" },
+        { title: "Meta花了十亿美元买了个寂寞", author: "超级大大大大大西瓜", likes: "268", url: "https://www.xiaohongshu.com/explore/6991105e000000001b01ef9e", text: "openclaw也就比收购案晚了那么几天，结果基本manus能干的活都干了，只是说对于普通人来说，配置部署的过程稍微麻烦了些，但社区已经有海量的项目帮助解决这些问题了。\nopenclaw相对于manus更加开放、权限更高，能做的事情也更多。当manus的用户不满足于一些问答式的场景，需要更嵌入自己工作生活的工具时，可能会向openclaw生态迁移。" }
+      ],
+      trends: "<strong>海外生活</strong>: 美国物价飙升讨论；加州湾区中产现状；纽约vs亚洲时代红利<br><strong>财经投资</strong>: 2026投资者不友好预警；但斌All-in谷歌；美股波动<br><strong>AI/科技</strong>: Meta十亿美元收购讨论；Gemini团队新加坡聚会"
+    },
+    bili: {
+      items: [
+        { title: "听妈妈的话", up: "小南宫zzZ", views: "531.5万", url: "https://www.bilibili.com/video/BV1USfBBzEQj", image: "https://i2.hdslb.com/bfs/archive/345411a0fdd3d1f08a62ff901bb63e2725195c16.jpg@320w_200h", summary: "音乐改编创作，母爱主题催泪短片" },
+        { title: "2026春晚Remix", up: "枪弹轨迹", views: "379.9万", url: "https://www.bilibili.com/video/BV1d5Z6B7EnA", image: "https://i2.hdslb.com/bfs/archive/345411a0fdd3d1f08a62ff901bb63e2725195c16.jpg@320w_200h", summary: "2026年央视春晚节目素材混剪remix" },
+        { title: '"起初人们以为只是一场普通的雪～"', up: "咕咕啊啊咕", views: "309.1万", url: "https://www.bilibili.com/video/BV1LRfxBmEUs", image: "https://i1.hdslb.com/bfs/archive/35c0148d1d3af4333a1e8af8ba081fb7000612b1.jpg@320w_200h", summary: "叙事类爆款短片，以'普通的雪'为引的反转故事" },
+        { title: "这是我处了五年的女朋友 她家里一直不同意她嫁给我", up: "辛大壮壮", views: "258.7万", url: "https://www.bilibili.com/video/BV1vyfMBhESU", image: "https://i1.hdslb.com/bfs/archive/7d0dc886d25870629f4c384adb51f650bdde33c5.jpg@320w_200h", summary: "五年恋爱遭女方家庭反对，情感故事vlog" },
+        { title: "我叛逆的一生", up: "光色水鸟", views: "210.1万", url: "https://www.bilibili.com/video/BV1ZsfFBGEpk", image: "https://i0.hdslb.com/bfs/archive/58d20243b245ef9518a569c885244647721318c8.jpg@320w_200h", summary: "个人成长经历自述短片" },
+        { title: "父刺子笑", up: "小小潮爱生活", views: "156.9万", url: "https://www.bilibili.com/video/BV1b8ftBkEWG", image: "https://i1.hdslb.com/bfs/archive/d34a225df38cb4f6a8d9df564230a50908687caf.jpg@320w_200h", summary: "父子互动温馨搞笑日常" },
+        { title: "「看原神迎财神」2026原神同人新春会", up: "暗猫の祝福", views: "144.5万", url: "https://www.bilibili.com/video/BV1NffLBNEpg", image: "https://i0.hdslb.com/bfs/archive/59694731022f544af73061f93fb43e146abc9286.jpg@320w_200h", summary: "原神游戏同人新春贺岁动画合集" },
+        { title: "人生建议：不要与母亲结盟攻击父亲", up: "奇幻日", views: "103.9万", url: "https://www.bilibili.com/video/BV1ckfABtEi8", summary: "探讨家庭关系中亲子联盟对家庭的破坏性影响" },
+        { title: "可敢担碳中和之责？", up: "中国能源报", views: "97.5万", url: "https://www.bilibili.com/video/BV1FdfTBNEVo", summary: "中国能源转型与碳中和责任纪录片" }
+      ],
+      trends: '春节情感类持续霸榜；春晚二创仍热（Remix 379万）；新热点"起初以为只是一场普通的雪"爆款叙事类'
+    },
+    yt: {
+      items: [
+        { title: "英伟达还能涨起来吗？甲骨文出现买点？高盛喊话该抄底大科技了！", channel: "美投侃新闻", views: "4.1万", time: "11小时前", url: "https://www.youtube.com/watch?v=d_wJBr09tI0", image: "https://img.youtube.com/vi/d_wJBr09tI0/mqdefault.jpg", summary: "AI毁灭论引发市场恐慌：某机构报告预测S&P先涨至8000再跌38%、失业率达10%。市场过度交易负面叙事，Visa/AmEx/Capital One被大幅杀跌。反驳：AI创造'超级工人'提升产出，新工种弥补失业但有时间差。AI Agent经济或颠覆平台型公司。赢家：AI基建+云厂商；输家：传统支付与软件。建议坚持基本面" },
+        { title: "美股 NVDA超预期不涨！CRM前瞻欠佳！IGV何时反转？", channel: "视野环球财经", views: "6.2万", time: "11小时前", url: "https://www.youtube.com/watch?v=UuqXV-BXQAw", image: "https://img.youtube.com/vi/UuqXV-BXQAw/mqdefault.jpg", summary: "NVDA Q4营收681.3亿美元(+73%)超预期22亿，下季指引780亿。CRM远程前景积极但近期指引略低。软件ETF(IGV)处反弹阶段非结构性反转。交易员预期从加息转为持续降息，受AI失业恐慌驱动。NVDA $200为期权关键战场" },
+        { title: "AI 寫 Code 這麼強，工程師要怎麼生存？", channel: "Terry Chen 泰瑞", views: "15万", time: "3天前", url: "https://www.youtube.com/watch?v=XGveb2bQhAI", image: "https://img.youtube.com/vi/XGveb2bQhAI/mqdefault.jpg", summary: "探讨AI写代码能力日益增强背景下，软件工程师如何调整定位、提升不可替代性以适应行业变革" },
+        { title: "攒够多少钱可以辞职躺平？探访存款10w和500w的「退休」青年", channel: "小豹城市探索", views: "15万", url: "https://www.youtube.com/watch?v=IYiZETtgz6Q", image: "https://img.youtube.com/vi/IYiZETtgz6Q/mqdefault.jpg", summary: "探访不同存款水平(10万到500万)选择辞职躺平的年轻人，了解退休生活方式与财务规划" }
+      ],
+      tracked: [
+        { title: "美股速递 Nvidia Q4营收单季新高 毛利率创一年半高", channel: "投资TALK君", handle: "@yttalkjun", views: "1.2万", time: "2天前", url: "https://www.youtube.com/watch?v=juPDtCPyK_w", image: "https://img.youtube.com/vi/juPDtCPyK_w/mqdefault.jpg", summary: "NVDA 2026财年Q4营收创单季新高，毛利率达一年半高点；详解英伟达财报亮点与后市展望" },
+        { title: "比特币2026会创新高，因为已经被庄家控制了", channel: "课代表立正", handle: "@kedaibiao", views: "1.8万", time: "2周前", url: "https://www.youtube.com/watch?v=w0QB45tLDM8", image: "https://img.youtube.com/vi/w0QB45tLDM8/mqdefault.jpg", summary: "分析比特币2026走势：认为BTC已被机构/庄家控制，预测将创新高，解析市场操控逻辑与投资策略" }
+      ],
+      trends: "<strong>财经投资类</strong>主导：NVDA财报后市场反应、高盛喊话抄底大科技<br><strong>AI话题</strong>持续：AI写代码对工程师冲击<br><strong>生活方式</strong>：辞职躺平讨论、F.I.R.E.族投资理念"
+    }
+  },
+  "2026-02-25": {
+    wechat: {
+      sections: [
+        {
+          title: "AI洞察日报 2026-02-25 日刊",
+          items: [
+            { title: "阿里发布Qwen 3.5中量级全系模型", summary: "通义千问新一代中型模型" },
+            { title: "Claude Code支持手机远程操控代码", summary: "Anthropic编程工具扩展到移动端" },
+            { title: "Perplexity升级Comet语音模式", summary: "AI搜索引擎语音交互升级" },
+            { title: "Claude企业协作功能上线", summary: "Anthropic面向企业的团队协作" },
+            { title: "Spotify在多国推出AI提示播放列表", summary: "用自然语言描述生成个性化歌单" },
+            { title: "Google ProducerAI实验室", summary: "谷歌新AI创作工具实验项目" }
+          ]
+        }
+      ]
+    },
+    xhs: {
+      items: [
+        { title: "在央妈后台，扒到了两招春晚上镜妆秘诀！", author: "深夜徐老师", likes: "1.4万", url: "https://www.xiaohongshu.com/explore/6995810e000000000a02ea47", summary: "分享春晚演员上镜妆的两个关键技巧，包括底妆和眼妆细节处理" },
+        { title: "当艺术家沙滩偶遇女明星\"关晓彤\"", author: "大黑牛", likes: "2628", url: "https://www.xiaohongshu.com/explore/69940a92000000001b01d90a", summary: "沙滩vlog记录偶遇关晓彤的瞬间" },
+        { title: "2026年高净值人群都把钱往哪放？", author: "胡润", likes: "995", url: "https://www.xiaohongshu.com/explore/699e998b0000000022033394", summary: "胡润排行榜创始人分析1900万想躺平的高净值人群资产配置趋势" },
+        { title: "突发！纳斯达克100基金单日可买10W了", author: "钱来哆哆", likes: "407", url: "https://www.xiaohongshu.com/explore/699e9dc3000000001d02426b", summary: "纳斯达克100基金限额放开，分析对散户投资者的影响" }
+      ],
+      trends: "<strong>AI/科技</strong>: Anthropic创始人谈\"走向指数的尽头\"；Playwright CLI登上GitHub Trending<br><strong>财经理财</strong>: 高盛研报；纳斯达克100基金限额放开<br><strong>生活方式</strong>: 春晚上镜妆秘诀；布偶猫话题持续热门"
+    },
+    bili: {
+      items: [
+        { title: "干嘛猫的vlog（过年篇）", up: "荒蛋记录员", views: "596万", url: "https://www.bilibili.com/video/BV1qHfuBKEeE", summary: "记录春节期间猫咪日常，温馨搞笑的过年氛围vlog" },
+        { title: "听妈妈的话", up: "小南宫zzZ", views: "482万", url: "https://www.bilibili.com/video/BV1USfBBzEQj", summary: "走心向内容，引发大量弹幕共鸣的亲情主题视频" },
+        { title: "2026春晚Remix", up: "枪弹轨迹", views: "363万", url: "https://www.bilibili.com/video/BV1d5Z6B7EnA", summary: "将2026央视春晚节目混音重制，B站音乐区热门二创" },
+        { title: "这是我处了五年的女朋友 她家里一直不同意她嫁给我", up: "辛大壮壮", views: "224万", url: "https://www.bilibili.com/video/BV1vyfMBhESU", summary: "情侣vlog，讲述五年感情遭遇家庭阻力的真实故事" },
+        { title: "我叛逆的一生", up: "光色水鸟", views: "189万", url: "https://www.bilibili.com/video/BV1ZsfFBGEpk", summary: "个人成长回顾，引发年轻观众强烈共鸣的自述类内容" }
+      ],
+      trends: "春节主题持续霸榜；猫meme/宠物类热度不减；音乐二创活跃"
+    },
+    yt: {
+      items: [
+        { title: "AI 寫 Code 這麼強，工程師要怎麼生存？", channel: "Terry Chen 泰瑞", views: "14万", time: "2天前", url: "https://www.youtube.com/watch?v=XGveb2bQhAI", image: "https://img.youtube.com/vi/XGveb2bQhAI/mqdefault.jpg", summary: "探讨AI编程工具崛起后软件工程师的生存策略和转型方向" },
+        { title: "设计师前途很清晰：少用Figma，多\"操作\"代码｜Cursor设计负责人Ryo Lu", channel: "课代表立正", views: "1.1万", time: "4天前", url: "https://www.youtube.com/watch?v=BnL5qaBzmR0", image: "https://img.youtube.com/vi/BnL5qaBzmR0/mqdefault.jpg", summary: "设计师/PM/工程师正融合为\"Builder\"角色。AI工具让设计师直接操控代码，将传统3个月设计周期缩短至2周" },
+        { title: "高盛研报解读：2026中国经济展望", channel: "老厉害", views: "45万", url: "https://www.youtube.com/watch?v=dUhhfz_QX_0", image: "https://img.youtube.com/vi/dUhhfz_QX_0/mqdefault.jpg", summary: "2026年中国经济仍面临供需失衡。出口仍是GDP核心驱动力，房地产未触底，就业压力增大" },
+        { title: "学历再高也逃不过35岁被刀：失业两年", channel: "网易纪录片", views: "26万", url: "https://www.youtube.com/watch?v=iATEBznd7pw", image: "https://img.youtube.com/vi/iATEBznd7pw/mqdefault.jpg", summary: "高学历互联网大厂夫妻35岁双双失业后的两年挣扎与重生。从年薪百万降至月入两三千，最终卖房搬家创业自媒体" }
+      ],
+      trends: "<strong>AI/科技话题</strong>升温：AI写代码对工程师的冲击、Cursor设计负责人访谈<br><strong>财经投资类</strong>持续热门：高盛研报、AI新品对市场影响"
+    }
+  }
+};
+
+/* ===== CONFIG ===== */
+const PLATFORMS = {
+  wechat: { label: '微信', cls: 'p-wechat' },
+  xhs:    { label: '小红书', cls: 'p-xhs' },
+  bili:   { label: 'B站', cls: 'p-bili' },
+  yt:     { label: 'YouTube', cls: 'p-yt' }
+};
 const WEEKDAYS = ['周日','周一','周二','周三','周四','周五','周六'];
-let allDays = [];
-let loadedDays = 0;
-const BATCH = 14;
 let filter = 'all';
 
-function fmt(d) {
-  return d.getFullYear() + '-' +
-    String(d.getMonth()+1).padStart(2,'0') + '-' +
-    String(d.getDate()).padStart(2,'0');
-}
+function esc(s) { return s ? s.replace(/</g,'&lt;').replace(/>/g,'&gt;') : ''; }
 
 function setFilter(f) {
   filter = f;
   document.querySelectorAll('.filter-btn').forEach(btn => {
-    const bf = btn.dataset.f || 'all';
-    btn.classList.toggle('active', bf === f);
+    btn.classList.toggle('active', (btn.dataset.f || 'all') === f);
   });
-  // Re-render with filter
-  renderAll();
+  render();
 }
 
-// Simple markdown → HTML for entry bodies
-function md(text) {
-  // Pre-process: convert list items with links + optional summary into <details>
-  // Format: - [**title**](url) — metadata\n  > summary text
-  const lines = text.split('\n');
-  const out = [];
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    const m = line.match(/^- \[(.+?)\]\((.+?)\)\s*(.*)$/);
-    if (m) {
-      const title = m[1].replace(/\*\*/g, '');
-      const url = m[2];
-      const meta = m[3];
-      // Collect indented summary lines (starting with "  >")
-      let summary = '';
-      while (i + 1 < lines.length && /^\s{2}>/.test(lines[i + 1])) {
-        i++;
-        summary += (summary ? ' ' : '') + lines[i].replace(/^\s{2}>\s?/, '');
-      }
-      let detail = '<details><summary><strong>' + title + '</strong>';
-      if (meta) detail += ' <span style="color:var(--text2);font-weight:400">' + meta + '</span>';
-      detail += '</summary><div class="item-detail">';
-      if (summary) detail += '<p>' + summary + '</p>';
-      detail += '<a class="source-link" href="' + url + '" target="_blank">查看原文 →</a>';
-      detail += '</div></details>';
-      out.push(detail);
-    } else {
-      out.push(line);
-    }
-  }
-  text = out.join('\n');
+function toggleDay(el) { el.closest('.date-node').classList.toggle('collapsed'); }
+function togglePlatform(el) { el.closest('.platform-group').classList.toggle('collapsed'); }
 
-  return text
-    .replace(/^#### (.+)$/gm, '<h4>$1</h4>')
-    .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank">$1</a>')
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>')
-    .replace(/^- (.+)$/gm, '<li>$1</li>')
-    .replace(/(<li>.*<\/li>\n?)+/gs, m => '<ul>' + m + '</ul>')
-    .replace(/\n{2,}/g, '<br>')
-    .replace(/\n/g, ' ');
-}
+function renderItem(item, type) {
+  let html = '<div class="item-card">';
 
-// Parse a daily md file into platform entries
-function parseDay(text, dateStr) {
-  const platforms = {
-    wechat: { pattern: /^##\s*微信/i, label: '微信', cls: 'p-wechat' },
-    xhs: { pattern: /^##\s*小红书/i, label: '小红书', cls: 'p-xhs' },
-    bili: { pattern: /^##\s*[Bb]站/i, label: 'B站', cls: 'p-bili' },
-    yt: { pattern: /^##\s*[Yy]ou[Tt]ube/i, label: 'YouTube', cls: 'p-yt' },
-  };
-
-  const lines = text.split('\n');
-  const entries = [];
-  let currentPlatform = null;
-  let currentLines = [];
-  let currentTitle = '';
-
-  function flush() {
-    if (currentPlatform && currentLines.length > 0) {
-      const body = currentLines.join('\n').trim();
-      if (body && !body.match(/^[-\s]*暂无数据/)) {
-        entries.push({
-          platform: currentPlatform.key,
-          label: currentPlatform.label,
-          cls: currentPlatform.cls,
-          title: currentTitle,
-          body: body,
-          date: dateStr,
-        });
-      }
-    }
-    currentLines = [];
+  // Thumbnail
+  const img = item.image;
+  if (img) {
+    const url = item.url || '#';
+    html += `<a href="${url}" target="_blank"><img class="item-thumb" src="${esc(img)}" loading="lazy" onerror="this.style.display='none'"></a>`;
   }
 
-  for (const line of lines) {
-    // Skip top-level title
-    if (/^#\s/.test(line) && !/^##/.test(line)) continue;
+  html += '<div class="item-body">';
 
-    let matched = false;
-    for (const [key, p] of Object.entries(platforms)) {
-      if (p.pattern.test(line)) {
-        flush();
-        currentPlatform = { ...p, key };
-        currentTitle = line.replace(/^##\s*/, '');
-        matched = true;
-        break;
-      }
-    }
-    if (!matched && currentPlatform) {
-      currentLines.push(line);
-    }
-  }
-  flush();
-
-  return entries;
-}
-
-// Fetched data cache: dateStr → { raw, entries }
-const cache = {};
-
-async function fetchDay(dateStr) {
-  if (cache[dateStr]) return cache[dateStr];
-  try {
-    const resp = await fetch(DAILY_DIR + dateStr + '/index.md');
-    if (!resp.ok) { cache[dateStr] = null; return null; }
-    const raw = await resp.text();
-    const entries = parseDay(raw, dateStr);
-    cache[dateStr] = { raw, entries };
-    return cache[dateStr];
-  } catch {
-    cache[dateStr] = null;
-    return null;
-  }
-}
-
-function toggleDay(el) {
-  el.closest('.date-node').classList.toggle('collapsed');
-}
-
-function togglePlatform(el) {
-  el.closest('.platform-group').classList.toggle('collapsed');
-}
-
-let dayIndex = 0;
-
-function renderDay(dateStr, entries) {
-  const d = new Date(dateStr + 'T00:00:00');
-  const weekday = WEEKDAYS[d.getDay()];
-
-  const filtered = filter === 'all' ? entries : entries.filter(e => e.platform === filter);
-  if (filtered.length === 0) return '';
-
-  const isFirst = dayIndex === 0;
-  dayIndex++;
-  const collapsed = isFirst ? '' : ' collapsed';
-
-  let html = `<div class="date-node${collapsed}">`;
-  html += `<div class="date-label" onclick="toggleDay(this)">`;
-  html += `<span class="arrow">▾</span>`;
-  html += `${dateStr}<span class="weekday">${weekday}</span>`;
-  html += `<span class="entry-count">${filtered.length} 条</span>`;
-  html += `</div>`;
-
-  for (const e of filtered) {
-    html += `<div class="platform-group collapsed">`;
-    html += `<div class="platform-header" onclick="togglePlatform(this)">`;
-    html += `<span class="arrow">▾</span>`;
-    html += `<span class="entry-platform ${e.cls}">${e.label}</span>`;
-    html += `</div>`;
-    html += `<div class="platform-content">`;
-    html += `<div class="entry-body">${md(e.body)}</div>`;
-    html += `</div>`;
-    html += `</div>`;
+  // Title
+  if (item.url) {
+    html += `<div class="item-title"><a href="${esc(item.url)}" target="_blank">${esc(item.title)}</a></div>`;
+  } else {
+    html += `<div class="item-title">${esc(item.title)}</div>`;
   }
 
-  html += `</div>`;
+  // Meta line
+  const meta = [];
+  if (item.source) meta.push(`<span class="source">${esc(item.source)}</span>`);
+  if (item.channel) meta.push(esc(item.channel));
+  if (item.handle) meta.push(esc(item.handle));
+  if (item.up) meta.push(esc(item.up));
+  if (item.author) meta.push(esc(item.author));
+  if (item.views) meta.push(esc(item.views) + (type === 'bili' ? '播放' : '次观看'));
+  if (item.likes) meta.push(esc(item.likes) + '赞');
+  if (item.time) meta.push(esc(item.time));
+  if (meta.length) html += `<div class="item-meta">${meta.join(' · ')}</div>`;
+
+  // Summary or full text
+  if (item.text) {
+    html += `<div class="item-summary full-text">${esc(item.text)}</div>`;
+  } else if (item.summary) {
+    html += `<div class="item-summary">${esc(item.summary)}</div>`;
+  }
+
+  html += '</div></div>';
   return html;
 }
 
-async function renderAll() {
-  const el = document.getElementById('timeline');
-  let html = '';
-  dayIndex = 0;
+function renderPlatform(key, data) {
+  const p = PLATFORMS[key];
+  let content = '';
 
-  for (let i = 0; i < loadedDays; i++) {
-    const dateStr = allDays[i];
-    const data = cache[dateStr];
-    if (data && data.entries.length > 0) {
-      html += renderDay(dateStr, data.entries);
+  // wechat has sections
+  if (data.sections) {
+    for (const sec of data.sections) {
+      content += `<div class="section-title">${esc(sec.title)}</div>`;
+      for (const item of sec.items) content += renderItem(item, key);
     }
   }
 
-  if (!html) {
-    html = `<div class="empty-state">
-      <div class="icon">📱</div>
-      <p>暂无内容<br>在 Discord 频道让 agent 开始监控你的社交媒体</p>
-    </div>`;
+  // items (xhs, bili, yt)
+  if (data.items) {
+    for (const item of data.items) content += renderItem(item, key);
   }
 
+  // tracked channels (yt)
+  if (data.tracked && data.tracked.length) {
+    content += '<div class="section-title">跟踪频道动态</div>';
+    for (const item of data.tracked) content += renderItem(item, key);
+  }
+
+  // trends
+  if (data.trends) {
+    content += `<div class="trends">${data.trends}</div>`;
+  }
+
+  if (!content) return '';
+
+  let html = '<div class="platform-group collapsed">';
+  const count = (data.items?.length || 0) + (data.sections?.reduce((n,s) => n + s.items.length, 0) || 0) + (data.tracked?.length || 0);
+  html += `<div class="platform-header" onclick="togglePlatform(this)">`;
+  html += `<span class="arrow">▾</span>`;
+  html += `<span class="entry-platform ${p.cls}">${p.label}</span>`;
+  html += `<span style="color:var(--text2);font-size:12px;margin-left:auto">${count} 条</span>`;
+  html += '</div>';
+  html += `<div class="platform-content">${content}</div>`;
+  html += '</div>';
+  return html;
+}
+
+function render() {
+  const el = document.getElementById('timeline');
+  const dates = Object.keys(DATA).sort((a,b) => b.localeCompare(a));
+  let html = '';
+  let dayIdx = 0;
+
+  for (const dateStr of dates) {
+    const dayData = DATA[dateStr];
+    const d = new Date(dateStr + 'T00:00:00');
+    const weekday = WEEKDAYS[d.getDay()];
+
+    // Filter platforms
+    const keys = filter === 'all'
+      ? Object.keys(PLATFORMS).filter(k => dayData[k])
+      : (dayData[filter] ? [filter] : []);
+    if (!keys.length) continue;
+
+    const collapsed = dayIdx === 0 ? '' : ' collapsed';
+    dayIdx++;
+    let totalItems = 0;
+    let platformsHtml = '';
+    for (const k of keys) {
+      const ph = renderPlatform(k, dayData[k]);
+      if (ph) {
+        platformsHtml += ph;
+        const dd = dayData[k];
+        totalItems += (dd.items?.length || 0) + (dd.sections?.reduce((n,s) => n + s.items.length, 0) || 0) + (dd.tracked?.length || 0);
+      }
+    }
+    if (!platformsHtml) continue;
+
+    html += `<div class="date-node${collapsed}">`;
+    html += `<div class="date-label" onclick="toggleDay(this)">`;
+    html += `<span class="arrow">▾</span>${dateStr}<span class="weekday">${weekday}</span>`;
+    html += `<span class="entry-count">${totalItems} 条</span>`;
+    html += '</div>';
+    html += platformsHtml;
+    html += '</div>';
+  }
+
+  if (!html) {
+    html = '<div class="empty-state"><div class="icon">📱</div><p>暂无内容</p></div>';
+  }
   el.innerHTML = html;
 }
 
-async function loadMore() {
-  const end = Math.min(loadedDays + BATCH, allDays.length);
-  const promises = [];
-  for (let i = loadedDays; i < end; i++) {
-    promises.push(fetchDay(allDays[i]));
-  }
-  await Promise.all(promises);
-  loadedDays = end;
-
-  document.getElementById('loadMore').style.display =
-    loadedDays < allDays.length ? '' : 'none';
-
-  renderAll();
-}
-
-async function init() {
-  if (location.protocol === 'file:') {
-    document.getElementById('timeline').innerHTML = `<div class="empty-state">
-      <div class="icon">🔒</div>
-      <p>file:// 协议无法加载数据<br>
-      请通过 HTTP 服务访问：<br><br>
-      <code style="background:var(--card);padding:6px 12px;border-radius:6px;font-size:13px;">
-      cd 每日汇总 && python3 -m http.server 8765</code><br><br>
-      然后打开 <a href="http://localhost:8765/index.html">http://localhost:8765/index.html</a></p>
-    </div>`;
-    return;
-  }
-
-  // Generate date list for last 90 days
-  const today = new Date();
-  for (let i = 0; i < 90; i++) {
-    const d = new Date(today);
-    d.setDate(d.getDate() - i);
-    allDays.push(fmt(d));
-  }
-
-  // Scan which files exist (check first 30 days quickly)
-  const existing = [];
-  const checks = allDays.slice(0, 30).map(async ds => {
-    try {
-      const resp = await fetch(DAILY_DIR + ds + '/index.md', { method: 'HEAD' });
-      if (resp.ok) existing.push(ds);
-    } catch {}
-  });
-  await Promise.all(checks);
-
-  // Sort and use only existing days
-  existing.sort((a, b) => b.localeCompare(a));
-  if (existing.length > 0) {
-    allDays = existing;
-  } else {
-    // Keep all days so user can see empty state
-    allDays = allDays.slice(0, 7);
-  }
-
-  await loadMore();
-}
-
-init();
+render();
 </script>
 </body>
 </html>

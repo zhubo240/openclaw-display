@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>美股均值回归研究门户</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: #0a0e1a;
+    color: #e0e6ed;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 30px 20px; }
+
+  .header {
+    text-align: center; padding: 40px 0 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 32px;
+  }
+  .header h1 {
+    font-size: 2rem;
+    background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6, #fbbf24);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .header .subtitle { color: #6b7a8d; font-size: 0.92rem; }
+  .header .meta { color: #4a5568; font-size: 0.75rem; margin-top: 6px; }
+
+  .thesis-box {
+    background: rgba(167,139,250,0.06);
+    border: 1px solid rgba(167,139,250,0.15);
+    border-radius: 14px; padding: 24px;
+    margin-bottom: 32px; text-align: center;
+  }
+  .thesis-box h2 { font-size: 1.1rem; color: #a78bfa; margin-bottom: 10px; }
+  .thesis-box p { font-size: 0.88rem; color: #8896a8; max-width: 800px; margin: 0 auto; line-height: 1.8; }
+  .thesis-box strong { color: #e0e6ed; }
+
+  .topics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px; margin-bottom: 32px;
+  }
+
+  .topic-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px; padding: 24px;
+    transition: all 0.3s;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+    border-top: 3px solid;
+  }
+  .topic-card:hover {
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(255,255,255,0.15);
+    transform: translateY(-2px);
+  }
+  .topic-card h3 { font-size: 1rem; margin-bottom: 6px; }
+  .topic-card .desc { font-size: 0.8rem; color: #6b7a8d; margin-bottom: 14px; line-height: 1.5; }
+
+  .metrics {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 8px; margin-bottom: 14px;
+  }
+  .metric {
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px; padding: 8px; text-align: center;
+  }
+  .metric .val { font-size: 1.1rem; font-weight: 700; }
+  .metric .lbl { font-size: 0.65rem; color: #4a5568; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .topic-card .tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .tag {
+    display: inline-block; padding: 2px 8px;
+    border-radius: 10px; font-size: 0.68rem; font-weight: 600;
+  }
+
+  .link-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 14px; padding-top: 12px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .link-row .arrow { color: #4a5568; font-size: 0.8rem; }
+  .link-row .files { font-size: 0.72rem; color: #4a5568; }
+
+  /* Causal chain */
+  .chain-section {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px; padding: 24px;
+    margin-bottom: 32px;
+  }
+  .chain-section h2 { font-size: 1.1rem; color: #a5b4c6; margin-bottom: 6px; }
+  .chain-section .desc { font-size: 0.82rem; color: #4a5568; margin-bottom: 16px; }
+
+  .chain {
+    display: flex; flex-direction: column; gap: 0;
+  }
+  .chain-node {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 16px; border-radius: 8px;
+    background: rgba(255,255,255,0.02);
+    border-left: 3px solid;
+  }
+  .chain-node .icon { font-size: 1.3rem; min-width: 30px; text-align: center; }
+  .chain-node .text { flex: 1; }
+  .chain-node .text strong { color: #e0e6ed; }
+  .chain-node .text { color: #8896a8; font-size: 0.85rem; }
+  .chain-node .ref {
+    font-size: 0.68rem; padding: 2px 8px;
+    border-radius: 10px; white-space: nowrap;
+  }
+  .chain-arrow { text-align: center; color: #4a5568; font-size: 0.7rem; padding: 2px 0; }
+
+  .footer {
+    text-align: center; padding: 30px 0;
+    color: #4a5568; font-size: 0.75rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  @media (max-width: 700px) {
+    .topics-grid { grid-template-columns: 1fr; }
+    .metrics { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>美股均值回归研究门户</h1>
+    <div class="subtitle">S&P 500 回报分解 · 估值归因 · 风险溢价 · AI 盈利 · 黄金与法币</div>
+    <div class="meta">5 个研究主题 · 基于 Shiller + CRSP/Compustat 数据 · 2026 年 2 月</div>
+  </div>
+
+  <!-- ===== CORE THESIS ===== -->
+  <div class="thesis-box">
+    <h2>核心命题</h2>
+    <p>
+      S&P 500 过去 96 年 ~9% 的年化回报由<strong>盈利增长（5.2%）+ 股息（2.9%）+ PE 扩张（0.8%）</strong>构成。
+      当前 PE 27.2 远高于历史均值 16.2，部分由科技高增长支撑，部分是结构性因素（低利率、被动投资）。
+      <strong>均值回归可能不以股价下跌出现，而以货币贬值出现——黄金是衡量这个隐形贬值的标尺。</strong>
+    </p>
+  </div>
+
+  <!-- ===== TOPIC CARDS ===== -->
+  <div class="topics-grid">
+
+    <!-- 1. SP500 Mean Reversion -->
+    <a class="topic-card" href="sp500-mean-reversion/index.html" style="border-top-color:#60a5fa">
+      <h3 style="color:#60a5fa">S&P 500 均值回归分析</h3>
+      <div class="desc">96 年回报分解：盈利 vs 股息 vs PE。公司级 3 层分解（公司→行业→指数），行业轮换与成分股新陈代谢。</div>
+      <div class="metrics">
+        <div class="metric"><div class="val" style="color:#60a5fa">8.91%</div><div class="lbl">名义年化回报</div></div>
+        <div class="metric"><div class="val" style="color:#34d399">5.16%</div><div class="lbl">EPS CAGR</div></div>
+        <div class="metric"><div class="val" style="color:#fbbf24">0.81%</div><div class="lbl">PE 扩张</div></div>
+      </div>
+      <div class="tags">
+        <span class="tag" style="background:rgba(96,165,250,0.15);color:#60a5fa">Shiller 数据</span>
+        <span class="tag" style="background:rgba(96,165,250,0.15);color:#60a5fa">CRSP/Compustat</span>
+        <span class="tag" style="background:rgba(96,165,250,0.15);color:#60a5fa">17 Python 脚本</span>
+      </div>
+      <div class="link-row">
+        <div class="files">index.html + sector_weights.html + 17 scripts</div>
+        <div class="arrow">&rarr;</div>
+      </div>
+    </a>
+
+    <!-- 2. PE Valuation -->
+    <a class="topic-card" href="pe-valuation/index.html" style="border-top-color:#a78bfa">
+      <h3 style="color:#a78bfa">PE 高估值归因分析</h3>
+      <div class="desc">当前 PE 27.2 的构成：科技 vs 非科技、Mag7 vs 其余 493 家。PEG 估值对比，2000 vs 2024 泡沫类比。</div>
+      <div class="metrics">
+        <div class="metric"><div class="val" style="color:#f87171">27.2</div><div class="lbl">S&P 500 PE</div></div>
+        <div class="metric"><div class="val" style="color:#a78bfa">41.5</div><div class="lbl">IT PE</div></div>
+        <div class="metric"><div class="val" style="color:#34d399">22.0</div><div class="lbl">去科技后 PE</div></div>
+      </div>
+      <div class="tags">
+        <span class="tag" style="background:rgba(167,139,250,0.15);color:#a78bfa">科技推高 +5 PE</span>
+        <span class="tag" style="background:rgba(248,113,113,0.15);color:#f87171">非科技仍高 +36%</span>
+        <span class="tag" style="background:rgba(52,211,153,0.15);color:#34d399">科技 PEG 更优</span>
+      </div>
+      <div class="link-row">
+        <div class="files">8 图表 · Compustat 公司级数据</div>
+        <div class="arrow">&rarr;</div>
+      </div>
+    </a>
+
+    <!-- 3. Equity Premium -->
+    <a class="topic-card" href="equity-premium/index.html" style="border-top-color:#f472b6">
+      <h3 style="color:#f472b6">风险溢价之谜与 EPS 低估假说</h3>
+      <div class="desc">Mehra-Prescott 之谜：理论只能解释 ~2% 溢价，实际 5-6%。EPS 低估假说填补 1.66% 缺口，Shiller + CRSP 交叉验证。</div>
+      <div class="metrics">
+        <div class="metric"><div class="val" style="color:#f87171">4-5%</div><div class="lbl">观察溢价</div></div>
+        <div class="metric"><div class="val" style="color:#f472b6">1.66%</div><div class="lbl">EPS 低估修正</div></div>
+        <div class="metric"><div class="val" style="color:#34d399">65%</div><div class="lbl">时段被低估</div></div>
+      </div>
+      <div class="tags">
+        <span class="tag" style="background:rgba(244,114,182,0.15);color:#f472b6">Gordon 模型</span>
+        <span class="tag" style="background:rgba(244,114,182,0.15);color:#f472b6">双数据源验证</span>
+        <span class="tag" style="background:rgba(244,114,182,0.15);color:#f472b6">残余仅 0.37%</span>
+      </div>
+      <div class="link-row">
+        <div class="files">7 图表 · Shiller + CRSP/Compustat</div>
+        <div class="arrow">&rarr;</div>
+      </div>
+    </a>
+
+    <!-- 4. Mag7 AI Attribution -->
+    <a class="topic-card" href="mag7-ai-attribution/index.html" style="border-top-color:#76b900">
+      <h3 style="color:#76b900">Mag 7 盈利 AI 归因分析</h3>
+      <div class="desc">$484B 盈利拆解：AI 前业务 64%、AI 持久 21%、AI 可能暂时 15%。Nvidia 占"暂时"的 65%。循环依赖与终端验证。</div>
+      <div class="metrics">
+        <div class="metric"><div class="val" style="color:#60a5fa">$484B</div><div class="lbl">Mag7 总盈利</div></div>
+        <div class="metric"><div class="val" style="color:#f87171">15%</div><div class="lbl">AI 可能暂时</div></div>
+        <div class="metric"><div class="val" style="color:#fbbf24">$1.25B</div><div class="lbl">概率加权期望</div></div>
+      </div>
+      <div class="tags">
+        <span class="tag" style="background:rgba(118,185,0,0.15);color:#76b900">NVDA 93% AI 依赖</span>
+        <span class="tag" style="background:rgba(248,113,113,0.15);color:#f87171">循环买单风险</span>
+        <span class="tag" style="background:rgba(52,211,153,0.15);color:#34d399">META 最扎实</span>
+      </div>
+      <div class="link-row">
+        <div class="files">7 图表 · Compustat + 定性归因</div>
+        <div class="arrow">&rarr;</div>
+      </div>
+    </a>
+
+    <!-- 5. Gold Zero Sum -->
+    <a class="topic-card" href="gold-zero-sum/index.html" style="border-top-color:#fbbf24">
+      <h3 style="color:#fbbf24">黄金上涨：正和 → 零和与法币信任危机</h3>
+      <div class="desc">金价 $1,282→$5,150（+302%）四层归因：传统模型崩溃、央行购金翻倍、财政不可持续、体系从正和转向零和。</div>
+      <div class="metrics">
+        <div class="metric"><div class="val" style="color:#fbbf24">$5,150</div><div class="lbl">金价 /oz</div></div>
+        <div class="metric"><div class="val" style="color:#f87171">1,000+</div><div class="lbl">央行购金 吨/年</div></div>
+        <div class="metric"><div class="val" style="color:#60a5fa">56.3%</div><div class="lbl">USD 储备占比</div></div>
+      </div>
+      <div class="tags">
+        <span class="tag" style="background:rgba(251,191,36,0.15);color:#fbbf24">传统模型崩溃</span>
+        <span class="tag" style="background:rgba(251,191,36,0.15);color:#fbbf24">结构性不可逆</span>
+        <span class="tag" style="background:rgba(251,191,36,0.15);color:#fbbf24">隐形贬值标尺</span>
+      </div>
+      <div class="link-row">
+        <div class="files">11 图表 · WGC + IMF COFER + FRED</div>
+        <div class="arrow">&rarr;</div>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- ===== CAUSAL CHAIN ===== -->
+  <div class="chain-section">
+    <h2>五个主题的因果关联</h2>
+    <div class="desc">从均值回归出发，推导出估值归因、风险溢价、AI 盈利、黄金上涨的逻辑链</div>
+
+    <div class="chain">
+      <div class="chain-node" style="border-left-color:#60a5fa">
+        <div class="icon">1</div>
+        <div class="text"><strong>S&P 500 回报分解</strong> — 96 年 8.91% 回报 = 盈利 5.16% + 股息 2.9% + PE 扩张 0.81%</div>
+        <span class="ref" style="background:rgba(96,165,250,0.15);color:#60a5fa">sp500</span>
+      </div>
+      <div class="chain-arrow">&darr; PE 扩张 0.81% 从何而来？</div>
+
+      <div class="chain-node" style="border-left-color:#f472b6">
+        <div class="icon">2</div>
+        <div class="text"><strong>EPS 低估假说</strong> — 市场系统性低估盈利增速 1.66%/年，PE 持续被上修。风险溢价之谜基本消解。</div>
+        <span class="ref" style="background:rgba(244,114,182,0.15);color:#f472b6">equity-premium</span>
+      </div>
+      <div class="chain-arrow">&darr; 当前 PE 27.2 为何这么高？</div>
+
+      <div class="chain-node" style="border-left-color:#a78bfa">
+        <div class="icon">3</div>
+        <div class="text"><strong>PE 归因</strong> — 科技推高 +5 PE 点（有盈利支撑），但非科技也高出历史 36%（结构性原因）。</div>
+        <span class="ref" style="background:rgba(167,139,250,0.15);color:#a78bfa">pe-valuation</span>
+      </div>
+      <div class="chain-arrow">&darr; 科技盈利中多少是 AI 驱动的？</div>
+
+      <div class="chain-node" style="border-left-color:#76b900">
+        <div class="icon">4</div>
+        <div class="text"><strong>Mag7 AI 归因</strong> — $484B 盈利中 AI 持久增量 21%，可能暂时 15%。概率加权后 AI 盈利增量接近零。</div>
+        <span class="ref" style="background:rgba(118,185,0,0.15);color:#76b900">mag7-ai</span>
+      </div>
+      <div class="chain-arrow">&darr; 如果盈利增速放缓、财政持续恶化……</div>
+
+      <div class="chain-node" style="border-left-color:#fbbf24">
+        <div class="icon">5</div>
+        <div class="text"><strong>黄金与法币信任</strong> — 均值回归可能不以股价下跌出现，而以货币贬值出现。黄金是这个隐形贬值的标尺。</div>
+        <span class="ref" style="background:rgba(251,191,36,0.15);color:#fbbf24">gold</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    美股均值回归研究 · 基于 Shiller 历史数据 + CRSP/Compustat 公司级数据 · 2026 年 2 月<br>
+    自动更新日志：<a href="AUTO-LOG.md" style="color:#4a5568">AUTO-LOG.md</a>
+  </div>
+</div>
+
+</body>
+</html>

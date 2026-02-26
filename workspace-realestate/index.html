@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>西安房地产研究中心</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; background: #f7f8fc; color: #2c3e50; }
+
+        /* Hero */
+        .hero { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: white; padding: 48px 24px 40px; text-align: center; }
+        .hero h1 { font-size: 32px; margin-bottom: 8px; letter-spacing: 1px; }
+        .hero p { font-size: 15px; opacity: 0.7; max-width: 600px; margin: 0 auto; }
+        .hero .badge { display: inline-block; background: rgba(52,152,219,0.2); border: 1px solid rgba(52,152,219,0.4); color: #3498db; padding: 4px 12px; border-radius: 20px; font-size: 12px; margin-top: 12px; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        /* Nav cards */
+        .nav-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin: -40px auto 32px; position: relative; z-index: 10; }
+        .nav-card { background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); padding: 24px; transition: transform 0.15s, box-shadow 0.15s; cursor: pointer; text-decoration: none; color: inherit; display: block; border-left: 4px solid transparent; }
+        .nav-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.12); }
+        .nav-card.c1 { border-left-color: #3498db; }
+        .nav-card.c2 { border-left-color: #e74c3c; }
+        .nav-card.c3 { border-left-color: #2ecc71; }
+        .nav-card .card-icon { font-size: 28px; margin-bottom: 8px; }
+        .nav-card h3 { font-size: 17px; margin-bottom: 6px; }
+        .nav-card p { font-size: 13px; color: #7f8c8d; line-height: 1.6; }
+        .nav-card .card-stat { display: inline-block; background: #f0f4f8; padding: 3px 10px; border-radius: 12px; font-size: 11px; color: #555; margin-top: 8px; }
+
+        /* Section */
+        .section { margin: 32px 0; }
+        .section-title { font-size: 20px; font-weight: 700; margin-bottom: 16px; text-align: center; }
+        .section-sub { font-size: 13px; color: #95a5a6; text-align: center; margin-top: -10px; margin-bottom: 16px; }
+
+        /* Map */
+        #unified-map { width: 100%; height: 520px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+
+        /* KPI strip */
+        .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin: 24px 0; }
+        .kpi { background: white; border-radius: 10px; box-shadow: 0 2px 12px rgba(0,0,0,0.05); padding: 16px; text-align: center; }
+        .kpi .num { font-size: 26px; font-weight: 700; }
+        .kpi .num.blue { color: #3498db; }
+        .kpi .num.red { color: #e74c3c; }
+        .kpi .num.green { color: #2ecc71; }
+        .kpi .lbl { font-size: 12px; color: #95a5a6; margin-top: 2px; }
+
+        /* Comparison bar */
+        .cmp-row { display: flex; align-items: center; margin: 8px 0; }
+        .cmp-label { width: 100px; font-size: 13px; text-align: right; padding-right: 12px; color: #555; }
+        .cmp-bar-wrap { flex: 1; display: flex; gap: 2px; }
+        .cmp-bar { height: 26px; border-radius: 4px; display: flex; align-items: center; padding: 0 10px; font-size: 11px; color: white; font-weight: 600; }
+        .cmp-bar.gx { background: linear-gradient(90deg, #3498db, #2980b9); }
+        .cmp-bar.qj { background: linear-gradient(90deg, #e74c3c, #c0392b); }
+
+        /* Timeline */
+        .timeline { margin: 24px 0; }
+        .tl-item { display: flex; gap: 16px; margin: 12px 0; }
+        .tl-dot { width: 12px; height: 12px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
+        .tl-content { flex: 1; font-size: 14px; line-height: 1.6; }
+        .tl-content strong { color: #2c3e50; }
+        .tl-content .time { font-size: 11px; color: #95a5a6; }
+
+        .footer { text-align: center; padding: 32px 20px; font-size: 12px; color: #bdc3c7; border-top: 1px solid #ecf0f1; margin-top: 40px; }
+        .footer a { color: #3498db; text-decoration: none; }
+
+        @media (max-width: 700px) {
+            .hero h1 { font-size: 24px; }
+            .nav-grid { grid-template-columns: 1fr; margin-top: -30px; }
+            #unified-map { height: 360px; }
+            .cmp-label { width: 70px; font-size: 11px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+    <h1>西安房地产研究中心</h1>
+    <p>高新区 525 小区 + 曲江 10 小区 | 二手房价格、板块分析、地理可视化</p>
+    <div class="badge">数据采集 2026-02-09 ~ 02-10 | 自动分析 2026-02-26</div>
+</div>
+
+<!-- Navigation cards -->
+<div class="container">
+    <div class="nav-grid">
+        <a class="nav-card c1" href="xian-realestate/index.html">
+            <div class="card-icon">&#x1F5FA;</div>
+            <h3>高新区全景地图</h3>
+            <p>645 个房产项目（二手房+新房）在 Leaflet 地图上的交互式展示，支持按类型、价格筛选。</p>
+            <span class="card-stat">645 项目 | 交互地图</span>
+        </a>
+        <a class="nav-card c1" href="xian-realestate/gaoxin-analytics.html">
+            <div class="card-icon">&#x1F4CA;</div>
+            <h3>高新区深度分析</h3>
+            <p>525 小区全量数据仪表盘 — 18 板块全景、价格直方图、年份趋势、价值洼地与高端板块识别。</p>
+            <span class="card-stat">402 有价 | 4,923 套在售</span>
+        </a>
+        <a class="nav-card c2" href="xian-realestate/qujiang-vs-gaoxin.html">
+            <div class="card-icon">&#x2696;</div>
+            <h3>曲江 vs 高新对比</h3>
+            <p>曲江 10 小区 vs 高新 60 小区样本对比 — 均价差 53%、容积率、户型面积、定位差异分析。</p>
+            <span class="card-stat">曲江均价 31,761 | 高新 20,800</span>
+        </a>
+    </div>
+
+    <!-- KPI -->
+    <div class="kpi-strip">
+        <div class="kpi"><div class="num blue">525</div><div class="lbl">高新小区总数</div></div>
+        <div class="kpi"><div class="num red">10</div><div class="lbl">曲江样本小区</div></div>
+        <div class="kpi"><div class="num blue">15,302</div><div class="lbl">高新中位价</div></div>
+        <div class="kpi"><div class="num red">31,761</div><div class="lbl">曲江均价</div></div>
+        <div class="kpi"><div class="num green">18</div><div class="lbl">覆盖板块数</div></div>
+        <div class="kpi"><div class="num blue">4,923</div><div class="lbl">在售总套数</div></div>
+    </div>
+
+    <!-- Unified Map -->
+    <div class="section">
+        <h2 class="section-title">双区统一地图</h2>
+        <p class="section-sub">蓝色 = 高新 TOP60 在售 | 红色 = 曲江 10 小区 | 圆点大小 = 在售套数</p>
+        <div id="unified-map"></div>
+    </div>
+
+    <!-- Quick comparison -->
+    <div class="section">
+        <h2 class="section-title">高新 vs 曲江 快速对比</h2>
+        <div style="background:white;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.05);padding:24px;max-width:700px;margin:0 auto;">
+            <div class="cmp-row">
+                <div class="cmp-label">均价</div>
+                <div class="cmp-bar-wrap">
+                    <div class="cmp-bar gx" style="width:55%">高新 ~20,800</div>
+                    <div class="cmp-bar qj" style="width:45%">曲江 31,761</div>
+                </div>
+            </div>
+            <div class="cmp-row">
+                <div class="cmp-label">样本数</div>
+                <div class="cmp-bar-wrap">
+                    <div class="cmp-bar gx" style="width:85%">高新 525</div>
+                    <div class="cmp-bar qj" style="width:15%">曲江 10</div>
+                </div>
+            </div>
+            <div class="cmp-row">
+                <div class="cmp-label">最高价</div>
+                <div class="cmp-bar-wrap">
+                    <div class="cmp-bar gx" style="width:59%">高新 89,622</div>
+                    <div class="cmp-bar qj" style="width:41%">曲江 61,556</div>
+                </div>
+            </div>
+            <div class="cmp-row">
+                <div class="cmp-label">定位</div>
+                <div class="cmp-bar-wrap">
+                    <div class="cmp-bar gx" style="width:50%">科技产业刚需+改善</div>
+                    <div class="cmp-bar qj" style="width:50%">文旅改善+豪宅</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Research Timeline -->
+    <div class="section">
+        <h2 class="section-title">研究时间线</h2>
+        <div style="max-width:700px;margin:0 auto;" class="timeline">
+            <div class="tl-item">
+                <div class="tl-dot" style="background:#3498db;"></div>
+                <div class="tl-content">
+                    <strong>高新区数据采集与地图</strong><br>
+                    抓取 525 小区二手房 + 60 新房数据，地理编码，高德 POI 验证（61.9% 精确匹配），产出交互地图。
+                    <div class="time">2026-02-09 ~ 02-10</div>
+                </div>
+            </div>
+            <div class="tl-item">
+                <div class="tl-dot" style="background:#e74c3c;"></div>
+                <div class="tl-content">
+                    <strong>曲江 vs 高新对比研究</strong><br>
+                    分析曲江 10 小区数据，发现曲江均价比高新高 53%，低密度大户型改善属性突出。
+                    <div class="time">2026-02-26 17:00 (自主推进)</div>
+                </div>
+            </div>
+            <div class="tl-item">
+                <div class="tl-dot" style="background:#2ecc71;"></div>
+                <div class="tl-content">
+                    <strong>高新区深度分析仪表盘</strong><br>
+                    525 小区全量分析：识别大寨路为最大价值洼地（中位 1.03 万，956 套），科技六路为最活跃高端板块。
+                    <div class="time">2026-02-26 21:00 (自主推进)</div>
+                </div>
+            </div>
+            <div class="tl-item">
+                <div class="tl-dot" style="background:#f39c12;"></div>
+                <div class="tl-content">
+                    <strong>统一门户 + 双区地图</strong><br>
+                    整合所有研究产出，创建统一入口页面，叠加高新 TOP60 + 曲江 10 小区于同一张地图。
+                    <div class="time">2026-02-26 23:00 (自主推进)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    西安房地产研究中心 | 数据来源 <a href="https://fang.com">房天下</a> + 高德地图 | 自动生成于 2026-02-26
+</div>
+
+<script>
+// === MAP DATA ===
+const gxTop60 = [
+    {"name":"香榭御澄","price":33439,"lat":34.200346,"lng":108.89339,"district":"科技六路","units":130},
+    {"name":"万达天樾","price":27297,"lat":34.1963,"lng":108.887216,"district":"科技六路","units":127},
+    {"name":"中华世纪城","price":15022,"lat":34.23513,"lng":108.877855,"district":"科技路西口","units":124},
+    {"name":"融侨城","price":15081,"lat":34.241763,"lng":108.877461,"district":"大寨路","units":122},
+    {"name":"万熙天地","price":18036,"lat":34.187073,"lng":108.893401,"district":"西万路口","units":111},
+    {"name":"紫薇田园都市","price":17120,"lat":34.169846,"lng":108.864943,"district":"锦业路","units":101},
+    {"name":"恒大城","price":11046,"lat":34.240783,"lng":108.859029,"district":"大寨路","units":98},
+    {"name":"宏府麒麟山","price":10254,"lat":34.24074,"lng":108.855213,"district":"大寨路","units":97},
+    {"name":"天地源枫林绿洲","price":24971,"lat":34.208116,"lng":108.891049,"district":"科技六路","units":93},
+    {"name":"中建国熙台","price":19937,"lat":34.236711,"lng":108.874815,"district":"科技路西口","units":91},
+    {"name":"逸翠园四期","price":29750,"lat":34.175061,"lng":108.865871,"district":"锦业路","units":87},
+    {"name":"逸翠园","price":26635,"lat":34.176246,"lng":108.872869,"district":"锦业路","units":84},
+    {"name":"中航华府","price":14480,"lat":34.237322,"lng":108.849333,"district":"大寨路","units":83},
+    {"name":"苏宁云著","price":16331,"lat":34.215188,"lng":108.832526,"district":"软件新城","units":82},
+    {"name":"万科高新华府","price":17117,"lat":34.174366,"lng":108.88277,"district":"西万路口","units":80},
+    {"name":"万科翡翠国宾","price":28615,"lat":34.200903,"lng":108.867958,"district":"科技六路","units":72},
+    {"name":"莱安逸珲","price":20423,"lat":34.236908,"lng":108.869517,"district":"科技路西口","units":65},
+    {"name":"金辉高新云璟","price":15009,"lat":34.234298,"lng":108.859762,"district":"大寨路","units":64},
+    {"name":"金地中央公园","price":20257,"lat":34.170534,"lng":108.888229,"district":"西万路口","units":63},
+    {"name":"东方米兰","price":11852,"lat":34.238109,"lng":108.873101,"district":"科技路西口","units":62},
+    {"name":"香榭兰廷","price":22711,"lat":34.203672,"lng":108.89394,"district":"科技六路","units":62},
+    {"name":"铭城国际社区","price":10765,"lat":34.240765,"lng":108.849996,"district":"大寨路","units":56},
+    {"name":"万达天玺","price":35026,"lat":34.200666,"lng":108.885537,"district":"科技六路","units":56},
+    {"name":"高新红枫林","price":13557,"lat":34.239971,"lng":108.871877,"district":"大寨路","units":55},
+    {"name":"昆明花园","price":11414,"lat":34.245324,"lng":108.871523,"district":"大寨路","units":55},
+    {"name":"绿地世纪城","price":19673,"lat":34.190285,"lng":108.866828,"district":"锦业路","units":55},
+    {"name":"天地源丹轩坊","price":43303,"lat":34.213781,"lng":108.889012,"district":"高新一中","units":54},
+    {"name":"天地源·云水天境","price":20853,"lat":34.212319,"lng":108.824246,"district":"软件新城","units":54},
+    {"name":"中建群贤汇","price":13875,"lat":34.238203,"lng":108.876812,"district":"科技路西口","units":51},
+    {"name":"中国铁建瑞园","price":12075,"lat":34.235378,"lng":108.871246,"district":"科技路西口","units":51},
+    {"name":"中大国际九号","price":89622,"lat":34.216386,"lng":108.890255,"district":"高新一中","units":48},
+    {"name":"逸翠园i都会","price":18210,"lat":34.179418,"lng":108.879446,"district":"锦业路","units":30},
+    {"name":"中海·学仕里","price":28278,"lat":34.14965,"lng":108.838799,"district":"CID","units":45},
+    {"name":"苏宁云著","price":16331,"lat":34.215188,"lng":108.832526,"district":"软件新城","units":82},
+    {"name":"绿城海棠三章","price":25063,"lat":34.210746,"lng":108.863286,"district":"软件新城","units":45},
+    {"name":"招商臻观府","price":23136,"lat":34.229099,"lng":108.833731,"district":"软件新城","units":25}
+];
+
+const qjData = [
+    {"name":"曲江公馆和园","price":61556,"lat":34.2082,"lng":108.9862,"units":10,"district":"曲江"},
+    {"name":"中海铂宫","price":40526,"lat":34.2193,"lng":108.9731,"units":5,"district":"曲江"},
+    {"name":"中海百贤府","price":46597,"lat":34.2050,"lng":108.9780,"units":1,"district":"曲江"},
+    {"name":"中海御湖公馆","price":29118,"lat":34.2130,"lng":108.9750,"units":20,"district":"曲江"},
+    {"name":"紫薇永和坊","price":22947,"lat":34.2170,"lng":108.9670,"units":22,"district":"曲江"},
+    {"name":"金地湖城大境","price":38921,"lat":34.2010,"lng":108.9700,"units":30,"district":"曲江"},
+    {"name":"曲江春晓苑","price":19715,"lat":34.2060,"lng":108.9640,"units":12,"district":"曲江"},
+    {"name":"丰景佳园","price":19524,"lat":34.2150,"lng":108.9780,"units":10,"district":"曲江"},
+    {"name":"曲江假日新嘉园","price":18410,"lat":34.2100,"lng":108.9630,"units":3,"district":"曲江"},
+    {"name":"曲江汇景新都","price":20298,"lat":34.2120,"lng":108.9710,"units":0,"district":"曲江"}
+];
+
+// === LEAFLET MAP ===
+const map = L.map("unified-map").setView([34.205, 108.92], 12);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "&copy; OpenStreetMap", maxZoom: 18
+}).addTo(map);
+
+// Gaoxin markers (blue)
+const gxLayer = L.layerGroup();
+gxTop60.forEach(d => {
+    const r = Math.max(5, Math.min(14, d.units / 12));
+    L.circleMarker([d.lat, d.lng], {
+        radius: r, color: "#3498db", fillColor: "#3498db", fillOpacity: 0.6, weight: 1
+    }).bindPopup(`<b>${d.name}</b><br><span style="color:#3498db;font-size:16px;font-weight:bold">${d.price.toLocaleString()} 元/㎡</span><br><span style="font-size:12px;color:#888">${d.district} | ${d.units}套在售</span>`)
+    .addTo(gxLayer);
+});
+gxLayer.addTo(map);
+
+// Qujiang markers (red)
+const qjLayer = L.layerGroup();
+qjData.forEach(d => {
+    const r = Math.max(6, Math.min(14, d.price / 5000));
+    L.circleMarker([d.lat, d.lng], {
+        radius: r, color: "#e74c3c", fillColor: "#e74c3c", fillOpacity: 0.7, weight: 1
+    }).bindPopup(`<b>${d.name}</b><br><span style="color:#e74c3c;font-size:16px;font-weight:bold">${d.price.toLocaleString()} 元/㎡</span><br><span style="font-size:12px;color:#888">曲江</span>`)
+    .addTo(qjLayer);
+});
+qjLayer.addTo(map);
+
+// Layer control
+L.control.layers(null, {
+    "高新 TOP60": gxLayer,
+    "曲江 10小区": qjLayer
+}, { collapsed: false, position: "topright" }).addTo(map);
+
+// Legend
+const legend = L.control({ position: "bottomright" });
+legend.onAdd = function() {
+    const div = L.DomUtil.create("div");
+    div.style.cssText = "background:white;padding:10px 14px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.15);font-size:12px;";
+    div.innerHTML = `
+        <div style="font-weight:bold;margin-bottom:6px;">图例</div>
+        <div style="display:flex;align-items:center;gap:6px;margin:3px 0"><span style="width:12px;height:12px;border-radius:50%;background:#3498db;display:inline-block"></span> 高新 (${gxTop60.length})</div>
+        <div style="display:flex;align-items:center;gap:6px;margin:3px 0"><span style="width:12px;height:12px;border-radius:50%;background:#e74c3c;display:inline-block"></span> 曲江 (${qjData.length})</div>
+        <div style="color:#999;margin-top:4px">圆点大小 = 供应量/价格</div>`;
+    return div;
+};
+legend.addTo(map);
+</script>
+</body>
+</html>

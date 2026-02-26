@@ -325,6 +325,126 @@
   .cycle-box .r { color: var(--red); }
   .cycle-box .g { color: var(--green); }
 
+  /* Six mismatches */
+  .mismatches {
+    padding: 48px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .mismatches h2 {
+    text-align: center;
+    font-size: 1.3em;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text2);
+    letter-spacing: 0.08em;
+  }
+  .mismatches .sub {
+    text-align: center;
+    color: var(--text2);
+    font-size: 0.88em;
+    margin-bottom: 28px;
+  }
+  .mm-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 14px;
+  }
+  .mm-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 22px;
+  }
+  .mm-card h3 {
+    font-size: 0.95em;
+    font-weight: 600;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .mm-card h3 .mm-num {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-size: 0.75em;
+    font-weight: 700;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .mm-bar-group { margin-bottom: 10px; }
+  .mm-bar-label {
+    font-size: 0.78em;
+    color: var(--text2);
+    margin-bottom: 3px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .mm-bar-track {
+    height: 8px;
+    background: var(--surface2);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .mm-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+  }
+  .mm-bar-fill.supply { background: var(--blue); }
+  .mm-bar-fill.demand { background: var(--orange); }
+  .mm-bar-fill.excess { background: var(--red); }
+  .mm-bar-fill.deficit { background: var(--green); }
+  .mm-note {
+    font-size: 0.8em;
+    color: var(--text2);
+    margin-top: 10px;
+    line-height: 1.5;
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+  }
+  .mm-note strong { color: var(--text); font-weight: 600; }
+
+  /* Blockages */
+  .blockages {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 28px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .blockage-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    text-align: center;
+  }
+  .blockage-card .bc-icon {
+    font-size: 1.6em;
+    margin-bottom: 8px;
+  }
+  .blockage-card h4 {
+    font-size: 0.9em;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .blockage-card p {
+    font-size: 0.8em;
+    color: var(--text2);
+    line-height: 1.5;
+  }
+  @media (max-width: 600px) {
+    .blockages { grid-template-columns: 1fr; }
+  }
+
   /* Footer */
   .footer {
     padding: 40px 0;
@@ -510,6 +630,136 @@
                                     │         │
                                     &darr;         │
                           <span class="r">需求不足</span> &rarr;&rarr;&rarr;&rarr;&rarr;&rarr;&rarr;&rarr;┘</div>
+  </section>
+
+  <!-- Six Mismatches -->
+  <section class="mismatches">
+    <h2>六 大 供 需 错 配</h2>
+    <p class="sub">不是简单的"多了"或"少了"，而是供给和需求在结构上对不上</p>
+    <div class="mm-grid">
+
+      <div class="mm-card">
+        <h3><span class="mm-num">1</span>制造业过剩 vs 服务业短缺</h3>
+        <div class="mm-bar-group">
+          <div class="mm-bar-label"><span>制造业产能利用率</span><span>74%</span></div>
+          <div class="mm-bar-track"><div class="mm-bar-fill excess" style="width:74%"></div></div>
+        </div>
+        <div class="mm-bar-group">
+          <div class="mm-bar-label"><span>光伏产能利用率</span><span>~50%</span></div>
+          <div class="mm-bar-track"><div class="mm-bar-fill excess" style="width:50%"></div></div>
+        </div>
+        <div class="mm-bar-group">
+          <div class="mm-bar-label"><span>3岁以下托幼覆盖率</span><span>5.5%</span></div>
+          <div class="mm-bar-track"><div class="mm-bar-fill deficit" style="width:5.5%"></div></div>
+        </div>
+        <div class="mm-note">养老床位缺口 500 万张，每千人医师 2.4（发达国家 3-4）。<strong>服务业每亿元投入创造就业是制造业的 1.5-2 倍</strong>。</div>
+      </div>
+
+      <div class="mm-card">
+        <h3><span class="mm-num">2</span>高端供给能力 vs 低端消费能力</h3>
+        <div class="mm-bar-group">
+          <div class="mm-bar-label"><span>高端消费群体</span><span>5%</span></div>
+          <div class="mm-bar-track"><div class="mm-bar-fill supply" style="width:5%"></div></div>
+        </div>
+        <div class="mm-bar-group">
+          <div class="mm-bar-label"><span>中端消费群体</span><span>35%</span></div>
+          <div class="mm-bar-track"><div class="mm-bar-fill demand" style="width:35%"></div></div>
+        </div>
+        <div class="mm-bar-group">
+          <div class="mm-bar-label"><span>基础消费群体</span><span>60%</span></div>
+          <div class="mm-bar-track"><div class="mm-bar-fill excess" style="width:60%"></div></div>
+        </div>
+        <div class="mm-note"><strong>产业政策推动供给向高端走，分配政策没有同步让需求跟上。</strong>高端产品靠出口消化，国内市场"消费降级"。</div>
+      </div>
+
+      <div class="mm-card">
+        <h3><span class="mm-num">3</span>投资的地方 vs 需要投资的地方</h3>
+        <div class="mm-bar-group">
+          <div class="mm-bar-label"><span>基建投资</span><span>~20 万亿</span></div>
+          <div class="mm-bar-track"><div class="mm-bar-fill excess" style="width:80%"></div></div>
+        </div>
+        <div class="mm-bar-group">
+          <div class="mm-bar-label"><span>制造业投资</span><span>~16 万亿</span></div>
+          <div class="mm-bar-track"><div class="mm-bar-fill demand" style="width:64%"></div></div>
+        </div>
+        <div class="mm-bar-group">
+          <div class="mm-bar-label"><span>社保支出 / GDP</span><span>10%</span></div>
+          <div class="mm-bar-track"><div class="mm-bar-fill deficit" style="width:33%"></div></div>
+        </div>
+        <div class="mm-note">社保占 GDP 仅 10%（发达国家 18-30%）。基础研究经费仅占 R&D 的 6.8%。<strong>激励机制错位：考核 GDP，不考核居民福利。</strong></div>
+      </div>
+
+      <div class="mm-card">
+        <h3><span class="mm-num">4</span>劳动力技能 vs 产业需求</h3>
+        <div class="mm-bar-group">
+          <div class="mm-bar-label"><span>年大学毕业生</span><span>1,179 万</span></div>
+          <div class="mm-bar-track"><div class="mm-bar-fill supply" style="width:37%"></div></div>
+        </div>
+        <div class="mm-bar-group">
+          <div class="mm-bar-label"><span>技术工人缺口</span><span>~2,000 万</span></div>
+          <div class="mm-bar-track"><div class="mm-bar-fill excess" style="width:63%"></div></div>
+        </div>
+        <div class="mm-bar-group">
+          <div class="mm-bar-label"><span>青年失业率</span><span>15-17%</span></div>
+          <div class="mm-bar-track"><div class="mm-bar-fill excess" style="width:48%"></div></div>
+        </div>
+        <div class="mm-note">大学培养最多的岗位（行政、文案）正被 AI 替代。<strong>青年失业率高企与制造业"招工难"并存</strong>——典型的结构性错配。</div>
+      </div>
+
+      <div class="mm-card">
+        <h3><span class="mm-num">5</span>居民储蓄 vs 投资渠道</h3>
+        <div class="mm-bar-group">
+          <div class="mm-bar-label"><span>房产配置</span><span>~63%</span></div>
+          <div class="mm-bar-track"><div class="mm-bar-fill excess" style="width:63%"></div></div>
+        </div>
+        <div class="mm-bar-group">
+          <div class="mm-bar-label"><span>银行存款</span><span>~22%</span></div>
+          <div class="mm-bar-track"><div class="mm-bar-fill demand" style="width:22%"></div></div>
+        </div>
+        <div class="mm-bar-group">
+          <div class="mm-bar-label"><span>股票 + 基金</span><span>~6%</span></div>
+          <div class="mm-bar-track"><div class="mm-bar-fill deficit" style="width:6%"></div></div>
+        </div>
+        <div class="mm-note">151 万亿居民存款找不到好的投资渠道。A 股长期不给投资者赚钱。<strong>储蓄无法有效转化为投资和消费——供需循环断裂的金融表现。</strong></div>
+      </div>
+
+      <div class="mm-card">
+        <h3><span class="mm-num">6</span>城市化的人 vs 城市化的权利</h3>
+        <div class="mm-bar-group">
+          <div class="mm-bar-label"><span>常住人口城镇化率</span><span>~67%</span></div>
+          <div class="mm-bar-track"><div class="mm-bar-fill supply" style="width:67%"></div></div>
+        </div>
+        <div class="mm-bar-group">
+          <div class="mm-bar-label"><span>户籍人口城镇化率</span><span>~48%</span></div>
+          <div class="mm-bar-track"><div class="mm-bar-fill excess" style="width:48%"></div></div>
+        </div>
+        <div class="mm-bar-group">
+          <div class="mm-bar-label"><span>差距 = 2.6 亿人无完整市民权利</span><span>19pp</span></div>
+          <div class="mm-bar-track"><div class="mm-bar-fill deficit" style="width:28%"></div></div>
+        </div>
+        <div class="mm-note">农民工消费行为是"暂住者"模式。<strong>户籍城镇化率每提高 1 个百分点，可增加消费 2,000-3,000 亿元。</strong></div>
+      </div>
+
+    </div>
+
+    <!-- Three structural blockages -->
+    <div class="blockages">
+      <div class="blockage-card">
+        <div class="bc-icon" style="color:var(--red)">&#9671;</div>
+        <h4>分配堵点</h4>
+        <p>钱到不了消费者手里。劳动报酬占 GDP 仅 52%（发达国家 60-65%）。生产者分到的不够买回自己生产的东西。</p>
+      </div>
+      <div class="blockage-card">
+        <div class="bc-icon" style="color:var(--orange)">&#9671;</div>
+        <h4>制度堵点</h4>
+        <p>想花花不了。医疗、教育、养老、金融——有支付意愿的领域供给被管制，民营资本进不去或不敢进。</p>
+      </div>
+      <div class="blockage-card">
+        <div class="bc-icon" style="color:var(--blue)">&#9671;</div>
+        <h4>预期堵点</h4>
+        <p>不敢花。居民预期收入下降不消费，企业预期需求下降不投资，银行预期不良上升不放贷——合成谬误。</p>
+      </div>
+    </div>
   </section>
 
   <!-- Footer -->

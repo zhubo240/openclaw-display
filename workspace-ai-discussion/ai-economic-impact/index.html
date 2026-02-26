@@ -165,9 +165,35 @@
   .phase-card p { font-size: 0.8rem; color: #8896a8; line-height: 1.5; }
 
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .mobile-nav-toggle {
+    display: none;
+    position: fixed; top: 12px; left: 12px; z-index: 200;
+    width: 40px; height: 40px; border-radius: 10px;
+    background: rgba(10, 14, 26, 0.9);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #a5b4c6; font-size: 1.2rem;
+    cursor: pointer; backdrop-filter: blur(12px);
+    align-items: center; justify-content: center;
+  }
+  .mobile-nav-toggle:hover { background: rgba(167,139,250,0.2); }
+
+  .sidebar-overlay {
+    display: none;
+    position: fixed; inset: 0; z-index: 99;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+  }
+  .sidebar-overlay.open { display: block; }
+
   @media (max-width: 800px) {
-    .sidebar { display: none; }
-    .main { margin-left: 0; }
+    .mobile-nav-toggle { display: flex; }
+    .sidebar {
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      z-index: 101;
+    }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; padding-top: 60px; }
     .two-col, .phase-timeline { grid-template-columns: 1fr; }
     .summary-grid { grid-template-columns: repeat(2, 1fr); }
   }
@@ -190,7 +216,9 @@
 </head>
 <body>
 
-<nav class="sidebar">
+<button class="mobile-nav-toggle" id="menuToggle" aria-label="Toggle navigation">&#9776;</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<nav class="sidebar" id="sidebar">
   <div class="logo">
     <h3>AI 经济影响分析</h3>
     <span>第一性原理推演 · 2025</span>
@@ -231,6 +259,14 @@
     <a class="nav-link" href="#data-inflation">数据膨胀真相</a>
     <a class="nav-link" href="#cost-zero">成本趋零的世界</a>
     <a class="nav-link" href="#three-eras">三个时代的逆转</a>
+    <a class="nav-link" href="#software-moat">软件壁垒消失</a>
+    <a class="nav-link" href="#equilibrium">极限均衡状态</a>
+    <a class="nav-link" href="#energy-constraint">能源约束分析</a>
+    <a class="nav-link" href="#reverse-training">AI 反向训练人</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">对话记录</div>
+    <a class="nav-link" href="需求-社会演化-AI.html" style="color:#f472b6;">⏳ 需求·社会演化·AI</a>
   </div>
 </nav>
 
@@ -790,6 +826,182 @@
     </div>
   </div>
 
+  <!-- ===== SECTION: SOFTWARE MOAT ===== -->
+  <div class="section" id="software-moat">
+    <h2>AI 搬回家与软件壁垒的消失</h2>
+    <div class="desc">算力从集中走向分散是反复出现的模式 · 软件的"杂质"正在被 AI 穿透</div>
+
+    <h4 style="font-size:0.85rem;color:#60a5fa;margin-bottom:10px">AI 本地化趋势：重演 PC 历史</h4>
+    <div class="phase-timeline">
+      <div class="phase-card" style="border-top-color:#4a5568">
+        <h4 style="color:#4a5568">2023</h4>
+        <div class="time">7B 参数，勉强能用</div>
+        <p>需要高端显卡，体验远低于云端。</p>
+      </div>
+      <div class="phase-card" style="border-top-color:#60a5fa">
+        <h4 style="color:#60a5fa">2025</h4>
+        <div class="time">70B+ 参数，接近商用</div>
+        <p>中端显卡即可运行，量化模型质量大幅提升。</p>
+      </div>
+      <div class="phase-card" style="border-top-color:#34d399">
+        <h4 style="color:#34d399">未来</h4>
+        <div class="time">可能就是一个普通盒子</div>
+        <p>AI 搬回家，云端平台的收税能力被绕开——<strong>公→私</strong>的逻辑再次验证。</p>
+      </div>
+    </div>
+
+    <h4 style="font-size:0.85rem;color:#f87171;margin:18px 0 10px">上个时代的完美闭环 → 被 AI 打破</h4>
+    <div class="layer-stack">
+      <div class="layer" style="background:rgba(167,139,250,0.12);border-left:4px solid #a78bfa">
+        <div>
+          <div class="name" style="color:#a78bfa">软件难写 → 稀缺 → 壁垒 → 高利润</div>
+          <div class="detail" style="color:#6b7a8d">供给侧的摩擦</div>
+        </div>
+        <div style="font-size:0.78rem;color:#a78bfa">+ </div>
+      </div>
+      <div class="layer" style="background:rgba(251,191,36,0.12);border-left:4px solid #fbbf24">
+        <div>
+          <div class="name" style="color:#fbbf24">商业强依赖软件 → 愿意付高价</div>
+          <div class="detail" style="color:#6b7a8d">需求侧的刚性</div>
+        </div>
+        <div style="font-size:0.78rem;color:#fbbf24">= </div>
+      </div>
+      <div class="layer" style="background:rgba(52,211,153,0.12);border-left:4px solid #34d399">
+        <div>
+          <div class="name" style="color:#34d399">过去 30 年科技行业的黄金结构</div>
+          <div class="detail" style="color:#6b7a8d">摩擦本身就是价值</div>
+        </div>
+      </div>
+    </div>
+    <div class="insight danger" style="margin-top:10px">
+      <strong>AI 精准击中供给侧：</strong>需求强 + 供给难 = 高利润 → 需求强 + 供给易 = <strong>利润压缩</strong>。纯数字公司变成"透明"的——AI 可以直接穿透它们，用户不需要看它就过去了。
+    </div>
+
+    <h4 style="font-size:0.85rem;color:#6b7a8d;margin:18px 0 10px">什么还有壁垒？</h4>
+    <table>
+      <tr><th>壁垒类型</th><th>例子</th><th>AI 能穿透？</th></tr>
+      <tr><td>物理网络</td><td>物流、基站、管道</td><td><span class="tag" style="background:rgba(52,211,153,0.2);color:#34d399">不能</span></td></tr>
+      <tr><td>硬件生态</td><td>芯片、设备</td><td><span class="tag" style="background:rgba(52,211,153,0.2);color:#34d399">不能</span></td></tr>
+      <tr><td>监管牌照</td><td>金融、医疗、电信</td><td><span class="tag" style="background:rgba(52,211,153,0.2);color:#34d399">不能</span></td></tr>
+      <tr><td>人际网络</td><td>社交图谱</td><td><span class="tag" style="background:rgba(251,191,36,0.2);color:#fbbf24">很难</span></td></tr>
+      <tr><td>纯软件/SaaS</td><td>工具、中间件</td><td><span class="tag" style="background:rgba(248,113,113,0.2);color:#f87171">可以</span></td></tr>
+      <tr><td>信息中介</td><td>搜索、内容平台</td><td><span class="tag" style="background:rgba(248,113,113,0.2);color:#f87171">可以</span></td></tr>
+    </table>
+
+    <h4 style="font-size:0.85rem;color:#6b7a8d;margin:18px 0 10px">物理世界 vs 数字世界：最硬的边界</h4>
+    <div class="two-col">
+      <div>
+        <div class="chart-container" style="height:240px">
+          <canvas id="chartDigitalPhysical"></canvas>
+        </div>
+      </div>
+      <div>
+        <div class="insight" style="margin-top:0">
+          <strong>AI 征服数字世界：~5-10 年</strong>（正在发生）<br>
+          <strong>AI 征服物理世界：~20-30 年</strong>（也许更久）<br><br>
+          这意味着未来二三十年，<strong>物理世界的能力反而可能变成最稀缺的资源</strong>。可能是历史上第一次，"动手"比"动脑"更值钱。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION: EQUILIBRIUM ===== -->
+  <div class="section" id="equilibrium">
+    <h2>数字生成成本趋近理论极限时的均衡状态</h2>
+    <div class="desc">当任何人都能近乎即时地生成数字世界的一切，世界的约束条件收敛到哪里？</div>
+
+    <h4 style="font-size:0.85rem;color:#6b7a8d;margin-bottom:10px">逐层排除稀缺性</h4>
+    <div class="layer-stack">
+      <div class="layer" style="background:rgba(74,85,104,0.2);border-left:4px solid #4a5568;text-decoration:line-through;opacity:0.5">
+        <div>
+          <div class="name" style="color:#4a5568">数字内容 / 知识 / 软件</div>
+          <div class="detail" style="color:#4a5568">人人可即时生成 → 不稀缺</div>
+        </div>
+      </div>
+      <div class="layer" style="background:rgba(74,85,104,0.2);border-left:4px solid #4a5568;text-decoration:line-through;opacity:0.5">
+        <div>
+          <div class="name" style="color:#4a5568">能源</div>
+          <div class="detail" style="color:#4a5568">兰道尔极限极低 + 能源技术进步 → 理论上不硬</div>
+        </div>
+      </div>
+      <div class="layer" style="background:rgba(248,113,113,0.12);border-left:4px solid #f87171">
+        <div>
+          <div class="name" style="color:#f87171">物质 / 原子</div>
+          <div class="detail" style="color:#6b7a8d">食物、住所、硬件 — 受物质守恒和热力学约束，不服从摩尔定律</div>
+        </div>
+        <div><span class="tag" style="background:rgba(248,113,113,0.2);color:#f87171">硬约束</span></div>
+      </div>
+      <div class="layer" style="background:rgba(251,191,36,0.12);border-left:4px solid #fbbf24">
+        <div>
+          <div class="name" style="color:#fbbf24">时间</div>
+          <div class="detail" style="color:#6b7a8d">人的寿命和注意力有硬上限 — 一天 24 小时不可改变</div>
+        </div>
+        <div><span class="tag" style="background:rgba(251,191,36,0.2);color:#fbbf24">绝对硬</span></div>
+      </div>
+      <div class="layer" style="background:rgba(167,139,250,0.12);border-left:4px solid #a78bfa">
+        <div>
+          <div class="name" style="color:#a78bfa">人的意愿</div>
+          <div class="detail" style="color:#6b7a8d">"想做什么"不可外包 — 当一切都能做时，"做什么"成为终极瓶颈</div>
+        </div>
+        <div><span class="tag" style="background:rgba(167,139,250,0.2);color:#a78bfa">终极稀缺</span></div>
+      </div>
+    </div>
+
+    <div class="flow-diagram" style="margin-top:16px">
+      <div class="flow-step" style="border-left-color:#60a5fa"><div class="icon" style="font-size:0.85rem">01</div><div class="text"><strong>经济结构倒转</strong> — 物理劳动和物理资产相对价值上升，数字劳动价值趋零</div></div>
+      <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:2px">↓</div>
+      <div class="flow-step" style="border-left-color:#a78bfa"><div class="icon" style="font-size:0.85rem">02</div><div class="text"><strong>竞争轴线转移</strong> — 从"谁能做出更好的数字产品"→"谁占有物理位置"+"谁能决定做什么"</div></div>
+      <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:2px">↓</div>
+      <div class="flow-step" style="border-left-color:#fbbf24"><div class="icon" style="font-size:0.85rem">03</div><div class="text"><strong>货币意义改变</strong> — 货币主要用来交换物理商品和物理体验，名义 GDP 可能缩水但生活水平大幅提升</div></div>
+      <div style="text-align:center;color:#4a5568;font-size:0.7rem;padding:2px">↓</div>
+      <div class="flow-step" style="border-left-color:#f472b6"><div class="icon" style="font-size:0.85rem">04</div><div class="text"><strong>稀缺性从能力转移到真实性</strong> — 不是"能不能做到"，而是"这是不是真的"</div></div>
+    </div>
+
+    <div class="insight" style="margin-top:14px;font-size:0.95rem;padding:16px 20px;background:rgba(167,139,250,0.08)">
+      <strong style="font-size:1rem">终极推论：</strong><br>
+      当外部约束全部消除，人面对的不再是工具性问题，而是存在性问题。<br>
+      <strong>技术解决了所有工具性的问题后，剩下的全是哲学问题。</strong>
+    </div>
+  </div>
+
+  <!-- ===== SECTION: ENERGY CONSTRAINT ===== -->
+  <div class="section" id="energy-constraint">
+    <h2>能源约束深度分析</h2>
+    <div class="desc">兰道尔极限 · 经典计算 · 量子计算 · 杰文斯悖论</div>
+
+    <h4 style="font-size:0.85rem;color:#60a5fa;margin-bottom:10px">三种计算的能效对比</h4>
+    <div class="chart-container" style="height:300px">
+      <canvas id="chartEnergyCompare"></canvas>
+    </div>
+
+    <table style="margin-top:14px">
+      <tr><th></th><th>每次运算能耗</th><th>与理论极限比值</th><th>备注</th></tr>
+      <tr><td style="color:#f87171">兰道尔极限</td><td>~3 × 10⁻²¹ J</td><td class="num">1x</td><td>热力学硬墙（kT·ln2）</td></tr>
+      <tr><td style="color:#60a5fa">当前 CPU/GPU</td><td>~10⁻¹² J</td><td class="num" style="color:#60a5fa">~10⁹x</td><td>还有 ~1000x 现实改进空间</td></tr>
+      <tr><td style="color:#a78bfa">量子比特操作</td><td>~10⁻¹⁸ J</td><td class="num" style="color:#a78bfa">~10³x</td><td>裸操作高效，但系统级 25-50kW</td></tr>
+    </table>
+
+    <h4 style="font-size:0.85rem;color:#fbbf24;margin:18px 0 10px">效率改善 vs 需求增长：杰文斯悖论</h4>
+    <div class="chart-container" style="height:280px">
+      <canvas id="chartJevons"></canvas>
+    </div>
+    <div class="insight warn" style="margin-top:14px">
+      <strong>杰文斯悖论：</strong>效率越高，用得越多，总消耗反而增加。AI 效率改善 ~2-3x/年，但需求增长 ~5-10x/年（Agent 自主运行、全面自动化）。需求增长持续快于效率改善。
+    </div>
+
+    <h4 style="font-size:0.85rem;color:#6b7a8d;margin:18px 0 10px">2035 年 AI 用电情景分析</h4>
+    <div class="chart-container" style="height:260px">
+      <canvas id="chartEnergyScenario"></canvas>
+    </div>
+
+    <div class="insight" style="margin-top:14px;font-size:0.95rem;padding:16px 20px">
+      <strong>结论：</strong>能源<strong>不会阻止</strong> AI 发展，但会<strong>决定 AI 发展的速度和形态</strong>。<br>
+      能源充裕 → AI 全面在线化、Agent 化、实时化<br>
+      能源紧张 → AI 更多走本地化、高效化、按需调用<br><br>
+      这解释了为什么科技巨头疯狂投资能源——<strong>谁控制了电力供给，谁就控制了 AI 规模化的节奏。</strong>
+    </div>
+  </div>
+
   <div style="text-align:center;padding:30px 0;color:#4a5568;font-size:0.75rem">
     基于 Compustat / CRSP 财务数据 + 第一性原理推演 · 2025 年 2 月<br>
     AI 未来推演 · 2026 年 2 月 对话整理
@@ -1132,6 +1344,112 @@ new Chart(document.getElementById('chartAttention'), {
   }
 });
 
+// === Digital vs Physical ===
+new Chart(document.getElementById('chartDigitalPhysical'), {
+  type: 'bar',
+  data: {
+    labels: ['试错成本', '环境复杂度', '迭代速度', '复制成本'],
+    datasets: [
+      { label: '数字世界', data: [1, 1, 95, 1], backgroundColor: '#60a5fa', borderRadius: 4 },
+      { label: '物理世界', data: [90, 95, 10, 85], backgroundColor: '#f87171', borderRadius: 4 },
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'bottom', labels: { padding: 12 } } },
+    scales: {
+      y: { max: 100, title: { display: true, text: '难度/成本 %', color: '#4a5568' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// === Energy Comparison (log scale) ===
+new Chart(document.getElementById('chartEnergyCompare'), {
+  type: 'bar',
+  data: {
+    labels: ['兰道尔极限\n~3×10⁻²¹ J', '量子比特操作\n~10⁻¹⁸ J', '当前 CPU/GPU\n~10⁻¹² J'],
+    datasets: [{
+      label: '每次运算能耗 (log₁₀ J)',
+      data: [-20.5, -18, -12],
+      backgroundColor: ['#f87171', '#a78bfa', '#60a5fa'],
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => {
+            const map = {0: '~3×10⁻²¹ J (理论极限)', 1: '~10⁻¹⁸ J (千倍于极限)', 2: '~10⁻¹² J (十亿倍于极限)'};
+            return map[ctx.dataIndex];
+          }
+        }
+      }
+    },
+    scales: {
+      x: { min: -22, max: -10, title: { display: true, text: 'log₁₀ 焦耳/运算', color: '#4a5568' } },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// === Jevons Paradox ===
+new Chart(document.getElementById('chartJevons'), {
+  type: 'line',
+  data: {
+    labels: ['2024','2025','2026','2027','2028','2029','2030','2032','2035'],
+    datasets: [
+      {
+        label: 'AI 效率改善 (累计)',
+        data: [1, 2.5, 6, 15, 40, 100, 250, 1500, 15000],
+        borderColor: '#34d399',
+        tension: 0.4, pointRadius: 3,
+      },
+      {
+        label: 'AI 需求增长 (累计)',
+        data: [1, 7, 50, 350, 2500, 17000, 120000, 600000, 5000000],
+        borderColor: '#f87171',
+        tension: 0.4, pointRadius: 3,
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'bottom', labels: { padding: 12, font: { size: 10.5 } } } },
+    scales: {
+      y: { type: 'logarithmic', title: { display: true, text: '累计倍数 (对数)', color: '#4a5568' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// === Energy Scenarios 2035 ===
+new Chart(document.getElementById('chartEnergyScenario'), {
+  type: 'bar',
+  data: {
+    labels: ['当前 AI 用电', '全球电力产量\n(2025)', '保守 (~10%)', '基准 (~25%)', '激进 (>50%)', '全球电力产量\n(2035 预估)'],
+    datasets: [{
+      label: 'TWh',
+      data: [400, 30000, 4000, 10000, 20000, 40000],
+      backgroundColor: ['#a78bfa', '#4a5568', '#34d399', '#fbbf24', '#f87171', '#4a5568'],
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false },
+      tooltip: { callbacks: { label: ctx => `${ctx.raw.toLocaleString()} TWh` } }
+    },
+    scales: {
+      y: { title: { display: true, text: 'TWh/年', color: '#4a5568' }, ticks: { callback: v => `${(v/1000).toFixed(0)}k` } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
 // === Sidebar active state ===
 const sections = document.querySelectorAll('.section');
 const navLinks = document.querySelectorAll('.nav-link');
@@ -1146,6 +1464,34 @@ const observer = new IntersectionObserver(entries => {
   });
 }, { rootMargin: '-20% 0px -70% 0px' });
 sections.forEach(s => observer.observe(s));
+
+// === Mobile nav toggle ===
+const menuToggle = document.getElementById('menuToggle');
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('sidebarOverlay');
+
+function openSidebar() {
+  sidebar.classList.add('open');
+  overlay.classList.add('open');
+  menuToggle.innerHTML = '&#10005;';
+}
+function closeSidebar() {
+  sidebar.classList.remove('open');
+  overlay.classList.remove('open');
+  menuToggle.innerHTML = '&#9776;';
+}
+
+menuToggle.addEventListener('click', () => {
+  sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+});
+overlay.addEventListener('click', closeSidebar);
+
+// Close sidebar when clicking a nav link on mobile
+document.querySelectorAll('.nav-link').forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 800) closeSidebar();
+  });
+});
 </script>
 </body>
 </html>

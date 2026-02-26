@@ -208,7 +208,7 @@
   <div class="nav-group">
     <div class="nav-group-title">四层分析框架</div>
     <a class="nav-link" href="#traditional">传统因素（模型崩溃）</a>
-    <a class="nav-link" href="#central-bank">央行购金（结构断裂）</a>
+    <a class="nav-link" href="#central-bank">央行购金 + 储备转换</a>
     <a class="nav-link" href="#fiscal">财政可持续性</a>
     <a class="nav-link" href="#zero-sum">正和 → 零和（根本）</a>
   </div>
@@ -355,15 +355,26 @@
         </div>
       </div>
       <div>
-        <h4 style="font-size:0.85rem;color:#6b7a8d;margin-bottom:8px">主要买家（2020-2025 累计）</h4>
-        <table>
-          <tr><th>国家</th><th>黄金储备</th><th>特点</th></tr>
-          <tr><td style="color:#f87171">中国</td><td class="num">2,296 吨</td><td>连续 15 个月增持</td></tr>
-          <tr><td style="color:#60a5fa">波兰</td><td class="num">550 吨</td><td>2024-25 年最大买家</td></tr>
-          <tr><td style="color:#fbbf24">印度</td><td class="num">880 吨</td><td>自 2017 年累计 +320 吨</td></tr>
-          <tr><td style="color:#a78bfa">土耳其</td><td class="num">644 吨</td><td>持续增持</td></tr>
-          <tr><td style="color:#34d399">俄罗斯</td><td class="num">2,329 吨</td><td>全球第五，年补充 ~150 吨</td></tr>
-        </table>
+        <h4 style="font-size:0.85rem;color:#6b7a8d;margin-bottom:8px">主要买家：当前黄金储备（吨）</h4>
+        <div class="chart-container" style="height:280px">
+          <canvas id="chartTopBuyers"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="two-col" style="margin-top:16px">
+      <div>
+        <h4 style="font-size:0.85rem;color:#fbbf24;margin-bottom:8px">黄金占全球官方储备比例 (%)</h4>
+        <div class="chart-container" style="height:260px">
+          <canvas id="chartGoldReserveShare"></canvas>
+        </div>
+      </div>
+      <div>
+        <h4 style="font-size:0.85rem;color:#6b7a8d;margin-bottom:8px">镜像对比</h4>
+        <div style="padding:16px;background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.15);border-radius:8px;font-size:0.82rem;line-height:1.8">
+          <div style="margin-bottom:8px"><strong style="color:#fbbf24">美元占比</strong>：72% → 56.3%（-16pp）</div>
+          <div style="margin-bottom:8px"><strong style="color:#fbbf24">黄金占比</strong>：&lt;10% → 23%（+13pp，翻倍以上）</div>
+          <div style="color:#6b7a8d;border-top:1px solid rgba(255,255,255,0.06);padding-top:8px;margin-top:8px">此消彼长：各国央行从持有美元债转向持有实物黄金，这一结构性转换在 2022 年俄储备被冻结后加速。</div>
+        </div>
       </div>
     </div>
     <div class="insight danger" style="margin-top:16px">
@@ -785,6 +796,68 @@ new Chart(document.getElementById('chartCBGold'), {
     },
     scales: {
       y: { title: { display: true, text: '吨', color: '#4a5568' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// === 3b. Top Central Bank Buyers (horizontal bar) ===
+new Chart(document.getElementById('chartTopBuyers'), {
+  type: 'bar',
+  data: {
+    labels: ['俄罗斯', '中国', '印度', '土耳其', '波兰'],
+    datasets: [{
+      label: '黄金储备 (吨)',
+      data: [2329, 2296, 880, 644, 550],
+      backgroundColor: ['#34d399','#f87171','#fbbf24','#a78bfa','#60a5fa'],
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => `${ctx.raw.toLocaleString()} 吨` } }
+    },
+    scales: {
+      x: {
+        title: { display: true, text: '吨', color: '#4a5568' },
+        ticks: { callback: v => v.toLocaleString() }
+      },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// === 3c. Gold Share in Global Official Reserves ===
+new Chart(document.getElementById('chartGoldReserveShare'), {
+  type: 'line',
+  data: {
+    labels: ['2010','2012','2014','2016','2018','2020','2022','2024','2025'],
+    datasets: [{
+      label: '黄金占官方储备 (%)',
+      data: [9.5, 10.2, 10.8, 10.1, 10.4, 11.7, 15.2, 20.1, 23],
+      borderColor: '#fbbf24',
+      backgroundColor: 'rgba(251,191,36,0.1)',
+      fill: true,
+      tension: 0.3,
+      pointRadius: 5,
+      pointBackgroundColor: '#fbbf24',
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => `${ctx.raw}%` } }
+    },
+    scales: {
+      y: {
+        title: { display: true, text: '%', color: '#4a5568' },
+        ticks: { callback: v => `${v}%` },
+        min: 5, max: 28,
+      },
       x: { grid: { display: false } }
     }
   }

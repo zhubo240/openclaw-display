@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中证A500指数研究 | 2026年2月</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0f1117;
+    --card: #1a1d2e;
+    --card-alt: #212538;
+    --border: #2a2e42;
+    --text: #e4e4e7;
+    --text-dim: #9ca3af;
+    --accent: #3b82f6;
+    --accent2: #f59e0b;
+    --green: #22c55e;
+    --red: #ef4444;
+    --purple: #a78bfa;
+    --cyan: #06b6d4;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    padding: 80px 40px 60px;
+    text-align: center;
+    background: linear-gradient(135deg, #1a1d2e 0%, #0f1117 50%, #101a2e 100%);
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(ellipse at 30% 50%, rgba(59,130,246,0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 50%, rgba(245,158,11,0.05) 0%, transparent 50%);
+    animation: pulse 8s ease-in-out infinite alternate;
+  }
+  @keyframes pulse {
+    from { opacity: 0.6; transform: scale(1); }
+    to { opacity: 1; transform: scale(1.05); }
+  }
+  .hero-content { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
+  .hero h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), #60a5fa, var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+    letter-spacing: 2px;
+  }
+  .hero .subtitle { font-size: 1.1rem; color: var(--text-dim); margin-bottom: 32px; }
+
+  /* KPI Row */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .kpi {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 16px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .kpi:hover { transform: translateY(-4px); border-color: var(--accent); }
+  .kpi .value { font-size: 1.8rem; font-weight: 800; line-height: 1.2; }
+  .kpi .label { font-size: 0.82rem; color: var(--text-dim); margin-top: 4px; }
+  .kpi .tag {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+  .tag-blue { background: rgba(59,130,246,0.15); color: var(--accent); }
+  .tag-green { background: rgba(34,197,94,0.15); color: var(--green); }
+  .tag-amber { background: rgba(245,158,11,0.15); color: var(--accent2); }
+
+  /* Container */
+  .container { max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
+
+  /* Section */
+  .section { margin-bottom: 56px; }
+  .section-title {
+    font-size: 1.5rem; font-weight: 700; margin-bottom: 8px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-title .icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; font-size: 1rem;
+  }
+  .section-desc { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 24px; }
+
+  /* Cards */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: rgba(59,130,246,0.3); }
+  .card-full { grid-column: 1 / -1; }
+  .card h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 16px; color: var(--text); }
+
+  .chart-wrap { position: relative; width: 100%; max-height: 340px; }
+
+  /* Table */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  .data-table th {
+    text-align: left; padding: 10px 12px; color: var(--text-dim); font-weight: 500;
+    border-bottom: 1px solid var(--border); font-size: 0.8rem; letter-spacing: 0.5px;
+  }
+  .data-table td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .data-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .pos { color: var(--green); font-weight: 600; }
+  .neg { color: var(--red); font-weight: 600; }
+
+  /* Bar chart (horizontal) */
+  .hbar { margin-bottom: 14px; }
+  .hbar-label { font-size: 0.82rem; color: var(--text-dim); margin-bottom: 4px; display: flex; justify-content: space-between; }
+  .hbar-track { height: 10px; background: rgba(255,255,255,0.06); border-radius: 5px; overflow: hidden; }
+  .hbar-fill { height: 100%; border-radius: 5px; transition: width 1s ease; }
+
+  /* Comparison row */
+  .vs-row {
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    gap: 16px; align-items: center;
+  }
+  .vs-label { text-align: center; color: var(--text-dim); font-size: 0.9rem; font-weight: 600; }
+
+  /* Feature list */
+  .feature-list { list-style: none; }
+  .feature-list li {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .feature-list li:last-child { border-bottom: none; }
+  .feat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 7px; }
+  .feature-list .feat-title { font-weight: 600; font-size: 0.9rem; }
+  .feature-list .feat-desc { font-size: 0.82rem; color: var(--text-dim); margin-top: 2px; }
+
+  /* ETF cards */
+  .etf-card {
+    background: var(--card-alt); border-radius: 12px; padding: 20px;
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 12px; border: 1px solid var(--border); transition: border-color 0.2s;
+  }
+  .etf-card:hover { border-color: var(--accent); }
+  .etf-badge {
+    width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 0.7rem; flex-shrink: 0; line-height: 1.1; text-align: center;
+  }
+  .etf-info { flex: 1; }
+  .etf-name { font-weight: 600; font-size: 0.95rem; }
+  .etf-code { font-size: 0.8rem; color: var(--text-dim); }
+  .etf-meta { display: flex; gap: 16px; margin-top: 6px; }
+  .etf-meta span { font-size: 0.78rem; color: var(--text-dim); }
+  .etf-meta strong { color: var(--text); }
+  .etf-tag {
+    padding: 4px 12px; border-radius: 20px; font-size: 0.72rem; font-weight: 600; white-space: nowrap;
+  }
+
+  /* Combo box */
+  .combo-box {
+    background: linear-gradient(135deg, rgba(59,130,246,0.08), rgba(245,158,11,0.06));
+    border: 1px solid rgba(59,130,246,0.2);
+    border-radius: 16px; padding: 32px;
+  }
+  .combo-box h3 { font-size: 1.2rem; color: var(--accent); margin-bottom: 20px; }
+  .combo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+  .combo-item .combo-label { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 4px; }
+  .combo-item .combo-value { font-size: 1.15rem; font-weight: 700; }
+
+  /* Footer */
+  .footer {
+    text-align: center; padding: 40px 24px; color: var(--text-dim);
+    font-size: 0.78rem; border-top: 1px solid var(--border);
+  }
+
+  /* Fade */
+  .fade-in { opacity: 0; transform: translateY(20px); animation: fadeIn 0.6s ease forwards; }
+  @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+  .delay-1 { animation-delay: 0.1s; }
+  .delay-2 { animation-delay: 0.2s; }
+  .delay-3 { animation-delay: 0.3s; }
+  .delay-4 { animation-delay: 0.4s; }
+  .delay-5 { animation-delay: 0.5s; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 2rem; }
+    .hero { padding: 48px 20px 40px; }
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .cards { grid-template-columns: 1fr; }
+    .combo-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-content">
+    <h1>中证A500指数研究</h1>
+    <p class="subtitle">中国版"标普500" &middot; 行业均衡的A股核心资产代表 &middot; 2026年2月</p>
+    <div class="kpi-row">
+      <div class="kpi fade-in delay-1">
+        <div class="value" style="color:var(--accent)">500</div>
+        <div class="label">成分股数量</div>
+        <span class="tag tag-blue">行业均衡选样</span>
+      </div>
+      <div class="kpi fade-in delay-2">
+        <div class="value" style="color:var(--green)">10.7%</div>
+        <div class="label">回测年化收益</div>
+        <span class="tag tag-green">优于沪深300</span>
+      </div>
+      <div class="kpi fade-in delay-3">
+        <div class="value" style="color:var(--accent2)">93</div>
+        <div class="label">覆盖二级行业</div>
+        <span class="tag tag-amber">远超沪深300</span>
+      </div>
+      <div class="kpi fade-in delay-4">
+        <div class="value" style="color:var(--purple)">~40%</div>
+        <div class="label">信息技术+工业占比</div>
+        <span class="tag tag-blue">新经济倾斜</span>
+      </div>
+      <div class="kpi fade-in delay-5">
+        <div class="value" style="color:var(--cyan)">0.20%</div>
+        <div class="label">ETF综合费率</div>
+        <span class="tag tag-green">同类最低档</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- 编制规则 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(59,130,246,0.15)">&#9881;</span>
+      编制规则与创新
+    </div>
+    <p class="section-desc">三级行业均衡 + ESG约束 + 互联互通筛选——三重机制打造A股新一代宽基</p>
+    <div class="cards">
+      <div class="card">
+        <h3>核心选股机制</h3>
+        <ul class="feature-list">
+          <li>
+            <span class="feat-dot" style="background:var(--accent)"></span>
+            <div><div class="feat-title">行业代表性优先</div><div class="feat-desc">从中证三级行业出发，优选各细分领域市值最大、流动性最好的证券，而非简单按总市值排序</div></div>
+          </li>
+          <li>
+            <span class="feat-dot" style="background:var(--green)"></span>
+            <div><div class="feat-title">ESG约束</div><div class="feat-desc">剔除ESG评价C及以下的公司，降低"暴雷"风险</div></div>
+          </li>
+          <li>
+            <span class="feat-dot" style="background:var(--accent2)"></span>
+            <div><div class="feat-title">互联互通</div><div class="feat-desc">成分股必须属于沪股通或深股通，天然对接外资审美</div></div>
+          </li>
+          <li>
+            <span class="feat-dot" style="background:var(--purple)"></span>
+            <div><div class="feat-title">流动性门槛</div><div class="feat-desc">剔除过去一年日均成交额排名后10%的证券</div></div>
+          </li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>成分股来源</h3>
+        <div class="chart-wrap"><canvas id="chartSource"></canvas></div>
+        <div style="margin-top:16px;font-size:0.85rem;color:var(--text-dim)">
+          覆盖大盘蓝筹（沪深300段）+ 中盘成长（中证500/1000段），市值和风格更加均衡。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- A500 vs 沪深300 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(245,158,11,0.15)">&#9878;</span>
+      A500 vs 沪深300
+    </div>
+    <p class="section-desc">去金融化、拥抱新经济——A500的行业结构是其核心竞争力</p>
+    <div class="cards">
+      <div class="card card-full">
+        <h3>行业权重对比</h3>
+        <div class="chart-wrap"><canvas id="chartSector"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>关键差异</h3>
+        <table class="data-table">
+          <thead><tr><th>维度</th><th>中证A500</th><th>沪深300</th></tr></thead>
+          <tbody>
+            <tr><td>选股逻辑</td><td>行业代表性+市值</td><td>纯市值排序</td></tr>
+            <tr><td>成分股数</td><td>500</td><td>300</td></tr>
+            <tr><td>二级行业覆盖</td><td class="pos">93个</td><td>~60个</td></tr>
+            <tr><td>金融占比</td><td class="pos">~15%</td><td class="neg">~28%</td></tr>
+            <tr><td>信息技术+工业</td><td class="pos">~40%</td><td>~24%</td></tr>
+            <tr><td>ESG筛选</td><td class="pos">有</td><td>无</td></tr>
+            <tr><td>互联互通要求</td><td class="pos">有</td><td>无</td></tr>
+            <tr><td>前十权重集中度</td><td class="pos">~20%</td><td class="neg">~30%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h3>市值分布</h3>
+        <div class="chart-wrap"><canvas id="chartMcap"></canvas></div>
+        <div style="margin-top:16px;font-size:0.85rem;color:var(--text-dim)">
+          平均市值超1100亿元，但200亿以下中小盘仍占20%，大中小盘兼顾。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 历史业绩 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(34,197,94,0.15)">&#9650;</span>
+      历史业绩回测
+    </div>
+    <p class="section-desc">回测年化10.7%，几乎所有年份跑赢沪深300，年均超额约1-2%</p>
+    <div class="cards">
+      <div class="card">
+        <h3>逐年收益对比（回测）</h3>
+        <div class="chart-wrap"><canvas id="chartYearly"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>长期回测指标</h3>
+        <table class="data-table">
+          <thead><tr><th>指标</th><th class="num">A500全收益</th><th class="num">沪深300全收益</th></tr></thead>
+          <tbody>
+            <tr><td>累计涨幅</td><td class="num pos">~694%</td><td class="num">~580%</td></tr>
+            <tr><td>年化收益率</td><td class="num pos">~10.7%</td><td class="num">~9.4%</td></tr>
+            <tr><td>夏普比率</td><td class="num pos">~0.50</td><td class="num">~0.46</td></tr>
+            <tr><td>最大回撤</td><td class="num">-70.9%</td><td class="num neg">-72.3%</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:16px;padding:12px;background:rgba(239,68,68,0.08);border-radius:8px;font-size:0.82rem;color:var(--red)">
+          &#9888; 指数于2024年9月发布，长期数据基于回测，非实盘表现。超额能否持续有待验证。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 前十大权重股 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(167,139,250,0.15)">&#9733;</span>
+      前十大权重股
+    </div>
+    <p class="section-desc">权重分散，前十合计仅~20%，单一个股影响有限</p>
+    <div class="cards">
+      <div class="card card-full">
+        <table class="data-table">
+          <thead><tr><th>#</th><th>股票</th><th>行业</th><th class="num">权重</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>宁德时代</td><td>电力设备/新能源</td><td class="num">~2.8%</td></tr>
+            <tr><td>2</td><td>贵州茅台</td><td>食品饮料</td><td class="num">~2.5%</td></tr>
+            <tr><td>3</td><td>中国平安</td><td>保险</td><td class="num">~2.0%</td></tr>
+            <tr><td>4</td><td>招商银行</td><td>银行</td><td class="num">~1.9%</td></tr>
+            <tr><td>5</td><td>紫金矿业</td><td>有色金属</td><td class="num">~1.7%</td></tr>
+            <tr><td>6</td><td>中际旭创</td><td>光模块</td><td class="num">~1.6%</td></tr>
+            <tr><td>7</td><td>美的集团</td><td>家电</td><td class="num">~1.5%</td></tr>
+            <tr><td>8</td><td>兴业银行</td><td>银行</td><td class="num">~1.4%</td></tr>
+            <tr><td>9</td><td>新易盛</td><td>光模块</td><td class="num">~1.3%</td></tr>
+            <tr><td>10</td><td>长江电力</td><td>公用事业</td><td class="num">~1.3%</td></tr>
+            <tr style="font-weight:700;border-top:2px solid var(--border)"><td></td><td>合计</td><td></td><td class="num">~18%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ETF 选择 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(6,182,212,0.15)">&#9632;</span>
+      ETF 产品对比
+    </div>
+    <p class="section-desc">20+只同类ETF，费率一致（0.20%/年），选规模和流动性</p>
+
+    <div class="etf-card">
+      <div class="etf-badge" style="background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff">规模<br>第一</div>
+      <div class="etf-info">
+        <div class="etf-name">国泰中证A500ETF</div>
+        <div class="etf-code">159338 (深市)</div>
+        <div class="etf-meta">
+          <span>规模 <strong>~350亿+</strong></span>
+          <span>费率 <strong style="color:var(--green)">0.15%+0.05%</strong></span>
+          <span>个人投资者 <strong>34%</strong></span>
+        </div>
+      </div>
+      <span class="etf-tag" style="background:rgba(59,130,246,0.15);color:var(--accent)">首选</span>
+    </div>
+    <div class="etf-card">
+      <div class="etf-badge" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#000">品牌<br>效应</div>
+      <div class="etf-info">
+        <div class="etf-name">华夏中证A500ETF</div>
+        <div class="etf-code">512050 (沪市)</div>
+        <div class="etf-meta">
+          <span>规模 <strong>~300亿+</strong></span>
+          <span>费率 <strong style="color:var(--green)">0.15%+0.05%</strong></span>
+        </div>
+      </div>
+      <span class="etf-tag" style="background:rgba(245,158,11,0.15);color:var(--accent2)">头部产品</span>
+    </div>
+    <div class="etf-card">
+      <div class="etf-badge" style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#000">增长<br>快</div>
+      <div class="etf-info">
+        <div class="etf-name">嘉实中证A500ETF</div>
+        <div class="etf-code">159351 (深市)</div>
+        <div class="etf-meta">
+          <span>规模 <strong>~200亿+</strong></span>
+          <span>费率 <strong style="color:var(--green)">0.15%+0.05%</strong></span>
+        </div>
+      </div>
+      <span class="etf-tag" style="background:rgba(34,197,94,0.15);color:var(--green)">快速成长</span>
+    </div>
+    <div class="etf-card">
+      <div class="etf-badge" style="background:linear-gradient(135deg,#a78bfa,#7c3aed);color:#fff">机构<br>偏好</div>
+      <div class="etf-info">
+        <div class="etf-name">华泰柏瑞中证A500ETF</div>
+        <div class="etf-code">563360 (沪市)</div>
+        <div class="etf-meta">
+          <span>规模 <strong>~150亿+</strong></span>
+          <span>费率 <strong style="color:var(--green)">0.15%+0.05%</strong></span>
+        </div>
+      </div>
+      <span class="etf-tag" style="background:rgba(167,139,250,0.15);color:var(--purple)">机构持仓高</span>
+    </div>
+  </div>
+
+  <!-- 投资建议 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(245,158,11,0.15)">&#10070;</span>
+      投资建议
+    </div>
+    <p class="section-desc">A股核心底仓的最佳选择之一，定投入场，长期持有</p>
+
+    <div class="combo-box" style="margin-bottom:24px">
+      <h3>核心建议</h3>
+      <div class="combo-grid">
+        <div class="combo-item">
+          <div class="combo-label">投资方式</div>
+          <div class="combo-value" style="color:var(--accent)">定投为主</div>
+          <div style="font-size:0.82rem;color:var(--text-dim);margin-top:4px">分6-12个月定投入场<br>避免一次性高位买入</div>
+        </div>
+        <div class="combo-item">
+          <div class="combo-label">首选ETF</div>
+          <div class="combo-value" style="color:var(--accent2)">159338 / 512050</div>
+          <div style="font-size:0.82rem;color:var(--text-dim);margin-top:4px">规模和流动性双优<br>场外可选对应联接基金</div>
+        </div>
+        <div class="combo-item">
+          <div class="combo-label">配置比例</div>
+          <div class="combo-value" style="color:var(--green)">20% ~ 40%</div>
+          <div style="font-size:0.82rem;color:var(--text-dim);margin-top:4px">占权益类资产比例<br>作为A股核心底仓</div>
+        </div>
+        <div class="combo-item">
+          <div class="combo-label">预期年化</div>
+          <div class="combo-value" style="color:var(--purple)">8% ~ 12%</div>
+          <div style="font-size:0.82rem;color:var(--text-dim);margin-top:4px">回测10.7%年化<br>实际运行可能偏低</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <h3>优势</h3>
+        <ul class="feature-list">
+          <li>
+            <span class="feat-dot" style="background:var(--green)"></span>
+            <div><div class="feat-title">行业更均衡</div><div class="feat-desc">不被金融地产"绑架"，自然配置新经济龙头</div></div>
+          </li>
+          <li>
+            <span class="feat-dot" style="background:var(--green)"></span>
+            <div><div class="feat-title">长期超额</div><div class="feat-desc">回测年化超额沪深300约1.3%，夏普比率更优</div></div>
+          </li>
+          <li>
+            <span class="feat-dot" style="background:var(--green)"></span>
+            <div><div class="feat-title">互联互通属性</div><div class="feat-desc">成分股均可被外资买入，天然对接北向资金审美</div></div>
+          </li>
+          <li>
+            <span class="feat-dot" style="background:var(--green)"></span>
+            <div><div class="feat-title">ESG筛选</div><div class="feat-desc">剔除ESG差的公司，降低"暴雷"概率</div></div>
+          </li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>风险</h3>
+        <ul class="feature-list">
+          <li>
+            <span class="feat-dot" style="background:var(--red)"></span>
+            <div><div class="feat-title">回测 ≠ 实盘</div><div class="feat-desc">指数实际运行不到两年，长期超额能否持续有待验证</div></div>
+          </li>
+          <li>
+            <span class="feat-dot" style="background:var(--red)"></span>
+            <div><div class="feat-title">最大回撤仍很大</div><div class="feat-desc">-70.9%的历史回撤与沪深300相当，不具备防守属性</div></div>
+          </li>
+          <li>
+            <span class="feat-dot" style="background:var(--accent2)"></span>
+            <div><div class="feat-title">资金拥挤</div><div class="feat-desc">大量资金涌入A500 ETF，可能推高成分股估值、压缩未来回报</div></div>
+          </li>
+          <li>
+            <span class="feat-dot" style="background:var(--accent2)"></span>
+            <div><div class="feat-title">与沪深300高度重叠</div><div class="feat-desc">234只成分股重叠（47%），差异化程度有限</div></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 搭配策略 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(167,139,250,0.15)">&#9876;</span>
+      A500 + 红利低波搭配
+    </div>
+    <p class="section-desc">进攻 + 防守的"核心+卫星"配置</p>
+    <div class="cards">
+      <div class="card card-full">
+        <table class="data-table">
+          <thead><tr><th>组合比例</th><th>进攻性</th><th>防御性</th><th>适合场景</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600">A500 70% : 红利低波 30%</td><td class="pos">高</td><td>中</td><td>看好成长，愿承担波动</td></tr>
+            <tr><td style="font-weight:600">A500 50% : 红利低波 50%</td><td>中</td><td>中</td><td>均衡配置，攻守兼备</td></tr>
+            <tr><td style="font-weight:600">A500 30% : 红利低波 70%</td><td>低</td><td class="pos">高</td><td>偏保守，追求稳定收益</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <p>免责声明：以上内容仅为公开信息整理和研究参考，不构成任何投资建议。投资有风险，入市需谨慎。</p>
+  <p style="margin-top:8px">数据来源：中证指数官网、中国基金报、东方财富、广发策略、嘉实基金等公开渠道 &middot; 研究日期 2026-02-26</p>
+</div>
+
+<script>
+Chart.defaults.color = '#9ca3af';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.font.family = '-apple-system, "PingFang SC", sans-serif';
+
+// 1. Source pie chart
+new Chart(document.getElementById('chartSource'), {
+  type: 'doughnut',
+  data: {
+    labels: ['来自沪深300 (234只)', '来自中证500 (207只)', '来自中证1000 (59只)'],
+    datasets: [{
+      data: [234, 207, 59],
+      backgroundColor: ['#3b82f6', '#f59e0b', '#a78bfa'],
+      borderWidth: 0,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false, cutout: '55%',
+    plugins: {
+      legend: { position: 'bottom', labels: { boxWidth: 10, padding: 12, font: { size: 12 } } },
+      tooltip: { callbacks: { label: ctx => ctx.label + ' (' + Math.round(ctx.parsed/5) + '%)' } }
+    }
+  }
+});
+
+// 2. Sector comparison
+new Chart(document.getElementById('chartSector'), {
+  type: 'bar',
+  data: {
+    labels: ['信息技术', '工业', '金融', '可选消费', '日常消费', '医药卫生', '原材料', '通信', '公用事业', '房地产'],
+    datasets: [
+      { label: '中证A500', data: [20, 20, 15, 10, 8, 8, 7, 6, 4, 2], backgroundColor: '#3b82f6', borderRadius: 4 },
+      { label: '沪深300', data: [14, 10, 28, 8, 10, 7, 5, 4, 6, 3], backgroundColor: 'rgba(245,158,11,0.6)', borderRadius: 4 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'top', labels: { boxWidth: 12, padding: 16 } },
+      tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y + '%' } }
+    },
+    scales: {
+      y: { ticks: { callback: v => v + '%' }, grid: { color: 'rgba(255,255,255,0.04)' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// 3. Market cap
+new Chart(document.getElementById('chartMcap'), {
+  type: 'doughnut',
+  data: {
+    labels: ['≥1000亿', '500-999亿', '300-499亿', '200-299亿', '<200亿'],
+    datasets: [{
+      data: [22, 18, 19, 21, 20],
+      backgroundColor: ['#3b82f6', '#60a5fa', '#93c5fd', '#f59e0b', '#fbbf24'],
+      borderWidth: 0,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false, cutout: '55%',
+    plugins: {
+      legend: { position: 'bottom', labels: { boxWidth: 10, padding: 10, font: { size: 11 } } },
+      tooltip: { callbacks: { label: ctx => ctx.label + ': ' + ctx.parsed + '%' } }
+    }
+  }
+});
+
+// 4. Yearly returns
+new Chart(document.getElementById('chartYearly'), {
+  type: 'bar',
+  data: {
+    labels: ['2019', '2020', '2021', '2022', '2023', '2024', '2025'],
+    datasets: [
+      { label: '中证A500', data: [40.6, 34.1, 2.1, -19.8, -8.5, 16.2, 24.0], backgroundColor: '#3b82f6', borderRadius: 4 },
+      { label: '沪深300', data: [36.1, 27.2, -5.2, -21.6, -11.4, 14.7, 19.1], backgroundColor: 'rgba(245,158,11,0.6)', borderRadius: 4 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'top', labels: { boxWidth: 12, padding: 16 } },
+      tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y + '%' } }
+    },
+    scales: {
+      y: { ticks: { callback: v => v + '%' }, grid: { color: 'rgba(255,255,255,0.04)' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// Scroll animation
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) { entry.target.classList.add('fade-in'); observer.unobserve(entry.target); }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.section').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>西安曲江 vs 高新 — 房价对比研究</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; background: #f5f6fa; color: #2c3e50; }
+        .header { background: linear-gradient(135deg, #2c3e50, #3498db); color: white; padding: 32px 24px 24px; }
+        .header h1 { font-size: 26px; margin-bottom: 6px; }
+        .header p { opacity: 0.85; font-size: 14px; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+        .section { margin: 24px 0; }
+        .section-title { font-size: 18px; font-weight: 700; margin-bottom: 14px; padding-left: 10px; border-left: 4px solid #3498db; }
+        .card { background: white; border-radius: 10px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); padding: 20px; margin-bottom: 20px; }
+
+        /* KPI row */
+        .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin: 20px 0; }
+        .kpi { background: white; border-radius: 10px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); padding: 18px 20px; text-align: center; }
+        .kpi .label { font-size: 13px; color: #888; margin-bottom: 6px; }
+        .kpi .value { font-size: 28px; font-weight: 700; }
+        .kpi .value.qj { color: #e74c3c; }
+        .kpi .value.gx { color: #3498db; }
+        .kpi .sub { font-size: 12px; color: #aaa; margin-top: 4px; }
+
+        /* Comparison table */
+        .cmp-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .cmp-table th { background: #f8f9fa; padding: 10px 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #e9ecef; }
+        .cmp-table td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; }
+        .cmp-table tr:hover td { background: #f8f9fa; }
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; color: white; }
+        .tag-qj { background: #e74c3c; }
+        .tag-gx { background: #3498db; }
+
+        /* Bar chart */
+        .bar-chart { margin: 10px 0; }
+        .bar-row { display: flex; align-items: center; margin: 6px 0; }
+        .bar-label { width: 130px; font-size: 13px; text-align: right; padding-right: 10px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .bar-track { flex: 1; height: 22px; background: #f0f0f0; border-radius: 4px; overflow: hidden; position: relative; }
+        .bar-fill { height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 8px; font-size: 11px; color: white; font-weight: 600; min-width: 40px; }
+        .bar-fill.qj { background: linear-gradient(90deg, #e74c3c, #c0392b); }
+        .bar-fill.gx { background: linear-gradient(90deg, #3498db, #2980b9); }
+
+        /* Map */
+        #map { width: 100%; height: 420px; border-radius: 10px; }
+
+        /* Insights */
+        .insight-list { list-style: none; }
+        .insight-list li { padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; line-height: 1.7; }
+        .insight-list li:last-child { border-bottom: none; }
+        .insight-list li strong { color: #e74c3c; }
+
+        .footer { text-align: center; padding: 24px; font-size: 12px; color: #aaa; }
+
+        @media (max-width: 600px) {
+            .header h1 { font-size: 20px; }
+            .kpi-row { grid-template-columns: 1fr 1fr; }
+            .bar-label { width: 80px; font-size: 11px; }
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <div class="container">
+        <h1>西安曲江 vs 高新 — 二手房价对比研究</h1>
+        <p>数据来源：房天下 fang.com | 采集时间 2026-02-09 ~ 02-10 | 自动分析生成于 2026-02-26</p>
+    </div>
+</div>
+<div class="container">
+
+    <!-- KPI -->
+    <div class="kpi-row">
+        <div class="kpi">
+            <div class="label">曲江样本均价</div>
+            <div class="value qj">31,761</div>
+            <div class="sub">元/㎡ (10个小区)</div>
+        </div>
+        <div class="kpi">
+            <div class="label">高新样本均价</div>
+            <div class="value gx">~20,800</div>
+            <div class="sub">元/㎡ (60个小区)</div>
+        </div>
+        <div class="kpi">
+            <div class="label">曲江溢价</div>
+            <div class="value qj">+53%</div>
+            <div class="sub">相对高新加权均价</div>
+        </div>
+        <div class="kpi">
+            <div class="label">曲江最高价</div>
+            <div class="value qj">61,556</div>
+            <div class="sub">曲江公馆和园</div>
+        </div>
+    </div>
+
+    <!-- 小区价格条形图 -->
+    <div class="section">
+        <h2 class="section-title">曲江 10 个小区 — 均价排名</h2>
+        <div class="card">
+            <div class="bar-chart" id="qj-bars"></div>
+        </div>
+    </div>
+
+    <!-- 对比表 -->
+    <div class="section">
+        <h2 class="section-title">核心指标对比</h2>
+        <div class="card" style="overflow-x:auto;">
+            <table class="cmp-table">
+                <thead>
+                    <tr><th>指标</th><th><span class="tag tag-qj">曲江</span></th><th><span class="tag tag-gx">高新</span></th><th>差异</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>样本小区数</td><td>10</td><td>60 (在售) / 525 (总)</td><td>曲江数据覆盖面小</td></tr>
+                    <tr><td>均价范围</td><td>18,410 ~ 61,556</td><td>7,244 ~ 89,622</td><td>高新跨度更大</td></tr>
+                    <tr><td>中位价</td><td>~26,000</td><td>~17,000</td><td>曲江高 53%</td></tr>
+                    <tr><td>建成年份</td><td>2003 ~ 2014</td><td>1990 ~ 2027</td><td>曲江样本更集中</td></tr>
+                    <tr><td>平均总户数</td><td>~1,326</td><td>—</td><td>曲江大盘居多</td></tr>
+                    <tr><td>平均容积率</td><td>~1.93</td><td>—</td><td>低密度改善型</td></tr>
+                    <tr><td>平均绿化率</td><td>~41%</td><td>—</td><td>曲江绿化优势</td></tr>
+                    <tr><td>主力户型面积</td><td>89 ~ 903 ㎡</td><td>—</td><td>大面积改善为主</td></tr>
+                    <tr><td>POI 验证</td><td>未做</td><td>61.9% 精确匹配</td><td>曲江待跑 POI 验证</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 地图 -->
+    <div class="section">
+        <h2 class="section-title">地图：曲江小区分布 vs 高新热力区</h2>
+        <div class="card" style="padding: 0; overflow: hidden; border-radius: 10px;">
+            <div id="map"></div>
+        </div>
+    </div>
+
+    <!-- 高新分片区 vs 曲江 -->
+    <div class="section">
+        <h2 class="section-title">高新各片区 vs 曲江 均价对比</h2>
+        <div class="card">
+            <div class="bar-chart" id="zone-bars"></div>
+        </div>
+    </div>
+
+    <!-- 关键发现 -->
+    <div class="section">
+        <h2 class="section-title">关键发现</h2>
+        <div class="card">
+            <ol class="insight-list">
+                <li><strong>曲江整体定价显著高于高新</strong> — 曲江 10 个样本小区均价 31,761 元/㎡，比高新加权均价（~20,800）高出约 53%。这与曲江"文旅改善区"定位一致。</li>
+                <li><strong>曲江呈双极分化</strong> — 高端盘（曲江公馆和园 6.1 万、中海百贤府 4.6 万）与老小区（曲江假日新嘉园 1.8 万、丰景佳园 1.9 万）差距达 3 倍以上。</li>
+                <li><strong>曲江小区普遍低密度、大户型</strong> — 平均容积率仅 1.93，绿化率 41%，主力户型起步 89㎡、豪宅段可达 900㎡，改善属性远强于高新。</li>
+                <li><strong>高新价格跨度更大</strong> — 从老旧家属院 7,244 到中大国际九号 89,622，内部分化比曲江更剧烈，投资需精选片区。</li>
+                <li><strong>曲江数据完整度不足</strong> — 仅 10 个小区，且缺少 POI 验证和在售套数。下一步应跑完曲江全量采集 + 高德 POI 校准。</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- 下一步 -->
+    <div class="section">
+        <h2 class="section-title">待推进事项</h2>
+        <div class="card">
+            <table class="cmp-table">
+                <thead><tr><th>优先级</th><th>事项</th><th>说明</th></tr></thead>
+                <tbody>
+                    <tr><td>P0</td><td>曲江全量二手房采集</td><td>复用 scrape_gaoxin_esf.py 脚本，目标覆盖 30+ 小区</td></tr>
+                    <tr><td>P0</td><td>曲江地理编码 + POI 验证</td><td>当前 10 个小区坐标精度混合（精确/近似），需统一校准</td></tr>
+                    <tr><td>P1</td><td>高新区数据刷新</td><td>数据已过半个月，重跑采集可做价格趋势对比</td></tr>
+                    <tr><td>P2</td><td>统一双区地图展示</td><td>在 index.html 地图中叠加曲江图层</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    自动生成于 2026-02-26 17:00 GMT+8 | Claude Code 自主推进
+</div>
+
+<script>
+// === 曲江小区数据 ===
+const qjData = [
+    { name: "曲江公馆和园", price: 61556, lat: 34.2082, lng: 108.9862, year: 2012, units: 1052, addr: "曲江池北路999号" },
+    { name: "中海百贤府", price: 46597, lat: 34.2050, lng: 108.9780, year: 2014, units: 104, addr: "寒窑路1158号" },
+    { name: "中海铂宫", price: 40526, lat: 34.2193, lng: 108.9731, year: 2012, units: 543, addr: "芙蓉东路99号" },
+    { name: "金地湖城大境", price: 38921, lat: 34.2010, lng: 108.9700, year: 2012, units: 3069, addr: "曲江池西路" },
+    { name: "中海御湖公馆", price: 29118, lat: 34.2130, lng: 108.9750, year: 2014, units: 2046, addr: "曲江路398号" },
+    { name: "紫薇永和坊", price: 22947, lat: 34.2170, lng: 108.9670, year: 2013, units: 2200, addr: "雁塔南路与雁展路交汇处" },
+    { name: "曲江汇景新都", price: 20298, lat: 34.2120, lng: 108.9710, year: 2004, units: null, addr: "曲江新区CCBD" },
+    { name: "曲江春晓苑", price: 19715, lat: 34.2060, lng: 108.9640, year: 2004, units: 1212, addr: "雁南五路8号" },
+    { name: "丰景佳园", price: 19524, lat: 34.2150, lng: 108.9780, year: 2004, units: 1004, addr: "芙蓉东路121号" },
+    { name: "曲江假日新嘉园", price: 18410, lat: 34.2100, lng: 108.9630, year: 2003, units: 376, addr: "雁南三路138号" }
+];
+
+// === 高新片区汇总 ===
+const gxZones = [
+    { name: "高新一期", avg: 20800, count: 28 },
+    { name: "高新二期", avg: 21500, count: 26 },
+    { name: "高新三期", avg: 28278, count: 1 },
+    { name: "软东", avg: 20200, count: 2 },
+    { name: "软西", avg: 17600, count: 3 }
+];
+
+// === 曲江条形图 ===
+const maxPrice = 65000;
+const qjBarsEl = document.getElementById("qj-bars");
+qjData.forEach(d => {
+    const pct = (d.price / maxPrice * 100).toFixed(1);
+    qjBarsEl.innerHTML += `
+        <div class="bar-row">
+            <div class="bar-label">${d.name}</div>
+            <div class="bar-track">
+                <div class="bar-fill qj" style="width:${pct}%">${d.price.toLocaleString()}</div>
+            </div>
+        </div>`;
+});
+
+// === 片区对比条形图 ===
+const zoneBarsEl = document.getElementById("zone-bars");
+const allZones = [
+    { name: "曲江 (整体)", avg: 31761, cls: "qj" },
+    ...gxZones.map(z => ({ ...z, cls: "gx" }))
+];
+allZones.sort((a, b) => b.avg - a.avg);
+const zoneMax = 35000;
+allZones.forEach(z => {
+    const pct = Math.min(z.avg / zoneMax * 100, 100).toFixed(1);
+    zoneBarsEl.innerHTML += `
+        <div class="bar-row">
+            <div class="bar-label">${z.name}</div>
+            <div class="bar-track">
+                <div class="bar-fill ${z.cls}" style="width:${pct}%">${z.avg.toLocaleString()}</div>
+            </div>
+        </div>`;
+});
+
+// === Leaflet 地图 ===
+const map = L.map("map").setView([34.21, 108.96], 13);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "&copy; OpenStreetMap", maxZoom: 18
+}).addTo(map);
+
+// 曲江小区标记 (红)
+qjData.forEach(d => {
+    L.circleMarker([d.lat, d.lng], {
+        radius: Math.max(6, Math.min(14, d.price / 5000)),
+        color: "#e74c3c", fillColor: "#e74c3c", fillOpacity: 0.7, weight: 1
+    }).addTo(map).bindPopup(`
+        <div style="font-size:14px;font-weight:bold;">${d.name}</div>
+        <div style="color:#e74c3c;font-size:16px;font-weight:bold;">${d.price.toLocaleString()} 元/㎡</div>
+        <div style="font-size:12px;color:#666;">${d.addr}<br>建成 ${d.year}${d.units ? " | " + d.units + " 户" : ""}</div>
+    `);
+});
+
+// 高新区域示意 (蓝色矩形)
+const gxBounds = [[34.19, 108.88], [34.26, 108.96]];
+L.rectangle(gxBounds, { color: "#3498db", weight: 2, fillOpacity: 0.08, dashArray: "6 4" }).addTo(map)
+    .bindPopup("<b>高新区</b><br>60个样本小区<br>加权均价 ~20,800 元/㎡");
+
+// 曲江区域示意 (红色矩形)
+const qjBounds = [[34.198, 108.958], [34.222, 108.992]];
+L.rectangle(qjBounds, { color: "#e74c3c", weight: 2, fillOpacity: 0.08, dashArray: "6 4" }).addTo(map)
+    .bindPopup("<b>曲江</b><br>10个样本小区<br>均价 31,761 元/㎡");
+
+// 图例
+const legend = L.control({ position: "topright" });
+legend.onAdd = function() {
+    const div = L.DomUtil.create("div", "");
+    div.style.cssText = "background:white;padding:10px 14px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.15);font-size:12px;";
+    div.innerHTML = `
+        <div style="font-weight:bold;margin-bottom:6px;">图例</div>
+        <div style="display:flex;align-items:center;gap:6px;margin:3px 0;"><span style="width:12px;height:12px;border-radius:50%;background:#e74c3c;display:inline-block;"></span> 曲江小区</div>
+        <div style="display:flex;align-items:center;gap:6px;margin:3px 0;"><span style="width:12px;height:12px;border-radius:50%;background:#3498db;display:inline-block;"></span> 高新区域</div>
+        <div style="margin-top:6px;color:#888;">圆点大小 = 价格</div>`;
+    return div;
+};
+legend.addTo(map);
+</script>
+</body>
+</html>

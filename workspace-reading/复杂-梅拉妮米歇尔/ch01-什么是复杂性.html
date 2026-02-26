@@ -161,6 +161,80 @@
       color: #cbd5e0;
     }
 
+    /* Property list */
+    .prop-list { list-style: none; margin: 20px 0; }
+    .prop-list li {
+      display: flex;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .prop-list li:last-child { border-bottom: none; }
+    .prop-num {
+      width: 30px; height: 30px;
+      background: rgba(99, 179, 237, 0.1);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 600; color: #63b3ed;
+      flex-shrink: 0; margin-top: 2px;
+    }
+    .prop-content h4 { font-size: 14px; color: #e2e8f0; margin-bottom: 2px; }
+    .prop-content .en-term { font-size: 12px; color: #718096; font-style: italic; margin-bottom: 4px; }
+    .prop-content p { font-size: 13px; color: #a0aec0; line-height: 1.7; }
+
+    /* Comparison table */
+    .cmp-table {
+      width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px;
+    }
+    .cmp-table th {
+      text-align: left; padding: 10px 14px;
+      background: rgba(99, 179, 237, 0.08); color: #63b3ed;
+      font-weight: 600; font-size: 12px; letter-spacing: 0.5px;
+      border-bottom: 1px solid rgba(99, 179, 237, 0.15);
+    }
+    .cmp-table td {
+      padding: 10px 14px; color: #a0aec0;
+      border-bottom: 1px solid rgba(255,255,255,0.04); line-height: 1.6;
+    }
+    .cmp-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+    /* People grid */
+    .people-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 10px; margin: 16px 0;
+    }
+    .person-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 10px; padding: 14px 16px;
+    }
+    .person-card h4 { font-size: 13px; color: #e2e8f0; margin-bottom: 2px; }
+    .person-card .role { font-size: 11px; color: #63b3ed; margin-bottom: 4px; }
+    .person-card p { font-size: 12px; color: #718096; line-height: 1.6; }
+
+    /* Definition box */
+    .def-box {
+      background: rgba(159, 122, 234, 0.05);
+      border: 1px solid rgba(159, 122, 234, 0.12);
+      border-radius: 10px; padding: 20px 24px; margin: 16px 0;
+    }
+    .def-box .def-label {
+      font-size: 11px; letter-spacing: 2px; color: #b794f4;
+      text-transform: uppercase; margin-bottom: 10px;
+    }
+    .def-box p { font-size: 14px; line-height: 1.8; color: #cbd5e0; }
+    .def-box p strong { color: #e2e8f0; }
+
+    /* Quote block */
+    .quote-block {
+      border-left: 3px solid rgba(99, 179, 237, 0.3);
+      padding: 14px 20px; margin: 20px 0;
+      background: rgba(99, 179, 237, 0.04);
+      border-radius: 0 8px 8px 0;
+    }
+    .quote-block p { font-size: 14px; color: #cbd5e0; line-height: 1.8; font-style: italic; }
+    .quote-block .attr { font-size: 12px; color: #718096; margin-top: 6px; font-style: normal; }
+
     /* Discussion section */
     .discussion {
       margin-top: 48px;
@@ -382,6 +456,144 @@
         <div class="label">一句话总结</div>
         <p>世界上有一大类现象——没人指挥，但整体表现出惊人的秩序和智能——传统科学解释不了，而复杂性科学就是要搞清楚这是怎么回事。</p>
       </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Six Properties -->
+    <section>
+      <h2 class="section-title">复杂系统的六大共同属性</h2>
+      <ul class="prop-list">
+        <li>
+          <span class="prop-num">1</span>
+          <div class="prop-content">
+            <h4>复杂的集体行为</h4>
+            <div class="en-term">Complex Collective Behavior</div>
+            <p>大量简单个体，各自遵循简单规则，整体却表现出远超个体能力的行为模式。</p>
+          </div>
+        </li>
+        <li>
+          <span class="prop-num">2</span>
+          <div class="prop-content">
+            <h4>信号传递与信息处理</h4>
+            <div class="en-term">Signaling and Information Processing</div>
+            <p>蚂蚁用信息素、神经元用电化学信号、经济体用价格——系统通过内部信号维持运作。</p>
+          </div>
+        </li>
+        <li>
+          <span class="prop-num">3</span>
+          <div class="prop-content">
+            <h4>适应性</h4>
+            <div class="en-term">Adaptation</div>
+            <p>通过学习或进化适应环境变化，是"复杂适应系统（CAS）"的核心。</p>
+          </div>
+        </li>
+        <li>
+          <span class="prop-num">4</span>
+          <div class="prop-content">
+            <h4>没有中央控制</h4>
+            <div class="en-term">No Central Control</div>
+            <p>无"总指挥"协调行为，秩序从底层互动中自发产生。</p>
+          </div>
+        </li>
+        <li>
+          <span class="prop-num">5</span>
+          <div class="prop-content">
+            <h4>涌现</h4>
+            <div class="en-term">Emergence</div>
+            <p>整体性质无法从孤立研究个体推导出——"整体大于部分之和"。</p>
+          </div>
+        </li>
+        <li>
+          <span class="prop-num">6</span>
+          <div class="prop-content">
+            <h4>自组织</h4>
+            <div class="en-term">Self-Organization</div>
+            <p>无内外控制者，秩序在时间推移中自发形成。强调的是过程。</p>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Complex vs Complicated -->
+    <section>
+      <h2 class="section-title">复杂 (Complex) vs. 精密 (Complicated)</h2>
+      <p class="summary-text">核心区别：<strong>精密系统可以通过拆解来理解，复杂系统必须作为整体来研究</strong>——非线性使得整体不等于部分之和。</p>
+      <table class="cmp-table">
+        <thead>
+          <tr><th></th><th>复杂 Complex</th><th>精密 Complicated</th></tr>
+        </thead>
+        <tbody>
+          <tr><td style="color:#718096">例子</td><td>蚁群、大脑、经济体</td><td>波音747、瑞士手表</td></tr>
+          <tr><td style="color:#718096">互动</td><td>非线性、不可分离</td><td>线性或可预测</td></tr>
+          <tr><td style="color:#718096">还原性</td><td>不可还原</td><td>可拆解理解</td></tr>
+          <tr><td style="color:#718096">控制</td><td>无中央控制</td><td>有设计者</td></tr>
+          <tr><td style="color:#718096">适应性</td><td>能学习、进化</td><td>按预设运转</td></tr>
+          <tr><td style="color:#718096">涌现</td><td>意料之外的宏观模式</td><td>设计范围之内</td></tr>
+        </tbody>
+      </table>
+      <div class="quote-block">
+        <p>"线性是还原论者的美梦，非线性有时是还原论者的噩梦。"</p>
+        <div class="attr">"Linearity is a reductionist's dream, and nonlinearity can sometimes be a reductionist's nightmare."</div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- SFI & Key People -->
+    <section>
+      <h2 class="section-title">圣塔菲研究所与关键人物</h2>
+      <p class="summary-text">1984 年，<strong>"科学中的涌现综合"（Emerging Syntheses in Science）</strong>研讨会在新墨西哥州召开。跨学科的科学家们达成共识：最有趣的现象发生在学科交叉处。<strong>圣塔菲研究所（SFI）</strong>由此诞生，成为复杂性科学的摇篮。</p>
+      <div class="people-grid">
+        <div class="person-card">
+          <h4>菲利普·安德森</h4>
+          <div class="role">Philip Anderson · 诺贝尔物理学奖</div>
+          <p>提出 "More Is Different"（多者异也），奠定涌现思想的物理学基础。</p>
+        </div>
+        <div class="person-card">
+          <h4>默里·盖尔曼</h4>
+          <div class="role">Murray Gell-Mann · 诺贝尔物理学奖</div>
+          <p>夸克模型提出者，推动复杂适应系统（CAS）概念发展。</p>
+        </div>
+        <div class="person-card">
+          <h4>约翰·霍兰德</h4>
+          <div class="role">John Holland · 遗传算法之父</div>
+          <p>复杂适应系统理论的主要奠基者。</p>
+        </div>
+        <div class="person-card">
+          <h4>斯图亚特·考夫曼</h4>
+          <div class="role">Stuart Kauffman · 生物学家</div>
+          <p>自组织研究先驱，提出"混沌边缘"概念。</p>
+        </div>
+        <div class="person-card">
+          <h4>布莱恩·阿瑟</h4>
+          <div class="role">W. Brian Arthur · 经济学家</div>
+          <p>将复杂性引入经济学，提出收益递增理论。</p>
+        </div>
+        <div class="person-card">
+          <h4>克里斯·兰顿</h4>
+          <div class="role">Chris Langton · 计算机科学家</div>
+          <p>人工生命（Artificial Life）领域开创者。</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Working Definitions -->
+    <section>
+      <h2 class="section-title">米歇尔的工作定义</h2>
+      <div class="def-box">
+        <div class="def-label">定义一 · 结构视角</div>
+        <p>由<strong>大量组分</strong>组成的网络，<strong>不存在中央控制</strong>，通过<strong>简单运作规则</strong>产生出复杂的集体行为和信息处理，并通过学习和进化产生<strong>适应性</strong>。</p>
+      </div>
+      <div class="def-box">
+        <div class="def-label">定义二 · 行为视角</div>
+        <p>具有<strong>非平凡的涌现行为</strong>和<strong>自组织行为</strong>的系统。</p>
+      </div>
+      <p class="summary-text" style="margin-top:16px;">两个定义互补：第一个强调机制（简单个体 + 无控制 + 简单规则），第二个强调结果（涌现 + 自组织）。核心挑战之一：<strong>如何度量复杂性</strong>——将在后续章节展开。</p>
     </section>
 
     <div class="divider"></div>

@@ -210,6 +210,8 @@
   </div>
   <div class="nav-group">
     <div class="nav-group-title">深层原因</div>
+    <a class="nav-link" href="#margin-trend">利润率趋势</a>
+    <a class="nav-link" href="#drivers">驱动因素量化</a>
     <a class="nav-link" href="#structural">结构性原因</a>
     <a class="nav-link" href="#conclusion">结论</a>
   </div>
@@ -408,6 +410,35 @@
     </table>
     <div class="insight warn">
       <strong>Health Care PE 34.3、Consumer Staples PE 29.4 -- 增长仅 2-3% 但享受高估值。</strong>投资者为稳定性支付溢价。Financials PE 16.0 是唯一接近历史合理水平的行业。
+    </div>
+  </div>
+
+  <!-- ===== SECTION: MARGIN TREND ===== -->
+  <div class="section" id="margin-trend">
+    <h2>S&P 500 净利润率结构性扩张</h2>
+    <div class="desc">从 1990 年代 ~5% 到 2024 年 ~12%，利润率翻倍是支撑高 PE 的核心基本面变化</div>
+    <div class="chart-container" style="height:340px">
+      <canvas id="chartMarginTrend"></canvas>
+    </div>
+    <div class="two-col" style="margin-top:16px">
+      <div class="insight">
+        <strong>利润率翻倍的驱动力：</strong>(1) 科技赋能降低运营成本，(2) 全球化压低劳动力和供应链成本，(3) 行业集中度提升（寡头定价权增强），(4) 轻资产模式占比扩大。
+      </div>
+      <div class="insight warn">
+        <strong>可持续性存疑：</strong>全球化逆转（关税）、劳动力成本上升、反垄断监管加强 — 这三股力量可能压缩利润率。如果利润率回到 8%，当前 PE 27.2 对应的盈利收益率将显著下降。
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION: DRIVERS ===== -->
+  <div class="section" id="drivers">
+    <h2>非 Mag7 PE 膨胀：结构性驱动因素量化</h2>
+    <div class="desc">从 1990 年 ~15 到 2024 年 ~24.6，约 +10 PE 点的来源估算</div>
+    <div class="chart-container" style="height:340px">
+      <canvas id="chartDrivers"></canvas>
+    </div>
+    <div class="insight danger" style="margin-top:14px">
+      <strong>最脆弱的因素：</strong>低利率贡献最大（~3.5 PE 点），但当前利率已回到 5%+。如果市场接受"higher for longer"，仅利率正常化一项就可能压缩非科技 PE 3-4 个点，从 24.6 降到 ~21。叠加被动投资的逆向流出风险，PE 可能进一步回到 18-19。
     </div>
   </div>
 
@@ -699,6 +730,83 @@ new Chart(document.getElementById('chartSectorPE'), {
         title: { display: true, text: '2024 PE 倍数', color: '#4a5568' },
       },
       y: { grid: { display: false } }
+    }
+  }
+});
+
+// === 9. S&P 500 Net Profit Margin Trend ===
+new Chart(document.getElementById('chartMarginTrend'), {
+  type: 'line',
+  data: {
+    labels: ['1990','1993','1996','1999','2002','2005','2008','2011','2014','2017','2020','2022','2024'],
+    datasets: [{
+      label: 'S&P 500 净利润率 (%)',
+      data: [5.0, 4.8, 6.2, 7.0, 5.5, 8.0, 5.8, 9.2, 9.8, 10.5, 9.0, 11.4, 12.1],
+      borderColor: '#34d399',
+      backgroundColor: 'rgba(52,211,153,0.1)',
+      fill: true,
+      tension: 0.3,
+      pointRadius: 5,
+      pointBackgroundColor: ctx => ctx.raw >= 10 ? '#34d399' : '#6b7a8d',
+    },{
+      label: '1990s 均值 (~5.5%)',
+      data: Array(13).fill(5.5),
+      borderColor: 'rgba(248,113,113,0.4)',
+      borderDash: [6,4],
+      pointRadius: 0,
+      fill: false,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { padding: 12, font: { size: 10.5 } } },
+      tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw}%` } }
+    },
+    scales: {
+      y: {
+        title: { display: true, text: '净利润率 (%)', color: '#4a5568' },
+        ticks: { callback: v => v + '%' },
+        min: 3, max: 14,
+      },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// === 10. Non-Mag7 PE Expansion Drivers ===
+new Chart(document.getElementById('chartDrivers'), {
+  type: 'bar',
+  data: {
+    labels: ['低利率长周期\n(2010-2021)', '被动投资\n/指数基金效应', '利润率\n结构性提升', '安全资产\n溢价', 'Mag7 光环\n溢出效应'],
+    datasets: [{
+      label: '对 PE 的估算贡献 (点数)',
+      data: [3.5, 2.0, 2.5, 1.5, 1.0],
+      backgroundColor: ['#60a5fa', '#a78bfa', '#34d399', '#fbbf24', '#f472b6'],
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => `+${ctx.raw} PE 点`,
+          afterBody: function() { return '合计 ~+10.5 PE 点\n(历史 ~15 → 当前 ~24.6)'; }
+        }
+      }
+    },
+    scales: {
+      x: {
+        title: { display: true, text: 'PE 贡献 (点数)', color: '#4a5568' },
+        max: 5,
+      },
+      y: {
+        grid: { display: false },
+        ticks: { font: { size: 10 } }
+      }
     }
   }
 });
