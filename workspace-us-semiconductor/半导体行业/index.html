@@ -1092,6 +1092,43 @@
     </div>
   </div>
 
+  <!-- ASIC vs GPU -->
+  <div class="grid-2" style="margin-bottom:40px">
+    <div class="card">
+      <h3>AI 加速器竞争格局演变</h3>
+      <div class="chart-container" style="height:240px">
+        <canvas id="chartASICvsGPU"></canvas>
+      </div>
+      <div style="margin-top:12px;font-size:0.82rem;color:var(--muted)">
+        Counterpoint: ASIC 出货量 2027 年翻 3 倍，2028 年可能超越 GPU
+      </div>
+    </div>
+    <div class="card">
+      <h3>定制 ASIC 阵营</h3>
+      <table style="margin-bottom:12px">
+        <thead><tr><th>玩家</th><th>芯片</th><th>设计方</th><th>2026 动态</th></tr></thead>
+        <tbody>
+          <tr><td><b>Google</b></td><td>TPU v7 Ironwood</td><td>Broadcom</td><td><span class="tag tag-green">78% AI 服务器用 TPU</span></td></tr>
+          <tr><td><b>AWS</b></td><td>Trainium3</td><td>Annapurna</td><td><span class="tag tag-blue">Q2 开始 ramp</span></td></tr>
+          <tr><td><b>OpenAI</b></td><td>定制芯片</td><td>Broadcom</td><td><span class="tag tag-purple">>$100 亿订单</span></td></tr>
+          <tr><td><b>Meta</b></td><td>MTIA v3</td><td>内部</td><td><span class="tag tag-amber">推理为主</span></td></tr>
+          <tr><td><b>Microsoft</b></td><td>Maia 100</td><td>内部</td><td>逐步扩大部署</td></tr>
+        </tbody>
+      </table>
+      <h3>AMD MI400 vs NVIDIA GB300</h3>
+      <table>
+        <thead><tr><th></th><th>MI400 (CDNA5)</th><th>GB300 (Blackwell)</th></tr></thead>
+        <tbody>
+          <tr><td>算力 FP4</td><td style="color:var(--green);font-weight:700">40 PFLOPS</td><td>~36 PFLOPS</td></tr>
+          <tr><td>显存</td><td style="color:var(--green);font-weight:700">432GB HBM4</td><td>384GB HBM4</td></tr>
+          <tr><td>带宽</td><td style="color:var(--green);font-weight:700">19.6 TB/s</td><td>~14 TB/s</td></tr>
+          <tr><td>生态</td><td style="color:var(--red)">ROCm（弱）</td><td style="color:var(--green)">CUDA（强）</td></tr>
+          <tr><td>发布</td><td>2026 H2</td><td>2026 H1</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
   <!-- Section 9: 风险 -->
   <div class="section-title"><span class="num">9</span> 风险提示</div>
   <div class="risk-list" style="margin-bottom:40px">
@@ -1423,6 +1460,27 @@ new Chart(document.getElementById('chartCoWoSCustomer'), {
   options: {
     responsive: true, maintainAspectRatio: false,
     plugins: { legend: { position: 'right', labels: { padding: 12, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } } } }
+  }
+});
+
+// ASIC vs GPU 份额演变
+new Chart(document.getElementById('chartASICvsGPU'), {
+  type: 'bar',
+  data: {
+    labels: ['2024', '2025', '2026E', '2027E', '2028E'],
+    datasets: [
+      { label: 'NVIDIA GPU %', data: [88, 85, 78, 72, 67], backgroundColor: COLORS.green, borderRadius: 6, barPercentage: 0.7 },
+      { label: 'AMD GPU %', data: [7, 8, 11, 13, 13], backgroundColor: COLORS.cyan, borderRadius: 6, barPercentage: 0.7 },
+      { label: '定制 ASIC %', data: [5, 7, 11, 15, 20], backgroundColor: COLORS.purple, borderRadius: 6, barPercentage: 0.7 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', padding: 12, font: { size: 11 } } } },
+    scales: {
+      x: { grid: { display: false }, stacked: true },
+      y: { max: 100, grid: { color: '#1e293b33' }, stacked: true, ticks: { callback: v => `${v}%` } }
+    }
   }
 });
 
