@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>周趋势分析 · 2026 W09 (2/25–2/27)</title>
+<style>
+  :root {
+    --bg: #0d1117; --card: #161b22; --border: #30363d;
+    --text: #e6edf3; --text2: #8b949e; --accent: #58a6ff;
+    --green: #3fb950; --red: #f85149; --orange: #d29922; --purple: #bc8cff;
+    --wechat: #07c160; --xhs: #fe2c55; --bili: #00a1d6; --yt: #ff0000;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--text);
+    font: 15px/1.7 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    padding: 32px 20px;
+  }
+  .container { max-width: 860px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 40px; }
+  header h1 { font-size: 22px; margin-bottom: 4px; }
+  header .sub { color: var(--text2); font-size: 13px; }
+  header .period {
+    display: inline-block; margin-top: 8px; padding: 4px 14px;
+    background: rgba(88,166,255,0.1); border: 1px solid rgba(88,166,255,0.2);
+    border-radius: 20px; font-size: 12px; color: var(--accent);
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Key metric cards */
+  .metrics {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    margin-bottom: 36px;
+  }
+  .metric-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px; text-align: center;
+  }
+  .metric-card .num { font-size: 28px; font-weight: 700; }
+  .metric-card .label { font-size: 11px; color: var(--text2); margin-top: 4px; }
+
+  /* Topic section */
+  .topic {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; margin-bottom: 20px; overflow: hidden;
+  }
+  .topic-header {
+    padding: 16px 20px; cursor: pointer; user-select: none;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .topic-header:hover { background: rgba(88,166,255,0.04); }
+  .topic-header .icon { font-size: 20px; }
+  .topic-header h2 { font-size: 16px; font-weight: 600; flex: 1; }
+  .topic-header .heat {
+    font-size: 11px; padding: 3px 10px; border-radius: 10px;
+    font-weight: 600;
+  }
+  .heat-hot { background: rgba(248,81,73,0.15); color: var(--red); }
+  .heat-warm { background: rgba(210,153,34,0.15); color: var(--orange); }
+  .heat-rising { background: rgba(63,185,80,0.15); color: var(--green); }
+
+  .topic-body { padding: 0 20px 20px; }
+  .topic.collapsed .topic-body { display: none; }
+  .topic-header .arrow {
+    font-size: 12px; transition: transform 0.2s;
+    display: inline-block; width: 14px; color: var(--text2);
+  }
+  .topic.collapsed .arrow { transform: rotate(-90deg); }
+
+  .insight {
+    font-size: 14px; color: var(--text); line-height: 1.7;
+    margin-bottom: 16px; padding: 12px 16px;
+    background: rgba(88,166,255,0.04); border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+  }
+
+  /* Platform presence tags */
+  .platforms { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .ptag {
+    font-size: 11px; padding: 2px 10px; border-radius: 10px; font-weight: 600;
+  }
+  .ptag-wechat { background: rgba(7,193,96,0.12); color: var(--wechat); }
+  .ptag-xhs { background: rgba(254,44,85,0.12); color: var(--xhs); }
+  .ptag-bili { background: rgba(0,161,214,0.12); color: var(--bili); }
+  .ptag-yt { background: rgba(255,0,0,0.12); color: var(--yt); }
+
+  /* Evidence list */
+  .evidence { margin: 0; padding: 0; list-style: none; }
+  .evidence li {
+    font-size: 13px; color: var(--text2); padding: 6px 0;
+    border-bottom: 1px solid rgba(48,54,61,0.5);
+    display: flex; gap: 8px; align-items: baseline;
+  }
+  .evidence li:last-child { border-bottom: none; }
+  .evidence .day {
+    font-size: 11px; color: var(--accent); font-weight: 600;
+    white-space: nowrap; min-width: 36px;
+  }
+  .evidence .src {
+    font-size: 10px; padding: 1px 6px; border-radius: 4px;
+    white-space: nowrap;
+  }
+  .src-wechat { background: rgba(7,193,96,0.1); color: var(--wechat); }
+  .src-xhs { background: rgba(254,44,85,0.1); color: var(--xhs); }
+  .src-bili { background: rgba(0,161,214,0.1); color: var(--bili); }
+  .src-yt { background: rgba(255,0,0,0.1); color: var(--yt); }
+
+  /* Footer */
+  .footer {
+    text-align: center; padding: 24px; color: var(--text2); font-size: 12px;
+    border-top: 1px solid var(--border); margin-top: 32px;
+  }
+
+  @media (max-width: 600px) {
+    .metrics { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>跨平台周趋势分析</h1>
+  <div class="sub">基于微信 · 小红书 · B站 · YouTube 四平台数据</div>
+  <div class="period">2026 第 9 周 · 2月25日 – 2月27日</div>
+</header>
+
+<div class="metrics">
+  <div class="metric-card">
+    <div class="num" style="color:var(--accent)">4</div>
+    <div class="label">跨平台热点主题</div>
+  </div>
+  <div class="metric-card">
+    <div class="num" style="color:var(--red)">3</div>
+    <div class="label">覆盖天数</div>
+  </div>
+  <div class="metric-card">
+    <div class="num" style="color:var(--green)">4</div>
+    <div class="label">监测平台</div>
+  </div>
+  <div class="metric-card">
+    <div class="num" style="color:var(--orange)">~80</div>
+    <div class="label">追踪条目</div>
+  </div>
+</div>
+
+<!-- Topic 1 -->
+<div class="topic" id="t1">
+  <div class="topic-header" onclick="this.closest('.topic').classList.toggle('collapsed')">
+    <span class="arrow">▾</span>
+    <span class="icon">🔥</span>
+    <h2>AI 对就业的冲击：从焦虑到现实</h2>
+    <span class="heat heat-hot">爆热</span>
+  </div>
+  <div class="topic-body">
+    <div class="insight">
+      <strong>核心洞察：</strong>Block 裁员 40% 是本周最大引爆点 — 这不再是"AI 会不会替代人"的假设性讨论，而是 CEO 亲口说"AI 时代不需要这么多人了"。三天内，从微信科技媒体到小红书热帖、YouTube 财经频道同步放大，形成了完整的恐慌-反思-理性化叙事链。值得关注的是，35 岁程序员失业、AI 写代码工程师生存等话题已从"个体故事"升级为"结构性议题"。
+    </div>
+    <div class="platforms">
+      <span class="ptag ptag-wechat">微信</span>
+      <span class="ptag ptag-xhs">小红书</span>
+      <span class="ptag ptag-yt">YouTube</span>
+    </div>
+    <ul class="evidence">
+      <li>
+        <span class="day">2/27</span>
+        <span class="src src-wechat">微信</span>
+        36氪：一夜暴裁4000人，股价飙涨25%，联创发文：AI时代不需要那么多人了
+      </li>
+      <li>
+        <span class="day">2/27</span>
+        <span class="src src-xhs">小红书</span>
+        "见证历史了：Block裁员40%，AI的第一刀" · 403赞 + "搞了ai裁员一半" · 645赞
+      </li>
+      <li>
+        <span class="day">2/27</span>
+        <span class="src src-yt">YouTube</span>
+        投资TALK君1398期：疯狂，裁员近一半！AI引发的悲剧？
+      </li>
+      <li>
+        <span class="day">2/26</span>
+        <span class="src src-yt">YouTube</span>
+        Terry Chen：AI 寫 Code 這麼強，工程師要怎麼生存？· 15万次观看
+      </li>
+      <li>
+        <span class="day">2/26</span>
+        <span class="src src-wechat">微信</span>
+        V2EX：34岁大龄失业程序员的迷茫
+      </li>
+      <li>
+        <span class="day">2/25</span>
+        <span class="src src-yt">YouTube</span>
+        网易纪录片：学历再高也逃不过35岁被刀 · 26万次观看
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- Topic 2 -->
+<div class="topic" id="t2">
+  <div class="topic-header" onclick="this.closest('.topic').classList.toggle('collapsed')">
+    <span class="arrow">▾</span>
+    <span class="icon">⚔️</span>
+    <h2>AI 模型军备竞赛：春节档后的密集发布</h2>
+    <span class="heat heat-hot">爆热</span>
+  </div>
+  <div class="topic-body">
+    <div class="insight">
+      <strong>核心洞察：</strong>春节前后成为中国 AI 大模型的集中发布窗口。智谱 GLM-5、阿里 Qwen 3.5、月之暗面 Kimi K2.5 前脚刚落，Google Nano Banana 2、xAI Grok 4.20、Google Gemini 3.1 后脚跟上。最引人注目的是 AI 视频赛道 — Seedance 2.0 和 SkyReels-V4 接连登顶，国产 AI 视频模型已从"追赶"转为"竞争"姿态。同时，Agent 全链路成功率 0% 的 ICLR'26 论文揭示：模型能力与实际可用之间仍有巨大鸿沟。
+    </div>
+    <div class="platforms">
+      <span class="ptag ptag-wechat">微信</span>
+      <span class="ptag ptag-xhs">小红书</span>
+      <span class="ptag ptag-bili">B站</span>
+      <span class="ptag ptag-yt">YouTube</span>
+    </div>
+    <ul class="evidence">
+      <li>
+        <span class="day">2/27</span>
+        <span class="src src-wechat">微信</span>
+        AI洞察日报：Grok 4.20发布、Gemini 3.1图像模型、Seedance 2.0上春晚
+      </li>
+      <li>
+        <span class="day">2/27</span>
+        <span class="src src-wechat">微信</span>
+        新智元：Seedance2.0炸场后，又一中国黑马登顶AA榜单（SkyReels-V4）
+      </li>
+      <li>
+        <span class="day">2/27</span>
+        <span class="src src-wechat">微信</span>
+        36氪：谷歌生图新王Nano Banana 2深夜突袭，性能屠榜速度飞升
+      </li>
+      <li>
+        <span class="day">2/27</span>
+        <span class="src src-wechat">微信</span>
+        新智元：Agent全链路成功率0%（ICLR'26 DevOps-Gym基准）
+      </li>
+      <li>
+        <span class="day">2/27</span>
+        <span class="src src-bili">B站</span>
+        全面解析《说谎的马卡龙》到底是不是AI编曲？· 38.1万播放
+      </li>
+      <li>
+        <span class="day">2/27</span>
+        <span class="src src-xhs">小红书</span>
+        Claude Code创始人上了AI创业最残酷的一课 · 663赞
+      </li>
+      <li>
+        <span class="day">2/25</span>
+        <span class="src src-wechat">微信</span>
+        阿里发布Qwen 3.5中量级全系模型；Claude Code支持手机远程操控
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- Topic 3 -->
+<div class="topic" id="t3">
+  <div class="topic-header" onclick="this.closest('.topic').classList.toggle('collapsed')">
+    <span class="arrow">▾</span>
+    <span class="icon">📉</span>
+    <h2>美股震荡与 AI 泡沫叙事</h2>
+    <span class="heat heat-warm">持续热</span>
+  </div>
+  <div class="topic-body">
+    <div class="insight">
+      <strong>核心洞察：</strong>NVDA Q4 营收 681 亿美元（+73%）超预期，但股价不涨反跌 — 市场叙事已从"业绩驱动"转向"恐慌定价"。"2028全球智能危机"报告预测S&P先涨至8000再跌38%，引爆卖盘。有趣的对比：YouTube 财经频道（美投侃新闻、视野环球）倾向理性分析，小红书则更情绪化（"美股疯了"、"2026对新投资者非常不友好"），体现平台调性差异。高盛喊话抄底信号成为多平台传播的关键情绪转折点。
+    </div>
+    <div class="platforms">
+      <span class="ptag ptag-wechat">微信</span>
+      <span class="ptag ptag-xhs">小红书</span>
+      <span class="ptag ptag-yt">YouTube</span>
+    </div>
+    <ul class="evidence">
+      <li>
+        <span class="day">2/27</span>
+        <span class="src src-yt">YouTube</span>
+        美投侃新闻：英伟达还能涨起来吗？高盛喊话该抄底大科技了！· 4.1万观看
+      </li>
+      <li>
+        <span class="day">2/27</span>
+        <span class="src src-wechat">微信</span>
+        黄仁勋每天都用的AI工具，要抢金融行业饭碗了？
+      </li>
+      <li>
+        <span class="day">2/26</span>
+        <span class="src src-yt">YouTube</span>
+        视野环球财经：NVDA超预期不涨！CRM前瞻欠佳！· 6.2万观看
+      </li>
+      <li>
+        <span class="day">2/26</span>
+        <span class="src src-wechat">微信</span>
+        晚间要闻：英伟达Q4超预期 + "2028全球智能危机"报告引恐慌
+      </li>
+      <li>
+        <span class="day">2/26</span>
+        <span class="src src-xhs">小红书</span>
+        "美股疯了" · 276赞 + "2026对新入场投资者不友好" · 413赞
+      </li>
+      <li>
+        <span class="day">2/25</span>
+        <span class="src src-yt">YouTube</span>
+        高盛研报解读：2026中国经济展望 · 45万观看
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- Topic 4 -->
+<div class="topic" id="t4">
+  <div class="topic-header" onclick="this.closest('.topic').classList.toggle('collapsed')">
+    <span class="arrow">▾</span>
+    <span class="icon">🌏</span>
+    <h2>海外生活成本与"地理套利"</h2>
+    <span class="heat heat-rising">上升中</span>
+  </div>
+  <div class="topic-body">
+    <div class="insight">
+      <strong>核心洞察：</strong>小红书成为海外华人生活成本讨论的主阵地。"美国物价贵到离谱"（3991赞）和"加州湾区中产贫民窟"（354赞）引发共鸣，而"从纽约回亚洲，体会到时代红利"提出了"地理套利"概念 — 用美国的学历经验 + 亚洲的生活成本实现最优解。这一话题与 AI 裁员恐慌形成联动：当高薪科技岗位不再安全，"在哪里生活"成为更核心的决策。
+    </div>
+    <div class="platforms">
+      <span class="ptag ptag-xhs">小红书</span>
+      <span class="ptag ptag-yt">YouTube</span>
+    </div>
+    <ul class="evidence">
+      <li>
+        <span class="day">2/26</span>
+        <span class="src src-xhs">小红书</span>
+        "华人真的不觉得美国现在贵到离谱吗？" · 3991赞（长文详述物价对比）
+      </li>
+      <li>
+        <span class="day">2/26</span>
+        <span class="src src-xhs">小红书</span>
+        "从纽约回亚洲，体会到我们的时代红利" · 680赞（提出"地理套利"概念）
+      </li>
+      <li>
+        <span class="day">2/26</span>
+        <span class="src src-xhs">小红书</span>
+        "加州湾区大部分城市实际是个中产贫民窟" · 354赞
+      </li>
+      <li>
+        <span class="day">2/25</span>
+        <span class="src src-yt">YouTube</span>
+        攒够多少钱可以辞职躺平？探访存款10w和500w的退休青年 · 15万观看
+      </li>
+      <li>
+        <span class="day">2/25</span>
+        <span class="src src-xhs">小红书</span>
+        硅谷和苏黎世幸福指数对比
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- B站 special -->
+<div class="topic collapsed" id="t5">
+  <div class="topic-header" onclick="this.closest('.topic').classList.toggle('collapsed')">
+    <span class="arrow">▾</span>
+    <span class="icon">📺</span>
+    <h2>B站特色：春节余热 + 科普类崛起</h2>
+    <span class="heat heat-warm">持续热</span>
+  </div>
+  <div class="topic-body">
+    <div class="insight">
+      <strong>核心洞察：</strong>B站的内容生态与其他三个平台明显不同 — 春节情感类和二创内容仍占据榜首（"听妈妈的话"从 482 万涨到 531 万），但科普类异军突起（"呆呆说万物" 913 万登顶）标志着 B 站用户对信息密度的需求升级。猫 meme 自述类成为新的情感出口。AI 相关内容在 B 站表现为更下沉的讨论形态：不是"模型对比"，而是"这首歌是不是 AI 编的"。
+    </div>
+    <div class="platforms">
+      <span class="ptag ptag-bili">B站</span>
+    </div>
+    <ul class="evidence">
+      <li>
+        <span class="day">2/27</span>
+        <span class="src src-bili">B站</span>
+        呆呆说万物"碰见这种鱼能不能吃" · 913.6万播放（科普登顶）
+      </li>
+      <li>
+        <span class="day">2/25→27</span>
+        <span class="src src-bili">B站</span>
+        "听妈妈的话" 482万→531万（持续增长）；春晚Remix 363万→379万
+      </li>
+      <li>
+        <span class="day">2/27</span>
+        <span class="src src-bili">B站</span>
+        AI音乐争议：《说谎的马卡龙》是不是AI编曲？· 38.1万播放
+      </li>
+      <li>
+        <span class="day">2/27</span>
+        <span class="src src-bili">B站</span>
+        FARS科研直播 · 12.5万播放（AI工具在学术圈的渗透）
+      </li>
+      <li>
+        <span class="day">2/26→27</span>
+        <span class="src src-bili">B站</span>
+        猫meme自述类：从"我叛逆的一生"到"自卑杀死了我的青春"
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="footer">
+  数据来源：每日汇总 2026-02-25 / 02-26 / 02-27<br>
+  覆盖平台：微信（Folo RSS）· 小红书 · B站 · YouTube<br>
+  生成时间：2026-02-27 22:00
+</div>
+
+</div>
+</body>
+</html>
