@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第五章：进化 — 复杂</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: #0a0a0f;
+      color: #e0e0e0;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 48px 24px;
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 48px;
+      font-size: 13px;
+    }
+
+    .nav a {
+      color: #63b3ed;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+
+    .nav a:hover { color: #90cdf4; }
+
+    .nav .chapter-nav {
+      display: flex;
+      gap: 20px;
+    }
+
+    .chapter-header { margin-bottom: 48px; }
+
+    .chapter-label {
+      font-size: 12px;
+      letter-spacing: 3px;
+      color: #63b3ed;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .chapter-title {
+      font-size: 36px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    .chapter-subtitle {
+      font-size: 15px;
+      color: #718096;
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(99, 179, 237, 0.2), transparent);
+      margin: 40px 0;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title::before {
+      content: '';
+      width: 3px;
+      height: 18px;
+      background: #63b3ed;
+      border-radius: 2px;
+    }
+
+    .summary-text {
+      font-size: 15px;
+      line-height: 1.9;
+      color: #a0aec0;
+      margin-bottom: 20px;
+    }
+
+    .summary-text strong { color: #e2e8f0; }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+      padding-left: 28px;
+      margin: 28px 0 36px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: 4px;
+      bottom: 4px;
+      width: 2px;
+      background: rgba(99, 179, 237, 0.15);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 24px;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -25px;
+      top: 7px;
+      width: 10px;
+      height: 10px;
+      background: #1a202c;
+      border: 2px solid #63b3ed;
+      border-radius: 50%;
+    }
+
+    .timeline-item h4 {
+      font-size: 14px;
+      color: #e2e8f0;
+      margin-bottom: 6px;
+    }
+
+    .timeline-item h4 .year {
+      color: #63b3ed;
+      font-family: "SF Mono", Monaco, Consolas, monospace;
+      font-size: 12px;
+      margin-right: 8px;
+    }
+
+    .timeline-item p {
+      font-size: 13px;
+      line-height: 1.8;
+      color: #718096;
+    }
+
+    /* Concept cards */
+    .concepts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 24px 0 32px;
+    }
+
+    .concept-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 22px 18px;
+      transition: all 0.25s;
+    }
+
+    .concept-card:hover {
+      background: rgba(99, 179, 237, 0.05);
+      border-color: rgba(99, 179, 237, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .concept-card h4 {
+      font-size: 15px;
+      color: #e2e8f0;
+      margin-bottom: 8px;
+    }
+
+    .concept-card p {
+      font-size: 13px;
+      color: #718096;
+      line-height: 1.7;
+    }
+
+    .concept-card .icon {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    /* Highlight box */
+    .highlight-box {
+      background: rgba(99, 179, 237, 0.06);
+      border: 1px solid rgba(99, 179, 237, 0.15);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 28px 0;
+    }
+
+    .highlight-box .label {
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: #63b3ed;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .highlight-box p {
+      font-size: 15px;
+      line-height: 1.8;
+      color: #cbd5e0;
+    }
+
+    .highlight-box p + p { margin-top: 12px; }
+
+    /* Quote */
+    .quote-block {
+      border-left: 3px solid rgba(99, 179, 237, 0.3);
+      padding: 16px 20px;
+      margin: 24px 0;
+      background: rgba(255,255,255,0.02);
+      border-radius: 0 8px 8px 0;
+    }
+
+    .quote-block p {
+      font-size: 14px;
+      line-height: 1.8;
+      color: #a0aec0;
+      font-style: italic;
+    }
+
+    .quote-block .source {
+      font-size: 12px;
+      color: #718096;
+      margin-top: 8px;
+      font-style: normal;
+    }
+
+    /* Formula */
+    .formula {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 20px 0;
+      font-family: "SF Mono", Monaco, Consolas, monospace;
+      font-size: 14px;
+      color: #90cdf4;
+      text-align: center;
+      line-height: 1.8;
+    }
+
+    /* Debate table */
+    .debate-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 13px;
+    }
+
+    .debate-table th {
+      text-align: left;
+      padding: 10px 14px;
+      background: rgba(99, 179, 237, 0.08);
+      color: #63b3ed;
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid rgba(99, 179, 237, 0.15);
+    }
+
+    .debate-table td {
+      padding: 10px 14px;
+      color: #a0aec0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      line-height: 1.6;
+    }
+
+    .debate-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+    /* Discussion placeholder */
+    .discussion-placeholder {
+      background: rgba(255,255,255,0.02);
+      border: 1px dashed rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 32px;
+      text-align: center;
+      color: #4a5568;
+      font-size: 14px;
+      margin-top: 24px;
+    }
+
+    /* Footer nav */
+    .footer-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .footer-nav a {
+      color: #63b3ed;
+      text-decoration: none;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.2s;
+    }
+
+    .footer-nav a:hover { color: #90cdf4; }
+
+    .footer-nav .prev-chapter {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 12px 24px;
+      border-radius: 8px;
+    }
+
+    .footer-nav .prev-chapter:hover { background: rgba(255,255,255,0.06); }
+
+    .footer-nav .next-chapter {
+      background: rgba(99, 179, 237, 0.1);
+      border: 1px solid rgba(99, 179, 237, 0.2);
+      padding: 12px 24px;
+      border-radius: 8px;
+    }
+
+    .footer-nav .next-chapter:hover { background: rgba(99, 179, 237, 0.15); }
+
+    @media (max-width: 640px) {
+      .concepts { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Navigation -->
+    <nav class="nav">
+      <a href="index.html">&larr; 返回书目</a>
+      <div class="chapter-nav">
+        <a href="ch04-计算.html">&larr; 上一章</a>
+        <a href="#">下一章 &rarr;</a>
+      </div>
+    </nav>
+
+    <!-- Chapter Header -->
+    <div class="chapter-header">
+      <div class="chapter-label">Chapter 05 &middot; 第一部分：背景与历史</div>
+      <h1 class="chapter-title">进化</h1>
+      <p class="chapter-subtitle">Evolution</p>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Chapter Summary -->
+    <section>
+      <h2 class="section-title">章节概要</h2>
+
+      <p class="summary-text">
+        前四章铺设了复杂性科学的四根支柱：复杂系统的定义（第一章）、混沌与不可预测性（第二章）、信息论（第三章）、计算理论（第四章）。第五章引入最后一根也是最重要的一根支柱——<strong>进化</strong>。进化不仅是生物学理论，更是复杂适应系统的核心引擎。
+      </p>
+
+      <h2 class="section-title">达尔文的革命</h2>
+
+      <p class="summary-text">
+        米歇尔从达尔文讲起。1859 年，查尔斯·达尔文发表《物种起源》，提出了自然选择（natural selection）理论。核心机制极其简单：
+      </p>
+
+      <div class="formula">
+        变异（Variation）+ 遗传（Heredity）+ 选择（Selection）= 适应性进化
+      </div>
+
+      <p class="summary-text">
+        <strong>变异</strong>：个体之间存在差异（基因突变、重组）。<strong>遗传</strong>：后代继承亲代的特征。<strong>选择</strong>：适应环境的个体更有可能存活和繁殖。三者合一，种群就会随时间适应环境——不需要任何"设计者"。
+      </p>
+
+      <div class="quote-block">
+        <p>"关于这个世界，有一件事比其他任何事都更令我惊叹——自然选择这个如此简单的过程，竟然能产生如此复杂的结果。"</p>
+        <div class="source">&mdash; 梅拉妮·米歇尔</div>
+      </div>
+
+      <h2 class="section-title">现代综合与分子革命</h2>
+
+      <div class="timeline">
+        <div class="timeline-item">
+          <h4><span class="year">1859</span>《物种起源》</h4>
+          <p>达尔文提出自然选择理论，但不知道遗传的具体机制——当时还没有"基因"的概念。</p>
+        </div>
+        <div class="timeline-item">
+          <h4><span class="year">1865</span>孟德尔的遗传实验</h4>
+          <p>格里高·孟德尔（Gregor Mendel）通过豌豆实验发现了遗传的离散性质（显性/隐性），但论文几乎被忽略了 35 年。</p>
+        </div>
+        <div class="timeline-item">
+          <h4><span class="year">1930s-40s</span>现代综合（Modern Synthesis）</h4>
+          <p>费舍尔（Fisher）、赖特（Wright）、霍尔丹（Haldane）等人将达尔文的自然选择与孟德尔的遗传学统一为数学框架——群体遗传学。进化获得了精确的数学语言。</p>
+        </div>
+        <div class="timeline-item">
+          <h4><span class="year">1953</span>DNA 双螺旋结构</h4>
+          <p>沃森和克里克发现 DNA 的分子结构，揭示了遗传信息的物质载体。"信息"不再只是隐喻——基因真的是用四个字母（A/T/G/C）编写的代码。</p>
+        </div>
+        <div class="timeline-item">
+          <h4><span class="year">1960s-70s</span>中性进化理论</h4>
+          <p>木村资生（Motoo Kimura）提出：大部分分子层面的进化变化是选择性中性的（既非有利也非有害），靠随机的遗传漂变固定。这挑战了"一切变化都被选择驱动"的正统观点。</p>
+        </div>
+      </div>
+
+      <h2 class="section-title">核心概念</h2>
+
+      <div class="concepts">
+        <div class="concept-card">
+          <div class="icon">🧬</div>
+          <h4>基因型与表现型</h4>
+          <p><strong>基因型（genotype）</strong>是遗传编码，<strong>表现型（phenotype）</strong>是外在表现。从基因型到表现型的映射极其复杂——同一个基因在不同环境中可能产生完全不同的效果。这是"简单规则产生复杂结果"的又一个例证。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">🎲</div>
+          <h4>遗传漂变</h4>
+          <p>在小种群中，基因频率会因为纯粹的随机效应（而非选择）发生变化。漂变是进化中"噪声"的来源，但这种噪声有时反而帮助种群跳出局部最优。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">🏔</div>
+          <h4>适应度景观</h4>
+          <p>赖特（Sewall Wright）提出的核心比喻。想象一个多维地形图：每个位置代表一种基因组合，高度代表适应度。自然选择驱动种群"爬山"，但景观上有很多局部高峰——种群可能被困在次优解上。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">🔀</div>
+          <h4>性与重组</h4>
+          <p>有性生殖通过基因重组（crossover）将两个亲代的基因组混合。这极大地加速了进化搜索——相当于在适应度景观上做大范围跳跃，而不只是局部爬坡。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">⚖️</div>
+          <h4>选择的层次</h4>
+          <p>选择发生在哪个层面？基因、个体、群体、还是物种？道金斯的"自私的基因"观点认为基因是选择的基本单位。但群体选择、多层次选择的争论至今未终。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">🏗️</div>
+          <h4>进化的约束与路径依赖</h4>
+          <p>进化不是从白纸开始设计，而是在已有结构上修改。人类的脊椎、眼睛的盲点——都是历史遗留的妥协。进化受物理定律、发育约束和历史路径的多重限制。</p>
+        </div>
+      </div>
+
+      <h2 class="section-title">进化中的大辩论</h2>
+
+      <p class="summary-text">
+        米歇尔在这一章梳理了进化理论中几个持续至今的核心争论：
+      </p>
+
+      <table class="debate-table">
+        <thead>
+          <tr><th>争论</th><th>一方</th><th>另一方</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color:#718096">渐变 vs. 突变</td>
+            <td>达尔文主义：进化是缓慢、渐进的积累</td>
+            <td>间断平衡（Gould &amp; Eldredge）：长期停滞 + 短暂爆发</td>
+          </tr>
+          <tr>
+            <td style="color:#718096">选择 vs. 漂变</td>
+            <td>适应论：自然选择是塑造力的主角</td>
+            <td>中性理论（Kimura）：大部分分子变化是中性的、靠漂变</td>
+          </tr>
+          <tr>
+            <td style="color:#718096">选择的单位</td>
+            <td>基因选择（Dawkins）：基因是选择的基本单位</td>
+            <td>多层次选择（Wilson）：选择同时作用于基因、个体、群体</td>
+          </tr>
+          <tr>
+            <td style="color:#718096">选择 vs. 自组织</td>
+            <td>正统：自然选择解释一切适应</td>
+            <td>考夫曼（Kauffman）：自组织提供"免费的秩序"，选择只是修剪</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="summary-text">
+        最后一个争论——<strong>选择 vs. 自组织</strong>——对复杂性科学尤为关键。考夫曼认为生命的秩序不全是选择的功劳：随机的基因调控网络在临界状态附近自发地产生秩序，自然选择只是在这个自发秩序的基础上做微调。这直接联系到全书的核心主题：<strong>涌现和自组织不需要设计者。</strong>
+      </p>
+
+      <h2 class="section-title">进化作为计算</h2>
+
+      <p class="summary-text">
+        米歇尔着重强调了一个跨学科的关键洞察：<strong>进化可以被理解为一种计算过程。</strong>
+      </p>
+
+      <p class="summary-text">
+        种群是"并行处理器"——每个个体同时在"测试"一种基因组合的适应度。突变是"随机搜索"。重组是"信息交换"。选择是"保留好结果、丢弃坏结果"的"评估函数"。
+      </p>
+
+      <div class="formula">
+        种群 = 并行搜索代理<br>
+        基因组 = 候选方案的编码<br>
+        适应度 = 评估函数<br>
+        选择 + 变异 + 重组 = 搜索算法
+      </div>
+
+      <p class="summary-text">
+        这个类比不只是修辞。约翰·霍兰德正是基于这个洞察，在 1960-70 年代发明了<strong>遗传算法（Genetic Algorithms）</strong>——用计算机模拟进化来解决优化问题。这直接引出了下一章的主题。
+      </p>
+
+      <h2 class="section-title">与前四章的连接</h2>
+
+      <p class="summary-text">
+        <strong>第一章（复杂性）</strong>：进化是复杂适应系统（CAS）的定义性特征——通过学习和进化产生适应性。没有进化，就没有"适应"。
+      </p>
+
+      <p class="summary-text">
+        <strong>第二章（混沌）</strong>：适应度景观上的动力学可以是混沌的——环境变化时景观本身在动，种群在追逐一个移动的目标（"红皇后效应"）。
+      </p>
+
+      <p class="summary-text">
+        <strong>第三章（信息）</strong>：DNA 就是信息的物质载体。进化可以被看作一个信息处理过程：环境中的信息通过自然选择被"编码"进基因组。种群的基因库就是关于环境的"压缩表示"。
+      </p>
+
+      <p class="summary-text">
+        <strong>第四章（计算）</strong>：进化是一种计算。但它是什么样的计算？它能"计算"什么？它的效率如何？这些问题把进化理论和计算理论直接连接在一起。
+      </p>
+
+      <div class="highlight-box">
+        <div class="label">一句话总结</div>
+        <p>进化是自然界最强大的搜索算法——不需要设计者，不需要全局信息，只靠变异、遗传和选择三个简单机制，就能在天文数字般的可能性空间中找到惊人复杂的解。</p>
+      </div>
+
+      <div class="highlight-box">
+        <div class="label">第一部分完结</div>
+        <p>至此，"背景与历史"的五章结束。复杂性科学的五根支柱全部就位：<strong>复杂系统的定义 → 混沌与不可预测性 → 信息论 → 计算理论 → 进化</strong>。从第二部分开始，米歇尔将展示这些思想如何在计算机中被实现和验证——首先是遗传算法，然后是元胞自动机。</p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Discussion -->
+    <section>
+      <h2 class="section-title">读书讨论</h2>
+      <div class="discussion-placeholder">
+        尚无讨论 &middot; 读完这一章后来聊聊？
+      </div>
+    </section>
+
+    <!-- Footer navigation -->
+    <div class="footer-nav">
+      <a class="prev-chapter" href="ch04-计算.html">&larr; 第四章：计算</a>
+      <a class="next-chapter" href="#">第六章：遗传算法 &rarr;</a>
+    </div>
+
+  </div>
+</body>
+</html>
