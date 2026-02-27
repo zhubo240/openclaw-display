@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>人口与就业 — 中国宏观经济分析框架</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a25;
+    --border: #2a2a3a;
+    --text: #e0e0e8;
+    --text2: #9090a0;
+    --accent: #f0c040;
+    --red: #e05050;
+    --green: #40c080;
+    --blue: #5080e0;
+    --orange: #e08040;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  a { color: var(--accent); text-decoration: none; }
+
+  .header {
+    padding: 60px 0 40px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .header .back { font-size: 0.85em; color: var(--text2); margin-bottom: 16px; display: block; }
+  .header h1 { font-size: 2em; font-weight: 700; letter-spacing: 0.04em; margin-bottom: 10px; }
+  .header .dim-label {
+    display: inline-block; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 6px; padding: 3px 12px; font-size: 0.8em; color: var(--accent);
+    font-weight: 600; margin-bottom: 14px;
+  }
+  .header .subtitle { font-size: 0.95em; color: var(--text2); max-width: 720px; margin: 0 auto; }
+
+  .key-nums {
+    display: flex; justify-content: center; gap: 28px; padding: 28px 0;
+    border-bottom: 1px solid var(--border); flex-wrap: wrap;
+  }
+  .kn-item { text-align: center; min-width: 110px; }
+  .kn-value { font-size: 1.6em; font-weight: 700; color: var(--accent); }
+  .kn-value.danger { color: var(--red); }
+  .kn-label { font-size: 0.75em; color: var(--text2); margin-top: 2px; }
+
+  .section { padding: 44px 0; border-bottom: 1px solid var(--border); }
+  .section h2 {
+    text-align: center; font-size: 1.25em; font-weight: 600;
+    color: var(--text2); letter-spacing: 0.06em; margin-bottom: 24px;
+  }
+  .section .sub {
+    text-align: center; font-size: 0.88em; color: var(--text2);
+    margin-top: -16px; margin-bottom: 24px;
+  }
+
+  .bar-section { max-width: 700px; margin: 0 auto; }
+  .bar-group { margin-bottom: 12px; }
+  .bar-header { display: flex; justify-content: space-between; font-size: 0.82em; margin-bottom: 4px; }
+  .bar-header .lbl { color: var(--text2); }
+  .bar-header .val { font-weight: 600; }
+  .bar-track { height: 10px; background: var(--surface2); border-radius: 5px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 5px; }
+
+  /* Birth decline timeline */
+  .timeline { max-width: 700px; margin: 0 auto; }
+  .tl-row {
+    display: flex; align-items: center; gap: 12px; padding: 6px 0;
+    font-size: 0.85em;
+  }
+  .tl-year { width: 50px; color: var(--text2); flex-shrink: 0; text-align: right; font-weight: 600; }
+  .tl-bar-wrap { flex: 1; }
+  .tl-bar {
+    height: 18px; border-radius: 4px; display: flex; align-items: center;
+    padding-left: 8px; font-size: 0.75em; font-weight: 600; color: var(--bg);
+    min-width: 40px;
+  }
+  .tl-note { font-size: 0.72em; color: var(--text2); margin-left: 6px; flex-shrink: 0; }
+
+  /* Comparison table */
+  .cmp-table {
+    width: 100%; border-collapse: collapse; font-size: 0.85em;
+  }
+  .cmp-table th, .cmp-table td {
+    padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border);
+  }
+  .cmp-table th {
+    color: var(--accent); font-weight: 600; font-size: 0.82em; background: var(--surface);
+  }
+  .cmp-table tr:hover td { background: var(--surface); }
+  .cmp-table .hl { color: var(--accent); font-weight: 600; }
+  .cmp-table .warn { color: var(--red); font-weight: 600; }
+
+  /* Grid cards */
+  .card-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px;
+  }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 20px;
+  }
+  .card h3 { font-size: 0.9em; font-weight: 600; margin-bottom: 8px; }
+  .card p { font-size: 0.82em; color: var(--text2); line-height: 1.5; }
+  .card .big { font-size: 1.5em; font-weight: 700; margin-bottom: 6px; }
+
+  /* Wider cards */
+  .wide-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px;
+  }
+  .wide-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px 22px;
+  }
+  .wide-card h3 { font-size: 0.92em; font-weight: 600; color: var(--accent); margin-bottom: 8px; }
+  .wide-card p { font-size: 0.85em; color: var(--text2); line-height: 1.6; }
+
+  /* ASCII box */
+  .ascii-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 24px; max-width: 700px; margin: 0 auto;
+    font-family: "SF Mono", "Fira Code", monospace; font-size: 0.85em;
+    line-height: 1.8; color: var(--text2); white-space: pre; overflow-x: auto;
+  }
+  .ascii-box .hl { color: var(--accent); font-weight: 600; }
+  .ascii-box .r { color: var(--red); font-weight: 600; }
+  .ascii-box .g { color: var(--green); }
+
+  /* Callout */
+  .callout {
+    margin-top: 18px; padding: 16px 20px; background: var(--surface);
+    border: 1px solid var(--border); border-left: 3px solid var(--red);
+    border-radius: 8px; font-size: 0.84em;
+  }
+  .callout .cl-title { color: var(--accent); font-weight: 600; margin-bottom: 6px; }
+  .callout .cl-body { color: var(--text2); line-height: 1.5; }
+
+  .footer {
+    padding: 36px 0; text-align: center; color: var(--text2); font-size: 0.8em;
+  }
+
+  @media (max-width: 600px) {
+    .key-nums { gap: 14px; }
+    .kn-value { font-size: 1.3em; }
+    .card-grid, .wide-grid { grid-template-columns: 1fr; }
+    .ascii-box { font-size: 0.72em; padding: 14px; }
+    .cmp-table { font-size: 0.75em; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <section class="header">
+    <a class="back" href="../index.html">&larr; 返回总览</a>
+    <div class="dim-label">维度五</div>
+    <h1>人口与就业</h1>
+    <p class="subtitle">2022年人口负增长，生育率约1.0，"未富先老"。青年失业率18-19%，对标东亚同阶段经济体是异常高的2-3倍。移民不是可行选项——文化、制度、政治三重约束。这是中国经济最大的长期结构性挑战，且几乎不可逆。</p>
+  </section>
+
+  <div class="key-nums">
+    <div class="kn-item"><div class="kn-value danger">-139万</div><div class="kn-label">2024年人口变化</div></div>
+    <div class="kn-item"><div class="kn-value danger">~1.0</div><div class="kn-label">总和生育率（需2.1）</div></div>
+    <div class="kn-item"><div class="kn-value">3.1亿</div><div class="kn-label">60岁以上人口</div></div>
+    <div class="kn-item"><div class="kn-value danger">18-19%</div><div class="kn-label">青年失业率（毕业季）</div></div>
+    <div class="kn-item"><div class="kn-value">2.6亿</div><div class="kn-label">无城市户口的城镇居民</div></div>
+  </div>
+
+  <!-- Birth collapse -->
+  <section class="section">
+    <h2>出 生 人 口 断 崖</h2>
+    <p class="sub">6年跌去近一半，TFR 1.0 意味着每代人比上一代减少约一半</p>
+    <div class="timeline">
+      <div class="tl-row">
+        <div class="tl-year">2016</div>
+        <div class="tl-bar-wrap"><div class="tl-bar" style="width:100%;background:var(--green)">1,786万</div></div>
+        <div class="tl-note">二孩放开</div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-year">2017</div>
+        <div class="tl-bar-wrap"><div class="tl-bar" style="width:96%;background:var(--green)">1,723万</div></div>
+        <div class="tl-note"></div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-year">2019</div>
+        <div class="tl-bar-wrap"><div class="tl-bar" style="width:82%;background:var(--orange)">1,465万</div></div>
+        <div class="tl-note"></div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-year">2021</div>
+        <div class="tl-bar-wrap"><div class="tl-bar" style="width:59%;background:var(--orange)">1,062万</div></div>
+        <div class="tl-note">三孩放开</div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-year">2022</div>
+        <div class="tl-bar-wrap"><div class="tl-bar" style="width:53%;background:var(--red)">956万</div></div>
+        <div class="tl-note">首次人口负增长</div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-year">2023</div>
+        <div class="tl-bar-wrap"><div class="tl-bar" style="width:50%;background:var(--red)">902万</div></div>
+        <div class="tl-note">历史新低</div>
+      </div>
+      <div class="tl-row">
+        <div class="tl-year">2024</div>
+        <div class="tl-bar-wrap"><div class="tl-bar" style="width:53%;background:var(--red)">~954万</div></div>
+        <div class="tl-note">微弱反弹（统计波动）</div>
+      </div>
+    </div>
+
+    <div class="callout" style="max-width:700px;margin:20px auto 0;">
+      <div class="cl-title">为什么生不出来？</div>
+      <div class="cl-body">育龄妇女数量减少（90年代婴儿潮已过育龄高峰）+ 结婚率下降 + 养育成本高企（房价、教育、医疗）+ 女性教育和劳动参与率提升 + 城市化本身的抑制效应 + 经济不确定性加剧"不敢生"心理。全球几乎没有成功逆转低生育率的案例。</div>
+    </div>
+  </section>
+
+  <!-- Aging acceleration -->
+  <section class="section">
+    <h2>老 龄 化 加 速 ："未 富 先 老"</h2>
+    <p class="sub">从65岁以上占7%到14%，中国只用了21年——比日本还快</p>
+    <div class="bar-section">
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">法国（115年）</span><span class="val" style="color:var(--green)">7% &rarr; 14%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--green)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">美国（69年）</span><span class="val" style="color:var(--green)">7% &rarr; 14%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:60%;background:var(--green)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">日本（24年）</span><span class="val" style="color:var(--orange)">7% &rarr; 14%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:21%;background:var(--orange)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">中国（~21年）</span><span class="val" style="color:var(--red)">7% &rarr; 14%（2001-2022）</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:18%;background:var(--red)"></div></div>
+      </div>
+    </div>
+
+    <div class="card-grid" style="margin-top:24px;">
+      <div class="card">
+        <div class="big" style="color:var(--red)">22%</div>
+        <h3>60+ 人口占比（2024）</h3>
+        <p>约3.1亿人。1962-1975年婴儿潮正在进入老年。</p>
+      </div>
+      <div class="card">
+        <div class="big" style="color:var(--red)">30%+</div>
+        <h3>65+ 占比（2035年预测）</h3>
+        <p>65岁以上将超过4亿人，进入重度老龄化。</p>
+      </div>
+      <div class="card">
+        <div class="big" style="color:var(--orange)">50%</div>
+        <h3>老年抚养比（2050年）</h3>
+        <p>每2个劳动力供养1个老人。</p>
+      </div>
+      <div class="card">
+        <div class="big" style="color:var(--accent)">~2035</div>
+        <h3>养老金耗尽预警</h3>
+        <p>社科院预测城镇职工养老基金可能在2035年前后耗尽。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Labor force shrinkage -->
+  <section class="section">
+    <h2>劳 动 力 持 续 缩 减</h2>
+    <p class="sub">2013年达峰后持续下降，对GDP增长年拖累0.3-0.5个百分点</p>
+    <div style="overflow-x:auto;">
+      <table class="cmp-table">
+        <thead><tr><th>时期</th><th>劳动年龄人口年均变化</th><th>累计效应</th></tr></thead>
+        <tbody>
+          <tr><td>2013-2018</td><td class="warn">每年 -300~400万</td><td>从10.06亿降至~9.8亿</td></tr>
+          <tr><td>2019-2024</td><td class="warn">每年 -400~500万</td><td>降至~9.6亿</td></tr>
+          <tr><td>2025-2030</td><td class="warn">每年 -500~700万</td><td>预计降至~9.2亿</td></tr>
+          <tr><td>2031-2040</td><td class="warn">每年 -800~1,000万</td><td>预计降至~8亿</td></tr>
+          <tr><td>2050</td><td class="warn">持续加速</td><td>预计降至~7.5亿</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout" style="max-width:700px;margin:20px auto 0;">
+      <div class="cl-title">不仅是数量——质量也在老化</div>
+      <div class="cl-body">劳动力内部年龄中位数上升，45-64岁"老龄劳动力"占比增加。体力、适应性和流动性都在下降。短期内人力资本提升（教育）可抵消，2030年后数量下降加速而质量提升放缓，净效应显著转负。</div>
+    </div>
+  </section>
+
+  <!-- Youth unemployment -->
+  <section class="section">
+    <h2>青 年 失 业 ：结 构 性 危 机</h2>
+    <p class="sub">7年翻一倍，对标东亚同阶段是异常高的2-3倍——趋势比水平更令人担忧</p>
+
+    <div class="bar-section">
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">2018</span><span class="val">~10%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:25%;background:var(--green)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">2020</span><span class="val">~13%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:33%;background:var(--orange)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">2022</span><span class="val">~18%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:45%;background:var(--red)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">2023.6（旧口径峰值，停止公布）</span><span class="val" style="color:var(--red)">21.3%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:53%;background:var(--red)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">2025.8（新口径，不含在校生）</span><span class="val" style="color:var(--red)">18.9% 新高</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:47%;background:var(--red)"></div></div>
+      </div>
+    </div>
+
+    <!-- East Asian comparison -->
+    <div style="overflow-x:auto;margin-top:24px;">
+      <table class="cmp-table">
+        <thead><tr><th>国家</th><th>人均GDP ~$13,000时</th><th>当时青年失业率</th><th>比较</th></tr></thead>
+        <tbody>
+          <tr><td>日本（~1983）</td><td>~$13,000</td><td class="hl">~5%</td><td></td></tr>
+          <tr><td>韩国（~2004）</td><td>~$13,000</td><td class="hl">~8%</td><td></td></tr>
+          <tr><td>中国台湾（~2005）</td><td>~$13,000</td><td class="hl">~10%</td><td></td></tr>
+          <tr><td>中国（2024）</td><td>~$13,000</td><td class="warn">~18%</td><td class="warn">日韩的2-3倍</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="ascii-box" style="margin-top:24px;"><span class="hl">供需剪刀差在扩大</span>
+
+年份    大学毕业生    "适配"岗位（估）   <span class="r">缺口</span>
+2020    874万         ~500万             <span class="r">~370万</span>
+2022    1,076万       ~450万             <span class="r">~626万</span>
+2024    1,179万       ~400万             <span class="r">~779万</span>
+2025    1,222万       ~350-400万         <span class="r">~800万</span>
+
+<span class="r">每年约800万大学毕业生"多出来"——而且差距还在扩大。</span>
+
+高学历者反而是重灾区：本科及以上失业率 > 高中以下
+外卖骑手中本科学历占比：2019 ~1% → 2024 ~5-6%</div>
+
+    <div class="callout" style="max-width:700px;margin:20px auto 0;border-left-color:var(--orange);">
+      <div class="cl-title">"疤痕效应"——可能失去的一代</div>
+      <div class="cl-body">日本"就职冰河期世代"（1993-2005年毕业）至今仍收入偏低、非正规就业多、结婚率低。中国2020-2025年毕业的约6,000万大学生正在经历类似的入职困境。这不仅是当下的失业问题，还将影响他们未来30年的收入、消费、生育和社会参与。</div>
+    </div>
+  </section>
+
+  <!-- Urbanization gap -->
+  <section class="section">
+    <h2>城 镇 化 ：量 的 空 间 收 窄 ，质 的 缺 口 巨 大</h2>
+    <div class="bar-section">
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">常住人口城镇化率</span><span class="val" style="color:var(--green)">67%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:67%;background:var(--green)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">户籍人口城镇化率</span><span class="val" style="color:var(--orange)">48%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:48%;background:var(--orange)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">差距 = 2.6亿"半城镇化"人口</span><span class="val" style="color:var(--red)">19pp</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:19%;background:var(--red)"></div></div>
+      </div>
+    </div>
+
+    <div class="card-grid" style="margin-top:20px;">
+      <div class="card">
+        <div class="big" style="color:var(--accent)">15-20pp</div>
+        <h3>理论剩余空间</h3>
+        <p>发达国家城镇化率80-92%。但增速将从1pp/年放缓至0.3-0.5pp。</p>
+      </div>
+      <div class="card">
+        <div class="big" style="color:var(--accent)">2,000-3,000亿</div>
+        <h3>户籍化每提升1pp</h3>
+        <p>农民工市民化后消费行为从"暂住者"模式转变，增加消费。</p>
+      </div>
+      <div class="card">
+        <div class="big" style="color:var(--orange)">10-15万元</div>
+        <h3>市民化人均成本</h3>
+        <p>2.6亿人总成本约30-40万亿——谁来买单？</p>
+      </div>
+      <div class="card">
+        <div class="big" style="color:var(--red)">50%+</div>
+        <h3>GDP靠五大城市群</h3>
+        <p>未来城镇化集中在长三角、珠三角、京津冀、成渝、长江中游。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Migration: not an option -->
+  <section class="section">
+    <h2>移 民 ：为 什 么 行 不 通</h2>
+    <p class="sub">不是"不应该"，而是"做不到"</p>
+    <div class="ascii-box"><span class="hl">缺口 vs 能力</span>
+
+每年劳动力缺口                     <span class="r">~800万</span>
+乐观假设（德国2015年极端水平）     ~100万/年
+填补比例                           <span class="r">12%</span>
+现实假设（考虑中国实际约束）       ~5-15万/年
+填补比例                           <span class="r">&lt;2%</span>
+
+中国绿卡：2004-2023年累计仅发放 <span class="r">~1.2万张</span>
+对比美国：每年发放 ~100万张
+
+<span class="hl">四重约束</span>
+<span class="r">文化</span>：汉族91%+，社会对外来移民接受度极低
+<span class="r">制度</span>：连国内2.6亿农民工流动都没解决
+<span class="r">吸引力</span>：语言壁垒 + 互联网受限 + 政治不确定性
+<span class="r">政治</span>：民族主义高涨，2020年永居条例草案引发舆论风暴</div>
+
+    <div class="callout" style="max-width:700px;margin:20px auto 0;">
+      <div class="cl-title">更现实的路径：日本模式</div>
+      <div class="cl-body">延迟退休（2025年开始）+ 自动化/AI（机器人密度已全球前列）+ 提高人力资本 + 户籍改革释放内部流动潜力。代价：经济增速进一步放缓。唯一的"解法"是大幅提高全要素生产率——让更少的人创造更多价值。</div>
+    </div>
+  </section>
+
+  <!-- Key insights -->
+  <section class="section">
+    <h2>核 心 判 断</h2>
+    <div class="wide-grid">
+      <div class="wide-card">
+        <h3>人口是最大的长期结构性挑战，且不可逆</h3>
+        <p>鼓励生育效果极差（全球无成功案例），移民做不到，延迟退休和自动化只能缓解。人口因素对经济的拖累将是30年级别的长周期。</p>
+      </div>
+      <div class="wide-card">
+        <h3>青年失业是承受不起的数字</h3>
+        <p>18-19%在全球不算最差，但对一个还没跨过高收入门槛、急需消费和创新驱动增长的经济体——这是一个承受不起的数字。6,000万毕业生可能成为"失去的一代"。</p>
+      </div>
+      <div class="wide-card">
+        <h3>城镇化的红利在"质"不在"量"</h3>
+        <p>关键不是让更多人住在城市，而是让已经在城市的2.6亿人获得完整市民权利。户籍改革的消费释放效应远超基建投入。</p>
+      </div>
+      <div class="wide-card">
+        <h3>人口质量红利必须替代数量红利</h3>
+        <p>教育和技能体系需要根本性改革——当前大学每年培养最多的专业（管理、法学）恰恰是市场最不需要的。同时技术工人缺口2,000万。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="footer">
+    <p>数据基准：2024 年 &middot; 来源：国家统计局、联合国人口展望、教育部、人社部、ILO、CHFS</p>
+    <p style="margin-top:8px;"><a href="../index.html">&larr; 返回中国宏观经济分析框架总览</a></p>
+  </section>
+
+</div>
+
+</body>
+</html>
