@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高新区购房决策指南 — 三类买家 × 数据推荐</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; background: #f8f9fc; color: #2c3e50; line-height: 1.6; }
+        .header { background: linear-gradient(135deg, #1abc9c, #16a085); color: white; padding: 32px 24px; }
+        .header h1 { font-size: 24px; margin-bottom: 4px; }
+        .header p { font-size: 13px; opacity: 0.85; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 16px; }
+        .section { margin: 28px 0; }
+        .section-title { font-size: 18px; font-weight: 700; margin-bottom: 14px; padding-left: 10px; border-left: 4px solid #1abc9c; }
+
+        /* Profile cards */
+        .profile-tabs { display: flex; gap: 8px; margin: 20px 0; flex-wrap: wrap; }
+        .tab { padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; border: 2px solid #ddd; background: white; transition: all 0.15s; }
+        .tab:hover { border-color: #1abc9c; }
+        .tab.active { background: #1abc9c; color: white; border-color: #1abc9c; }
+
+        .profile-panel { display: none; }
+        .profile-panel.active { display: block; }
+
+        .card { background: white; border-radius: 10px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); padding: 20px; margin-bottom: 16px; }
+        .card-title { font-size: 15px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .badge-green { background: #d5f5e3; color: #1e8449; padding: 2px 8px; border-radius: 4px; font-size: 11px; }
+        .badge-orange { background: #fdebd0; color: #d35400; padding: 2px 8px; border-radius: 4px; font-size: 11px; }
+        .badge-red { background: #fadbd8; color: #c0392b; padding: 2px 8px; border-radius: 4px; font-size: 11px; }
+
+        /* Recommendation list */
+        .rec-item { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+        .rec-item:last-child { border-bottom: none; }
+        .rec-rank { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: white; margin-right: 12px; flex-shrink: 0; }
+        .rec-info { flex: 1; }
+        .rec-name { font-size: 14px; font-weight: 600; }
+        .rec-meta { font-size: 12px; color: #888; margin-top: 2px; }
+        .rec-price { font-size: 16px; font-weight: 700; margin-left: 12px; flex-shrink: 0; }
+
+        /* Strategy box */
+        .strategy { background: #eafaf1; border: 1px solid #a9dfbf; border-radius: 8px; padding: 16px; margin: 12px 0; }
+        .strategy.warn { background: #fef9e7; border-color: #f9e79f; }
+        .strategy.danger { background: #fdedec; border-color: #f5b7b1; }
+        .strategy h4 { font-size: 14px; margin-bottom: 6px; }
+        .strategy p, .strategy li { font-size: 13px; }
+        .strategy ul { padding-left: 20px; }
+
+        /* Decision matrix */
+        .matrix { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .matrix th { background: #1abc9c; color: white; padding: 10px; text-align: left; }
+        .matrix td { padding: 10px; border-bottom: 1px solid #f0f0f0; }
+        .matrix tr:hover td { background: #f0faf7; }
+        .score { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 2px; }
+        .s-full { background: #1abc9c; }
+        .s-empty { background: #ddd; }
+
+        .nav-back { display: inline-block; margin: 20px 0; color: #1abc9c; text-decoration: none; font-size: 13px; }
+        .footer { text-align: center; padding: 24px; font-size: 12px; color: #bdc3c7; }
+        @media (max-width: 600px) { .tab { padding: 8px 14px; font-size: 12px; } }
+    </style>
+</head>
+<body>
+<div class="header">
+    <div class="container">
+        <h1>高新区购房决策指南</h1>
+        <p>基于 525 个二手房小区 + 171 个新房楼盘的数据驱动推荐 | 三类买家画像 × 板块匹配</p>
+    </div>
+</div>
+<div class="container">
+    <a class="nav-back" href="index.html">&larr; 返回门户</a>
+
+    <!-- Decision matrix overview -->
+    <div class="section">
+        <h2 class="section-title">板块 × 买家适配矩阵</h2>
+        <div class="card" style="overflow-x:auto;">
+            <table class="matrix">
+                <thead>
+                    <tr><th>板块</th><th>中位价</th><th>在售套数</th><th>刚需</th><th>改善</th><th>豪宅</th><th>核心特征</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>大寨路</strong></td><td>10,324</td><td>956</td>
+                        <td><span class="score s-full"></span><span class="score s-full"></span><span class="score s-full"></span></td>
+                        <td><span class="score s-empty"></span><span class="score s-empty"></span><span class="score s-empty"></span></td>
+                        <td><span class="score s-empty"></span><span class="score s-empty"></span><span class="score s-empty"></span></td>
+                        <td>最大价值洼地，存量充足，2005-16年老盘为主</td>
+                    </tr>
+                    <tr>
+                        <td><strong>科技路西口</strong></td><td>12,991</td><td>720</td>
+                        <td><span class="score s-full"></span><span class="score s-full"></span><span class="score s-full"></span></td>
+                        <td><span class="score s-full"></span><span class="score s-empty"></span><span class="score s-empty"></span></td>
+                        <td><span class="score s-empty"></span><span class="score s-empty"></span><span class="score s-empty"></span></td>
+                        <td>紧邻高新核心，交通便利，性价比刚需区</td>
+                    </tr>
+                    <tr>
+                        <td><strong>锦业路</strong></td><td>15,377</td><td>586</td>
+                        <td><span class="score s-full"></span><span class="score s-empty"></span><span class="score s-empty"></span></td>
+                        <td><span class="score s-full"></span><span class="score s-full"></span><span class="score s-full"></span></td>
+                        <td><span class="score s-empty"></span><span class="score s-empty"></span><span class="score s-empty"></span></td>
+                        <td>高新二期核心，逸翠园系列品质标杆</td>
+                    </tr>
+                    <tr>
+                        <td><strong>科技六路</strong></td><td>22,103</td><td>1,090</td>
+                        <td><span class="score s-empty"></span><span class="score s-empty"></span><span class="score s-empty"></span></td>
+                        <td><span class="score s-full"></span><span class="score s-full"></span><span class="score s-full"></span></td>
+                        <td><span class="score s-full"></span><span class="score s-full"></span><span class="score s-empty"></span></td>
+                        <td>最大交易池，流动性极强，新房溢价仅19%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>高新一中</strong></td><td>20,792</td><td>296</td>
+                        <td><span class="score s-empty"></span><span class="score s-empty"></span><span class="score s-empty"></span></td>
+                        <td><span class="score s-full"></span><span class="score s-full"></span><span class="score s-empty"></span></td>
+                        <td><span class="score s-full"></span><span class="score s-full"></span><span class="score s-full"></span></td>
+                        <td>学区溢价显著，中大国际九号8.9万领跑</td>
+                    </tr>
+                    <tr>
+                        <td><strong>软件新城</strong></td><td>22,199</td><td>284</td>
+                        <td><span class="score s-empty"></span><span class="score s-empty"></span><span class="score s-empty"></span></td>
+                        <td><span class="score s-full"></span><span class="score s-full"></span><span class="score s-full"></span></td>
+                        <td><span class="score s-empty"></span><span class="score s-empty"></span><span class="score s-empty"></span></td>
+                        <td>新兴板块，2022后新盘多，配套仍在完善</td>
+                    </tr>
+                    <tr>
+                        <td><strong>西万路口</strong></td><td>16,401</td><td>390</td>
+                        <td><span class="score s-empty"></span><span class="score s-empty"></span><span class="score s-empty"></span></td>
+                        <td><span class="score s-full"></span><span class="score s-full"></span><span class="score s-empty"></span></td>
+                        <td><span class="score s-empty"></span><span class="score s-empty"></span><span class="score s-empty"></span></td>
+                        <td>高新三期入口，万科/万熙大盘聚集</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Profile tabs -->
+    <div class="profile-tabs">
+        <div class="tab active" onclick="switchTab(0)">刚需首置 (&lt;1.2万)</div>
+        <div class="tab" onclick="switchTab(1)">品质改善 (1.5-3万)</div>
+        <div class="tab" onclick="switchTab(2)">高端/豪宅 (&gt;3万)</div>
+    </div>
+
+    <!-- Profile 1: 刚需 -->
+    <div class="profile-panel active" id="panel-0">
+        <div class="card">
+            <div class="card-title">画像 <span class="badge-green">预算 &lt;120万 | 首套</span></div>
+            <p style="font-size:13px;color:#666;">首次置业，预算有限（总价 80-120 万，面积 80-100㎡），优先考虑通勤便利和基础生活配套，对小区年龄容忍度较高。</p>
+        </div>
+
+        <div class="strategy">
+            <h4>核心策略：锁定大寨路 + 科技路西口</h4>
+            <ul>
+                <li>大寨路中位仅 <strong>10,324 元/㎡</strong>，100㎡总价约 103 万，且在售 956 套，议价空间大</li>
+                <li>科技路西口中位 <strong>12,991 元/㎡</strong>，位置更核心（紧邻科技路商圈），溢价合理</li>
+                <li><strong>避开新房</strong> — 该价位段新房极少（仅高新6号 1.5万），且新房溢价 37%，刚需买二手更划算</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="card-title">数据推荐 TOP 8</div>
+            <div class="rec-item"><div class="rec-rank" style="background:#1abc9c">1</div><div class="rec-info"><div class="rec-name">恒大城</div><div class="rec-meta">大寨路 | 2010年 | 98套在售 — 流动性好</div></div><div class="rec-price" style="color:#1abc9c">11,046</div></div>
+            <div class="rec-item"><div class="rec-rank" style="background:#1abc9c">2</div><div class="rec-info"><div class="rec-name">宏府麒麟山</div><div class="rec-meta">大寨路 | 2016年 | 97套在售 — 相对较新</div></div><div class="rec-price" style="color:#1abc9c">10,254</div></div>
+            <div class="rec-item"><div class="rec-rank" style="background:#27ae60">3</div><div class="rec-info"><div class="rec-name">东方米兰</div><div class="rec-meta">科技路西口 | 2011年 | 62套 — 位置核心</div></div><div class="rec-price" style="color:#27ae60">11,852</div></div>
+            <div class="rec-item"><div class="rec-rank" style="background:#27ae60">4</div><div class="rec-info"><div class="rec-name">铭城国际社区</div><div class="rec-meta">大寨路 | 2015年 | 56套 — 品质尚可</div></div><div class="rec-price" style="color:#27ae60">10,765</div></div>
+            <div class="rec-item"><div class="rec-rank" style="background:#2ecc71">5</div><div class="rec-info"><div class="rec-name">昆明花园</div><div class="rec-meta">大寨路 | 2011年 | 55套</div></div><div class="rec-price" style="color:#2ecc71">11,414</div></div>
+            <div class="rec-item"><div class="rec-rank" style="background:#2ecc71">6</div><div class="rec-info"><div class="rec-name">旭景碧泽园</div><div class="rec-meta">大寨路 | 2005年 | 47套 — 最便宜之一</div></div><div class="rec-price" style="color:#2ecc71">10,105</div></div>
+            <div class="rec-item"><div class="rec-rank" style="background:#82e0aa">7</div><div class="rec-info"><div class="rec-name">新西蓝一期</div><div class="rec-meta">高新四路 | 2006年 | 21套 — 南二环旁</div></div><div class="rec-price" style="color:#82e0aa">9,860</div></div>
+            <div class="rec-item"><div class="rec-rank" style="background:#82e0aa">8</div><div class="rec-info"><div class="rec-name">复地优尚国际</div><div class="rec-meta">软件园 | 2011年 | 18套</div></div><div class="rec-price" style="color:#82e0aa">11,864</div></div>
+        </div>
+
+        <div class="strategy warn">
+            <h4>风险提示</h4>
+            <ul>
+                <li>大寨路多为 2005-2015 年建成，注意电梯老化、物业水平</li>
+                <li>在售套数过高（恒大城 98 套）可能暗示业主集中抛售，需调查原因</li>
+                <li>该区域新房几乎断供，未来补涨可能性低，适合自住不宜投资</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Profile 2: 改善 -->
+    <div class="profile-panel" id="panel-1">
+        <div class="card">
+            <div class="card-title">画像 <span class="badge-orange">预算 200-400万 | 换房</span></div>
+            <p style="font-size:13px;color:#666;">已有住房，置换改善。追求品质小区、更好学区或更大面积，预算 200-400 万（1.5-3万/㎡ × 120-140㎡），关注保值性和生活品质。</p>
+        </div>
+
+        <div class="strategy">
+            <h4>核心策略：科技六路二手房 > 同区新房</h4>
+            <ul>
+                <li>科技六路是改善首选 — <strong>1,090 套在售</strong>，流动性全区第一，中位 22,103，品质盘密集</li>
+                <li><strong>二手优于新房</strong> — 科技六路新房溢价仅 19%，但二手房位置更核心、配套更成熟</li>
+                <li>锦业路是性价比改善区 — 逸翠园系列品质标杆，中位 15,377，比科技六路低 30%</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="card-title">数据推荐 TOP 8</div>
+            <div class="rec-item"><div class="rec-rank" style="background:#e67e22">1</div><div class="rec-info"><div class="rec-name">万达天樾</div><div class="rec-meta">科技六路 | 2018年 | 127套 — 次新房，超高流动性</div></div><div class="rec-price" style="color:#e67e22">27,297</div></div>
+            <div class="rec-item"><div class="rec-rank" style="background:#e67e22">2</div><div class="rec-info"><div class="rec-name">逸翠园四期</div><div class="rec-meta">锦业路 | 2016年 | 87套 — 口碑标杆</div></div><div class="rec-price" style="color:#e67e22">29,750</div></div>
+            <div class="rec-item"><div class="rec-rank" style="background:#f39c12">3</div><div class="rec-info"><div class="rec-name">天地源枫林绿洲</div><div class="rec-meta">科技六路 | 2008年 | 93套 — 大社区成熟配套</div></div><div class="rec-price" style="color:#f39c12">24,971</div></div>
+            <div class="rec-item"><div class="rec-rank" style="background:#f39c12">4</div><div class="rec-info"><div class="rec-name">逸翠园</div><div class="rec-meta">锦业路 | 2009年 | 84套 — 经典园区</div></div><div class="rec-price" style="color:#f39c12">26,635</div></div>
+            <div class="rec-item"><div class="rec-rank" style="background:#f5b041">5</div><div class="rec-info"><div class="rec-name">万科翡翠国宾</div><div class="rec-meta">科技六路 | 2021年 | 72套 — 万科品质</div></div><div class="rec-price" style="color:#f5b041">28,615</div></div>
+            <div class="rec-item"><div class="rec-rank" style="background:#f5b041">6</div><div class="rec-info"><div class="rec-name">苏宁云著</div><div class="rec-meta">软件新城 | 2022年 | 82套 — 新兴板块最新</div></div><div class="rec-price" style="color:#f5b041">16,331</div></div>
+            <div class="rec-item"><div class="rec-rank" style="background:#f9e79f">7</div><div class="rec-info"><div class="rec-name">莱安逸珲</div><div class="rec-meta">科技路西口 | 2015年 | 65套</div></div><div class="rec-price" style="color:#d4ac0d">20,423</div></div>
+            <div class="rec-item"><div class="rec-rank" style="background:#f9e79f">8</div><div class="rec-info"><div class="rec-name">云顶园</div><div class="rec-meta">高新一中 | 2010年 | 40套 — 学区加持</div></div><div class="rec-price" style="color:#d4ac0d">24,753</div></div>
+        </div>
+
+        <div class="strategy warn">
+            <h4>新房 vs 二手房决策</h4>
+            <ul>
+                <li>如果预算够科技六路二手房（2.2万+），<strong>不建议买同区新房</strong>（溢价 19%，且远离已成熟商圈）</li>
+                <li>如果偏好新房，软件新城（均价 24,193）配套仍在完善期，需接受 3-5 年成熟等待</li>
+                <li>CID/三期新房均价 23,334 但<strong>无二手房参照</strong>，定价合理性无法验证，风险较高</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Profile 3: 豪宅 -->
+    <div class="profile-panel" id="panel-2">
+        <div class="card">
+            <div class="card-title">画像 <span class="badge-red">预算 500万+ | 顶级改善</span></div>
+            <p style="font-size:13px;color:#666;">追求稀缺性、圈层、品质感。预算 500 万以上，关注品牌开发商、低密度、核心地段、学区。或考虑曲江改善型大户型。</p>
+        </div>
+
+        <div class="strategy">
+            <h4>核心策略：高新一中学区 + 曲江文旅，二选一</h4>
+            <ul>
+                <li><strong>高新一中板块</strong>（中位 20,792）是学区驱动型高端区，中大国际九号 8.9 万领跑，丹轩坊/丹轩梓园 4-5.7 万</li>
+                <li><strong>曲江</strong>均价 31,761，低密度大户型（容积率 1.93），适合不追求学区但重视居住体验的买家</li>
+                <li>科技六路长安龙胤（6.2 万）、万达天玺（3.5 万）是非学区高端的替代选择</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="card-title">数据推荐 TOP 8</div>
+            <div class="rec-item"><div class="rec-rank" style="background:#c0392b">1</div><div class="rec-info"><div class="rec-name">中大国际九号</div><div class="rec-meta">高新一中 | 2017年 | 48套 — 高新最贵</div></div><div class="rec-price" style="color:#c0392b">89,622</div></div>
+            <div class="rec-item"><div class="rec-rank" style="background:#c0392b">2</div><div class="rec-info"><div class="rec-name">曲江公馆和园</div><div class="rec-meta">曲江 | 2012年 | 1052户 — 曲江标杆</div></div><div class="rec-price" style="color:#c0392b">61,556</div></div>
+            <div class="rec-item"><div class="rec-rank" style="background:#e74c3c">3</div><div class="rec-info"><div class="rec-name">长安龙胤</div><div class="rec-meta">科技六路 | 2019年 | 31套 — 科技六路顶配</div></div><div class="rec-price" style="color:#e74c3c">62,303</div></div>
+            <div class="rec-item"><div class="rec-rank" style="background:#e74c3c">4</div><div class="rec-info"><div class="rec-name">天地源·丹轩梓园</div><div class="rec-meta">高新一中 | 2012年 | 40套 — 学区经典</div></div><div class="rec-price" style="color:#e74c3c">57,737</div></div>
+            <div class="rec-item"><div class="rec-rank" style="background:#ec7063">5</div><div class="rec-info"><div class="rec-name">中海百贤府</div><div class="rec-meta">曲江 | 2014年 | 104户 — 低密墅质</div></div><div class="rec-price" style="color:#ec7063">46,597</div></div>
+            <div class="rec-item"><div class="rec-rank" style="background:#ec7063">6</div><div class="rec-info"><div class="rec-name">天地源丹轩坊</div><div class="rec-meta">高新一中 | 2017年 | 54套 — 学区+品质</div></div><div class="rec-price" style="color:#ec7063">43,303</div></div>
+            <div class="rec-item"><div class="rec-rank" style="background:#f1948a">7</div><div class="rec-info"><div class="rec-name">中海铂宫</div><div class="rec-meta">曲江 | 2012年 | 543户 — 大户型为主</div></div><div class="rec-price" style="color:#f1948a">40,526</div></div>
+            <div class="rec-item"><div class="rec-rank" style="background:#f1948a">8</div><div class="rec-info"><div class="rec-name">金地湖城大境</div><div class="rec-meta">曲江 | 2012年 | 3069户 — 曲江大盘</div></div><div class="rec-price" style="color:#f1948a">38,921</div></div>
+        </div>
+
+        <div class="strategy danger">
+            <h4>风险提示</h4>
+            <ul>
+                <li>高新一中板块学区溢价可能随政策变化（多校划片等）而缩水</li>
+                <li>曲江数据仅 10 个样本，价格代表性有限，实际成交可能有折扣</li>
+                <li>新房豪宅段（望云松间 5 万、曲江文商·檀境 4.2 万）无二手房锚定，溢价风险高</li>
+                <li>在售 > 40 套的豪宅小区（如中大九号 48 套）可能暗示流动性问题</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Summary decision tree -->
+    <div class="section">
+        <h2 class="section-title">一张图决策</h2>
+        <div class="card" style="font-size:14px;">
+            <pre style="white-space:pre-wrap;font-family:inherit;line-height:2;">
+<strong>你的预算是？</strong>
+├── <strong>&lt; 120万 (刚需)</strong>
+│   ├── 通勤优先 → <strong>科技路西口</strong> (东方米兰 1.1万起)
+│   └── 面积优先 → <strong>大寨路</strong> (恒大城/宏府麒麟山 1.0万起)
+│
+├── <strong>200-400万 (改善)</strong>
+│   ├── 成熟配套 → <strong>科技六路二手房</strong> (万达天樾 2.7万)
+│   ├── 品质园区 → <strong>锦业路</strong> (逸翠园 2.6-2.9万)
+│   └── 新房偏好 → <strong>软件新城</strong> (慎选，配套待完善)
+│
+└── <strong>500万+ (豪宅)</strong>
+    ├── 学区驱动 → <strong>高新一中</strong> (丹轩坊 4.3万起)
+    ├── 居住体验 → <strong>曲江</strong> (公馆和园 6.1万)
+    └── 非学区高端 → <strong>科技六路</strong> (长安龙胤 6.2万)
+            </pre>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    自动生成于 2026-02-27 18:00 GMT+8 | Claude Code 自主推进 | 数据驱动，不构成投资建议
+</div>
+
+<script>
+function switchTab(idx) {
+    document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === idx));
+    document.querySelectorAll('.profile-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+}
+</script>
+</body>
+</html>
