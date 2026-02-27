@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高新区房地产市场供需研究</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: #0a0e17; color: #e0e6ed; line-height: 1.7; }
+
+.header { background: linear-gradient(135deg, #1a1f35 0%, #0d1321 100%); padding: 60px 40px 40px; border-bottom: 1px solid #1e2a3a; }
+.header h1 { font-size: 32px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+.header .sub { font-size: 15px; color: #7a8ba8; }
+
+.container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+
+.section { margin-bottom: 48px; }
+.section-title { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 20px; padding-left: 14px; border-left: 4px solid #3b82f6; }
+
+/* KPI cards */
+.kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+.kpi { background: #111827; border: 1px solid #1e2a3a; border-radius: 12px; padding: 24px; text-align: center; }
+.kpi .value { font-size: 36px; font-weight: 800; color: #3b82f6; }
+.kpi .value.red { color: #ef4444; }
+.kpi .value.green { color: #10b981; }
+.kpi .value.amber { color: #f59e0b; }
+.kpi .label { font-size: 13px; color: #7a8ba8; margin-top: 4px; }
+
+/* Tables */
+table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid #1e2a3a; font-size: 14px; }
+th { color: #7a8ba8; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+td { color: #c8d3e0; }
+tr:hover td { background: #111827; }
+.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Charts (CSS bar charts) */
+.bar-chart { margin: 16px 0; }
+.bar-row { display: flex; align-items: center; margin-bottom: 8px; }
+.bar-label { width: 120px; font-size: 13px; color: #7a8ba8; flex-shrink: 0; }
+.bar-track { flex: 1; height: 28px; background: #111827; border-radius: 6px; overflow: hidden; position: relative; }
+.bar-fill { height: 100%; border-radius: 6px; display: flex; align-items: center; padding-left: 10px; font-size: 12px; font-weight: 600; color: #fff; min-width: 40px; transition: width 0.8s ease; }
+.bar-fill.blue { background: linear-gradient(90deg, #3b82f6, #2563eb); }
+.bar-fill.green { background: linear-gradient(90deg, #10b981, #059669); }
+.bar-fill.amber { background: linear-gradient(90deg, #f59e0b, #d97706); }
+.bar-fill.red { background: linear-gradient(90deg, #ef4444, #dc2626); }
+.bar-fill.purple { background: linear-gradient(90deg, #8b5cf6, #7c3aed); }
+
+/* Conclusion cards */
+.conclusions { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; }
+.conclusion-card { background: #111827; border: 1px solid #1e2a3a; border-radius: 12px; padding: 20px 24px; }
+.conclusion-card .tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-bottom: 10px; }
+.conclusion-card .tag.risk { background: #7f1d1d; color: #fca5a5; }
+.conclusion-card .tag.neutral { background: #1e3a5f; color: #93c5fd; }
+.conclusion-card .tag.opportunity { background: #064e3b; color: #6ee7b7; }
+.conclusion-card h3 { font-size: 16px; color: #fff; margin-bottom: 6px; }
+.conclusion-card p { font-size: 13px; color: #7a8ba8; }
+
+/* Supply-demand diagram */
+.sd-diagram { display: flex; gap: 40px; align-items: flex-end; justify-content: center; margin: 30px 0; }
+.sd-bar-wrap { text-align: center; }
+.sd-bar { width: 100px; border-radius: 8px 8px 0 0; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 12px; font-size: 20px; font-weight: 800; color: #fff; }
+.sd-bar.supply { background: linear-gradient(180deg, #ef4444 0%, #991b1b 100%); }
+.sd-bar.demand { background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%); }
+.sd-label { margin-top: 8px; font-size: 14px; color: #7a8ba8; }
+
+/* Scenario table */
+.scenario-table td:first-child { font-weight: 600; }
+.scenario-table .highlight { background: #1e2a3a; }
+
+/* Employer section */
+.employer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+.employer { background: #111827; border: 1px solid #1e2a3a; border-radius: 10px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; }
+.employer .name { font-size: 15px; font-weight: 600; color: #fff; }
+.employer .detail { font-size: 12px; color: #7a8ba8; }
+.employer .count { font-size: 20px; font-weight: 800; color: #3b82f6; }
+.employer .count-label { font-size: 11px; color: #7a8ba8; }
+
+/* Stacked bar for demand */
+.stacked-bar { display: flex; height: 40px; border-radius: 8px; overflow: hidden; margin: 16px 0; }
+.stacked-bar .seg { display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: #fff; }
+
+.footnote { font-size: 12px; color: #4a5568; margin-top: 8px; }
+.divider { border: none; border-top: 1px solid #1e2a3a; margin: 40px 0; }
+
+/* Nav link */
+.nav-link { display: inline-block; margin-top: 20px; color: #3b82f6; font-size: 14px; text-decoration: none; }
+.nav-link:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div style="max-width:1200px;margin:0 auto;">
+    <h1>高新区房地产市场供需研究</h1>
+    <div class="sub">数据来源: 房天下 456个二手房小区 + 171个新房楼盘 | 2026年2月</div>
+    <a class="nav-link" href="../analytics/index.html">&larr; 返回数据分析看板</a>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- KPI Overview -->
+<div class="section">
+  <div class="section-title">总览</div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="value">~80万</div><div class="label">估算总住房(户)</div></div>
+    <div class="kpi"><div class="value">~130万</div><div class="label">管理服务人口</div></div>
+    <div class="kpi"><div class="value red">1.5-1.8</div><div class="label">供需比(供大于求)</div></div>
+    <div class="kpi"><div class="value amber">2.5-3.5万</div><div class="label">月薪1万+岗位</div></div>
+    <div class="kpi"><div class="value green">3000-6000</div><div class="label">年实际住房需求(套)</div></div>
+  </div>
+</div>
+
+<!-- Housing Stock -->
+<div class="section">
+  <div class="section-title">住房存量构成</div>
+  <div class="bar-chart">
+    <div class="bar-row">
+      <div class="bar-label">二手房小区</div>
+      <div class="bar-track"><div class="bar-fill blue" style="width:71%">57万户 (71%)</div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">纯新房楼盘</div>
+      <div class="bar-track"><div class="bar-fill green" style="width:10%">5-9万</div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">城中村/安置</div>
+      <div class="bar-track"><div class="bar-fill amber" style="width:9%">~7万</div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">公寓/公租等</div>
+      <div class="bar-track"><div class="bar-fill purple" style="width:6%">~5万</div></div>
+    </div>
+  </div>
+  <p class="footnote">* 二手房数据来自 fang.com，有准确户数支撑；其余为估算</p>
+</div>
+
+<!-- By Era -->
+<div class="section">
+  <div class="section-title">存量住房年代分布</div>
+  <div class="bar-chart">
+    <div class="bar-row">
+      <div class="bar-label">2005年前</div>
+      <div class="bar-track"><div class="bar-fill red" style="width:10%">4.9万户</div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">2005-2009</div>
+      <div class="bar-track"><div class="bar-fill amber" style="width:17%">8.2万户</div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">2010-2014</div>
+      <div class="bar-track"><div class="bar-fill blue" style="width:31%">15.3万户</div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">2015-2019</div>
+      <div class="bar-track"><div class="bar-fill green" style="width:28%">13.8万户</div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">2020+</div>
+      <div class="bar-track"><div class="bar-fill purple" style="width:13%">6.4万户</div></div>
+    </div>
+  </div>
+  <p class="footnote">2015-2016两年高峰: 48个小区、10万户，透支了未来需求</p>
+</div>
+
+<!-- Supply vs Demand -->
+<div class="section">
+  <div class="section-title">供需对比</div>
+  <div class="sd-diagram">
+    <div class="sd-bar-wrap">
+      <div class="sd-bar supply" style="height:240px">80万</div>
+      <div class="sd-label">估算总供给(户)</div>
+    </div>
+    <div class="sd-bar-wrap">
+      <div class="sd-bar demand" style="height:160px">52万</div>
+      <div class="sd-label">需求(户均2.5人)</div>
+    </div>
+    <div class="sd-bar-wrap">
+      <div class="sd-bar demand" style="height:130px">43万</div>
+      <div class="sd-label">需求(户均3人)</div>
+    </div>
+  </div>
+</div>
+
+<!-- Future Scenarios -->
+<div class="section">
+  <div class="section-title">未来10年人口与需求情景</div>
+  <table class="scenario-table">
+    <tr><th>场景</th><th class="num">2035年人口</th><th class="num">增量</th><th class="num">新增住房需求</th><th class="num">已规划供给</th><th>供需</th></tr>
+    <tr><td>乐观</td><td class="num">180万</td><td class="num">+50万</td><td class="num">~20万户</td><td class="num" rowspan="3">5-9万户<br><span style="font-size:11px;color:#7a8ba8">(在售+待售新房)</span></td><td><span style="color:#10b981">供不应求</span></td></tr>
+    <tr class="highlight"><td>中性</td><td class="num">160万</td><td class="num">+30万</td><td class="num">~12万户</td><td><span style="color:#f59e0b">基本平衡</span></td></tr>
+    <tr><td>悲观</td><td class="num">140万</td><td class="num">+10万</td><td class="num">~4万户</td><td><span style="color:#ef4444">明显过剩</span></td></tr>
+  </table>
+  <p class="footnote">* 已规划供给仅含 fang.com 在册新房，不含未来新拍地块和存量空置回流</p>
+</div>
+
+<!-- Employment -->
+<div class="section">
+  <div class="section-title">高薪就业 (月薪1万+)</div>
+  <div class="employer-grid">
+    <div class="employer">
+      <div><div class="name">华为</div><div class="detail">研发为主 | 20-50K</div></div>
+      <div style="text-align:right"><div class="count">1.2-1.5万</div><div class="count-label">高薪岗位</div></div>
+    </div>
+    <div class="employer">
+      <div><div class="name">中兴通讯</div><div class="detail">研发+管理 | 18-40K</div></div>
+      <div style="text-align:right"><div class="count">3-4千</div><div class="count-label">高薪岗位</div></div>
+    </div>
+    <div class="employer">
+      <div><div class="name">隆基绿能(总部)</div><div class="detail">研发+管理 | 15-30K</div></div>
+      <div style="text-align:right"><div class="count">2-3千</div><div class="count-label">高薪岗位</div></div>
+    </div>
+    <div class="employer">
+      <div><div class="name">互联网分部</div><div class="detail">阿里/字节/腾讯/京东 | 20-60K</div></div>
+      <div style="text-align:right"><div class="count">2-3千</div><div class="count-label">高薪岗位</div></div>
+    </div>
+    <div class="employer">
+      <div><div class="name">银行研发中心</div><div class="detail">工行/农行/交行/邮储等 | 12-25K</div></div>
+      <div style="text-align:right"><div class="count">2-3千</div><div class="count-label">高薪岗位</div></div>
+    </div>
+    <div class="employer">
+      <div><div class="name">本地科技公司</div><div class="detail">中软/诺瓦星云等 | 10-20K</div></div>
+      <div style="text-align:right"><div class="count">3-5千</div><div class="count-label">高薪岗位</div></div>
+    </div>
+    <div class="employer">
+      <div><div class="name">大疆/荣耀/OPPO</div><div class="detail">研发 | 25-35K</div></div>
+      <div style="text-align:right"><div class="count">1-2千</div><div class="count-label">高薪岗位</div></div>
+    </div>
+    <div class="employer">
+      <div><div class="name">军工研究所</div><div class="detail">618所/206所等 | 8-15K</div></div>
+      <div style="text-align:right"><div class="count">2-3千</div><div class="count-label">高薪岗位</div></div>
+    </div>
+  </div>
+  <p class="footnote" style="margin-top:12px">* 三星(~1万人)和比亚迪(~2万人)以工厂为主(月薪4-6K)，不计入高薪统计</p>
+</div>
+
+<!-- Demand Structure -->
+<div class="section">
+  <div class="section-title">年需求结构</div>
+
+  <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+    <div>
+      <h3 style="font-size:16px;color:#fff;margin-bottom:12px;">刚需: 800-1,500套/年</h3>
+      <table>
+        <tr><th>筛选</th><th class="num">比例</th><th class="num">人数</th></tr>
+        <tr><td>高薪岗位</td><td class="num">-</td><td class="num">30,000</td></tr>
+        <tr><td>适龄(25-40)</td><td class="num">60%</td><td class="num">18,000</td></tr>
+        <tr><td>未购房</td><td class="num">50%</td><td class="num">9,000</td></tr>
+        <tr><td>定居西安</td><td class="num">70%</td><td class="num">6,300</td></tr>
+        <tr><td>买得起高新</td><td class="num">60%</td><td class="num">3,800</td></tr>
+      </table>
+      <p class="footnote">每年新增(人员流动15-20%): 800-1500套</p>
+    </div>
+
+    <div>
+      <h3 style="font-size:16px;color:#fff;margin-bottom:12px;">改善: 2,500-4,500套/年</h3>
+      <table>
+        <tr><th>来源</th><th class="num">潜在量</th><th>特点</th></tr>
+        <tr><td>2005前老房</td><td class="num">~6千</td><td style="font-size:12px">想换但多数买不起</td></tr>
+        <tr><td>2005-2009</td><td class="num">~1.1万</td><td style="font-size:12px">主力，孩子上中学</td></tr>
+        <tr><td>2010-2014</td><td class="num">~1.9万</td><td style="font-size:12px">最大池子，能力最强</td></tr>
+        <tr><td>2015-2019</td><td class="num">~1.1万</td><td style="font-size:12px">部分首套太小</td></tr>
+      </table>
+      <p class="footnote">4.8万户分5-10年，实际受二手房流动性制约打折</p>
+    </div>
+  </div>
+
+  <div style="margin-top:24px;">
+    <h3 style="font-size:16px;color:#fff;margin-bottom:12px;">年需求合计: 3,000-6,000套</h3>
+    <div class="stacked-bar">
+      <div class="seg" style="width:20%;background:#3b82f6;">刚需 800-1500</div>
+      <div class="seg" style="width:80%;background:#f59e0b;">改善 2500-4500</div>
+    </div>
+    <p class="footnote">改善是刚需的4-6倍，但必须先卖掉旧房 &mdash; 二手房不好卖时改善需求被锁死</p>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- Conclusions -->
+<div class="section">
+  <div class="section-title">核心结论</div>
+  <div class="conclusions">
+    <div class="conclusion-card">
+      <span class="tag risk">风险</span>
+      <h3>整体供大于求</h3>
+      <p>80万户供给 vs 43-52万户需求，供需比1.5-1.8。不是"需要提前建"而是"过去建多了"。</p>
+    </div>
+    <div class="conclusion-card">
+      <span class="tag risk">风险</span>
+      <h3>已规划项目覆盖未来10年</h3>
+      <p>在售+待售新房5-9万户，加上存量空置回流，中性场景下已够未来10年增量需求。</p>
+    </div>
+    <div class="conclusion-card">
+      <span class="tag neutral">趋势</span>
+      <h3>改善是市场主力</h3>
+      <p>改善需求是刚需的4-6倍。但改善依赖"卖旧买新"，二手房流动性差时整个链条停滞。</p>
+    </div>
+    <div class="conclusion-card">
+      <span class="tag neutral">趋势</span>
+      <h3>高薪岗位集中度高</h3>
+      <p>2.5-3.5万个月薪1万+岗位，华为一家占1/3以上。购买力基础窄，依赖少数大企业。</p>
+    </div>
+    <div class="conclusion-card">
+      <span class="tag opportunity">机会</span>
+      <h3>二期核心地段相对安全</h3>
+      <p>产业成熟、配套完善、学区稳定。一期老旧、三期配套不足的项目压力更大。</p>
+    </div>
+    <div class="conclusion-card">
+      <span class="tag opportunity">机会</span>
+      <h3>产业支撑仍在</h3>
+      <p>80万从业人员、GDP占全市28%。高新不是睡城，有真实产业基础，长期看优于纯住宅区。</p>
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center;padding:40px 0;color:#4a5568;font-size:12px;">
+  西安高新区房地产市场研究 | 数据截至 2026年2月
+</div>
+
+</div>
+</body>
+</html>

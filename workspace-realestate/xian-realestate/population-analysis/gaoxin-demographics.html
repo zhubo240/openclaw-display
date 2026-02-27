@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>西安高新区人口与居民画像</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; background: #0f1923; color: #e0e6ed; }
+        .header { background: linear-gradient(135deg, #1a2a3a, #2c3e50); padding: 28px 24px 20px; border-bottom: 2px solid #e67e22; }
+        .header h1 { font-size: 24px; color: #e67e22; margin-bottom: 4px; }
+        .header p { font-size: 13px; color: #7f8c8d; }
+        .header a { color: #3498db; text-decoration: none; font-size: 13px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
+
+        .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 20px 0; }
+        .kpi { background: #1a2a3a; border: 1px solid #2c3e50; border-radius: 8px; padding: 14px 16px; text-align: center; }
+        .kpi .num { font-size: 26px; font-weight: 700; color: #e67e22; }
+        .kpi .lbl { font-size: 12px; color: #7f8c8d; margin-top: 2px; }
+        .kpi .sub { font-size: 11px; color: #95a5a6; margin-top: 4px; }
+
+        .section { margin: 24px 0; }
+        .section-title { font-size: 16px; font-weight: 700; color: #ecf0f1; margin-bottom: 12px; padding-left: 10px; border-left: 3px solid #e67e22; }
+        .card { background: #1a2a3a; border: 1px solid #2c3e50; border-radius: 8px; padding: 18px; margin-bottom: 16px; }
+        .card h3 { font-size: 14px; color: #e67e22; margin-bottom: 10px; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+
+        .hbar-row { display: flex; align-items: center; margin: 6px 0; }
+        .hbar-label { width: 110px; font-size: 12px; text-align: right; padding-right: 10px; flex-shrink: 0; color: #bdc3c7; }
+        .hbar-track { flex: 1; height: 22px; background: #0f1923; border-radius: 3px; overflow: hidden; }
+        .hbar-fill { height: 100%; border-radius: 3px; display: flex; align-items: center; padding-left: 8px; font-size: 11px; color: white; font-weight: 600; min-width: 30px; }
+        .hbar-value { width: 70px; font-size: 12px; color: #bdc3c7; padding-left: 8px; flex-shrink: 0; }
+
+        .donut-container { display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap; }
+        .donut-box { text-align: center; }
+        .donut-box .label { font-size: 12px; color: #7f8c8d; margin-top: 6px; }
+
+        .persona-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+        .persona { background: #1a2a3a; border: 1px solid #2c3e50; border-radius: 8px; padding: 18px; }
+        .persona .tag { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; margin-bottom: 8px; }
+        .persona h4 { font-size: 15px; margin-bottom: 6px; }
+        .persona .desc { font-size: 13px; color: #bdc3c7; line-height: 1.6; }
+        .persona .stats { margin-top: 10px; font-size: 12px; color: #7f8c8d; }
+        .persona .stats span { color: #e67e22; font-weight: 600; }
+
+        .enterprise-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .enterprise-table th { background: #0f1923; padding: 8px 10px; text-align: left; font-weight: 600; color: #e67e22; border-bottom: 2px solid #2c3e50; }
+        .enterprise-table td { padding: 8px 10px; border-bottom: 1px solid #1f2f3f; }
+        .enterprise-table tr:hover td { background: #1f2f3f; }
+        .etag { display: inline-block; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600; }
+        .etag-tech { background: #3498db33; color: #3498db; }
+        .etag-auto { background: #2ecc7033; color: #2ecc70; }
+        .etag-semi { background: #9b59b633; color: #9b59b6; }
+        .etag-finance { background: #f39c1233; color: #f39c12; }
+
+        .insight-list { list-style: none; padding: 0; }
+        .insight-list li { padding: 10px 14px; border-left: 3px solid #e67e22; margin-bottom: 8px; background: #0f1923; border-radius: 0 6px 6px 0; font-size: 13px; line-height: 1.6; }
+        .insight-list li strong { color: #e67e22; }
+
+        .footer { text-align: center; padding: 24px; font-size: 11px; color: #34495e; border-top: 1px solid #1f2f3f; margin-top: 24px; }
+
+        .pill { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; margin: 2px; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="container">
+        <a href="../index.html">&larr; 返回研究门户</a>
+        <h1>西安高新区 &middot; 人口与居民画像</h1>
+        <p>基于第七次人口普查、统计公报及产业数据的综合分析 | 更新于 2026-02</p>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- KPI 带 -->
+    <div class="kpi-strip">
+        <div class="kpi">
+            <div class="num">~100万</div>
+            <div class="lbl">常住人口</div>
+            <div class="sub">七普 95.8万，估算已突破百万</div>
+        </div>
+        <div class="kpi">
+            <div class="num">3,300亿+</div>
+            <div class="lbl">GDP (2023)</div>
+            <div class="sub">占西安全市 27%</div>
+        </div>
+        <div class="kpi">
+            <div class="num">5,570</div>
+            <div class="lbl">高新技术企业</div>
+            <div class="sub">~24万户市场主体</div>
+        </div>
+        <div class="kpi">
+            <div class="num">31.5岁</div>
+            <div class="lbl">购房者平均年龄</div>
+            <div class="sub">西安整体数据</div>
+        </div>
+        <div class="kpi">
+            <div class="num">53,678</div>
+            <div class="lbl">城镇人均可支配(元)</div>
+            <div class="sub">2024年西安城镇均值</div>
+        </div>
+        <div class="kpi">
+            <div class="num">1,100亿+</div>
+            <div class="lbl">年技术合同交易额</div>
+            <div class="sub">人均交易额全国高新区第一</div>
+        </div>
+    </div>
+
+    <!-- 人口结构 -->
+    <div class="section">
+        <div class="section-title">人口结构（基于雁塔区七普数据，高新区核心区位于雁塔）</div>
+        <div class="grid-2">
+            <div class="card">
+                <h3>年龄结构</h3>
+                <div class="hbar-row">
+                    <div class="hbar-label">0-14岁</div>
+                    <div class="hbar-track"><div class="hbar-fill" style="width:14%;background:#3498db;">14.0%</div></div>
+                    <div class="hbar-value">少儿</div>
+                </div>
+                <div class="hbar-row">
+                    <div class="hbar-label">15-59岁</div>
+                    <div class="hbar-track"><div class="hbar-fill" style="width:72.5%;background:#2ecc70;">72.5%</div></div>
+                    <div class="hbar-value">劳动力</div>
+                </div>
+                <div class="hbar-row">
+                    <div class="hbar-label">60岁以上</div>
+                    <div class="hbar-track"><div class="hbar-fill" style="width:13.5%;background:#e74c3c;">13.5%</div></div>
+                    <div class="hbar-value">老龄</div>
+                </div>
+                <p style="margin-top:12px;font-size:12px;color:#7f8c8d;">
+                    劳动年龄人口占比 <strong style="color:#2ecc70;">72.5%</strong>，远高于西安市均值 67.8%。
+                    老龄化率仅 13.5%，低于全市 16.0%。是西安最年轻的区域之一。
+                </p>
+            </div>
+            <div class="card">
+                <h3>受教育程度</h3>
+                <div class="hbar-row">
+                    <div class="hbar-label">大专及以上</div>
+                    <div class="hbar-track"><div class="hbar-fill" style="width:88.5%;background:#e67e22;">44.25%</div></div>
+                    <div class="hbar-value">44.25%</div>
+                </div>
+                <div class="hbar-row">
+                    <div class="hbar-label">高中/中专</div>
+                    <div class="hbar-track"><div class="hbar-fill" style="width:37%;background:#3498db;">18.49%</div></div>
+                    <div class="hbar-value">18.49%</div>
+                </div>
+                <div class="hbar-row">
+                    <div class="hbar-label">初中</div>
+                    <div class="hbar-track"><div class="hbar-fill" style="width:40.8%;background:#95a5a6;">20.42%</div></div>
+                    <div class="hbar-value">20.42%</div>
+                </div>
+                <div class="hbar-row">
+                    <div class="hbar-label">小学及以下</div>
+                    <div class="hbar-track"><div class="hbar-fill" style="width:20%;background:#7f8c8d;">10.01%</div></div>
+                    <div class="hbar-value">10.01%</div>
+                </div>
+                <p style="margin-top:12px;font-size:12px;color:#7f8c8d;">
+                    大专及以上占 <strong style="color:#e67e22;">44.25%</strong>，远超全市 31.0%。
+                    每10万人中大学文化程度约 44,250 人，是西安学历最高的区域。
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 产业与就业 -->
+    <div class="section">
+        <div class="section-title">产业格局与核心雇主</div>
+        <div class="card">
+            <h3>两大千亿级产业集群</h3>
+            <div class="grid-2" style="margin-top:10px;">
+                <div style="padding:12px;background:#0f1923;border-radius:6px;">
+                    <div style="font-size:14px;font-weight:700;color:#3498db;margin-bottom:6px;">光电子信息</div>
+                    <div style="font-size:12px;color:#bdc3c7;line-height:1.6;">
+                        华为、中兴、三星、闻泰、华勤等龙头<br>
+                        智能终端年产能 1 亿部+<br>
+                        规上工业产值 3,800 亿+
+                    </div>
+                </div>
+                <div style="padding:12px;background:#0f1923;border-radius:6px;">
+                    <div style="font-size:14px;font-weight:700;color:#2ecc70;margin-bottom:6px;">新能源汽车</div>
+                    <div style="font-size:12px;color:#bdc3c7;line-height:1.6;">
+                        比亚迪整车产能 140 万辆/年<br>
+                        全球最大新能源汽车生产基地<br>
+                        配套零部件产业链完善
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>主要企业与人员规模</h3>
+            <table class="enterprise-table">
+                <thead>
+                    <tr><th>企业</th><th>行业</th><th>西安员工</th><th>备注</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>华为</strong></td>
+                        <td><span class="etag etag-tech">ICT</span></td>
+                        <td>16,000+</td>
+                        <td>西安研究所，426亩园区，四大业务线</td>
+                    </tr>
+                    <tr>
+                        <td><strong>中兴通讯</strong></td>
+                        <td><span class="etag etag-tech">通信</span></td>
+                        <td>4,000+</td>
+                        <td>手机研发+生产基地</td>
+                    </tr>
+                    <tr>
+                        <td><strong>比亚迪</strong></td>
+                        <td><span class="etag etag-auto">汽车/电子</span></td>
+                        <td>30,000+</td>
+                        <td>整车+电子双基地，员工估算</td>
+                    </tr>
+                    <tr>
+                        <td><strong>三星半导体</strong></td>
+                        <td><span class="etag etag-semi">半导体</span></td>
+                        <td>3,000+</td>
+                        <td>NAND闪存工厂（高新区外围）</td>
+                    </tr>
+                    <tr>
+                        <td><strong>美光科技</strong></td>
+                        <td><span class="etag etag-semi">半导体</span></td>
+                        <td>1,500+</td>
+                        <td>DRAM封装测试</td>
+                    </tr>
+                    <tr>
+                        <td><strong>闻泰/华勤</strong></td>
+                        <td><span class="etag etag-tech">ODM</span></td>
+                        <td>5,000+</td>
+                        <td>智能终端研发设计</td>
+                    </tr>
+                    <tr>
+                        <td><strong>软件/互联网集群</strong></td>
+                        <td><span class="etag etag-tech">软件</span></td>
+                        <td>50,000+</td>
+                        <td>丝路软件城 24.42km²，上千家企业</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p style="margin-top:10px;font-size:12px;color:#7f8c8d;">
+                仅以上头部企业/集群合计约 <strong style="color:#e67e22;">11万+</strong> 科技从业人员。
+                加上金融、服务等行业，高新区总就业人口估算 <strong style="color:#e67e22;">50万+</strong>。
+            </p>
+        </div>
+    </div>
+
+    <!-- 居民画像 -->
+    <div class="section">
+        <div class="section-title">典型购房者画像</div>
+        <div class="persona-grid">
+            <div class="persona">
+                <div class="tag" style="background:#3498db33;color:#3498db;">主力人群 · 60%</div>
+                <h4>科技/IT 从业者</h4>
+                <div class="desc">
+                    华为、中兴、比亚迪等大厂员工，或丝路软件城中小型软件公司程序员/产品经理。
+                    多为外地来西安的「新西安人」，因落户政策和就业机会定居。
+                </div>
+                <div class="stats">
+                    年龄: <span>25-35岁</span> &middot;
+                    学历: <span>本科/硕士</span> &middot;
+                    家庭年收入: <span>20-50万</span><br>
+                    偏好: 刚需/首改，90-120㎡，靠近地铁和科技园区<br>
+                    预算: <span>150-300万</span>
+                </div>
+            </div>
+            <div class="persona">
+                <div class="tag" style="background:#2ecc7033;color:#2ecc70;">改善群体 · 20%</div>
+                <h4>企业中高管 / 创业者</h4>
+                <div class="desc">
+                    科技企业中层以上管理者，或高新区创业公司创始人。
+                    多已在高新区有首套房，置换改善型大户型。
+                </div>
+                <div class="stats">
+                    年龄: <span>33-45岁</span> &middot;
+                    学历: <span>硕士/博士</span> &middot;
+                    家庭年收入: <span>50-150万</span><br>
+                    偏好: 改善型，120-180㎡，品质社区/学区<br>
+                    预算: <span>300-600万</span>
+                </div>
+            </div>
+            <div class="persona">
+                <div class="tag" style="background:#f39c1233;color:#f39c12;">品质追求 · 10%</div>
+                <h4>高收入 / 投资型</h4>
+                <div class="desc">
+                    企业高管、投资人、或多套房产持有者。
+                    关注高端项目（如高新CBD、锦业路核心段）。
+                </div>
+                <div class="stats">
+                    年龄: <span>35-55岁</span> &middot;
+                    学历: <span>本科+</span> &middot;
+                    家庭年收入: <span>100万+</span><br>
+                    偏好: 大平层/洋房/别墅，150㎡+，品牌开发商<br>
+                    预算: <span>500万+</span>
+                </div>
+            </div>
+            <div class="persona">
+                <div class="tag" style="background:#9b59b633;color:#9b59b6;">过渡刚需 · 10%</div>
+                <h4>应届毕业生 / 产业工人</h4>
+                <div class="desc">
+                    西安 63 所高校的毕业生，或比亚迪等制造业基层员工。
+                    收入有限，倾向于高新区外围（鱼化寨、大寨路）低价板块。
+                </div>
+                <div class="stats">
+                    年龄: <span>22-30岁</span> &middot;
+                    学历: <span>大专/本科</span> &middot;
+                    家庭年收入: <span>8-18万</span><br>
+                    偏好: 小户型/二手房，60-90㎡，价格敏感<br>
+                    预算: <span>60-150万</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 收入与房价 -->
+    <div class="section">
+        <div class="section-title">收入 vs 房价承受力</div>
+        <div class="card">
+            <div class="grid-2">
+                <div>
+                    <h3>西安/高新区收入水平 (2024)</h3>
+                    <div style="margin-top:10px;">
+                        <div class="hbar-row">
+                            <div class="hbar-label">非私营平均</div>
+                            <div class="hbar-track"><div class="hbar-fill" style="width:75%;background:#e67e22;">111,921元/年</div></div>
+                        </div>
+                        <div class="hbar-row">
+                            <div class="hbar-label">私营平均</div>
+                            <div class="hbar-track"><div class="hbar-fill" style="width:39%;background:#3498db;">58,791元/年</div></div>
+                        </div>
+                        <div class="hbar-row">
+                            <div class="hbar-label">城镇人均可支配</div>
+                            <div class="hbar-track"><div class="hbar-fill" style="width:36%;background:#2ecc70;">53,678元/年</div></div>
+                        </div>
+                        <div class="hbar-row">
+                            <div class="hbar-label">科技大厂估算</div>
+                            <div class="hbar-track"><div class="hbar-fill" style="width:100%;background:#9b59b6;">15-40万/年</div></div>
+                        </div>
+                    </div>
+                    <p style="margin-top:10px;font-size:12px;color:#7f8c8d;">
+                        高新区科技从业者收入显著高于全市平均。
+                        华为/中兴等大厂 3-5 年经验员工年薪通常 20-35万。
+                    </p>
+                </div>
+                <div>
+                    <h3>房价收入比分析</h3>
+                    <div style="margin-top:10px;font-size:13px;color:#bdc3c7;line-height:1.8;">
+                        <div style="padding:10px;background:#0f1923;border-radius:6px;margin-bottom:8px;">
+                            <strong style="color:#e67e22;">高新核心区</strong><br>
+                            均价 ~20,800元/㎡ &times; 100㎡ = <strong>208万</strong><br>
+                            科技双职工(年入40万): 房价收入比 = <strong style="color:#2ecc70;">5.2</strong> (合理)
+                        </div>
+                        <div style="padding:10px;background:#0f1923;border-radius:6px;margin-bottom:8px;">
+                            <strong style="color:#e67e22;">高新外围区</strong><br>
+                            均价 ~14,000元/㎡ &times; 90㎡ = <strong>126万</strong><br>
+                            私营双职工(年入12万): 房价收入比 = <strong style="color:#f39c12;">10.5</strong> (偏高)
+                        </div>
+                        <div style="padding:10px;background:#0f1923;border-radius:6px;">
+                            <strong style="color:#e67e22;">改善型</strong><br>
+                            均价 ~25,000元/㎡ &times; 140㎡ = <strong>350万</strong><br>
+                            中高管(年入80万): 房价收入比 = <strong style="color:#2ecc70;">4.4</strong> (合理)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 板块与人口分布 -->
+    <div class="section">
+        <div class="section-title">主要板块特征</div>
+        <div class="card" style="overflow-x:auto;">
+            <table class="enterprise-table">
+                <thead>
+                    <tr>
+                        <th>板块</th>
+                        <th>定位</th>
+                        <th>典型居民</th>
+                        <th>均价区间</th>
+                        <th>特点</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>锦业路/CBD</strong></td>
+                        <td>高端商务</td>
+                        <td>企业高管、金融从业</td>
+                        <td>25,000-35,000</td>
+                        <td>高新区价格天花板，品质改善集中地</td>
+                    </tr>
+                    <tr>
+                        <td><strong>科技路</strong></td>
+                        <td>成熟商圈</td>
+                        <td>科技白领、小型企业主</td>
+                        <td>18,000-25,000</td>
+                        <td>配套最成熟，二手房交易活跃</td>
+                    </tr>
+                    <tr>
+                        <td><strong>丝路软件城</strong></td>
+                        <td>产业新城</td>
+                        <td>软件/互联网从业者</td>
+                        <td>15,000-20,000</td>
+                        <td>24.42km² 规划，年轻化，配套建设中</td>
+                    </tr>
+                    <tr>
+                        <td><strong>丈八/沣惠</strong></td>
+                        <td>产城融合</td>
+                        <td>华为/中兴等大厂员工</td>
+                        <td>16,000-22,000</td>
+                        <td>大厂聚集，通勤便利，学区需求强</td>
+                    </tr>
+                    <tr>
+                        <td><strong>鱼化寨</strong></td>
+                        <td>刚需外围</td>
+                        <td>毕业生、产业工人</td>
+                        <td>11,000-16,000</td>
+                        <td>价格洼地，地铁3号线覆盖，租赁活跃</td>
+                    </tr>
+                    <tr>
+                        <td><strong>大寨路</strong></td>
+                        <td>刚需过渡</td>
+                        <td>刚工作1-3年的年轻人</td>
+                        <td>12,000-16,000</td>
+                        <td>价格门槛低，生活配套一般</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 关键洞察 -->
+    <div class="section">
+        <div class="section-title">关键洞察</div>
+        <div class="card">
+            <ul class="insight-list">
+                <li>
+                    <strong>人口年轻化优势明显</strong> — 15-59岁劳动力占比72.5%，比全市高约5个百分点。
+                    老龄化率仅13.5%，购房需求以刚需和首次改善为主。
+                </li>
+                <li>
+                    <strong>高学历人口密度全市最高</strong> — 大专及以上学历占比44.25%，
+                    是全市均值(31.0%)的1.4倍。这意味着居民对住宅品质、学区、物业管理的要求更高。
+                </li>
+                <li>
+                    <strong>产业吸引力支撑人口持续流入</strong> — 5,570家高新技术企业、
+                    两大千亿级产业集群(光电子+新能源汽车)持续吸引外地人才。
+                    西安2024年新增常住人口中，高新区是主要流入地。
+                </li>
+                <li>
+                    <strong>购房者以科技从业者为主力</strong> — 估算11万+科技从业者，
+                    平均购房年龄31.5岁，家庭年收入20-50万区间最为集中。
+                    核心区房价收入比约5.2，在主要城市中属于合理水平。
+                </li>
+                <li>
+                    <strong>板块分化明显，梯度清晰</strong> — 从CBD(3.5万/㎡)到鱼化寨(1.1万/㎡)，
+                    价差超3倍。不同收入层次的购房者各有去处，市场分层健康。
+                </li>
+                <li>
+                    <strong>潜在风险：产业依赖度高</strong> — 高新区经济高度依赖科技产业，
+                    比亚迪和三星分别贡献大量工业产值。单一产业波动可能影响区域楼市。
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 数据来源 -->
+    <div class="section">
+        <div class="section-title">数据来源</div>
+        <div class="card" style="font-size:12px;color:#7f8c8d;line-height:1.8;">
+            <ul style="padding-left:20px;">
+                <li>第七次全国人口普查数据（2020年）— 雁塔区/高新区口径</li>
+                <li>西安市2024年国民经济和社会发展统计公报</li>
+                <li>陕西省2024年非私营/私营单位就业人员平均工资公报</li>
+                <li>西安高新区2023年GDP及产业数据（中国新闻网陕西）</li>
+                <li>红黑人口库 — 高新技术产业开发区七普人口数据</li>
+                <li>界面新闻 — 西安购房者平均年龄调查</li>
+                <li>中国日报/西部网/人民网 — 高新区企业及产业报道</li>
+            </ul>
+            <p style="margin-top:10px;color:#95a5a6;">
+                注：高新区作为功能区（非行政区），部分数据使用所在行政区（雁塔区）数据作为近似。
+                收入及购房画像部分结合公开报道和行业经验推算，仅供参考。
+            </p>
+        </div>
+    </div>
+
+</div>
+
+<div class="footer">
+    西安房地产研究 &middot; 高新区人口与居民画像 &middot; 2026-02-27
+</div>
+
+</body>
+</html>
