@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>回潮季居家防潮指南 · Lifestyle Workspace</title>
+<style>
+  :root {
+    --bg: #faf9f6;
+    --text: #2d2d2d;
+    --accent: #5a7d64;
+    --accent-light: #e8f0eb;
+    --border: #e0ddd8;
+    --muted: #8a8580;
+    --blue: #4a7d9b;
+    --blue-light: #e6f0f5;
+    --warn: #c9a84c;
+    --warn-light: #fdf6e3;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Noto Sans SC", "Helvetica Neue", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.8;
+    padding: 3rem 1.5rem;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .breadcrumb { font-size: 0.85rem; color: var(--muted); margin-bottom: 2rem; }
+  header { margin-bottom: 2.5rem; }
+  header h1 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.3rem; }
+  header p { color: var(--muted); font-size: 0.9rem; }
+  .intro {
+    padding: 1.2rem 1.4rem;
+    background: linear-gradient(135deg, var(--blue-light) 0%, #f0ede6 100%);
+    border-left: 3px solid var(--blue);
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 2.5rem;
+    font-size: 0.9rem;
+  }
+  .section {
+    margin-bottom: 2.5rem;
+    padding: 1.5rem;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .section h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--blue);
+  }
+  .section h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 1.2rem 0 0.5rem;
+  }
+  .section p, .section li { font-size: 0.9rem; }
+  .principle-box {
+    padding: 1rem 1.2rem;
+    background: var(--blue-light);
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    font-size: 0.88rem;
+  }
+  .principle-box strong { color: var(--blue); }
+  .compare-table {
+    width: 100%;
+    font-size: 0.82rem;
+    border-collapse: collapse;
+    margin-top: 0.5rem;
+  }
+  .compare-table th, .compare-table td {
+    padding: 0.55rem 0.6rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .compare-table th { color: var(--muted); font-weight: 500; white-space: nowrap; }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .rating { color: var(--warn); letter-spacing: 1px; }
+  .room-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    margin-top: 0.5rem;
+  }
+  .room-card {
+    padding: 1rem;
+    background: var(--blue-light);
+    border-radius: 6px;
+  }
+  .room-card h4 { font-size: 0.9rem; font-weight: 600; color: var(--blue); margin-bottom: 0.4rem; }
+  .room-card ul { padding-left: 1rem; font-size: 0.82rem; }
+  .room-card li { margin-bottom: 0.25rem; }
+  .vent-rule {
+    display: flex;
+    gap: 1rem;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.88rem;
+  }
+  .vent-rule:last-child { border-bottom: none; }
+  .vent-icon {
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    background: var(--accent-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+  }
+  .vent-text strong { display: block; margin-bottom: 0.15rem; }
+  .warn-box {
+    padding: 0.8rem 1rem;
+    background: var(--warn-light);
+    border-left: 3px solid var(--warn);
+    border-radius: 0 6px 6px 0;
+    font-size: 0.85rem;
+    margin-top: 1rem;
+  }
+  .tip-box {
+    padding: 0.8rem 1rem;
+    background: var(--accent-light);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    margin-top: 1rem;
+  }
+  .tip-box strong { color: var(--accent); }
+  .humidity-scale {
+    display: flex;
+    margin: 1rem 0;
+    border-radius: 6px;
+    overflow: hidden;
+    font-size: 0.75rem;
+    text-align: center;
+  }
+  .humidity-scale div { padding: 0.5rem 0.3rem; flex: 1; }
+  .h-dry { background: #f5e6d3; color: #a67c52; }
+  .h-ok { background: #d4edda; color: #2d6a4f; }
+  .h-wet { background: #cce5ff; color: #3a6b8c; }
+  .h-danger { background: #f8d7da; color: #9b3b3b; }
+  .checklist { list-style: none; }
+  .checklist li { padding: 0.4rem 0; font-size: 0.88rem; }
+  .checklist li::before { content: "☐ "; color: var(--blue); }
+  footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  @media (max-width: 500px) {
+    .room-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="breadcrumb"><a href="../index.html">Lifestyle Workspace</a> / 回潮季居家防潮</div>
+
+<header>
+  <h1>回潮季居家防潮指南</h1>
+  <p>回南天 · 梅雨季 · 春季潮湿应对方案</p>
+</header>
+
+<div class="intro">
+  每年 2-4 月，暖湿气流北上，冷地面遇暖湿空气，水汽凝结——这就是<strong>回南天</strong>。地板冒水、墙壁渗珠、衣物发霉。不是你家漏水了，是物理现象。了解原理，就能精准应对。
+</div>
+
+<!-- 原理 -->
+<div class="section">
+  <h2>为什么会潮？30 秒搞懂</h2>
+  <div class="principle-box">
+    <strong>露点温度：</strong>空气中水蒸气饱和时对应的温度。当物体表面温度 ≤ 露点温度时，水蒸气就会在表面凝结成水珠。回南天的本质：室内地板、墙壁、瓷砖在冬天被冷透了，突然来了一股暖湿空气（露点 > 物体表面温度），水就凝出来了。
+  </div>
+  <div class="principle-box">
+    <strong>关键指标：</strong>室内相对湿度（RH）。用温湿度计监测，是一切防潮决策的基础。
+  </div>
+
+  <p style="font-size: 0.85rem; color: var(--muted); margin-top: 0.8rem;">室内湿度舒适区间参考：</p>
+  <div class="humidity-scale">
+    <div class="h-dry">&lt;30%<br>过干</div>
+    <div class="h-ok">40-60%<br>舒适</div>
+    <div class="h-wet">60-80%<br>偏潮</div>
+    <div class="h-danger">&gt;80%<br>发霉风险</div>
+  </div>
+</div>
+
+<!-- 除湿方案对比 -->
+<div class="section">
+  <h2>除湿方案对比</h2>
+  <table class="compare-table">
+    <tr>
+      <th>方案</th>
+      <th>效果</th>
+      <th>适用场景</th>
+      <th>成本</th>
+      <th>缺点</th>
+    </tr>
+    <tr>
+      <td><strong>压缩机除湿机</strong></td>
+      <td><span class="rating">★★★★★</span></td>
+      <td>客厅、卧室、大空间（20m²+）</td>
+      <td>800-2500 元 + 电费</td>
+      <td>有噪音（40-50dB），低温效率降低</td>
+    </tr>
+    <tr>
+      <td><strong>转轮除湿机</strong></td>
+      <td><span class="rating">★★★★</span></td>
+      <td>低温环境（<15°C 仍有效）</td>
+      <td>1500-3000 元 + 电费</td>
+      <td>功耗较高，价格偏贵</td>
+    </tr>
+    <tr>
+      <td><strong>空调除湿模式</strong></td>
+      <td><span class="rating">★★★</span></td>
+      <td>已有空调的房间，临时应急</td>
+      <td>0 额外投入 + 电费</td>
+      <td>会降温（春天已经不暖和了），效率不如专用除湿机</td>
+    </tr>
+    <tr>
+      <td><strong>干燥剂/吸湿盒</strong></td>
+      <td><span class="rating">★★</span></td>
+      <td>衣柜、鞋柜、抽屉等小空间</td>
+      <td>10-30 元/个</td>
+      <td>覆盖面积极小，需频繁更换</td>
+    </tr>
+    <tr>
+      <td><strong>生石灰/竹炭</strong></td>
+      <td><span class="rating">★</span></td>
+      <td>储物间、极小空间辅助</td>
+      <td>几乎免费</td>
+      <td>效果有限，生石灰遇水发热需注意安全</td>
+    </tr>
+  </table>
+
+  <div class="tip-box">
+    <strong>选购建议：</strong>如果只买一台除湿机，选日除湿量 12L/天以上的压缩机式，覆盖 20-30m²。品牌参考：浦力适、德龙、松下、格力。回南天严重地区（广东沿海），这是最值得的家电投资之一。
+  </div>
+</div>
+
+<!-- 各空间策略 -->
+<div class="section">
+  <h2>各空间应对策略</h2>
+  <div class="room-grid">
+    <div class="room-card">
+      <h4>客厅 / 走廊</h4>
+      <ul>
+        <li>地板冒水时用干拖把擦（不要湿拖）</li>
+        <li>除湿机放在客厅中央，门窗关闭运行</li>
+        <li>瓷砖地面可涂一层薄薄的地板蜡，减少凝水</li>
+        <li>入户处放吸水地垫，减少外部湿气带入</li>
+      </ul>
+    </div>
+    <div class="room-card">
+      <h4>卧室</h4>
+      <ul>
+        <li>被褥潮湿→烘干机或电热毯开 30 分钟再睡</li>
+        <li>床底通风，不要塞满杂物</li>
+        <li>衣柜内放吸湿盒 + 定期开门通风</li>
+        <li>枕头每周立起来晾一次</li>
+      </ul>
+    </div>
+    <div class="room-card">
+      <h4>厨房</h4>
+      <ul>
+        <li>做饭时开抽油烟机排湿</li>
+        <li>水槽下方柜子放吸湿剂</li>
+        <li>干货（米、面粉、茶叶）密封保存</li>
+        <li>砧板竖放晾干，不要平放积水</li>
+      </ul>
+    </div>
+    <div class="room-card">
+      <h4>卫生间</h4>
+      <ul>
+        <li>洗完澡后开排气扇至少 30 分钟</li>
+        <li>瓷砖缝隙是霉菌重灾区，定期用含氯清洁剂擦</li>
+        <li>浴帘/浴室垫每周清洗晾干</li>
+        <li>尽量做到干湿分离</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="warn-box">
+    <strong>发霉了怎么办？</strong>墙面小面积霉斑：75% 酒精喷湿擦除 → 干燥后涂防霉涂料。衣物发霉：先日晒，再用白醋浸泡 30 分钟后正常洗涤。如果大面积墙体发霉（>1m²），可能需要铲掉重刷，建议找专业人士。
+  </div>
+</div>
+
+<!-- 通风时机判断 -->
+<div class="section">
+  <h2>通风时机判断</h2>
+  <p style="font-size: 0.88rem; margin-bottom: 1rem;">回潮天不是不能开窗，而是要<strong>选对时机</strong>。盲目开窗反而引入更多湿气。</p>
+
+  <div class="vent-rule">
+    <div class="vent-icon">&#x2714;</div>
+    <div class="vent-text">
+      <strong>可以开窗</strong>
+      室外湿度 < 室内湿度时。通常出现在：连续晴天的午后（12:00-16:00）、北风天（干燥冷空气）、室外温度高于室内地面温度时。
+    </div>
+  </div>
+  <div class="vent-rule">
+    <div class="vent-icon">&#x2718;</div>
+    <div class="vent-text">
+      <strong>不要开窗</strong>
+      雾天、雨天、回南天发作期（地板明显出水）。清晨和傍晚湿度通常较高，也应避免。如果开窗后玻璃马上起雾→立刻关窗。
+    </div>
+  </div>
+  <div class="vent-rule">
+    <div class="vent-icon">&#x26A0;</div>
+    <div class="vent-text">
+      <strong>判断工具</strong>
+      买一个带室内外双探头的温湿度计（30-80 元），或用手机天气 app 看室外湿度。室外 RH > 70% 时不建议开窗。
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>黄金组合：</strong>关窗 + 除湿机是回南天最稳的方案。通风交给天气好的日子，平时靠除湿机维持室内 50-60% 的湿度。
+  </div>
+</div>
+
+<!-- 速查清单 -->
+<div class="section">
+  <h2>回潮季居家速查清单</h2>
+  <ul class="checklist">
+    <li>购置温湿度计，放在客厅和卧室各一个</li>
+    <li>检查除湿机/空调除湿功能是否正常</li>
+    <li>衣柜、鞋柜内放置吸湿盒/干燥剂</li>
+    <li>干货食材转移至密封容器</li>
+    <li>检查卫生间排气扇是否通畅</li>
+    <li>准备干拖把（不要湿拖回南天的地板）</li>
+    <li>贵重物品（相机、乐器、皮具）放入防潮箱或密封袋+干燥剂</li>
+  </ul>
+</div>
+
+<footer>
+  <p><a href="../index.html">&larr; 返回首页</a></p>
+  <p>更新：2026-02-27 19:00 GMT+8 · 自主推进生成</p>
+</footer>
+
+</body>
+</html>
