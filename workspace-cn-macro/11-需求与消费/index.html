@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>需求与消费 — 中国宏观经济分析框架</title>
+<style>
+  :root {
+    --bg: #0a0a0f; --surface: #12121a; --surface2: #1a1a25; --border: #2a2a3a;
+    --text: #e0e0e8; --text2: #9090a0; --accent: #f0c040;
+    --red: #e05050; --green: #40c080; --blue: #5080e0; --orange: #e08040;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.7; -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  a { color: var(--accent); text-decoration: none; }
+
+  .header {
+    padding: 60px 0 40px; text-align: center; border-bottom: 1px solid var(--border);
+  }
+  .header .back { font-size: 0.85em; color: var(--text2); margin-bottom: 16px; display: block; }
+  .header h1 { font-size: 2em; font-weight: 700; letter-spacing: 0.04em; margin-bottom: 10px; }
+  .header .dim-label {
+    display: inline-block; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 6px; padding: 3px 12px; font-size: 0.8em; color: var(--accent);
+    font-weight: 600; margin-bottom: 14px;
+  }
+  .header .subtitle { font-size: 0.95em; color: var(--text2); max-width: 740px; margin: 0 auto; }
+
+  .key-nums {
+    display: flex; justify-content: center; gap: 24px; padding: 28px 0;
+    border-bottom: 1px solid var(--border); flex-wrap: wrap;
+  }
+  .kn-item { text-align: center; min-width: 100px; }
+  .kn-value { font-size: 1.5em; font-weight: 700; color: var(--accent); }
+  .kn-value.danger { color: var(--red); }
+  .kn-label { font-size: 0.72em; color: var(--text2); margin-top: 2px; }
+
+  .section { padding: 44px 0; border-bottom: 1px solid var(--border); }
+  .section h2 {
+    text-align: center; font-size: 1.25em; font-weight: 600;
+    color: var(--text2); letter-spacing: 0.06em; margin-bottom: 24px;
+  }
+  .section .sub {
+    text-align: center; font-size: 0.88em; color: var(--text2);
+    margin-top: -16px; margin-bottom: 24px;
+  }
+
+  .bar-section { max-width: 700px; margin: 0 auto; }
+  .bar-group { margin-bottom: 12px; }
+  .bar-header { display: flex; justify-content: space-between; font-size: 0.82em; margin-bottom: 4px; }
+  .bar-header .lbl { color: var(--text2); }
+  .bar-header .val { font-weight: 600; }
+  .bar-track { height: 10px; background: var(--surface2); border-radius: 5px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 5px; }
+
+  .cmp-table {
+    width: 100%; border-collapse: collapse; font-size: 0.85em;
+  }
+  .cmp-table th, .cmp-table td {
+    padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border);
+  }
+  .cmp-table th { color: var(--accent); font-weight: 600; font-size: 0.82em; background: var(--surface); }
+  .cmp-table tr:hover td { background: var(--surface); }
+  .cmp-table .hl { color: var(--accent); font-weight: 600; }
+  .cmp-table .warn { color: var(--red); font-weight: 600; }
+
+  .card-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px;
+  }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 20px;
+  }
+  .card h3 { font-size: 0.88em; font-weight: 600; margin-bottom: 8px; }
+  .card p { font-size: 0.8em; color: var(--text2); line-height: 1.5; }
+  .card .big { font-size: 1.4em; font-weight: 700; margin-bottom: 6px; }
+
+  .wide-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 14px;
+  }
+  .wide-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px 22px;
+  }
+  .wide-card h3 { font-size: 0.92em; font-weight: 600; color: var(--accent); margin-bottom: 8px; }
+  .wide-card p { font-size: 0.85em; color: var(--text2); line-height: 1.6; }
+
+  .ascii-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 24px; max-width: 700px; margin: 0 auto;
+    font-family: "SF Mono", "Fira Code", monospace; font-size: 0.84em;
+    line-height: 1.8; color: var(--text2); white-space: pre; overflow-x: auto;
+  }
+  .ascii-box .hl { color: var(--accent); font-weight: 600; }
+  .ascii-box .r { color: var(--red); font-weight: 600; }
+  .ascii-box .g { color: var(--green); }
+
+  .callout {
+    margin-top: 18px; padding: 16px 20px; background: var(--surface);
+    border: 1px solid var(--border); border-left: 3px solid var(--red);
+    border-radius: 8px; font-size: 0.84em; max-width: 700px; margin-left: auto; margin-right: auto;
+  }
+  .callout .cl-title { color: var(--accent); font-weight: 600; margin-bottom: 6px; }
+  .callout .cl-body { color: var(--text2); line-height: 1.5; }
+
+  .footer { padding: 36px 0; text-align: center; color: var(--text2); font-size: 0.8em; }
+
+  @media (max-width: 600px) {
+    .key-nums { gap: 12px; }
+    .kn-value { font-size: 1.2em; }
+    .card-grid, .wide-grid { grid-template-columns: 1fr; }
+    .ascii-box { font-size: 0.72em; padding: 14px; }
+    .cmp-table { font-size: 0.75em; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <section class="header">
+    <a class="back" href="../index.html">&larr; 返回总览</a>
+    <div class="dim-label">维度十一</div>
+    <h1>需求与消费</h1>
+    <p class="subtitle">居民可支配收入仅占 GDP 的 43%——即使把收入100%花掉也不可能达到发达国家60-70%的消费率。消费不足的根源不是"不愿花"，而是"分到的太少、担心的太多、投资渠道太差"。</p>
+  </section>
+
+  <div class="key-nums">
+    <div class="kn-item"><div class="kn-value danger">38%</div><div class="kn-label">居民消费率（全球最低）</div></div>
+    <div class="kn-item"><div class="kn-value danger">43%</div><div class="kn-label">可支配收入 / GDP</div></div>
+    <div class="kn-item"><div class="kn-value">33%</div><div class="kn-label">居民储蓄率</div></div>
+    <div class="kn-item"><div class="kn-value">151万亿</div><div class="kn-label">居民存款</div></div>
+    <div class="kn-item"><div class="kn-value danger">0.47</div><div class="kn-label">基尼系数</div></div>
+    <div class="kn-item"><div class="kn-value">87</div><div class="kn-label">消费者信心（历史低位）</div></div>
+  </div>
+
+  <!-- Distribution problem -->
+  <section class="section">
+    <h2>GDP 这 块 饼 ，居 民 分 到 的 太 少</h2>
+    <p class="sub">每年有 8-15 万亿本应到居民手中的收入，留在了政府和企业</p>
+    <div style="overflow-x:auto;">
+      <table class="cmp-table">
+        <thead><tr><th>分配对象</th><th>中国</th><th>发达国家</th><th>差距</th></tr></thead>
+        <tbody>
+          <tr><td>劳动报酬</td><td class="warn">~52%</td><td class="hl">60-65%</td><td class="warn">低 8-13pp</td></tr>
+          <tr><td>企业盈余</td><td>~25%</td><td>20-25%</td><td>略高</td></tr>
+          <tr><td>政府收入</td><td class="warn">~23%</td><td>15-20%</td><td class="warn">高 3-8pp</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="overflow-x:auto;margin-top:20px;">
+      <table class="cmp-table">
+        <thead><tr><th>指标</th><th>中国</th><th>美国</th><th>日本</th></tr></thead>
+        <tbody>
+          <tr><td>可支配收入 / GDP</td><td class="warn">43%</td><td class="hl">76%</td><td class="hl">62%</td></tr>
+          <tr><td>居民消费 / GDP</td><td class="warn">38%</td><td class="hl">68%</td><td class="hl">54%</td></tr>
+          <tr><td>居民储蓄率</td><td class="warn">33%</td><td>5-8%</td><td>~10%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Why people don't spend -->
+  <section class="section">
+    <h2>为 什 么 不 敢 花 ？—— 六 大 原 因</h2>
+    <div class="wide-grid">
+      <div class="wide-card">
+        <h3>1. 社保不足 — "不敢花"</h3>
+        <p>养老金替代率从77%跌至40-45%。城乡居民养老金月均仅200元。医疗自付27%，大病可掏空中产积蓄。教育总成本一个孩子50-130万。预防性储蓄每年锁死 13-21万亿消费潜力。</p>
+      </div>
+      <div class="wide-card">
+        <h3>2. 房贷挤出 — "花不起"</h3>
+        <p>居民杠杆率从40%飙至62%。月供占收入30-50%。房价跌了但贷款不变——"还着高价贷，住着贬值房"。提前还贷潮：2023年居民中长期贷款净增量腰斩。</p>
+      </div>
+      <div class="wide-card">
+        <h3>3. 预期恶化 — "觉得未来会更差"</h3>
+        <p>消费者信心指数从125跌至87。储蓄意愿从45%升至62%。互联网裁员、房企暴雷、教培归零。预期恶化比收入下降更致命——觉得会降就够让人少花钱。</p>
+      </div>
+      <div class="wide-card">
+        <h3>4. 财产性收入缺失 — "睡后收入少"</h3>
+        <p>财产性收入仅占居民收入9%（美国20%）。A股十年原地踏步。存款利率降至~1.5%。美国居民通过401k分享了增长红利，中国居民的"投资"主要是买房，现在跌了。</p>
+      </div>
+      <div class="wide-card">
+        <h3>5. 服务业管制 — "想花花不了"</h3>
+        <p>医疗、教育、文化等领域供给受管制。养老护理、托幼服务市场化不足。有支付意愿但买不到服务。</p>
+      </div>
+      <div class="wide-card">
+        <h3>6. 分配不均 — "钱在不需要花的人手里"</h3>
+        <p>最富5%家庭占全国储蓄的50.6%。最富10%收入是底部20%的10.3倍。40%家庭每年负储蓄。给富人更多钱他们不花，给穷人更多钱他们花不完。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Inequality -->
+  <section class="section">
+    <h2>财 富 分 配 ：比 收 入 差 距 严 重 得 多</h2>
+    <div class="bar-section">
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">最富1% 拥有全国财富</span><span class="val" style="color:var(--red)">~30%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:30%;background:var(--red)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">最富10% 拥有全国财富</span><span class="val" style="color:var(--red)">~67%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:67%;background:var(--red)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">中间40% 拥有全国财富</span><span class="val" style="color:var(--orange)">~26%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:26%;background:var(--orange)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">底部50% 拥有全国财富</span><span class="val" style="color:var(--accent)">~7%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:7%;background:var(--accent)"></div></div>
+      </div>
+    </div>
+
+    <div class="ascii-box" style="margin-top:24px;"><span class="hl">储蓄分布——151万亿存款在谁手里？</span>
+
+最富5%家庭   储蓄率72.2%   占全国储蓄 <span class="r">50.6%</span>
+最富10%家庭  储蓄率45.2%   占全国储蓄 <span class="r">62.4%</span>
+最富25%家庭  储蓄率42.9%   占全国储蓄 <span class="r">77.1%</span>
+其余75%家庭                仅 22.9%
+约40%家庭每年是<span class="r">负储蓄</span>（花的比挣的多）
+
+<span class="hl">招商银行缩影</span>
+顶部2.49%客户 持有 <span class="r">81.5%</span> 客户资产
+人均235万 vs 普通客户人均1.33万 → 比值 <span class="r">175:1</span></div>
+  </section>
+
+  <!-- High savings paradox -->
+  <section class="section">
+    <h2>高 储 蓄 与 高 债 务 ：同 一 枚 硬 币 的 两 面</h2>
+    <div class="ascii-box"><span class="hl">国民储蓄率 ~45% GDP — 分解</span>
+
+├── 企业储蓄（未分配利润）  ~20% GDP  ← <span class="r">最大来源，不是居民</span>
+├── 政府储蓄（投资&gt;民生）    ~8-10% GDP
+└── 居民储蓄               ~15-17% GDP
+
+<span class="hl">高储蓄+高债务=资金空转</span>
+
+居民存钱 ──→ 银行 ──→ 贷给国企/城投/房企
+(151万亿存款)          (210万亿企业贷款)
+<span class="r">居民的存款 = 企业和政府的债务来源</span>
+
+理想循环: 储蓄 → 高效投资 → 利润 → 工资/分红 → 收入↑
+<span class="r">实际循环: 储蓄 → 银行 → 低效部门 → 低回报 → 收入增长慢</span>
+
+如果储蓄率从45%降到35%（仍高于多数国家）
+每年将释放约 <span class="hl">13万亿元</span> 消费需求 — 足以根本改变内需不足</div>
+  </section>
+
+  <!-- Social safety net gap -->
+  <section class="section">
+    <h2>社 保 缺 口 ：锁 死 了 多 少 消 费 ？</h2>
+    <p class="sub">社保每覆盖1元未来风险，居民可释放 0.3-0.5 元当期消费</p>
+    <div class="card-grid">
+      <div class="card">
+        <div class="big" style="color:var(--red)">5-8万亿</div>
+        <h3>养老不安全感</h3>
+        <p>替代率40-45%（建议55%+）。5.5亿人月均养老金仅200元。2035年基金可能耗尽。</p>
+      </div>
+      <div class="card">
+        <div class="big" style="color:var(--red)">3-5万亿</div>
+        <h3>医疗不安全感</h3>
+        <p>自付比例27%。一场癌症自付10-30万。大病返贫风险真实存在。</p>
+      </div>
+      <div class="card">
+        <div class="big" style="color:var(--orange)">2-3万亿</div>
+        <h3>教育不确定性</h3>
+        <p>教育支出占家庭支出10-15%。一个孩子50-130万。"无底洞"特征促使多存。</p>
+      </div>
+      <div class="card">
+        <div class="big" style="color:var(--orange)">3-5万亿</div>
+        <h3>住房储蓄</h3>
+        <p>一线房价收入比30-40倍。首付需两代积蓄。保障房覆盖仅5-7%。</p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:20px;">
+      <div class="cl-title">合计：13-21万亿/年 被预防性储蓄锁死</div>
+      <div class="cl-body">如果社保能覆盖其中一半风险，可释放 5-10 万亿年消费（GDP的4-8%）。中国社保支出仅占GDP约10%，发达国家18-30%。这是最明确的"双赢"政策：既改善民生，又拉动内需。</div>
+    </div>
+  </section>
+
+  <!-- Balance sheet recession -->
+  <section class="section">
+    <h2>资 产 负 债 表 衰 退 ：与 日 本 的 比 较</h2>
+    <p class="sub">"不是崩盘，但增长持续被压制"——"半衰退"状态可能持续3-5年</p>
+    <div style="overflow-x:auto;">
+      <table class="cmp-table">
+        <thead><tr><th>维度</th><th>日本 1990s</th><th>中国 2020s</th><th>相似度</th></tr></thead>
+        <tbody>
+          <tr><td>触发事件</td><td>股市+房市同时崩</td><td>房市破裂（股市未大涨）</td><td>★★★★</td></tr>
+          <tr><td>居民行为</td><td>减消费、增储蓄</td><td>提前还贷、存款飙升</td><td class="warn">★★★★</td></tr>
+          <tr><td>货币政策</td><td>降息到零仍无效</td><td>降息效果越来越弱</td><td class="warn">★★★★</td></tr>
+          <tr><td>通缩压力</td><td>CPI长期 ~0%</td><td>CPI 0.2%，PPI持续负</td><td class="warn">★★★★</td></tr>
+          <tr><td>人口</td><td>老龄化加速</td><td>更快+已负增长</td><td class="warn">★★★★★</td></tr>
+          <tr><td>人均GDP</td><td class="hl">$25,000（高收入）</td><td class="warn">$13,000（中等收入）</td><td>★（差异大）</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout" style="margin-top:20px;border-left-color:var(--orange);">
+      <div class="cl-title">中国更困难：未富先停滞</div>
+      <div class="cl-body">日本是"富了之后停滞"（人均$25,000），中国可能是"还没富就停滞"（人均$13,000）。人口比日本更严峻，社保远不如日本完善。但中国有优势：泡沫烈度较低、政府掌控力强、城镇化仍有空间、有日本前车之鉴。</div>
+    </div>
+    <div class="callout" style="margin-top:12px;border-left-color:var(--accent);">
+      <div class="cl-title">辜朝明的药方</div>
+      <div class="cl-body">财政政策必须大规模扩张（GDP的5-8%），由政府借钱花钱弥补私人部门需求塌陷。货币政策在"资产负债表衰退"中几乎无效。如果像日本1990年代那样犹豫不决，可能陷入同样长期的停滞。</div>
+    </div>
+  </section>
+
+  <!-- Middle class squeeze -->
+  <section class="section">
+    <h2>中 产 困 境 ：四 面 楚 歌</h2>
+    <div class="ascii-box"><span class="hl">中产的账单</span>
+
+        ┌── 房贷（月供占收入 <span class="r">30-50%</span>）
+        │
+收入 ──┼── 教育（子女支出无底洞）
+ ↑      │
+增长    ├── 医疗（大病风险）
+放缓    │
+        ├── 养老（父母 + 自己）
+        │
+        └── 就业不安全感（<span class="r">35岁危机</span>、裁员潮）
+
+<span class="hl">低收入者的债务陷阱</span>
+底部20%有负债者：债务/收入比 = <span class="r">1,140%</span>
+中等收入有房贷者：房贷/收入比 = <span class="r">290%</span>
+"一借就是灾难"
+
+<span class="hl">房价下跌加剧不平等</span>
+中产 ~70% 资产是房产 → 房价跌 = 财富蒸发
+富人有多元资产（企业/海外/金融）→ 能对冲
+<span class="r">房价下跌实际上在加剧财富不平等</span></div>
+  </section>
+
+  <!-- Key insights -->
+  <section class="section">
+    <h2>核 心 判 断</h2>
+    <div class="wide-grid">
+      <div class="wide-card">
+        <h3>消费不足的本质是分配问题</h3>
+        <p>居民不是不想花，而是"分到的少、担心的多"。不改变分配结构和社保体系，任何刺激消费的政策都只是短期脉冲。提振消费需要一场深刻的利益再分配——从政府和企业向居民倾斜。</p>
+      </div>
+      <div class="wide-card">
+        <h3>高储蓄率不是文化而是制度</h3>
+        <p>收入分配、社保缺失、投资渠道差、政府偏好投资共同推高了储蓄率。国民储蓄的最大来源是企业（不分红）而非居民。降低储蓄率=利益再分配——每一项改革都触动深层利益。</p>
+      </div>
+      <div class="wide-card">
+        <h3>社保是最明确的双赢政策</h3>
+        <p>完善社保不是"花钱"而是"释放消费"——每1元社保支出可带动0.3-0.5元额外消费。中国社保支出占GDP仅10%（发达国家18-30%），提升空间巨大。</p>
+      </div>
+      <div class="wide-card">
+        <h3>"半衰退"需要更大力度的需求侧政策</h3>
+        <p>当前刺激方向偏供给侧（基建、产业）而非需求侧（直接给居民）。缺乏大规模转移支付。时间窗口很关键——越早干预，修复成本越低。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="footer">
+    <p>数据基准：2024 年 &middot; 来源：国家统计局、央行、CHFS、WID、IMF、BIS、OECD</p>
+    <p style="margin-top:8px;"><a href="../index.html">&larr; 返回中国宏观经济分析框架总览</a></p>
+  </section>
+
+</div>
+
+</body>
+</html>
