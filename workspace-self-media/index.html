@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自媒体工作空间</title>
+    <style>
+        :root {
+            --bg: #0f1117;
+            --card: #1a1d28;
+            --border: #2a2d3a;
+            --text: #e4e4e7;
+            --text-dim: #9ca3af;
+            --accent: #6366f1;
+            --accent-light: #818cf8;
+            --green: #34d399;
+            --orange: #fb923c;
+            --red: #f87171;
+            --yellow: #fbbf24;
+            --cyan: #22d3ee;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 100px 24px 70px;
+            background: linear-gradient(135deg, #1a1d28 0%, #0f1117 40%, #1a1040 70%, #0f1117 100%);
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at 30% 50%, rgba(99, 102, 241, 0.06) 0%, transparent 50%),
+                        radial-gradient(ellipse at 70% 50%, rgba(192, 132, 252, 0.04) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero .label {
+            display: inline-block;
+            padding: 5px 16px;
+            background: rgba(99, 102, 241, 0.12);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--accent-light);
+            margin-bottom: 24px;
+            letter-spacing: 0.05em;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #818cf8, #c084fc, #22d3ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
+
+        .hero .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-dim);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Container */
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 60px 24px 80px;
+        }
+
+        /* Section titles */
+        .section-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--accent-light);
+            margin-bottom: 20px;
+        }
+
+        /* Featured article card */
+        .featured {
+            display: block;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(192, 132, 252, 0.06));
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            border-radius: 16px;
+            padding: 36px 40px;
+            margin-bottom: 48px;
+            text-decoration: none;
+            color: inherit;
+            transition: border-color 0.2s, transform 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .featured:hover {
+            border-color: var(--accent-light);
+            transform: translateY(-2px);
+        }
+
+        .featured::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .featured .tag {
+            display: inline-block;
+            padding: 3px 12px;
+            background: rgba(52, 211, 153, 0.15);
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--green);
+            margin-bottom: 14px;
+        }
+
+        .featured h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+
+        .featured .desc {
+            font-size: 0.95rem;
+            color: var(--text-dim);
+            margin-bottom: 16px;
+            max-width: 600px;
+        }
+
+        .featured .meta-row {
+            display: flex;
+            gap: 20px;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            flex-wrap: wrap;
+        }
+
+        .featured .meta-row span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .featured .cta {
+            display: inline-block;
+            margin-top: 16px;
+            font-size: 0.85rem;
+            color: var(--accent-light);
+            font-weight: 500;
+        }
+
+        .featured .cta::after { content: ' →'; }
+
+        /* Project cards grid */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 48px;
+        }
+
+        .project-card {
+            display: block;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 28px 28px 24px;
+            text-decoration: none;
+            color: inherit;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+
+        .project-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .project-card .icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            margin-bottom: 16px;
+        }
+
+        .project-card .icon.purple { background: rgba(99, 102, 241, 0.15); }
+        .project-card .icon.cyan { background: rgba(34, 211, 238, 0.15); }
+
+        .project-card h3 {
+            font-size: 1.15rem;
+            margin-bottom: 8px;
+        }
+
+        .project-card .desc {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-bottom: 14px;
+        }
+
+        .project-card .stats {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .project-card .stat {
+            font-size: 0.75rem;
+            padding: 3px 10px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 8px;
+            color: var(--text-dim);
+        }
+
+        .project-card .stat strong {
+            color: var(--text);
+        }
+
+        /* Stats bar */
+        .workspace-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+
+        .ws-stat {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .ws-stat .num {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .ws-stat .num.purple { color: var(--accent-light); }
+        .ws-stat .num.green { color: var(--green); }
+        .ws-stat .num.orange { color: var(--orange); }
+        .ws-stat .num.cyan { color: var(--cyan); }
+
+        .ws-stat .label {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        /* Timeline */
+        .timeline {
+            border-top: 1px solid var(--border);
+            padding-top: 40px;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 24px;
+            align-items: flex-start;
+        }
+
+        .timeline-date {
+            width: 90px;
+            flex-shrink: 0;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            padding-top: 2px;
+        }
+
+        .timeline-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent);
+            flex-shrink: 0;
+            margin-top: 7px;
+            position: relative;
+        }
+
+        .timeline-dot::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 4px;
+            width: 2px;
+            height: 40px;
+            background: var(--border);
+        }
+
+        .timeline-item:last-child .timeline-dot::after { display: none; }
+
+        .timeline-content h4 {
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+
+        .timeline-content p {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 24px;
+            border-top: 1px solid var(--border);
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .hero h1 { font-size: 1.8rem; }
+            .hero { padding: 80px 16px 50px; }
+            .projects-grid { grid-template-columns: 1fr; }
+            .workspace-stats { grid-template-columns: 1fr 1fr; }
+            .featured { padding: 24px; }
+            .timeline-date { width: 70px; font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="hero">
+    <div class="hero-content">
+        <span class="label">WORKSPACE</span>
+        <h1>自媒体工作空间</h1>
+        <p class="subtitle">AI 时代自媒体行业的研究、分析与工具集</p>
+    </div>
+</header>
+
+<div class="container">
+
+    <!-- Workspace Stats -->
+    <div class="workspace-stats">
+        <div class="ws-stat">
+            <div class="num purple">8</div>
+            <div class="label">深度调研报告</div>
+        </div>
+        <div class="ws-stat">
+            <div class="num green">1</div>
+            <div class="label">综合分析文章</div>
+        </div>
+        <div class="ws-stat">
+            <div class="num cyan">50+</div>
+            <div class="label">AI 工具收录</div>
+        </div>
+        <div class="ws-stat">
+            <div class="num orange">2</div>
+            <div class="label">专题项目</div>
+        </div>
+    </div>
+
+    <!-- Featured Article -->
+    <p class="section-label">最新内容</p>
+    <a href="自媒体行业/article.html" class="featured">
+        <span class="tag">深度文章 / NEW</span>
+        <h2>AI 正在重塑自媒体：当内容不再稀缺，什么才值钱？</h2>
+        <p class="desc">供给暴增，注意力不变，单条内容的价值正在坍塌。基于 8 篇系统性调研综合提炼的全景解读——从成本崩塌、同质化陷阱、注意力零和博弈，到创作者的四道护城河与生存指南。</p>
+        <div class="meta-row">
+            <span>~4,500 字</span>
+            <span>2026-02-27</span>
+            <span>覆盖中国市场 + 全球视角</span>
+        </div>
+        <span class="cta">阅读全文</span>
+    </a>
+
+    <!-- Projects -->
+    <p class="section-label">专题项目</p>
+    <div class="projects-grid">
+        <a href="自媒体行业/index.html" class="project-card">
+            <div class="icon purple">📊</div>
+            <h3>AI 对自媒体行业的影响</h3>
+            <p class="desc">从监管政策、平台影响、商业模式、注意力经济到创作者竞争格局和深层需求分析的全方位调研。</p>
+            <div class="stats">
+                <span class="stat"><strong>8</strong> 篇报告</span>
+                <span class="stat"><strong>中国</strong> + 全球</span>
+                <span class="stat"><strong>2026.02</strong></span>
+            </div>
+        </a>
+        <a href="工具/ai-tools.html" class="project-card">
+            <div class="icon cyan">🛠</div>
+            <h3>AI 自媒体工具全景图</h3>
+            <p class="desc">覆盖内容创作全流程的 AI 工具收录与分类——文案、图片、视频、音频、分发与数据分析。</p>
+            <div class="stats">
+                <span class="stat"><strong>50+</strong> 工具</span>
+                <span class="stat"><strong>全流程</strong>覆盖</span>
+                <span class="stat"><strong>2026.02</strong></span>
+            </div>
+        </a>
+    </div>
+
+    <!-- Research Index -->
+    <p class="section-label">调研报告索引</p>
+    <div class="projects-grid">
+        <div class="project-card" style="cursor: default;">
+            <h3 style="font-size: 1rem; color: var(--orange); margin-bottom: 12px;">中国市场专项</h3>
+            <p class="desc" style="margin-bottom: 0; line-height: 2.2;">
+                <strong>01</strong> 监管政策 — 深度合成规定、标识办法、清朗行动<br>
+                <strong>02</strong> 平台影响 — 抖音/小红书/B站/知乎差异化分析<br>
+                <strong>03</strong> 商业模式 — 广告CPM、知识付费、数字人直播、MCN<br>
+                <strong>04</strong> 注意力分配 — 豆包/DeepSeek、算法调整、同质化
+            </p>
+        </div>
+        <div class="project-card" style="cursor: default;">
+            <h3 style="font-size: 1rem; color: var(--cyan); margin-bottom: 12px;">全球视角深度调研</h3>
+            <p class="desc" style="margin-bottom: 0; line-height: 2.2;">
+                <strong>05</strong> 供给侧冲击 — 成本对比、同质化、行业通缩<br>
+                <strong>06</strong> 注意力经济学 — Simon理论、Content Shock、幂律<br>
+                <strong>07</strong> 创作者竞争 — 护城河、赛道替代、创作者经济规模<br>
+                <strong>08</strong> 深层问题 — 六维需求、中间人价值、真实性溢价
+            </p>
+        </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="timeline">
+        <p class="section-label">工作时间线</p>
+        <div class="timeline-item">
+            <span class="timeline-date">02-27</span>
+            <span class="timeline-dot"></span>
+            <div class="timeline-content">
+                <h4>综合分析文章 + 展示页</h4>
+                <p>将 8 篇调研综合提炼为可发布的深度文章，创建独立展示页</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <span class="timeline-date">02-26</span>
+            <span class="timeline-dot"></span>
+            <div class="timeline-content">
+                <h4>AI 工具全景图</h4>
+                <p>创建自媒体全流程 AI 工具收录与分类展示页</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <span class="timeline-date">02-25</span>
+            <span class="timeline-dot"></span>
+            <div class="timeline-content">
+                <h4>调研总览展示页</h4>
+                <p>为 8 篇调研报告创建数据可视化展示页</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <span class="timeline-date">02-24</span>
+            <span class="timeline-dot"></span>
+            <div class="timeline-content">
+                <h4>深度调研完成</h4>
+                <p>完成 8 篇系统性调研，覆盖中国市场专项 + 全球视角分析</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<footer class="footer">
+    <p>自媒体工作空间 &middot; AI 时代的研究与实践 &middot; 2026</p>
+</footer>
+
+</body>
+</html>
