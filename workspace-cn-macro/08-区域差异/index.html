@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>区域差异 — 中国宏观经济分析框架</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a25;
+    --border: #2a2a3a;
+    --text: #e0e0e8;
+    --text2: #9090a0;
+    --accent: #f0c040;
+    --red: #e05050;
+    --green: #40c080;
+    --blue: #5080e0;
+    --orange: #e08040;
+    --purple: #a070d0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Header */
+  .header {
+    padding: 60px 0 40px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .header .back {
+    font-size: 0.85em;
+    color: var(--text2);
+    margin-bottom: 16px;
+    display: block;
+  }
+  .header h1 { font-size: 2em; font-weight: 700; letter-spacing: 0.04em; margin-bottom: 10px; }
+  .header .dim-label {
+    display: inline-block;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 3px 12px;
+    font-size: 0.8em;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  .header .subtitle {
+    font-size: 0.95em;
+    color: var(--text2);
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  /* Key numbers strip */
+  .key-nums {
+    display: flex;
+    justify-content: center;
+    gap: 36px;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .kn-item { text-align: center; }
+  .kn-value { font-size: 1.8em; font-weight: 700; color: var(--accent); }
+  .kn-label { font-size: 0.78em; color: var(--text2); margin-top: 2px; }
+
+  /* Section titles */
+  .section { padding: 44px 0; border-bottom: 1px solid var(--border); }
+  .section h2 {
+    text-align: center;
+    font-size: 1.25em;
+    font-weight: 600;
+    color: var(--text2);
+    letter-spacing: 0.06em;
+    margin-bottom: 24px;
+  }
+
+  /* Map-style comparison */
+  .region-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+  }
+  .region-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .region-card h3 {
+    font-size: 0.92em;
+    font-weight: 600;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .region-card .tag {
+    font-size: 0.7em;
+    padding: 1px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+  .tag-east { background: rgba(80,128,224,0.15); color: var(--blue); }
+  .tag-central { background: rgba(240,192,64,0.15); color: var(--accent); }
+  .tag-west { background: rgba(224,128,64,0.15); color: var(--orange); }
+  .tag-northeast { background: rgba(224,80,80,0.15); color: var(--red); }
+  .rc-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.82em;
+    padding: 3px 0;
+  }
+  .rc-row .label { color: var(--text2); }
+  .rc-row .val { font-weight: 600; }
+
+  /* Bar chart component */
+  .bar-section { max-width: 700px; margin: 0 auto; }
+  .bar-group { margin-bottom: 14px; }
+  .bar-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.82em;
+    margin-bottom: 4px;
+  }
+  .bar-header .lbl { color: var(--text2); }
+  .bar-header .val { font-weight: 600; }
+  .bar-track {
+    height: 10px;
+    background: var(--surface2);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 5px;
+  }
+
+  /* City cluster comparison */
+  .cluster-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+  }
+  .cluster-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    border-top: 3px solid var(--border);
+  }
+  .cluster-card.yangtze { border-top-color: var(--blue); }
+  .cluster-card.pearl { border-top-color: var(--green); }
+  .cluster-card.jingjinji { border-top-color: var(--red); }
+  .cluster-card.chengyu { border-top-color: var(--orange); }
+  .cluster-card h3 { font-size: 0.95em; font-weight: 600; margin-bottom: 4px; }
+  .cluster-card .cl-gdp { font-size: 1.3em; font-weight: 700; color: var(--accent); }
+  .cluster-card .cl-pop { font-size: 0.8em; color: var(--text2); margin-bottom: 10px; }
+  .cl-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 10px; }
+  .cl-tag {
+    font-size: 0.72em;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 8px;
+    color: var(--text2);
+  }
+  .star-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8em;
+    padding: 2px 0;
+  }
+  .star-row .dim { color: var(--text2); }
+  .star-row .stars { color: var(--accent); letter-spacing: 1px; }
+
+  /* Policy evaluation table */
+  .eval-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85em;
+  }
+  .eval-table th, .eval-table td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .eval-table th {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 0.82em;
+    letter-spacing: 0.04em;
+    background: var(--surface);
+  }
+  .eval-table td { color: var(--text); }
+  .eval-table tr:hover td { background: var(--surface); }
+  .eval-table .stars-cell { color: var(--accent); white-space: nowrap; }
+
+  /* Insight cards */
+  .insight-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 14px;
+  }
+  .insight-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 22px;
+  }
+  .insight-card h3 {
+    font-size: 0.92em;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .insight-card p {
+    font-size: 0.85em;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+
+  /* Footer */
+  .footer {
+    padding: 36px 0;
+    text-align: center;
+    color: var(--text2);
+    font-size: 0.8em;
+  }
+
+  @media (max-width: 600px) {
+    .key-nums { gap: 16px; }
+    .kn-value { font-size: 1.4em; }
+    .region-grid, .cluster-grid, .insight-grid { grid-template-columns: 1fr; }
+    .eval-table { font-size: 0.75em; }
+    .eval-table th, .eval-table td { padding: 6px 8px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <section class="header">
+    <a class="back" href="../index.html">&larr; 返回总览</a>
+    <div class="dim-label">维度八</div>
+    <h1>区域差异</h1>
+    <p class="subtitle">南北差距替代东西差距成为主要矛盾。四大城市群贡献约 50% GDP。2,844 个县级单位的分化，是中国经济最被低估的结构性问题。</p>
+  </section>
+
+  <!-- Key numbers -->
+  <div class="key-nums">
+    <div class="kn-item"><div class="kn-value">4:1</div><div class="kn-label">最富 vs 最穷省份人均GDP</div></div>
+    <div class="kn-item"><div class="kn-value">65% : 35%</div><div class="kn-label">南方 vs 北方 GDP占比</div></div>
+    <div class="kn-item"><div class="kn-value">~50%</div><div class="kn-label">四大城市群GDP占全国</div></div>
+    <div class="kn-item"><div class="kn-value">10.3万亿</div><div class="kn-label">中央转移支付/年</div></div>
+  </div>
+
+  <!-- Regional comparison -->
+  <section class="section">
+    <h2>四 大 板 块 经 济 对 比</h2>
+    <div class="region-grid">
+      <div class="region-card">
+        <h3>东部 <span class="tag tag-east">11省市</span></h3>
+        <div class="rc-row"><span class="label">GDP占比</span><span class="val">~52%</span></div>
+        <div class="rc-row"><span class="label">人口占比</span><span class="val">~40%</span></div>
+        <div class="rc-row"><span class="label">人均GDP指数</span><span class="val" style="color:var(--green)">130</span></div>
+        <div class="rc-row"><span class="label">趋势</span><span class="val" style="color:var(--green)">科技+创新优势扩大</span></div>
+      </div>
+      <div class="region-card">
+        <h3>中部 <span class="tag tag-central">6省</span></h3>
+        <div class="rc-row"><span class="label">GDP占比</span><span class="val">~22%</span></div>
+        <div class="rc-row"><span class="label">人口占比</span><span class="val">~25%</span></div>
+        <div class="rc-row"><span class="label">人均GDP指数</span><span class="val" style="color:var(--orange)">88</span></div>
+        <div class="rc-row"><span class="label">趋势</span><span class="val" style="color:var(--accent)">武汉/长沙/合肥崛起</span></div>
+      </div>
+      <div class="region-card">
+        <h3>西部 <span class="tag tag-west">12省区市</span></h3>
+        <div class="rc-row"><span class="label">GDP占比</span><span class="val">~21%</span></div>
+        <div class="rc-row"><span class="label">人口占比</span><span class="val">~27%</span></div>
+        <div class="rc-row"><span class="label">人均GDP指数</span><span class="val" style="color:var(--orange)">78</span></div>
+        <div class="rc-row"><span class="label">趋势</span><span class="val" style="color:var(--accent)">成渝领跑，其余分化</span></div>
+      </div>
+      <div class="region-card">
+        <h3>东北 <span class="tag tag-northeast">3省</span></h3>
+        <div class="rc-row"><span class="label">GDP占比</span><span class="val">~5%</span></div>
+        <div class="rc-row"><span class="label">人口占比</span><span class="val">~7%</span></div>
+        <div class="rc-row"><span class="label">人均GDP指数</span><span class="val" style="color:var(--red)">71</span></div>
+        <div class="rc-row"><span class="label">趋势</span><span class="val" style="color:var(--red)">人口外流 -1,100万/十年</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- South-North gap -->
+  <section class="section">
+    <h2>南 北 差 距 ：近 年 最 突 出 的 区 域 矛 盾</h2>
+    <div class="bar-section">
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">GDP占比 — 南方</span><span class="val" style="color:var(--green)">~65%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:65%;background:var(--green)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">GDP占比 — 北方</span><span class="val" style="color:var(--red)">~35%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:35%;background:var(--red)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">上市公司 — 南方</span><span class="val" style="color:var(--green)">~75%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:75%;background:var(--green)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">上市公司 — 北方</span><span class="val" style="color:var(--red)">~25%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:25%;background:var(--red)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">近5年GDP年均增速 — 南方</span><span class="val" style="color:var(--green)">~5.5%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:55%;background:var(--green)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">近5年GDP年均增速 — 北方</span><span class="val" style="color:var(--red)">~4.0%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:40%;background:var(--red)"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- City clusters -->
+  <section class="section">
+    <h2>四 大 城 市 群</h2>
+    <div class="cluster-grid">
+      <div class="cluster-card yangtze">
+        <h3>长三角</h3>
+        <div class="cl-gdp">~32万亿</div>
+        <div class="cl-pop">2.4亿人 &middot; 占全国GDP 24%</div>
+        <div class="star-row"><span class="dim">综合实力</span><span class="stars">★★★★★</span></div>
+        <div class="star-row"><span class="dim">创新能力</span><span class="stars">★★★★</span></div>
+        <div class="star-row"><span class="dim">市场化</span><span class="stars">★★★★</span></div>
+        <div class="star-row"><span class="dim">区域协同</span><span class="stars">★★★★</span></div>
+        <div class="cl-tags">
+          <span class="cl-tag">集成电路</span>
+          <span class="cl-tag">生物医药</span>
+          <span class="cl-tag">新能源车</span>
+          <span class="cl-tag">金融</span>
+        </div>
+      </div>
+      <div class="cluster-card pearl">
+        <h3>珠三角（大湾区）</h3>
+        <div class="cl-gdp">~17万亿</div>
+        <div class="cl-pop">9,600万人 &middot; 含港澳 &middot; 创新最强</div>
+        <div class="star-row"><span class="dim">综合实力</span><span class="stars">★★★★</span></div>
+        <div class="star-row"><span class="dim">创新能力</span><span class="stars">★★★★★</span></div>
+        <div class="star-row"><span class="dim">市场化</span><span class="stars">★★★★★</span></div>
+        <div class="star-row"><span class="dim">区域协同</span><span class="stars">★★★</span></div>
+        <div class="cl-tags">
+          <span class="cl-tag">消费电子</span>
+          <span class="cl-tag">电动汽车</span>
+          <span class="cl-tag">无人机</span>
+          <span class="cl-tag">跨境电商</span>
+        </div>
+      </div>
+      <div class="cluster-card jingjinji">
+        <h3>京津冀</h3>
+        <div class="cl-gdp">~10.5万亿</div>
+        <div class="cl-pop">1.1亿人 &middot; 占全国GDP 8%</div>
+        <div class="star-row"><span class="dim">综合实力</span><span class="stars">★★★</span></div>
+        <div class="star-row"><span class="dim">创新能力</span><span class="stars">★★★★</span></div>
+        <div class="star-row"><span class="dim">市场化</span><span class="stars">★★★</span></div>
+        <div class="star-row"><span class="dim">区域协同</span><span class="stars">★★</span></div>
+        <div class="cl-tags">
+          <span class="cl-tag">AI/互联网</span>
+          <span class="cl-tag">航天军工</span>
+          <span class="cl-tag">总部经济</span>
+          <span class="cl-tag">科研院所</span>
+        </div>
+      </div>
+      <div class="cluster-card chengyu">
+        <h3>成渝</h3>
+        <div class="cl-gdp">~8.5万亿</div>
+        <div class="cl-pop">1亿人 &middot; 西部增长极</div>
+        <div class="star-row"><span class="dim">综合实力</span><span class="stars">★★★</span></div>
+        <div class="star-row"><span class="dim">创新能力</span><span class="stars">★★★</span></div>
+        <div class="star-row"><span class="dim">市场化</span><span class="stars">★★★</span></div>
+        <div class="star-row"><span class="dim">区域协同</span><span class="stars">★★</span></div>
+        <div class="cl-tags">
+          <span class="cl-tag">电子信息</span>
+          <span class="cl-tag">汽车</span>
+          <span class="cl-tag">消费文旅</span>
+          <span class="cl-tag">人才洼地</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- County economy -->
+  <section class="section">
+    <h2>县 域 经 济 ：分 化 与 乡 村 振 兴</h2>
+    <div class="bar-section">
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">百强县（昆山、江阴等） — GDP千亿级</span><span class="val" style="color:var(--green)">3.5%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:3.5%;background:var(--green)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">中等县 — GDP 200-500亿</span><span class="val" style="color:var(--accent)">~25%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:25%;background:var(--accent)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">弱县（西部/东北）— GDP<100亿</span><span class="val" style="color:var(--red)">~40%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:40%;background:var(--red)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">城乡收入比</span><span class="val" style="color:var(--accent)">2.26:1（在改善）</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:45%;background:var(--accent)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">50%以上县域人口在减少</span><span class="val" style="color:var(--red)">空心化</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:50%;background:var(--red)"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Policy evaluation -->
+  <section class="section">
+    <h2>区 域 政 策 工 具 效 果 评 估</h2>
+    <div style="overflow-x:auto;">
+      <table class="eval-table">
+        <thead>
+          <tr>
+            <th>政策工具</th>
+            <th>经济拉动</th>
+            <th>制度创新</th>
+            <th>可复制性</th>
+            <th>总评</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>经济特区（早期）</td>
+            <td class="stars-cell">★★★★★</td>
+            <td class="stars-cell">★★★★★</td>
+            <td class="stars-cell">★</td>
+            <td>历史性成功，不可再现</td>
+          </tr>
+          <tr>
+            <td>浦东新区模式</td>
+            <td class="stars-cell">★★★★★</td>
+            <td class="stars-cell">★★★★</td>
+            <td class="stars-cell">★★</td>
+            <td>高度成功，需极强基础</td>
+          </tr>
+          <tr>
+            <td>一般国家级新区</td>
+            <td class="stars-cell">★★★</td>
+            <td class="stars-cell">★★</td>
+            <td class="stars-cell">★★★</td>
+            <td>效果参差不齐</td>
+          </tr>
+          <tr>
+            <td>开发区 / 高新区</td>
+            <td class="stars-cell">★★★★</td>
+            <td class="stars-cell">★★★</td>
+            <td class="stars-cell">★★★★</td>
+            <td>工业化主力军</td>
+          </tr>
+          <tr>
+            <td>自贸区（22个）</td>
+            <td class="stars-cell">★★</td>
+            <td class="stars-cell">★★★★</td>
+            <td class="stars-cell">★★★</td>
+            <td>制度价值 > 经济规模</td>
+          </tr>
+          <tr>
+            <td>财政转移支付</td>
+            <td class="stars-cell">★★</td>
+            <td class="stars-cell">★</td>
+            <td class="stars-cell">★★★★★</td>
+            <td>保底有余，发展不足</td>
+          </tr>
+          <tr>
+            <td>对口帮扶</td>
+            <td class="stars-cell">★★</td>
+            <td class="stars-cell">★★</td>
+            <td class="stars-cell">★★★</td>
+            <td>锦上添花，难雪中送炭</td>
+          </tr>
+          <tr>
+            <td>城市群战略</td>
+            <td class="stars-cell">★★★</td>
+            <td class="stars-cell">★★★</td>
+            <td class="stars-cell">★★★</td>
+            <td>进行中，长期看好</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Key insights -->
+  <section class="section">
+    <h2>核 心 判 断</h2>
+    <div class="insight-grid">
+      <div class="insight-card">
+        <h3>空间不平等是经济增长的内在特征</h3>
+        <p>区域差距不是政策失败。集聚效应意味着经济活动天然趋向核心区域——美国有铁锈带与硅谷之分，德国有东西差距。关键不是消灭差距，而是管理差距。</p>
+      </div>
+      <div class="insight-card">
+        <h3>人的流动 > 钱的流动</h3>
+        <p>让人从低生产率地区自由流向高生产率地区，比增加转移支付更有效。放开户籍限制的收益远超基建投入。接受部分地区人口减少的现实。</p>
+      </div>
+      <div class="insight-card">
+        <h3>制度竞争是最有效的区域发展动力</h3>
+        <p>深圳和浦东的成功本质上是制度竞争的成功。当全国制度趋同时——无论向好还是向差趋同——特区的独特价值就消失了。</p>
+      </div>
+      <div class="insight-card">
+        <h3>政策工具需匹配发展阶段</h3>
+        <p>工业化初期靠特区和开发区（承接产业转移），中后期靠城市群（服务业和创新需要密度），当前阶段需要制度型开放 + 人口自由流动 + 精准转移支付。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <section class="footer">
+    <p>数据基准：2024 年 &middot; 来源：国家统计局、财政部、各省统计年鉴、赛迪百强县报告</p>
+    <p style="margin-top:8px;"><a href="../index.html">&larr; 返回中国宏观经济分析框架总览</a></p>
+  </section>
+
+</div>
+
+</body>
+</html>
