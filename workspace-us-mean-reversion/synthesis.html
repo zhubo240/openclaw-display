@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>综合量化论证：均值回归的六条证据链</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: #0a0e1a; color: #e0e6ed; line-height: 1.7;
+  }
+
+  .sidebar {
+    position: fixed; top: 0; left: 0; width: 210px; height: 100vh;
+    background: rgba(10,14,26,0.97); border-right: 1px solid rgba(255,255,255,0.06);
+    padding: 24px 0; overflow-y: auto; z-index: 100;
+  }
+  .sidebar h2 {
+    font-size: 0.78rem; color: #4a5568; text-transform: uppercase;
+    letter-spacing: 1px; padding: 0 16px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 6px;
+  }
+  .sidebar a {
+    display: block; padding: 5px 16px; color: #6b7a8d; text-decoration: none;
+    font-size: 0.78rem; transition: all 0.2s; border-left: 2px solid transparent;
+  }
+  .sidebar a:hover, .sidebar a.active { color: #e0e6ed; background: rgba(255,255,255,0.03); border-left-color: #a78bfa; }
+  .sidebar .sep { height: 1px; background: rgba(255,255,255,0.04); margin: 6px 16px; }
+
+  .main { margin-left: 210px; max-width: 880px; padding: 28px 36px 60px; }
+
+  .back-link { display: inline-block; margin-bottom: 14px; color: #4a5568; text-decoration: none; font-size: 0.82rem; }
+  .back-link:hover { color: #e0e6ed; }
+
+  .header { text-align: center; padding: 28px 0 22px; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 30px; }
+  .header h1 {
+    font-size: 1.7rem;
+    background: linear-gradient(135deg, #a78bfa, #f472b6, #fbbf24);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 6px;
+  }
+  .header .subtitle { color: #6b7a8d; font-size: 0.88rem; }
+  .header .meta { color: #4a5568; font-size: 0.72rem; margin-top: 4px; }
+
+  section { margin-bottom: 36px; scroll-margin-top: 20px; }
+  section h2 { font-size: 1.15rem; margin-bottom: 6px; }
+  section h3 { font-size: 0.95rem; color: #a5b4c6; margin: 14px 0 6px; }
+  section p, section li { font-size: 0.85rem; color: #8896a8; }
+  section ul { padding-left: 18px; }
+  section li { margin-bottom: 3px; }
+
+  .chart-box {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px; padding: 18px; margin: 14px 0;
+  }
+  .chart-box .chart-title { font-size: 0.8rem; color: #a5b4c6; margin-bottom: 8px; font-weight: 600; }
+  .chart-box canvas { max-height: 340px; }
+
+  .insight-box {
+    border-radius: 10px; padding: 14px; margin: 14px 0;
+  }
+  .insight-box .label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+  .insight-box p { font-size: 0.83rem; color: #c4cdd8; }
+  .insight-purple { background: rgba(167,139,250,0.06); border: 1px solid rgba(167,139,250,0.15); }
+  .insight-purple .label { color: #a78bfa; }
+  .insight-gold { background: rgba(251,191,36,0.06); border: 1px solid rgba(251,191,36,0.15); }
+  .insight-gold .label { color: #fbbf24; }
+  .insight-red { background: rgba(248,113,113,0.06); border: 1px solid rgba(248,113,113,0.15); }
+  .insight-red .label { color: #f87171; }
+  .insight-green { background: rgba(52,211,153,0.06); border: 1px solid rgba(52,211,153,0.15); }
+  .insight-green .label { color: #34d399; }
+
+  .hl { font-weight: 700; }
+  .hl-blue { color: #60a5fa; }
+  .hl-purple { color: #a78bfa; }
+  .hl-pink { color: #f472b6; }
+  .hl-gold { color: #fbbf24; }
+  .hl-red { color: #f87171; }
+  .hl-green { color: #34d399; }
+  .hl-orange { color: #f97316; }
+  .hl-white { color: #e0e6ed; }
+
+  /* Chain flow */
+  .chain-flow { margin: 20px 0; }
+  .chain-step {
+    display: flex; gap: 14px; padding: 16px; border-radius: 10px;
+    background: rgba(255,255,255,0.02); border-left: 3px solid;
+    margin-bottom: 2px;
+  }
+  .chain-step .num {
+    min-width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.78rem; font-weight: 800; color: #0a0e1a;
+  }
+  .chain-step .body { flex: 1; }
+  .chain-step .body .title { font-size: 0.88rem; font-weight: 700; color: #e0e6ed; }
+  .chain-step .body .detail { font-size: 0.8rem; color: #8896a8; margin-top: 2px; }
+  .chain-step .body .number { font-size: 1.1rem; font-weight: 800; margin-top: 4px; }
+  .chain-step .ref {
+    font-size: 0.65rem; padding: 2px 8px; border-radius: 10px;
+    align-self: center; white-space: nowrap; cursor: pointer; text-decoration: none;
+  }
+  .chain-arrow { text-align: center; color: #4a5568; font-size: 0.68rem; padding: 1px 0; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .stat-card {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px; padding: 18px; text-align: center;
+  }
+  .stat-card .val { font-size: 1.8rem; font-weight: 800; }
+  .stat-card .lbl { font-size: 0.7rem; color: #4a5568; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 3px; }
+  .stat-card .sub { font-size: 0.75rem; color: #6b7a8d; margin-top: 5px; }
+
+  .scenario-card {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px; padding: 18px; margin: 10px 0;
+  }
+  .scenario-card .head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .scenario-card .head .name { font-size: 0.9rem; font-weight: 700; }
+  .scenario-card .head .prob { font-size: 0.78rem; padding: 2px 10px; border-radius: 10px; }
+  .scenario-card ul { font-size: 0.82rem; color: #8896a8; }
+
+  .footer {
+    text-align: center; padding: 28px 0; color: #4a5568; font-size: 0.72rem;
+    border-top: 1px solid rgba(255,255,255,0.06); margin-top: 36px;
+  }
+  .footer a { color: #4a5568; }
+
+  @media (max-width: 800px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 18px 14px; }
+    .two-col { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <h2>综合论证</h2>
+  <a href="#thesis">核心命题</a>
+  <a href="#chain">六步推理链</a>
+  <div class="sep"></div>
+  <a href="#step1">1 回报分解</a>
+  <a href="#step2">2 EPS 低估</a>
+  <a href="#step3">3 PE 归因</a>
+  <a href="#step4">4 AI 风险</a>
+  <a href="#step5">5 美欧趋同</a>
+  <a href="#step6">6 黄金标尺</a>
+  <div class="sep"></div>
+  <a href="#scenarios">情景分析</a>
+  <a href="#conclusion">结论</a>
+</nav>
+
+<div class="main">
+  <a class="back-link" href="index.html">&larr; 返回门户</a>
+
+  <div class="header">
+    <h1>综合量化论证</h1>
+    <div class="subtitle">均值回归的六条证据链 — 从回报分解到黄金标尺</div>
+    <div class="meta">跨 6 个研究主题 · 59 个图表 · Shiller + CRSP/Compustat + WGC + IMF 数据</div>
+  </div>
+
+  <!-- ===== THESIS ===== -->
+  <section id="thesis">
+    <h2 style="color:#a78bfa">核心命题</h2>
+    <p>S&P 500 过去 96 年的 ~9% 年化回报可以精确分解。当前估值远高于历史均值，而支撑高估值的关键因素（AI 盈利、科技溢价）都面临不确定性。<span class="hl hl-white">均值回归不一定以股价下跌实现，更可能以货币贬值的形式出现。</span></p>
+
+    <div class="chart-box">
+      <div class="chart-title">S&P 500 回报完全分解 — 从名义回报到真实风险补偿</div>
+      <canvas id="chartFullDecomp"></canvas>
+    </div>
+
+    <div class="insight-box insight-purple">
+      <div class="label">量化论证摘要</div>
+      <p>8.91% 名义回报 = 无风险利率 4.88% + 理性风险补偿 2.00% + EPS 低估修正 1.66% + 行为残余 0.37%。<br>
+      其中 <span class="hl hl-pink">1.66%</span> 来自市场对盈利增速的系统性低估，<span class="hl hl-gold">0.37%</span> 是真正无法解释的超额回报。风险溢价之谜基本消解。</p>
+    </div>
+  </section>
+
+  <!-- ===== CHAIN OVERVIEW ===== -->
+  <section id="chain">
+    <h2 style="color:#a78bfa">六步量化推理链</h2>
+    <p>从历史回报分解出发，每一步用数据回答上一步提出的问题：</p>
+
+    <div class="chain-flow">
+      <div class="chain-step" style="border-left-color:#60a5fa">
+        <div class="num" style="background:#60a5fa">1</div>
+        <div class="body">
+          <div class="title">回报分解：8.91% 从何而来？</div>
+          <div class="detail">盈利增长 5.16% + 股息 2.9% + PE 扩张 0.81%</div>
+          <div class="number hl-blue">PE 从 11.1 → 27.2（+145%）</div>
+        </div>
+        <a class="ref" href="sp500-mean-reversion/index.html" style="background:rgba(96,165,250,0.15);color:#60a5fa">sp500 →</a>
+      </div>
+      <div class="chain-arrow">↓ 0.81% PE 扩张 + 当前 PE 远高于均值 → 为什么市场持续给高估值？</div>
+
+      <div class="chain-step" style="border-left-color:#f472b6">
+        <div class="num" style="background:#f472b6">2</div>
+        <div class="body">
+          <div class="title">EPS 低估假说：市场系统性低估盈利</div>
+          <div class="detail">65% 的时段中，市场隐含增长预期低于实际 EPS 增速</div>
+          <div class="number hl-pink">平均低估幅度 1.66%/年</div>
+        </div>
+        <a class="ref" href="equity-premium/index.html" style="background:rgba(244,114,182,0.15);color:#f472b6">equity →</a>
+      </div>
+      <div class="chain-arrow">↓ 低估解释了 PE 持续上修，但当前 27.2 vs 均值 16.2 仍高 68%</div>
+
+      <div class="chain-step" style="border-left-color:#a78bfa">
+        <div class="num" style="background:#a78bfa">3</div>
+        <div class="body">
+          <div class="title">PE 归因：27.2 的构成是什么？</div>
+          <div class="detail">科技推高 +5 PE（有盈利支撑，PEG 2.66），但非科技也高出历史 +36%（PEG 5.38）</div>
+          <div class="number hl-purple">去科技 PE 仍有 22.0（vs 历史 ~16）</div>
+        </div>
+        <a class="ref" href="pe-valuation/index.html" style="background:rgba(167,139,250,0.15);color:#a78bfa">pe →</a>
+      </div>
+      <div class="chain-arrow">↓ 科技高 PE 靠盈利增长支撑 → 盈利中多少是 AI 驱动的？能持续吗？</div>
+
+      <div class="chain-step" style="border-left-color:#76b900">
+        <div class="num" style="background:#76b900">4</div>
+        <div class="body">
+          <div class="title">AI 盈利归因：$484B 中多少可持续？</div>
+          <div class="detail">AI 前业务 64%、AI 持久 21%、AI 可能暂时 15%。概率加权后增量接近零</div>
+          <div class="number" style="color:#76b900">期望值 +$1.25B ≈ 0（在 $484B 中）</div>
+        </div>
+        <a class="ref" href="mag7-ai-attribution/index.html" style="background:rgba(118,185,0,0.15);color:#76b900">mag7 →</a>
+      </div>
+      <div class="chain-arrow">↓ 如果 AI 溢价消退，美国还能保持对全球的超额回报吗？</div>
+
+      <div class="chain-step" style="border-left-color:#f97316">
+        <div class="num" style="background:#f97316">5</div>
+        <div class="body">
+          <div class="title">美欧对比：增长引擎 vs 分红引擎</div>
+          <div class="detail">美国靠盈利增长（6.3%），欧洲靠股息（3.0%）。若 AI 公用事业化……</div>
+          <div class="number hl-orange">S&P 500 趋同 STOXX 600：年化 7-8%</div>
+        </div>
+        <a class="ref" href="sp500-mean-reversion/us_europe_comparison.html" style="background:rgba(249,115,22,0.15);color:#f97316">us-eu →</a>
+      </div>
+      <div class="chain-arrow">↓ 回报从 10-11% 降到 7-8% = 名义上的均值回归。但还有另一种路径……</div>
+
+      <div class="chain-step" style="border-left-color:#fbbf24">
+        <div class="num" style="background:#fbbf24">6</div>
+        <div class="body">
+          <div class="title">黄金标尺：货币贬值是隐形的均值回归</div>
+          <div class="detail">金价 8 年 +302%，央行购金翻倍，USD 储备占比 72% → 56%</div>
+          <div class="number hl-gold">以黄金计价，S&P 500 回报已大幅缩水</div>
+        </div>
+        <a class="ref" href="gold-zero-sum/index.html" style="background:rgba(251,191,36,0.15);color:#fbbf24">gold →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== STEP 1 ===== -->
+  <section id="step1">
+    <h2 style="color:#60a5fa">证据链 1：回报分解</h2>
+    <p>96 年数据（1928-2024）将 S&P 500 回报精确拆解为三个来源：</p>
+    <div class="two-col">
+      <div class="stat-card">
+        <div class="val hl-blue">5.16%</div>
+        <div class="lbl">盈利增长（EPS CAGR）</div>
+        <div class="sub">回报的主引擎，占 58%</div>
+      </div>
+      <div class="stat-card">
+        <div class="val hl-green">2.94%</div>
+        <div class="lbl">股息收益</div>
+        <div class="sub">历史上远高于今天的 ~1.3%</div>
+      </div>
+    </div>
+    <div class="two-col" style="margin-top:14px">
+      <div class="stat-card">
+        <div class="val hl-gold">0.81%</div>
+        <div class="lbl">PE 扩张</div>
+        <div class="sub">PE 11.1 → 27.2（96 年 +145%）</div>
+      </div>
+      <div class="stat-card">
+        <div class="val hl-purple">8.91%</div>
+        <div class="lbl">名义年化总回报</div>
+        <div class="sub">= 5.16 + 2.94 + 0.81</div>
+      </div>
+    </div>
+    <div class="insight-box insight-red">
+      <div class="label">关键问题</div>
+      <p>PE 已从 11.1 涨到 27.2，历史均值只有 16.2。如果 PE 回归均值，未来 10 年仅 PE 收缩就意味着每年 <span class="hl hl-red">-5.2%</span> 的拖累。这把所有盈利增长都吃掉了。</p>
+    </div>
+  </section>
+
+  <!-- ===== STEP 2 ===== -->
+  <section id="step2">
+    <h2 style="color:#f472b6">证据链 2：EPS 低估假说</h2>
+    <p>风险溢价之谜（Mehra-Prescott, 1985）：理论只能解释 ~2% 股债溢价，实际 5-6%。我们的假说：市场系统性低估盈利增速。</p>
+
+    <div class="chart-box">
+      <div class="chart-title">风险溢价分解：从观察到的 8.91% 到真实风险补偿</div>
+      <canvas id="chartPremiumBridge"></canvas>
+    </div>
+
+    <div class="insight-box insight-green">
+      <div class="label">低估的证据</div>
+      <p>Gordon 模型回溯 20 个 5 年窗口（1928-2024），<span class="hl hl-pink">65% 的时段</span>中市场隐含 EPS 增长预期低于实际增速，平均低估 <span class="hl hl-pink">1.66%/年</span>。修正后，"谜题"从 4.03% 缩小到 <span class="hl hl-gold">0.37%</span>（可由行为偏差解释）。</p>
+    </div>
+  </section>
+
+  <!-- ===== STEP 3 ===== -->
+  <section id="step3">
+    <h2 style="color:#a78bfa">证据链 3：PE 27.2 归因</h2>
+    <p>当前 PE 27.2 比历史均值 16.2 高 68%。拆解后发现科技部分有盈利支撑，但非科技部分的高估值才是真正的风险。</p>
+
+    <div class="chart-box">
+      <div class="chart-title">PE 27.2 的逐层拆解</div>
+      <canvas id="chartPELayers"></canvas>
+    </div>
+
+    <div class="two-col">
+      <div class="stat-card">
+        <div class="val hl-green">2.66</div>
+        <div class="lbl">科技 PEG</div>
+        <div class="sub">高PE有高增长支撑 → 相对合理</div>
+      </div>
+      <div class="stat-card">
+        <div class="val hl-red">5.38</div>
+        <div class="lbl">非科技 PEG</div>
+        <div class="sub">PE高但增长不匹配 → 结构性泡沫？</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== STEP 4 ===== -->
+  <section id="step4">
+    <h2 style="color:#76b900">证据链 4：AI 盈利的脆弱性</h2>
+    <p>Mag7 的 $484B 盈利中，真正 AI 驱动且可能暂时的部分为 15%（~$74B）。四种情景概率加权后，AI 增量盈利的期望值接近零。</p>
+
+    <div class="chart-box">
+      <div class="chart-title">Mag7 $484B 盈利的 AI 归因拆解</div>
+      <canvas id="chartAIAttribution"></canvas>
+    </div>
+
+    <div class="insight-box insight-red">
+      <div class="label">循环依赖风险</div>
+      <p>AI 投资的"循环买单"：科技公司互相购买彼此的 AI 产品 → Nvidia 卖 GPU 给云厂商 → 云厂商卖算力给 AI 公司 → AI 公司还没证明终端收入。如果终端价值不兑现，<span class="hl hl-red">$74B "暂时"盈利面临蒸发</span>。Nvidia 一家占暂时盈利的 65%（$48B）。</p>
+    </div>
+  </section>
+
+  <!-- ===== STEP 5 ===== -->
+  <section id="step5">
+    <h2 style="color:#f97316">证据链 5：美欧趋同风险</h2>
+    <p>美国的超额回报完全建立在"每次都能接住新产业"的前提上。如果 AI 未能兑现，S&P 500 回报结构将趋同欧洲。</p>
+
+    <div class="chart-box">
+      <div class="chart-title">回报来源对比：美国（增长驱动） vs 欧洲（分红驱动）</div>
+      <canvas id="chartUSEU"></canvas>
+    </div>
+
+    <div class="insight-box insight-gold">
+      <div class="label">趋同的含义</div>
+      <p>美国年化从 <span class="hl hl-blue">10.5%</span> 降到欧洲的 <span class="hl hl-orange">7.8%</span>，意味着 10 年后 $100 的终值从 $271 降到 $212 — 少 <span class="hl hl-red">22%</span>。2025 年初 STOXX 600 <span class="hl hl-green">+7.4%</span> vs S&P 500 <span class="hl hl-red">-7.8%</span> 可能是早期信号。</p>
+    </div>
+  </section>
+
+  <!-- ===== STEP 6 ===== -->
+  <section id="step6">
+    <h2 style="color:#fbbf24">证据链 6：黄金 — 隐形贬值标尺</h2>
+    <p>均值回归有两种路径：股价下跌（显性）或货币贬值（隐性）。黄金 8 年 +302% 暗示第二条路径正在发生。</p>
+
+    <div class="two-col">
+      <div class="stat-card">
+        <div class="val hl-gold">+302%</div>
+        <div class="lbl">金价 8 年涨幅</div>
+        <div class="sub">$1,282 → $5,150 (2018-2026)</div>
+      </div>
+      <div class="stat-card">
+        <div class="val hl-red">-15.7pp</div>
+        <div class="lbl">USD 储备占比下降</div>
+        <div class="sub">72% → 56.3% (2001-2025)</div>
+      </div>
+    </div>
+    <div class="two-col" style="margin-top:14px">
+      <div class="stat-card">
+        <div class="val hl-orange">1,055</div>
+        <div class="lbl">央行年购金量（吨）</div>
+        <div class="sub">2022 前仅 473 吨/年，翻倍</div>
+      </div>
+      <div class="stat-card">
+        <div class="val hl-red">$1.0T</div>
+        <div class="lbl">美国年利息支出</div>
+        <div class="sub">2022 年仅 $500B，3 年翻倍</div>
+      </div>
+    </div>
+
+    <div class="insight-box insight-gold">
+      <div class="label">隐形贬值计算</div>
+      <p>S&P 500 近 8 年名义涨幅约 +100%。但以黄金计价，S&P 500 实际<span class="hl hl-red">贬值约 50%</span>（黄金涨 302% vs 股指涨 100%）。传统模型（实际利率升 → 金价跌）已完全失效：2023-2025 实际利率从 -1% 升到 +2.23%，金价反而涨 180%。<span class="hl hl-white">央行在用行动投票：不信任法币体系。</span></p>
+    </div>
+  </section>
+
+  <!-- ===== SCENARIOS ===== -->
+  <section id="scenarios">
+    <h2 style="color:#a78bfa">未来 10 年情景分析</h2>
+    <p>基于六条证据链，构建三个情景：</p>
+
+    <div class="scenario-card">
+      <div class="head">
+        <div class="name hl-green">情景 A：科技接棒成功</div>
+        <div class="prob" style="background:rgba(52,211,153,0.15);color:#34d399">概率 30%</div>
+      </div>
+      <ul>
+        <li>AI 终端价值兑现 → Mag7 盈利持续 15%+ 增长</li>
+        <li>PE 维持 25-28 区间（结构性高估值有理由）</li>
+        <li>S&P 500 年化回报 <span class="hl hl-green">9-11%</span>（盈利驱动，类似 2010-2024）</li>
+        <li>黄金涨幅放缓，但不会逆转（财政问题依在）</li>
+      </ul>
+    </div>
+
+    <div class="scenario-card">
+      <div class="head">
+        <div class="name hl-gold">情景 B：温和回归</div>
+        <div class="prob" style="background:rgba(251,191,36,0.15);color:#fbbf24">概率 45%</div>
+      </div>
+      <ul>
+        <li>AI 部分兑现 → 科技增速从 12% 降到 7%</li>
+        <li>PE 从 27 缓慢压缩到 20-22（10 年 -20%）</li>
+        <li>S&P 500 年化回报 <span class="hl hl-gold">5-7%</span>（趋同欧洲水平）</li>
+        <li>黄金继续涨 8-12%/年（结构性去美元化）</li>
+        <li>以黄金计价，股市实际回报接近 <span class="hl hl-red">0%</span></li>
+      </ul>
+    </div>
+
+    <div class="scenario-card">
+      <div class="head">
+        <div class="name hl-red">情景 C：剧烈回归</div>
+        <div class="prob" style="background:rgba(248,113,113,0.15);color:#f87171">概率 25%</div>
+      </div>
+      <ul>
+        <li>AI 泡沫类似 2000 年互联网 → 科技盈利暴跌</li>
+        <li>PE 回归历史均值 16.2（-40%）</li>
+        <li>S&P 500 年化回报 <span class="hl hl-red">0-3%</span>（失去的十年）</li>
+        <li>黄金加速上涨 15-20%/年（避险 + 去美元化）</li>
+        <li>欧洲/新兴市场跑赢美国（重演 2000-2009）</li>
+      </ul>
+    </div>
+
+    <div class="chart-box">
+      <div class="chart-title">三种情景下的 10 年回报预测（概率加权）</div>
+      <canvas id="chartScenarios"></canvas>
+    </div>
+
+    <div class="insight-box insight-purple">
+      <div class="label">概率加权期望</div>
+      <p>S&P 500 概率加权年化回报 = 30%×10% + 45%×6% + 25%×1.5% = <span class="hl hl-purple">6.1%</span>。<br>
+      黄金概率加权年化回报 = 30%×5% + 45%×10% + 25%×17.5% = <span class="hl hl-gold">10.3%</span>。<br>
+      <span class="hl hl-white">在概率加权框架下，黄金的期望回报高于 S&P 500。</span>这不是说"卖掉股票买黄金"，而是说市场低估了均值回归 + 货币贬值的尾部风险。</p>
+    </div>
+  </section>
+
+  <!-- ===== CONCLUSION ===== -->
+  <section id="conclusion">
+    <h2 style="color:#a78bfa">结论：三个可操作的洞察</h2>
+
+    <div class="insight-box insight-purple">
+      <div class="label">洞察 1 — 风险溢价没那么大</div>
+      <p>修正 EPS 低估后，真实风险溢价仅 <span class="hl hl-pink">2.37%</span>（非 5-6%）。散户以为的"股市长期高回报"有 1.66% 来自认知偏差，而非真实风险补偿。</p>
+    </div>
+
+    <div class="insight-box insight-gold">
+      <div class="label">洞察 2 — PE 回归可能以货币贬值实现</div>
+      <p>PE 27.2 → 16.2 不一定要股价跌 40%。如果通胀/贬值年化 5%（黄金已在定价这个预期），10 年后名义股价不变但实际购买力下降 40% — 同样达到均值回归效果。</p>
+    </div>
+
+    <div class="insight-box insight-green">
+      <div class="label">洞察 3 — 分散的价值</div>
+      <p>当 S&P 500 概率加权期望 <span class="hl hl-purple">6.1%</span> 而黄金 <span class="hl hl-gold">10.3%</span> 时，传统的 60/40 配置未必最优。加入黄金（或广义的"非美元资产"）不是看空美国，而是<span class="hl hl-white">对冲均值回归以货币贬值形式实现的尾部风险</span>。</p>
+    </div>
+  </section>
+
+  <div class="footer">
+    综合量化论证 · 跨 6 个研究主题 · 2026 年 2 月<br>
+    <a href="index.html">返回门户</a> ·
+    <a href="AUTO-LOG.md">自动更新日志</a>
+  </div>
+</div>
+
+<script>
+const C = { blue:'#60a5fa', purple:'#a78bfa', pink:'#f472b6', gold:'#fbbf24', red:'#f87171', green:'#34d399', orange:'#f97316', muted:'#4a5568', nvGreen:'#76b900' };
+const gC = 'rgba(255,255,255,0.06)';
+const baseOpts = {
+  responsive: true,
+  plugins: {
+    legend: { labels: { color:'#a5b4c6', font:{size:10} } },
+    tooltip: { backgroundColor:'rgba(10,14,26,0.95)', titleColor:'#e0e6ed', bodyColor:'#a5b4c6', borderColor:'rgba(255,255,255,0.1)', borderWidth:1 }
+  },
+  scales: {
+    x: { ticks:{color:'#6b7a8d',font:{size:10}}, grid:{color:gC} },
+    y: { ticks:{color:'#6b7a8d',font:{size:10}}, grid:{color:gC} }
+  }
+};
+
+// Chart 1: Full Return Decomposition Waterfall
+new Chart(document.getElementById('chartFullDecomp'), {
+  type: 'bar',
+  data: {
+    labels: ['名义回报\n8.91%', '− 无风险利率', '= 观察溢价', '− 理性补偿', '− EPS 低估', '= 残余'],
+    datasets: [{
+      label: '收益率 (%)',
+      data: [8.91, -4.88, 4.03, -2.00, -1.66, 0.37],
+      backgroundColor: [C.purple, C.muted, C.pink, C.blue, C.pink, C.gold],
+      borderRadius: 4
+    }]
+  },
+  options: {
+    ...baseOpts,
+    plugins: {
+      ...baseOpts.plugins,
+      legend: { display: false },
+      tooltip: {
+        ...baseOpts.plugins.tooltip,
+        callbacks: { label: ctx => (ctx.raw > 0 ? '+' : '') + ctx.raw.toFixed(2) + '%' }
+      }
+    },
+    scales: {
+      ...baseOpts.scales,
+      y: { ...baseOpts.scales.y, title: { display:true, text:'%', color:'#6b7a8d' } }
+    }
+  }
+});
+
+// Chart 2: Risk Premium Bridge
+new Chart(document.getElementById('chartPremiumBridge'), {
+  type: 'bar',
+  data: {
+    labels: ['无风险利率\n(国债)', '理性风险补偿\n(Mehra-Prescott)', 'EPS 低估修正\n(本研究)', '行为残余\n(无法解释)', '合计 =\n名义回报'],
+    datasets: [{
+      data: [4.88, 2.00, 1.66, 0.37, 8.91],
+      backgroundColor: [C.muted, C.blue, C.pink, C.gold, C.purple],
+      borderRadius: 4
+    }]
+  },
+  options: {
+    ...baseOpts,
+    plugins: { ...baseOpts.plugins, legend: { display: false } },
+    scales: {
+      ...baseOpts.scales,
+      x: { ...baseOpts.scales.x, stacked: true },
+      y: { ...baseOpts.scales.y, beginAtZero: true, title: { display:true, text:'年化 %', color:'#6b7a8d' } }
+    }
+  }
+});
+
+// Chart 3: PE Layers
+new Chart(document.getElementById('chartPELayers'), {
+  type: 'bar',
+  data: {
+    labels: ['历史均值', '+ 结构性因素\n(低利率/被动投资)', '+ 利润率扩张\n(5%→12%)', '+ 科技溢价\n(Mag7)', '= 当前 PE'],
+    datasets: [{
+      data: [16.2, 3.3, 2.5, 5.2, 27.2],
+      backgroundColor: [C.muted, C.blue, C.green, C.purple, C.pink],
+      borderRadius: 4
+    }]
+  },
+  options: {
+    ...baseOpts,
+    plugins: { ...baseOpts.plugins, legend: { display: false } },
+    scales: {
+      ...baseOpts.scales,
+      y: { ...baseOpts.scales.y, beginAtZero: true, title: { display:true, text:'PE 倍数', color:'#6b7a8d' } }
+    }
+  }
+});
+
+// Chart 4: AI Attribution Doughnut
+new Chart(document.getElementById('chartAIAttribution'), {
+  type: 'doughnut',
+  data: {
+    labels: ['AI 前业务 (64%)', 'AI 持久增量 (21%)', 'AI 可能暂时 (15%)'],
+    datasets: [{
+      data: [309, 101, 74],
+      backgroundColor: [C.blue, C.nvGreen, C.red],
+      borderColor: '#0a0e1a', borderWidth: 2
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { position: 'bottom', labels: { color: '#a5b4c6', font: { size: 11 }, padding: 16 } },
+      tooltip: {
+        backgroundColor: 'rgba(10,14,26,0.95)', titleColor: '#e0e6ed', bodyColor: '#a5b4c6',
+        callbacks: { label: ctx => `$${ctx.raw}B (${ctx.label})` }
+      }
+    }
+  }
+});
+
+// Chart 5: US vs EU Return Decomposition
+new Chart(document.getElementById('chartUSEU'), {
+  type: 'bar',
+  data: {
+    labels: ['S&P 500\n(~10.5%)', 'STOXX 600\n(~7.8%)'],
+    datasets: [
+      { label: '盈利增长', data: [6.3, 1.6], backgroundColor: C.blue, borderRadius: 4 },
+      { label: '股息', data: [1.8, 3.0], backgroundColor: C.green, borderRadius: 4 },
+      { label: 'PE 扩张', data: [2.4, 3.2], backgroundColor: C.gold, borderRadius: 4 }
+    ]
+  },
+  options: {
+    ...baseOpts,
+    scales: {
+      x: { ...baseOpts.scales.x, stacked: true },
+      y: { ...baseOpts.scales.y, stacked: true, beginAtZero: true, title: { display:true, text:'年化 %', color:'#6b7a8d' } }
+    }
+  }
+});
+
+// Chart 6: Scenario Analysis
+new Chart(document.getElementById('chartScenarios'), {
+  type: 'bar',
+  data: {
+    labels: ['情景 A\n科技接棒 (30%)', '情景 B\n温和回归 (45%)', '情景 C\n剧烈回归 (25%)', '概率加权'],
+    datasets: [
+      { label: 'S&P 500 年化', data: [10, 6, 1.5, 6.1], backgroundColor: C.blue, borderRadius: 4 },
+      { label: '黄金年化', data: [5, 10, 17.5, 10.3], backgroundColor: C.gold, borderRadius: 4 }
+    ]
+  },
+  options: {
+    ...baseOpts,
+    scales: {
+      ...baseOpts.scales,
+      y: { ...baseOpts.scales.y, beginAtZero: true, title: { display:true, text:'预期年化回报 %', color:'#6b7a8d' } }
+    }
+  }
+});
+
+// Sidebar active state
+const secs = document.querySelectorAll('section[id]');
+const navs = document.querySelectorAll('.sidebar a');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navs.forEach(n => n.classList.remove('active'));
+      const a = document.querySelector(`.sidebar a[href="#${e.target.id}"]`);
+      if (a) a.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+secs.forEach(s => obs.observe(s));
+</script>
+
+</body>
+</html>
