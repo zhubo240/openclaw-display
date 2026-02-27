@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第四章：计算 — 复杂</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: #0a0a0f;
+      color: #e0e0e0;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 48px 24px;
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 48px;
+      font-size: 13px;
+    }
+
+    .nav a {
+      color: #63b3ed;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+
+    .nav a:hover { color: #90cdf4; }
+
+    .nav .chapter-nav {
+      display: flex;
+      gap: 20px;
+    }
+
+    .chapter-header { margin-bottom: 48px; }
+
+    .chapter-label {
+      font-size: 12px;
+      letter-spacing: 3px;
+      color: #63b3ed;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .chapter-title {
+      font-size: 36px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    .chapter-subtitle {
+      font-size: 15px;
+      color: #718096;
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(99, 179, 237, 0.2), transparent);
+      margin: 40px 0;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title::before {
+      content: '';
+      width: 3px;
+      height: 18px;
+      background: #63b3ed;
+      border-radius: 2px;
+    }
+
+    .summary-text {
+      font-size: 15px;
+      line-height: 1.9;
+      color: #a0aec0;
+      margin-bottom: 20px;
+    }
+
+    .summary-text strong { color: #e2e8f0; }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+      padding-left: 28px;
+      margin: 28px 0 36px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: 4px;
+      bottom: 4px;
+      width: 2px;
+      background: rgba(99, 179, 237, 0.15);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 24px;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -25px;
+      top: 7px;
+      width: 10px;
+      height: 10px;
+      background: #1a202c;
+      border: 2px solid #63b3ed;
+      border-radius: 50%;
+    }
+
+    .timeline-item h4 {
+      font-size: 14px;
+      color: #e2e8f0;
+      margin-bottom: 6px;
+    }
+
+    .timeline-item h4 .year {
+      color: #63b3ed;
+      font-family: "SF Mono", Monaco, Consolas, monospace;
+      font-size: 12px;
+      margin-right: 8px;
+    }
+
+    .timeline-item p {
+      font-size: 13px;
+      line-height: 1.8;
+      color: #718096;
+    }
+
+    /* Concept cards */
+    .concepts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 24px 0 32px;
+    }
+
+    .concept-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 22px 18px;
+      transition: all 0.25s;
+    }
+
+    .concept-card:hover {
+      background: rgba(99, 179, 237, 0.05);
+      border-color: rgba(99, 179, 237, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .concept-card h4 {
+      font-size: 15px;
+      color: #e2e8f0;
+      margin-bottom: 8px;
+    }
+
+    .concept-card p {
+      font-size: 13px;
+      color: #718096;
+      line-height: 1.7;
+    }
+
+    .concept-card .icon {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    /* Highlight box */
+    .highlight-box {
+      background: rgba(99, 179, 237, 0.06);
+      border: 1px solid rgba(99, 179, 237, 0.15);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 28px 0;
+    }
+
+    .highlight-box .label {
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: #63b3ed;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .highlight-box p {
+      font-size: 15px;
+      line-height: 1.8;
+      color: #cbd5e0;
+    }
+
+    .highlight-box p + p { margin-top: 12px; }
+
+    /* Quote */
+    .quote-block {
+      border-left: 3px solid rgba(99, 179, 237, 0.3);
+      padding: 16px 20px;
+      margin: 24px 0;
+      background: rgba(255,255,255,0.02);
+      border-radius: 0 8px 8px 0;
+    }
+
+    .quote-block p {
+      font-size: 14px;
+      line-height: 1.8;
+      color: #a0aec0;
+      font-style: italic;
+    }
+
+    .quote-block .source {
+      font-size: 12px;
+      color: #718096;
+      margin-top: 8px;
+      font-style: normal;
+    }
+
+    /* Formula */
+    .formula {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 20px 0;
+      font-family: "SF Mono", Monaco, Consolas, monospace;
+      font-size: 14px;
+      color: #90cdf4;
+      text-align: center;
+      line-height: 1.8;
+    }
+
+    /* Step list */
+    .step-list {
+      list-style: none;
+      margin: 20px 0;
+    }
+
+    .step-list li {
+      display: flex;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .step-list li:last-child { border-bottom: none; }
+
+    .step-num {
+      width: 28px; height: 28px;
+      background: rgba(99, 179, 237, 0.1);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 600; color: #63b3ed;
+      flex-shrink: 0; margin-top: 2px;
+    }
+
+    .step-content h4 { font-size: 14px; color: #e2e8f0; margin-bottom: 4px; }
+    .step-content p { font-size: 13px; color: #a0aec0; line-height: 1.7; }
+
+    /* Discussion placeholder */
+    .discussion-placeholder {
+      background: rgba(255,255,255,0.02);
+      border: 1px dashed rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 32px;
+      text-align: center;
+      color: #4a5568;
+      font-size: 14px;
+      margin-top: 24px;
+    }
+
+    /* Footer nav */
+    .footer-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .footer-nav a {
+      color: #63b3ed;
+      text-decoration: none;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.2s;
+    }
+
+    .footer-nav a:hover { color: #90cdf4; }
+
+    .footer-nav .prev-chapter {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 12px 24px;
+      border-radius: 8px;
+    }
+
+    .footer-nav .prev-chapter:hover { background: rgba(255,255,255,0.06); }
+
+    .footer-nav .next-chapter {
+      background: rgba(99, 179, 237, 0.1);
+      border: 1px solid rgba(99, 179, 237, 0.2);
+      padding: 12px 24px;
+      border-radius: 8px;
+    }
+
+    .footer-nav .next-chapter:hover { background: rgba(99, 179, 237, 0.15); }
+
+    @media (max-width: 640px) {
+      .concepts { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Navigation -->
+    <nav class="nav">
+      <a href="index.html">&larr; 返回书目</a>
+      <div class="chapter-nav">
+        <a href="ch03-信息.html">&larr; 上一章</a>
+        <a href="#">下一章 &rarr;</a>
+      </div>
+    </nav>
+
+    <!-- Chapter Header -->
+    <div class="chapter-header">
+      <div class="chapter-label">Chapter 04 &middot; 第一部分：背景与历史</div>
+      <h1 class="chapter-title">计算</h1>
+      <p class="chapter-subtitle">Computation</p>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Chapter Summary -->
+    <section>
+      <h2 class="section-title">章节概要</h2>
+
+      <p class="summary-text">
+        第三章讲了信息——如何度量不确定性。第四章追问一个更深的问题：<strong>什么是"计算"？计算的能力和极限在哪里？</strong>这个问题的答案深刻影响了我们对复杂系统的理解——因为复杂系统本质上就是在"计算"。
+      </p>
+
+      <h2 class="section-title">希尔伯特的野心</h2>
+
+      <p class="summary-text">
+        故事要从数学家<strong>大卫·希尔伯特（David Hilbert）</strong>讲起。1900 年，希尔伯特在巴黎国际数学大会上提出了 23 个著名问题，试图为全部数学奠定坚实基础。到 1928 年，他进一步提出了三个根本性要求：
+      </p>
+
+      <ul class="step-list">
+        <li>
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <h4>完备性 Completeness</h4>
+            <p>数学中的每一个真命题都能被证明吗？</p>
+          </div>
+        </li>
+        <li>
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <h4>一致性 Consistency</h4>
+            <p>数学不会产生自相矛盾的结果吗？</p>
+          </div>
+        </li>
+        <li>
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <h4>可判定性 Decidability</h4>
+            <p>是否存在一个通用的机械化过程（算法），能判断任意数学命题的真假？</p>
+          </div>
+        </li>
+      </ul>
+
+      <p class="summary-text">
+        希尔伯特相信三个问题的答案都是"是"。但接下来发生的事情彻底粉碎了这个梦想。
+      </p>
+
+      <h2 class="section-title">哥德尔的炸弹</h2>
+
+      <div class="timeline">
+        <div class="timeline-item">
+          <h4><span class="year">1931</span>不完备性定理</h4>
+          <p>库尔特·哥德尔（Kurt G&ouml;del）证明了：在任何足够强大的、一致的形式系统中，<strong>必然存在真但不可证的命题</strong>。而且，这样的系统无法证明自身的一致性。希尔伯特的前两个问题被一举否定。</p>
+        </div>
+        <div class="timeline-item">
+          <h4><span class="year">1936</span>图灵机与不可判定性</h4>
+          <p>阿兰·图灵（Alan Turing）构造了一个精确的"计算"数学模型——<strong>图灵机</strong>——然后证明了<strong>停机问题不可判定</strong>：不存在一个通用算法能判断任意程序是否会停止。希尔伯特的第三个问题也被否定。</p>
+        </div>
+        <div class="timeline-item">
+          <h4><span class="year">1936</span>丘奇的 Lambda 演算</h4>
+          <p>阿隆佐·丘奇（Alonzo Church）用完全不同的方法（Lambda 演算）独立得出了相同结论。后来证明图灵机和 Lambda 演算的计算能力完全等价。</p>
+        </div>
+      </div>
+
+      <h2 class="section-title">图灵机：计算的终极抽象</h2>
+
+      <p class="summary-text">
+        图灵机是人类提出的最简洁的通用计算模型。它只有四个组成部分：
+      </p>
+
+      <div class="concepts">
+        <div class="concept-card">
+          <div class="icon">📜</div>
+          <h4>无限长纸带</h4>
+          <p>分成一个个格子，每个格子写着一个符号（比如 0 或 1）。既是输入，也是存储。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">👁</div>
+          <h4>读写头</h4>
+          <p>在纸带上移动，每次读一个格子、写一个符号、然后左移或右移一步。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">📋</div>
+          <h4>状态表（规则）</h4>
+          <p>一组有限的规则，形式是："如果当前状态是 A、读到符号 X，则写符号 Y、移动方向 D、转到状态 B"。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">⚙️</div>
+          <h4>当前状态</h4>
+          <p>机器在任意时刻处于有限个状态之一。包括一个特殊的"停机"状态。</p>
+        </div>
+      </div>
+
+      <p class="summary-text">
+        就这么简单。但图灵证明了一个惊人的结论：<strong>这台极其简单的机器能计算任何可计算的东西。</strong>你的笔记本电脑、超级计算机、未来的量子计算机（就可计算性而言），它们能算的东西，图灵机都能算——只是可能慢一些。
+      </p>
+
+      <h2 class="section-title">核心概念</h2>
+
+      <div class="concepts">
+        <div class="concept-card">
+          <div class="icon">🔄</div>
+          <h4>通用图灵机</h4>
+          <p>图灵证明存在一种"通用"图灵机，它能模拟任何其他图灵机——只要把被模拟机器的规则表写在纸带上作为输入。这就是现代计算机"可编程"思想的理论基础：<strong>硬件不变，软件决定行为。</strong></p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">🚫</div>
+          <h4>停机问题</h4>
+          <p>不存在一个程序能判断任意程序是否会停止运行。这不是技术限制——它是数学定理。某些关于计算的问题<strong>原则上不可回答</strong>。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">🧩</div>
+          <h4>丘奇-图灵论题</h4>
+          <p>"任何直觉上可计算的函数都能被图灵机计算。" 这不是定理（无法证明），而是一个被广泛接受的信念。至今没有人找到反例。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">⏱</div>
+          <h4>可计算 vs. 可行计算</h4>
+          <p>图灵机能算不代表能在合理时间内算完。这引出了<strong>计算复杂性理论</strong>——P vs NP 问题：有些问题验证答案很快，但找到答案可能需要宇宙年龄级别的时间。</p>
+        </div>
+      </div>
+
+      <h2 class="section-title">哥德尔不完备性定理的核心洞察</h2>
+
+      <p class="summary-text">
+        哥德尔的证明方法本身就是一件艺术品。他的核心技巧是<strong>自指（self-reference）</strong>：
+      </p>
+
+      <p class="summary-text">
+        他构造了一个数学命题 G，这个命题的含义是<strong>"G 不可被证明"</strong>。然后推理：
+      </p>
+
+      <div class="formula">
+        如果 G 可被证明 → G 是假的（因为 G 说自己不可证）→ 系统证明了假命题 → 系统不一致<br>
+        如果 G 不可被证明 → G 是真的（因为 G 说的就是这个）→ 真命题无法被证明 → 系统不完备
+      </div>
+
+      <p class="summary-text">
+        无论如何，系统要么不一致，要么不完备——<strong>不可能两者兼得</strong>。这个"说谎者悖论"的数学版本，用严格的编码技术（哥德尔编号）变成了一个货真价实的数学定理。
+      </p>
+
+      <div class="quote-block">
+        <p>"哥德尔的不完备性定理是 20 世纪最深刻的数学发现之一。它揭示了形式系统的内在限制，而这种限制并非源于我们的无知，而是数学本身的结构性特征。"</p>
+        <div class="source">&mdash; 梅拉妮·米歇尔</div>
+      </div>
+
+      <h2 class="section-title">为什么这对复杂性很重要</h2>
+
+      <div class="highlight-box">
+        <div class="label">计算视角下的复杂性</div>
+        <p>本章建立了一个关键框架：<strong>把自然过程看作计算。</strong>蚁群在"计算"最短路径；免疫系统在"计算"入侵者的身份；进化在"计算"适应环境的解。如果这个类比成立，那么计算理论的工具——可计算性、复杂度类、不可判定性——就能用来理解自然界的复杂系统。</p>
+        <p>哥德尔和图灵还揭示了一个深刻的主题：<strong>限制本身就是结构的一部分。</strong>不完备性不是缺陷，停机问题不是技术瓶颈——它们是计算的内在属性。同样，复杂系统的不可预测性也不是因为我们不够聪明，而可能是系统本身的结构性特征。</p>
+      </div>
+
+      <h2 class="section-title">与前三章的连接</h2>
+
+      <p class="summary-text">
+        <strong>第一章</strong>问"什么是复杂性"——本章提供了一种回答方式：复杂性可能与<strong>计算的不可约性</strong>有关。一个系统的行为如果无法被"快捷方式"预测，只能通过实际运行来观察，它就具有不可约的计算复杂性。
+      </p>
+
+      <p class="summary-text">
+        <strong>第二章</strong>讲混沌——确定性但不可预测。本章从计算角度给出了另一层解释：<strong>停机问题的不可判定性</strong>意味着即使你知道所有规则，某些关于系统长期行为的问题仍然原则上无法回答。
+      </p>
+
+      <p class="summary-text">
+        <strong>第三章</strong>讲信息——如何度量不确定性。本章加入了<strong>计算</strong>这个维度：信息不只是被度量的对象，更是被处理的对象。信息论问"有多少 bit"，计算理论问"处理这些 bit 需要多少步骤"。两者合在一起，才能真正逼近对复杂性的度量。
+      </p>
+
+      <div class="highlight-box">
+        <div class="label">一句话总结</div>
+        <p>计算不只是电脑做的事——它是描述自然过程的通用语言。而计算理论告诉我们：即使在这种语言里，某些问题也是原则上无法回答的。</p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Discussion -->
+    <section>
+      <h2 class="section-title">读书讨论</h2>
+      <div class="discussion-placeholder">
+        尚无讨论 &middot; 读完这一章后来聊聊？
+      </div>
+    </section>
+
+    <!-- Footer navigation -->
+    <div class="footer-nav">
+      <a class="prev-chapter" href="ch03-信息.html">&larr; 第三章：信息</a>
+      <a class="next-chapter" href="#">第五章：进化 &rarr;</a>
+    </div>
+
+  </div>
+</body>
+</html>

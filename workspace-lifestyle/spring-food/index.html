@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>初春时令食谱 · Lifestyle Workspace</title>
+<style>
+  :root {
+    --bg: #faf9f6;
+    --text: #2d2d2d;
+    --accent: #5a7d64;
+    --accent-light: #e8f0eb;
+    --border: #e0ddd8;
+    --muted: #8a8580;
+    --warm: #a67c52;
+    --warm-light: #f5f0e8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Noto Sans SC", "Helvetica Neue", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.8;
+    padding: 3rem 1.5rem;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .breadcrumb { font-size: 0.85rem; color: var(--muted); margin-bottom: 2rem; }
+  header { margin-bottom: 2.5rem; }
+  header h1 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.3rem; }
+  header p { color: var(--muted); font-size: 0.9rem; }
+  .intro {
+    padding: 1.2rem 1.4rem;
+    background: linear-gradient(135deg, #e8f0eb 0%, #f5f0e8 100%);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 2.5rem;
+    font-size: 0.9rem;
+  }
+  .ingredient {
+    margin-bottom: 2.5rem;
+    padding: 1.5rem;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .ingredient h2 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+  }
+  .ingredient .meta {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+  .ingredient .meta span {
+    display: inline-block;
+    padding: 0.1rem 0.45rem;
+    background: var(--accent-light);
+    border-radius: 3px;
+    margin-right: 0.4rem;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .ingredient .about {
+    font-size: 0.9rem;
+    margin-bottom: 1.2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px dashed var(--border);
+  }
+  .recipe-block {
+    background: var(--warm-light);
+    border-radius: 6px;
+    padding: 1.2rem;
+    margin-bottom: 0.8rem;
+  }
+  .recipe-block:last-child { margin-bottom: 0; }
+  .recipe-block h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--warm);
+    margin-bottom: 0.6rem;
+  }
+  .recipe-block .difficulty {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  .recipe-block ol, .recipe-block ul {
+    padding-left: 1.2rem;
+    font-size: 0.88rem;
+  }
+  .recipe-block li { margin-bottom: 0.3rem; }
+  .tip {
+    margin-top: 0.8rem;
+    padding: 0.6rem 0.8rem;
+    background: var(--accent-light);
+    border-radius: 4px;
+    font-size: 0.82rem;
+    color: var(--accent);
+  }
+  .tip::before { content: "Tips: "; font-weight: 600; }
+  .nutrition-table {
+    width: 100%;
+    font-size: 0.82rem;
+    border-collapse: collapse;
+    margin-top: 0.8rem;
+  }
+  .nutrition-table th, .nutrition-table td {
+    padding: 0.4rem 0.6rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .nutrition-table th { color: var(--muted); font-weight: 500; }
+  footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+
+<div class="breadcrumb"><a href="../index.html">Lifestyle Workspace</a> / 初春时令食谱</div>
+
+<header>
+  <h1>初春时令食谱</h1>
+  <p>惊蛰前后（2-3月），这些食材正当季</p>
+</header>
+
+<div class="intro">
+  春季饮食核心原则：<strong>升发阳气、疏肝养脾</strong>。选择应季食材，烹饪以清淡为主，保留食材本味。以下四种食材在初春最为鲜美，错过要再等一年。
+</div>
+
+<!-- 荠菜 -->
+<div class="ingredient">
+  <h2>荠菜</h2>
+  <div class="meta">
+    <span>2-4月</span> <span>野菜</span> <span>养肝明目</span>
+  </div>
+  <div class="about">
+    "城中桃李愁风雨，春在溪头荠菜花。" 荠菜是最经典的春季野菜，含丰富维生素 C 和胡萝卜素。市场购买选叶片鲜绿、根部完整的；公园野采注意避开喷药区域。
+  </div>
+
+  <table class="nutrition-table">
+    <tr><th>每 100g</th><th>热量</th><th>蛋白质</th><th>维 C</th><th>钙</th></tr>
+    <tr><td>荠菜（生）</td><td>27 kcal</td><td>2.9g</td><td>43mg</td><td>294mg</td></tr>
+  </table>
+
+  <div class="recipe-block">
+    <h3>荠菜馄饨</h3>
+    <div class="difficulty">难度 ★★☆ · 40 分钟 · 约 40 只</div>
+    <ul>
+      <li><strong>馅料：</strong>荠菜 300g、猪肉糜 200g、姜末、盐、生抽、芝麻油</li>
+      <li><strong>皮：</strong>买现成馄饨皮即可</li>
+    </ul>
+    <ol>
+      <li>荠菜洗净焯水 30 秒，捞出过凉水，挤干切碎</li>
+      <li>肉糜加姜末、盐、生抽、芝麻油，顺一个方向搅打至起胶</li>
+      <li>拌入荠菜，不要过度搅拌（保留颗粒感）</li>
+      <li>包馄饨，水开后下锅，浮起后再煮 1 分钟</li>
+      <li>汤底：紫菜、虾皮、一点醋、白胡椒粉</li>
+    </ol>
+    <div class="tip">荠菜焯水后一定要挤干，否则馅料出水，包的时候会破皮。</div>
+  </div>
+
+  <div class="recipe-block">
+    <h3>荠菜豆腐羹</h3>
+    <div class="difficulty">难度 ★☆☆ · 15 分钟 · 2 人份</div>
+    <ol>
+      <li>嫩豆腐切小丁，荠菜焯水切碎</li>
+      <li>锅中加清水或高汤烧开，放入豆腐丁煮 2 分钟</li>
+      <li>加入荠菜，水淀粉勾薄芡</li>
+      <li>淋入打散的蛋液，轻轻搅动成蛋花</li>
+      <li>调味：盐、白胡椒、几滴芝麻油</li>
+    </ol>
+    <div class="tip">快手汤品，适合不想大动干戈的工作日晚餐。</div>
+  </div>
+</div>
+
+<!-- 春笋 -->
+<div class="ingredient">
+  <h2>春笋</h2>
+  <div class="meta">
+    <span>2-4月</span> <span>蔬菜</span> <span>高纤低卡</span>
+  </div>
+  <div class="about">
+    春笋被称为"蔬中第一品"，口感脆嫩鲜美。富含膳食纤维，热量极低。选购时敲一敲笋壳，声音清脆的更新鲜；切面洁白无异味为佳。
+  </div>
+
+  <table class="nutrition-table">
+    <tr><th>每 100g</th><th>热量</th><th>蛋白质</th><th>膳食纤维</th><th>钾</th></tr>
+    <tr><td>春笋（生）</td><td>25 kcal</td><td>2.6g</td><td>2.8g</td><td>300mg</td></tr>
+  </table>
+
+  <div class="recipe-block">
+    <h3>油焖春笋</h3>
+    <div class="difficulty">难度 ★★☆ · 25 分钟 · 2-3 人份</div>
+    <ol>
+      <li>春笋剥壳，切滚刀块，焯水 3 分钟去草酸（重要）</li>
+      <li>锅中多放一点油，中火煸炒笋块至表面微焦</li>
+      <li>加生抽 2 勺、老抽半勺、糖 1 勺、少许水</li>
+      <li>盖锅焖 8-10 分钟，收汁至浓稠</li>
+      <li>出锅前撒葱花</li>
+    </ol>
+    <div class="tip">焯水是关键步骤，不焯水会涩嘴。糖不能省，它和酱油形成红烧的灵魂。</div>
+  </div>
+
+  <div class="recipe-block">
+    <h3>腌笃鲜</h3>
+    <div class="difficulty">难度 ★★☆ · 90 分钟（大部分是等） · 4 人份</div>
+    <ul>
+      <li><strong>材料：</strong>春笋 2 根、咸肉/金华火腿 100g、鲜排骨 300g、百叶结适量</li>
+    </ul>
+    <ol>
+      <li>排骨焯水去血沫；咸肉切片（不用焯）</li>
+      <li>春笋剥壳切块，焯水</li>
+      <li>所有材料入砂锅，加足冷水，大火烧开后转小火</li>
+      <li>炖 60-80 分钟，中途加入百叶结</li>
+      <li>只用盐微调，鲜味来自食材本身</li>
+    </ol>
+    <div class="tip">"腌"是咸肉，"笃"是小火慢炖的声音，"鲜"是春笋和排骨。这道菜的名字就是做法。</div>
+  </div>
+</div>
+
+<!-- 香椿 -->
+<div class="ingredient">
+  <h2>香椿</h2>
+  <div class="meta">
+    <span>3-4月</span> <span>树芽</span> <span>高蛋白</span>
+  </div>
+  <div class="about">
+    香椿芽号称"树上蔬菜"，香味独特浓烈，爱的人极爱，不爱的人避之不及。价格随季节变化剧烈——刚上市时堪比肉价，盛产期迅速回落。谷雨后的香椿纤维变老，口感下降。
+  </div>
+
+  <div class="recipe-block">
+    <h3>香椿炒蛋</h3>
+    <div class="difficulty">难度 ★☆☆ · 10 分钟 · 2 人份</div>
+    <ol>
+      <li>香椿一小把（约 80g），焯水 30 秒，切碎</li>
+      <li>鸡蛋 3 个打散，加少许盐，拌入香椿碎</li>
+      <li>锅中宽油烧至七成热，倒入蛋液</li>
+      <li>底部凝固后翻面，不要炒散——保持大块更香</li>
+    </ol>
+    <div class="tip">香椿必须焯水！生香椿含较高亚硝酸盐，焯水可去除大部分。</div>
+  </div>
+
+  <div class="recipe-block">
+    <h3>香椿拌豆腐</h3>
+    <div class="difficulty">难度 ★☆☆ · 8 分钟 · 2 人份</div>
+    <ol>
+      <li>内酯豆腐切块摆盘</li>
+      <li>香椿焯水切末</li>
+      <li>撒在豆腐上，淋生抽、芝麻油</li>
+      <li>吃的时候拌匀</li>
+    </ol>
+    <div class="tip">极简做法，适合第一次尝试香椿的人。冷食更清爽。</div>
+  </div>
+</div>
+
+<!-- 豌豆尖 -->
+<div class="ingredient">
+  <h2>豌豆尖</h2>
+  <div class="meta">
+    <span>1-3月</span> <span>嫩芽</span> <span>清甜爽口</span>
+  </div>
+  <div class="about">
+    豌豆尖（豌豆苗的嫩梢）是西南地区春季餐桌的常客，口感清甜细嫩。它极不耐放——买回来当天就做，放到第二天就蔫了。
+  </div>
+
+  <div class="recipe-block">
+    <h3>清炒豌豆尖</h3>
+    <div class="difficulty">难度 ★☆☆ · 5 分钟 · 2 人份</div>
+    <ol>
+      <li>豌豆尖掐去老茎，洗净沥干</li>
+      <li>锅中油烧热，拍一瓣蒜丢进去爆香</li>
+      <li>大火倒入豌豆尖，快速翻炒</li>
+      <li>看到叶片变软（约 30 秒），加盐出锅</li>
+    </ol>
+    <div class="tip">全程不超过 1 分钟。炒久了就老了，颜色也会变暗。这是一道考验火候的"快菜"。</div>
+  </div>
+
+  <div class="recipe-block">
+    <h3>豌豆尖鸡蛋汤</h3>
+    <div class="difficulty">难度 ★☆☆ · 8 分钟 · 2 人份</div>
+    <ol>
+      <li>水烧开，加少许盐</li>
+      <li>倒入打散的蛋液，不要搅动，等蛋花自然成形</li>
+      <li>放入豌豆尖，10 秒后关火</li>
+      <li>淋几滴芝麻油</li>
+    </ol>
+    <div class="tip">豌豆尖是最后放的，利用余温就够了。煮太久会失去清甜。</div>
+  </div>
+</div>
+
+<footer>
+  <p><a href="../index.html">&larr; 返回首页</a></p>
+  <p>更新：2026-02-27 14:30 GMT+8 · 自主推进生成</p>
+</footer>
+
+</body>
+</html>

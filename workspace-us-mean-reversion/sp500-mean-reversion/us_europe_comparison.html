@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>美欧股市对比：产业革命、指数换血与科技缺位</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: #0a0e1a;
+    color: #e0e6ed;
+    line-height: 1.7;
+  }
+
+  /* === Layout === */
+  .sidebar {
+    position: fixed; top: 0; left: 0; width: 220px; height: 100vh;
+    background: rgba(10,14,26,0.97); border-right: 1px solid rgba(255,255,255,0.06);
+    padding: 24px 0; overflow-y: auto; z-index: 100;
+  }
+  .sidebar h2 {
+    font-size: 0.82rem; color: #4a5568; text-transform: uppercase;
+    letter-spacing: 1px; padding: 0 18px 12px; border-bottom: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 8px;
+  }
+  .sidebar a {
+    display: block; padding: 6px 18px; color: #6b7a8d; text-decoration: none;
+    font-size: 0.82rem; transition: all 0.2s; border-left: 2px solid transparent;
+  }
+  .sidebar a:hover, .sidebar a.active { color: #e0e6ed; background: rgba(255,255,255,0.03); border-left-color: #f97316; }
+
+  .main { margin-left: 220px; max-width: 900px; padding: 30px 36px 60px; }
+
+  .header {
+    text-align: center; padding: 32px 0 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 32px;
+  }
+  .header h1 {
+    font-size: 1.8rem;
+    background: linear-gradient(135deg, #f97316, #fb923c, #fbbf24);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 6px;
+  }
+  .header .subtitle { color: #6b7a8d; font-size: 0.88rem; }
+  .header .meta { color: #4a5568; font-size: 0.75rem; margin-top: 4px; }
+
+  section { margin-bottom: 40px; scroll-margin-top: 20px; }
+  section h2 { font-size: 1.2rem; color: #f97316; margin-bottom: 6px; }
+  section h3 { font-size: 1rem; color: #a5b4c6; margin: 16px 0 6px; }
+  section p, section li { font-size: 0.88rem; color: #8896a8; }
+  section ul { padding-left: 20px; }
+  section li { margin-bottom: 4px; }
+  .highlight { color: #f97316; font-weight: 700; }
+  .highlight-blue { color: #60a5fa; font-weight: 700; }
+  .highlight-red { color: #f87171; font-weight: 700; }
+  .highlight-green { color: #34d399; font-weight: 700; }
+
+  .chart-box {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px; padding: 20px; margin: 16px 0;
+  }
+  .chart-box .chart-title {
+    font-size: 0.82rem; color: #a5b4c6; margin-bottom: 10px; font-weight: 600;
+  }
+  .chart-box canvas { max-height: 360px; }
+
+  .insight-box {
+    background: rgba(249,115,22,0.06); border: 1px solid rgba(249,115,22,0.15);
+    border-radius: 10px; padding: 16px; margin: 16px 0;
+  }
+  .insight-box .label { font-size: 0.72rem; color: #f97316; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .insight-box p { font-size: 0.85rem; color: #c4cdd8; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .stat-card {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px; padding: 20px; text-align: center;
+  }
+  .stat-card .val { font-size: 2rem; font-weight: 800; }
+  .stat-card .lbl { font-size: 0.75rem; color: #4a5568; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+  .stat-card .sub { font-size: 0.78rem; color: #6b7a8d; margin-top: 6px; }
+
+  .comparison-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px; border-radius: 8px;
+    background: rgba(255,255,255,0.02); margin: 6px 0;
+  }
+  .comparison-row .label { width: 140px; font-size: 0.82rem; color: #6b7a8d; }
+  .comparison-row .bar-container { flex: 1; display: flex; gap: 4px; align-items: center; }
+  .comparison-row .bar {
+    height: 22px; border-radius: 4px; display: flex; align-items: center;
+    padding: 0 8px; font-size: 0.7rem; font-weight: 700; color: #fff; min-width: 30px;
+  }
+
+  .timeline-node {
+    display: flex; gap: 16px; padding: 14px 16px; border-radius: 8px;
+    background: rgba(255,255,255,0.02); margin: 6px 0;
+    border-left: 3px solid;
+  }
+  .timeline-node .era { min-width: 90px; font-size: 0.78rem; color: #6b7a8d; font-weight: 600; }
+  .timeline-node .content { flex: 1; }
+  .timeline-node .content .us { font-size: 0.82rem; color: #60a5fa; }
+  .timeline-node .content .eu { font-size: 0.82rem; color: #f97316; }
+
+  .back-link {
+    display: inline-block; margin-bottom: 16px; color: #4a5568; text-decoration: none;
+    font-size: 0.82rem; transition: color 0.2s;
+  }
+  .back-link:hover { color: #e0e6ed; }
+
+  .footer {
+    text-align: center; padding: 30px 0; color: #4a5568; font-size: 0.72rem;
+    border-top: 1px solid rgba(255,255,255,0.06); margin-top: 40px;
+  }
+
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 20px 16px; }
+    .two-col { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <h2>美欧对比</h2>
+  <a href="#returns">回报差距</a>
+  <a href="#pe-divergence">PE 分化</a>
+  <a href="#sectors">行业构成</a>
+  <a href="#market-cap">市值对比</a>
+  <a href="#decomposition">回报来源拆解</a>
+  <a href="#industrial-revolution">产业革命更迭</a>
+  <a href="#why-europe-lost">欧洲为何缺位</a>
+  <a href="#implications">均值回归含义</a>
+</nav>
+
+<div class="main">
+  <a class="back-link" href="../index.html">&larr; 返回门户</a>
+
+  <div class="header">
+    <h1>美欧股市对比</h1>
+    <div class="subtitle">产业革命、指数换血与科技缺位</div>
+    <div class="meta">基于 S&P 500 vs STOXX 600 / MSCI Europe 数据 · 2025 年 2 月</div>
+  </div>
+
+  <!-- ===== 1. RETURNS ===== -->
+  <section id="returns">
+    <h2>一、回报差距</h2>
+    <p>美欧回报差距在 2010 年后急剧扩大。2015 年投 &euro;100：S&P 500 → &euro;355，STOXX 600 → &euro;210。</p>
+
+    <div class="chart-box">
+      <div class="chart-title">长期年化回报对比（%）</div>
+      <canvas id="chartReturns"></canvas>
+    </div>
+
+    <div class="two-col">
+      <div class="stat-card">
+        <div class="val" style="color:#60a5fa">+2.8pp</div>
+        <div class="lbl">33 年回报差</div>
+        <div class="sub">S&P 500 10.6% vs STOXX 600 7.8%</div>
+      </div>
+      <div class="stat-card">
+        <div class="val" style="color:#f87171">+8.3pp</div>
+        <div class="lbl">08 后回报差</div>
+        <div class="sub">S&P 500 11.9% vs MSCI EAFE 3.6%</div>
+      </div>
+    </div>
+
+    <div class="insight-box">
+      <div class="label">关键数据</div>
+      <p>2009 低点到 2021：MSCI USA <span class="highlight-blue">+600%</span>，MSCI Europe <span class="highlight">+230%</span>。差距主要在盈利增速：美国 <span class="highlight-blue">6.3%</span> vs 欧洲 <span class="highlight-red">1.6%</span>（差 4.7pp）。</p>
+    </div>
+  </section>
+
+  <!-- ===== 2. PE DIVERGENCE ===== -->
+  <section id="pe-divergence">
+    <h2>二、PE 分化：起点一样，终点分化</h2>
+    <p>2010 年初，两者 PE 几乎一样（~18x）。此后美国靠盈利增长支撑 PE 扩张 +39%；欧洲盈利不增长，PE 反而收缩 -7%。</p>
+
+    <div class="chart-box">
+      <div class="chart-title">PE 倍数走势对比（2010 → 2024）</div>
+      <canvas id="chartPE"></canvas>
+    </div>
+
+    <div class="insight-box">
+      <div class="label">核心洞察</div>
+      <p>起点一样，终点完全分化。美国 PE 18.3 → <span class="highlight-blue">25.5</span>（+39%），欧洲 PE 18.2 → <span class="highlight-red">16.9</span>（-7%）。根本原因是盈利增速，而非市场情绪。</p>
+    </div>
+  </section>
+
+  <!-- ===== 3. SECTORS ===== -->
+  <section id="sectors">
+    <h2>三、行业构成的巨大差异</h2>
+    <p>美国指数 = 科技 + 平台 + 消费（高增长、低分红）；欧洲指数 = 银行 + 工业 + 制药 + 能源（低增长、高分红）。</p>
+
+    <div class="chart-box">
+      <div class="chart-title">S&P 500 vs STOXX 600 行业权重对比（%）</div>
+      <canvas id="chartSectors"></canvas>
+    </div>
+
+    <div class="chart-box">
+      <div class="chart-title">各行业 Forward PE 对比：美国 vs 欧洲</div>
+      <canvas id="chartForwardPE"></canvas>
+    </div>
+
+    <div class="insight-box">
+      <div class="label">关键差异</div>
+      <p>美国科技+通讯合计占 <span class="highlight-blue">~41%</span>，欧洲仅 <span class="highlight-red">~11%</span>，差距 30 个百分点。如果给 S&P 500 套用欧洲行业权重，forward PE 约降低 0.8x。</p>
+    </div>
+  </section>
+
+  <!-- ===== 4. MARKET CAP ===== -->
+  <section id="market-cap">
+    <h2>四、市值的荒诞对比</h2>
+    <p>三家美国公司（Nvidia + Apple + Microsoft ≈ $13T）就接近整个欧盟全部上市公司（$16T）的 80%。</p>
+
+    <div class="chart-box">
+      <div class="chart-title">市值对比：美国三巨头 vs 欧洲 Top 10（万亿美元）</div>
+      <canvas id="chartMarketCap"></canvas>
+    </div>
+
+    <div class="two-col">
+      <div class="stat-card">
+        <div class="val" style="color:#60a5fa">$13T</div>
+        <div class="lbl">三家美国公司</div>
+        <div class="sub">Nvidia $5.0T + Apple $4.0T + Microsoft $4.0T</div>
+      </div>
+      <div class="stat-card">
+        <div class="val" style="color:#f97316">$16T</div>
+        <div class="lbl">欧盟全部上市公司</div>
+        <div class="sub">1,759 家公司合计</div>
+      </div>
+    </div>
+
+    <div class="insight-box">
+      <div class="label">一组荒诞数字</div>
+      <p>Nvidia 一家（$5T）> 欧洲前 10 名合计（~$2.7T）。全球 Top 25 最大公司中，美国占 20 家，欧洲仅 ASML 1 家。欧洲最大的公司：<span class="highlight">卖光刻机的和卖包的</span>。没有一家互联网平台。</p>
+    </div>
+  </section>
+
+  <!-- ===== 5. RETURN DECOMPOSITION ===== -->
+  <section id="decomposition">
+    <h2>五、回报来源拆解</h2>
+    <p>美国的回报靠盈利增长驱动，欧洲靠股息——更像债券。</p>
+
+    <div class="chart-box">
+      <div class="chart-title">回报来源分解：盈利增长 + 股息 + PE 扩张（%）</div>
+      <canvas id="chartDecomposition"></canvas>
+    </div>
+
+    <div class="insight-box">
+      <div class="label">欧洲股市更像债券</div>
+      <p>美国回报三引擎中盈利增长占 <span class="highlight-blue">60%</span>（6.3/10.5）；欧洲回报中股息占 <span class="highlight">38%</span>（3.0/7.8），盈利增长仅贡献 <span class="highlight-red">21%</span>（1.6/7.8）。欧洲指数本质是高分红低增长，回报结构类似固定收益。</p>
+    </div>
+  </section>
+
+  <!-- ===== 6. INDUSTRIAL REVOLUTION ===== -->
+  <section id="industrial-revolution">
+    <h2>六、产业革命与龙头更迭</h2>
+    <p>美国每一波产业革命都有新公司接棒成为龙头。欧洲在每波硬件/制造革命中都有世界级公司，但在软件/平台革命中几乎完全缺席。</p>
+
+    <div class="timeline-node" style="border-left-color:#6b7a8d">
+      <div class="era">铁路钢铁<br>1850-1900</div>
+      <div class="content">
+        <div class="us">美国：铁路公司、US Steel、Carnegie、Rockefeller — 美股起步</div>
+        <div class="eu">欧洲：英国纺织厂、铁路 — 全球霸主</div>
+      </div>
+    </div>
+    <div class="timeline-node" style="border-left-color:#60a5fa">
+      <div class="era">二次工业<br>1900-1950</div>
+      <div class="content">
+        <div class="us">美国：GE、福特、AT&T、杜邦 — 消费+工业驱动</div>
+        <div class="eu">欧洲：Siemens、BASF、Bayer、Shell、BP — 化工/电气/能源领先</div>
+      </div>
+    </div>
+    <div class="timeline-node" style="border-left-color:#a78bfa">
+      <div class="era">战后消费<br>1950-1980</div>
+      <div class="content">
+        <div class="us">美国：P&G、可口可乐、沃尔玛、IBM — 消费文化全球输出</div>
+        <div class="eu">欧洲：VW、BMW、Nestl&eacute;、LVMH — 汽车/奢侈品/制药崛起</div>
+      </div>
+    </div>
+    <div class="timeline-node" style="border-left-color:#f472b6">
+      <div class="era">IT 革命<br>1980-2000</div>
+      <div class="content">
+        <div class="us">美国：Microsoft、Intel、Cisco、Dell — 科技权重 5% → 15%</div>
+        <div class="eu">欧洲：Nokia、Ericsson、SAP — 1990s 短暂辉煌</div>
+      </div>
+    </div>
+    <div class="timeline-node" style="border-left-color:#f97316">
+      <div class="era">互联网/AI<br>2000-至今</div>
+      <div class="content">
+        <div class="us">美国：Google、Amazon、Apple、Meta、Nvidia — 科技权重 → 35%+，Mag7 占 1/3</div>
+        <div class="eu">欧洲：ASML（唯一例外）、Spotify/Adyen（太小）— <span class="highlight-red">几乎空白</span></div>
+      </div>
+    </div>
+
+    <h3>龙头变迁对比</h3>
+    <div class="two-col">
+      <div class="stat-card" style="text-align:left">
+        <div class="lbl" style="text-align:center; margin-bottom:10px; color:#60a5fa">美国 — 持续换血</div>
+        <div style="font-size:0.82rem; color:#8896a8; line-height:1.8">
+          1990: IBM、GE、Exxon<br>
+          2000: Microsoft、GE、Cisco<br>
+          2010: Apple、Exxon、Microsoft<br>
+          2020: Apple、Microsoft、Amazon<br>
+          2024: Apple、Nvidia、Microsoft
+        </div>
+      </div>
+      <div class="stat-card" style="text-align:left">
+        <div class="lbl" style="text-align:center; margin-bottom:10px; color:#f97316">欧洲 — 龙头固化</div>
+        <div style="font-size:0.82rem; color:#8896a8; line-height:1.8">
+          1990: Shell、Nestl&eacute;、Siemens、Unilever<br>
+          2024: ASML、LVMH、Shell、Nestl&eacute;、Siemens<br>
+          <br>
+          <span style="color:#f87171">30 年过去，还是那些老面孔。</span><br>
+          唯一新面孔：ASML、Novo Nordisk
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 7. WHY EUROPE LOST ===== -->
+  <section id="why-europe-lost">
+    <h2>七、欧洲为什么在互联网时代完全失守</h2>
+    <p>平台经济的本质是网络效应 → 赢家通吃 → 需要大市场快速起量。欧洲碎片化的市场结构是致命劣势。</p>
+
+    <div class="comparison-row">
+      <div class="label">巨大单一市场</div>
+      <div class="bar-container">
+        <div class="bar" style="background:#60a5fa; width:80%">美国 3.3 亿同语言 ✓</div>
+        <div class="bar" style="background:#f87171; width:20%">27 国 27 语 ✗</div>
+      </div>
+    </div>
+    <div class="comparison-row">
+      <div class="label">风险资本生态</div>
+      <div class="bar-container">
+        <div class="bar" style="background:#60a5fa; width:75%">硅谷 VC 文化 ✓</div>
+        <div class="bar" style="background:#f87171; width:25%">银行借贷 ✗</div>
+      </div>
+    </div>
+    <div class="comparison-row">
+      <div class="label">工程师人才密度</div>
+      <div class="bar-container">
+        <div class="bar" style="background:#60a5fa; width:75%">全球顶尖聚集 ✓</div>
+        <div class="bar" style="background:#f87171; width:25%">人才流美 ✗</div>
+      </div>
+    </div>
+    <div class="comparison-row">
+      <div class="label">网络效应空间</div>
+      <div class="bar-container">
+        <div class="bar" style="background:#60a5fa; width:80%">先发 → 全球 ✓</div>
+        <div class="bar" style="background:#f87171; width:20%">碎片化 ✗</div>
+      </div>
+    </div>
+    <div class="comparison-row">
+      <div class="label">失败容忍度</div>
+      <div class="bar-container">
+        <div class="bar" style="background:#60a5fa; width:70%">Move fast ✓</div>
+        <div class="bar" style="background:#f87171; width:30%">风险厌恶 ✗</div>
+      </div>
+    </div>
+    <div class="comparison-row">
+      <div class="label">监管环境</div>
+      <div class="bar-container">
+        <div class="bar" style="background:#60a5fa; width:65%">先做后管 ✓</div>
+        <div class="bar" style="background:#f87171; width:35%">GDPR 先行 ✗</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 8. IMPLICATIONS ===== -->
+  <section id="implications">
+    <h2>八、对均值回归与未来回报的含义</h2>
+
+    <h3>S&P 500 强劲回报依赖一个前提</h3>
+    <p><strong style="color:#e0e6ed">"每次都能接住新产业。"</strong> 如果这个前提不成立——</p>
+
+    <div class="stat-card" style="margin:16px 0; text-align:left; padding:20px">
+      <p style="font-size:0.85rem; color:#60a5fa; margin-bottom:8px"><strong>情景 A：美国继续接住 AI 浪潮</strong></p>
+      <p style="font-size:0.82rem; color:#8896a8">→ S&P 500 继续领先，年化 10-11%</p>
+      <p style="font-size:0.85rem; color:#f87171; margin: 12px 0 8px"><strong>情景 B：AI 价值公用事业化</strong></p>
+      <p style="font-size:0.82rem; color:#8896a8">→ 科技溢价消失 → S&P 500 回报结构越来越像 STOXX 600 → 低增长 + 高分红 + 年化 7-8%</p>
+    </div>
+
+    <h3>欧洲的反转可能</h3>
+    <p>如果 AI 让所有"可计算"的竞争趋于确定，美国科技公司的超额利润会被压缩。而欧洲的壁垒恰恰是"不可计算"的：</p>
+    <ul>
+      <li><strong>奢侈品</strong>（LVMH、Herm&egrave;s）：品牌认同、文化资本</li>
+      <li><strong>工业设备</strong>（Siemens、Airbus、ASML）：工程传统、物理制造</li>
+      <li><strong>制药</strong>（Novo Nordisk、Roche）：监管壁垒 + 生物研发</li>
+    </ul>
+
+    <div class="insight-box">
+      <div class="label">历史先例</div>
+      <p>2000-2009 年互联网泡沫破裂 + 中国商品需求 → 欧洲能源/工业/金融受益 → 国际股票跑赢美国。2025 年初 STOXX 600 <span class="highlight-green">+7.4%</span> vs S&P 500 <span class="highlight-red">-7.8%</span>（以欧元计），也许是这个趋势的早期信号。<strong style="color:#e0e6ed">如果 AI 泡沫重演类似剧本，历史可能重演。</strong></p>
+    </div>
+  </section>
+
+  <div class="footer">
+    美欧股市对比分析 · S&P 500 vs STOXX 600 / MSCI Europe · 2025 年 2 月<br>
+    <a href="../index.html" style="color:#4a5568">返回门户</a> ·
+    <a href="index.html" style="color:#4a5568">S&P 500 主报告</a>
+  </div>
+</div>
+
+<script>
+const COLORS = {
+  blue: '#60a5fa', orange: '#f97316', red: '#f87171',
+  green: '#34d399', purple: '#a78bfa', gold: '#fbbf24',
+  pink: '#f472b6', muted: '#4a5568'
+};
+const gridColor = 'rgba(255,255,255,0.06)';
+const defaultOpts = {
+  responsive: true,
+  plugins: {
+    legend: { labels: { color: '#a5b4c6', font: { size: 11 } } },
+    tooltip: { backgroundColor: 'rgba(10,14,26,0.95)', titleColor: '#e0e6ed', bodyColor: '#a5b4c6', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1 }
+  },
+  scales: {
+    x: { ticks: { color: '#6b7a8d', font: { size: 10 } }, grid: { color: gridColor } },
+    y: { ticks: { color: '#6b7a8d', font: { size: 10 } }, grid: { color: gridColor } }
+  }
+};
+
+// === Chart 1: Returns Comparison ===
+new Chart(document.getElementById('chartReturns'), {
+  type: 'bar',
+  data: {
+    labels: ['1992-2025 (33年)\n总回报', '2008-2024 (16年)\n总回报', '长期盈利增速'],
+    datasets: [
+      { label: 'S&P 500 / 美国', data: [10.6, 11.9, 6.3], backgroundColor: COLORS.blue, borderRadius: 4 },
+      { label: 'STOXX 600 / 欧洲', data: [7.8, 3.6, 1.6], backgroundColor: COLORS.orange, borderRadius: 4 }
+    ]
+  },
+  options: {
+    ...defaultOpts,
+    scales: {
+      ...defaultOpts.scales,
+      y: { ...defaultOpts.scales.y, beginAtZero: true, title: { display: true, text: '年化回报 %', color: '#6b7a8d' } }
+    }
+  }
+});
+
+// === Chart 2: PE Divergence ===
+new Chart(document.getElementById('chartPE'), {
+  type: 'line',
+  data: {
+    labels: ['2010', '2012', '2014', '2016', '2018', '2020', '2022', '2024'],
+    datasets: [
+      {
+        label: 'S&P 500 PE',
+        data: [18.3, 16.5, 19.8, 22.0, 20.5, 35.0, 19.8, 25.5],
+        borderColor: COLORS.blue, backgroundColor: 'rgba(96,165,250,0.1)',
+        fill: true, tension: 0.3, pointRadius: 4, pointBackgroundColor: COLORS.blue
+      },
+      {
+        label: 'MSCI Europe PE',
+        data: [18.2, 13.5, 17.5, 18.0, 15.0, 24.0, 13.5, 16.9],
+        borderColor: COLORS.orange, backgroundColor: 'rgba(249,115,22,0.1)',
+        fill: true, tension: 0.3, pointRadius: 4, pointBackgroundColor: COLORS.orange
+      }
+    ]
+  },
+  options: {
+    ...defaultOpts,
+    scales: {
+      ...defaultOpts.scales,
+      y: { ...defaultOpts.scales.y, title: { display: true, text: 'PE 倍数', color: '#6b7a8d' } }
+    },
+    plugins: {
+      ...defaultOpts.plugins,
+      annotation: {
+        annotations: {
+          start: { type: 'label', xValue: '2010', yValue: 18.3, content: '起点几乎一样 ~18x', color: '#6b7a8d', font: { size: 10 } }
+        }
+      }
+    }
+  }
+});
+
+// === Chart 3: Sector Weights ===
+new Chart(document.getElementById('chartSectors'), {
+  type: 'bar',
+  data: {
+    labels: ['Info Tech', 'Comm Svcs', 'Financials', 'Industrials', 'Health Care', 'Cons Staples', 'Energy'],
+    datasets: [
+      { label: 'S&P 500', data: [32, 9, 13, 9, 12, 6, 3], backgroundColor: COLORS.blue, borderRadius: 4 },
+      { label: 'STOXX 600', data: [7, 4, 24, 19, 13, 9, 4], backgroundColor: COLORS.orange, borderRadius: 4 }
+    ]
+  },
+  options: {
+    ...defaultOpts,
+    indexAxis: 'y',
+    scales: {
+      x: { ...defaultOpts.scales.x, beginAtZero: true, title: { display: true, text: '权重 %', color: '#6b7a8d' } },
+      y: { ...defaultOpts.scales.y }
+    }
+  }
+});
+
+// === Chart 4: Forward PE by sector ===
+new Chart(document.getElementById('chartForwardPE'), {
+  type: 'bar',
+  data: {
+    labels: ['整体指数', 'Consumer Disc.', 'Consumer Staples', 'Real Estate'],
+    datasets: [
+      { label: '美国 Forward PE', data: [21.7, 24.9, 18.2, 37.0], backgroundColor: COLORS.blue, borderRadius: 4 },
+      { label: '欧洲 Forward PE', data: [14.1, 13.6, 14.0, 14.4], backgroundColor: COLORS.orange, borderRadius: 4 }
+    ]
+  },
+  options: {
+    ...defaultOpts,
+    scales: {
+      ...defaultOpts.scales,
+      y: { ...defaultOpts.scales.y, beginAtZero: true, title: { display: true, text: 'Forward PE (x)', color: '#6b7a8d' } }
+    }
+  }
+});
+
+// === Chart 5: Market Cap ===
+new Chart(document.getElementById('chartMarketCap'), {
+  type: 'bar',
+  data: {
+    labels: ['Nvidia', 'Apple', 'Microsoft', 'ASML', 'LVMH', 'Hermès', "L'Oréal", 'SAP', 'Prosus', 'Siemens', 'Inditex', 'D. Telekom', 'Santander'],
+    datasets: [{
+      label: '市值 ($B)',
+      data: [5000, 4000, 4000, 577, 327, 259, 253, 230, 226, 219, 211, 197, 188],
+      backgroundColor: (ctx) => ctx.dataIndex < 3 ? COLORS.blue : COLORS.orange,
+      borderRadius: 4
+    }]
+  },
+  options: {
+    ...defaultOpts,
+    indexAxis: 'y',
+    plugins: {
+      ...defaultOpts.plugins,
+      legend: { display: false },
+      tooltip: {
+        ...defaultOpts.plugins.tooltip,
+        callbacks: { label: (ctx) => `$${(ctx.raw / 1000).toFixed(1)}T` }
+      }
+    },
+    scales: {
+      x: { ...defaultOpts.scales.x, title: { display: true, text: '市值 ($B)', color: '#6b7a8d' } },
+      y: { ...defaultOpts.scales.y, ticks: { color: (ctx) => ctx.index < 3 ? COLORS.blue : COLORS.orange, font: { size: 11 } } }
+    }
+  }
+});
+
+// === Chart 6: Return Decomposition ===
+new Chart(document.getElementById('chartDecomposition'), {
+  type: 'bar',
+  data: {
+    labels: ['S&P 500 (~10.5%)', 'STOXX 600 (~7.8%)'],
+    datasets: [
+      { label: '盈利增长', data: [6.3, 1.6], backgroundColor: COLORS.blue, borderRadius: 4 },
+      { label: '股息', data: [1.8, 3.0], backgroundColor: COLORS.green, borderRadius: 4 },
+      { label: 'PE 扩张', data: [2.4, 3.2], backgroundColor: COLORS.gold, borderRadius: 4 }
+    ]
+  },
+  options: {
+    ...defaultOpts,
+    scales: {
+      ...defaultOpts.scales,
+      x: { ...defaultOpts.scales.x, stacked: true },
+      y: { ...defaultOpts.scales.y, stacked: true, beginAtZero: true, title: { display: true, text: '年化回报贡献 %', color: '#6b7a8d' } }
+    }
+  }
+});
+
+// === Sidebar active state ===
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.sidebar a');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const active = document.querySelector(`.sidebar a[href="#${entry.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>

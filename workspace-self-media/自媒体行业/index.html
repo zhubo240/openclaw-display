@@ -499,6 +499,50 @@
             .stats-grid { grid-template-columns: 1fr; }
             .cost-grid { grid-template-columns: 1fr; }
         }
+
+        /* Featured article banner */
+        .featured-banner {
+            display: block;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(192, 132, 252, 0.08));
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 14px;
+            padding: 28px 32px;
+            margin-bottom: 48px;
+            text-decoration: none;
+            color: inherit;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+        .featured-banner:hover {
+            border-color: var(--accent-light);
+            transform: translateY(-2px);
+        }
+        .featured-banner .badge {
+            display: inline-block;
+            padding: 3px 12px;
+            background: rgba(99, 102, 241, 0.2);
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent-light);
+            margin-bottom: 10px;
+        }
+        .featured-banner h3 {
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .featured-banner p {
+            font-size: 0.95rem;
+            color: var(--text-dim);
+            margin-bottom: 10px;
+        }
+        .featured-banner .cta {
+            font-size: 0.85rem;
+            color: var(--accent-light);
+        }
+        .featured-banner .cta::after { content: ' →'; }
     </style>
 </head>
 <body>
@@ -510,6 +554,14 @@
 </div>
 
 <div class="container">
+
+    <!-- Featured Article -->
+    <a href="article.html" class="featured-banner">
+        <span class="badge">深度文章 / NEW</span>
+        <h3>AI 正在重塑自媒体：当内容不再稀缺，什么才值钱？</h3>
+        <p>基于 8 篇系统性调研综合提炼的深度分析 — 供给暴增、注意力不变、价值重心迁移的全景解读</p>
+        <span class="cta">阅读全文</span>
+    </a>
 
     <!-- Key Stats -->
     <section class="findings">

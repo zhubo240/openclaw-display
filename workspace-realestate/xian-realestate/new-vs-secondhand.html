@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高新区新房 vs 二手房 — 价格对比分析</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; background: #fafbfd; color: #2c3e50; }
+        .header { background: linear-gradient(135deg, #6c3483, #2980b9); color: white; padding: 32px 24px; }
+        .header h1 { font-size: 24px; margin-bottom: 6px; }
+        .header p { font-size: 13px; opacity: 0.8; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+        .section { margin: 24px 0; }
+        .section-title { font-size: 18px; font-weight: 700; margin-bottom: 14px; padding-left: 10px; border-left: 4px solid #8e44ad; }
+        .card { background: white; border-radius: 10px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); padding: 20px; margin-bottom: 16px; }
+
+        .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin: 20px 0; }
+        .kpi { background: white; border-radius: 10px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); padding: 16px; text-align: center; }
+        .kpi .num { font-size: 26px; font-weight: 700; }
+        .kpi .num.new { color: #8e44ad; }
+        .kpi .num.old { color: #2980b9; }
+        .kpi .num.diff { color: #e67e22; }
+        .kpi .lbl { font-size: 12px; color: #95a5a6; margin-top: 2px; }
+
+        /* Dual bar */
+        .dual-row { display: flex; align-items: center; margin: 8px 0; gap: 4px; }
+        .dual-label { width: 90px; font-size: 12px; text-align: right; padding-right: 8px; color: #555; flex-shrink: 0; }
+        .dual-bars { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+        .dual-bar { height: 18px; border-radius: 3px; display: flex; align-items: center; padding-left: 8px; font-size: 10px; color: white; font-weight: 600; }
+        .dual-bar.new-b { background: linear-gradient(90deg, #8e44ad, #9b59b6); }
+        .dual-bar.old-b { background: linear-gradient(90deg, #2980b9, #3498db); }
+
+        /* Table */
+        .dtable { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .dtable th { background: #f8f9fa; padding: 8px 10px; text-align: left; font-weight: 600; border-bottom: 2px solid #e9ecef; }
+        .dtable td { padding: 8px 10px; border-bottom: 1px solid #f0f0f0; }
+        .dtable tr:hover td { background: #f8f9fa; }
+        .num-cell { text-align: right; font-variant-numeric: tabular-nums; }
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; color: white; }
+        .tag-premium { background: #e74c3c; }
+        .tag-discount { background: #27ae60; }
+        .tag-par { background: #95a5a6; }
+
+        /* Price tier chart */
+        .tier-row { display: flex; align-items: center; margin: 6px 0; }
+        .tier-label { width: 80px; font-size: 12px; text-align: right; padding-right: 10px; color: #666; }
+        .tier-track { flex: 1; display: flex; gap: 2px; height: 24px; }
+        .tier-seg { height: 100%; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: white; font-weight: 600; min-width: 24px; }
+
+        /* Insight */
+        .insight { padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; line-height: 1.7; }
+        .insight:last-child { border-bottom: none; }
+        .hl { color: #8e44ad; font-weight: 700; }
+        .hl2 { color: #2980b9; font-weight: 700; }
+        .warn { color: #e67e22; font-weight: 700; }
+
+        .footer { text-align: center; padding: 24px; font-size: 12px; color: #bdc3c7; }
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+<div class="header">
+    <div class="container">
+        <h1>高新区新房 vs 二手房 — 价格对比分析</h1>
+        <p>171 个新房楼盘 vs 525 个二手房小区 | 数据：房天下 2026-02-09</p>
+    </div>
+</div>
+<div class="container">
+
+    <!-- KPI -->
+    <div class="kpi-row">
+        <div class="kpi"><div class="num new">171</div><div class="lbl">新房楼盘总数</div></div>
+        <div class="kpi"><div class="num new">21,000</div><div class="lbl">新房中位价 (元/㎡)</div></div>
+        <div class="kpi"><div class="num old">525</div><div class="lbl">二手房小区总数</div></div>
+        <div class="kpi"><div class="num old">15,302</div><div class="lbl">二手房中位价 (元/㎡)</div></div>
+        <div class="kpi"><div class="num diff">+37%</div><div class="lbl">新房溢价率</div></div>
+        <div class="kpi"><div class="num new">90</div><div class="lbl">新房在售楼盘</div></div>
+    </div>
+
+    <!-- Price tier comparison -->
+    <div class="section">
+        <h2 class="section-title">价格段分布对比</h2>
+        <div class="card">
+            <div style="display:flex;gap:16px;margin-bottom:12px;font-size:12px;color:#888;">
+                <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#8e44ad;vertical-align:middle;margin-right:4px;"></span>新房 (68个有价)</span>
+                <span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#2980b9;vertical-align:middle;margin-right:4px;"></span>二手房 (402个有价)</span>
+            </div>
+            <div id="tier-chart"></div>
+        </div>
+    </div>
+
+    <!-- Zone comparison -->
+    <div class="section">
+        <h2 class="section-title">片区新房 vs 二手房均价</h2>
+        <div class="card" id="zone-dual"></div>
+    </div>
+
+    <!-- Detail table -->
+    <div class="section">
+        <h2 class="section-title">片区溢价/折价明细</h2>
+        <div class="card" style="overflow-x:auto;">
+            <table class="dtable" id="zone-table">
+                <thead>
+                    <tr>
+                        <th>片区</th>
+                        <th class="num-cell">新房均价</th>
+                        <th class="num-cell">二手房中位价</th>
+                        <th class="num-cell">溢价率</th>
+                        <th class="num-cell">新房数</th>
+                        <th class="num-cell">二手房数</th>
+                        <th>判断</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Two columns: top new houses + market signals -->
+    <div class="two-col">
+        <div class="section">
+            <h2 class="section-title">新房价格 TOP 10</h2>
+            <div class="card" id="top-new"></div>
+        </div>
+        <div class="section">
+            <h2 class="section-title">市场供应信号</h2>
+            <div class="card">
+                <div class="insight"><span class="hl">CID/三期是新房主战场</span> — 64 个楼盘（占 37%），其中 42 个待售地块，说明三期仍处于大规模开发初期。</div>
+                <div class="insight"><span class="hl2">新房集中在 2-2.5 万段</span> — 25 个有价楼盘（37%）落在此区间，定价策略高度趋同，竞争激烈。</div>
+                <div class="insight"><span class="warn">大寨路几乎没有新盘</span> — 仅 1 个（高新6号 1.5 万），该区域已进入纯存量竞争阶段。</div>
+                <div class="insight">新房中有 <span class="hl">103 个无价格</span>（多为待售地块编号），真正可比较的仅 68 个有价楼盘。</div>
+                <div class="insight"><span class="warn">科技六路新房极端分化</span> — 从糖果SOHO 1.4 万到望云松间 5 万，同一板块价差 3.6 倍。</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key findings -->
+    <div class="section">
+        <h2 class="section-title">核心发现</h2>
+        <div class="card">
+            <div class="insight"><span class="hl">整体新房溢价 37%</span> — 新房中位价 21,000 vs 二手房 15,302，买新房平均多付 5,698 元/㎡。但这部分反映了新房集中在高价片区（CID/软件新城）。</div>
+            <div class="insight"><span class="hl2">科技六路是新房溢价最低的高端区</span> — 新房均价 26,372 vs 二手房中位 22,103，溢价仅 19%。原因：该区域二手房本身高端，新旧差距不大。</div>
+            <div class="insight"><span class="warn">科技路/软东是最大"买新亏"风险区</span> — 新房均价 20,001 vs 二手房中位 ~14,000，溢价 40%+，且周边二手房供应充足，未来转手压力大。</div>
+            <div class="insight"><span class="hl">CID/三期定价激进</span> — 新房均价 23,334，但该区域几乎没有成熟二手房可参照。买家依赖开发商定价，缺乏市场锚定。</div>
+            <div class="insight">对于<span class="hl2">刚需购房者</span>：大寨路二手房（中位 1.03 万）仍是性价比最高选择。对于<span class="hl">改善购房者</span>：科技六路二手房（中位 2.2 万）比同区新房便宜 19%，且位置更核心。</div>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    自动生成于 2026-02-27 16:00 GMT+8 | Claude Code 自主推进 | <a href="index.html" style="color:#8e44ad;text-decoration:none;">&larr; 返回门户</a>
+</div>
+
+<script>
+// === DATA ===
+const tiers = [
+    {label:"<1.5万", nh:5, esf:189, maxV:189},
+    {label:"1.5~2万", nh:22, esf:99, maxV:99},
+    {label:"2~2.5万", nh:25, esf:54, maxV:54},
+    {label:"2.5~3万", nh:10, esf:37, maxV:37},
+    {label:"3~5万", nh:5, esf:13, maxV:13},
+    {label:">5万", nh:1, esf:10, maxV:10}
+];
+// esf <1万 = 61, 1-1.5万 = 128 → combined <1.5万 = 189
+
+const zones = [
+    {name:"科技六路", nhAvg:26372, esfMed:22103, nhN:16, esfN:53},
+    {name:"软件新城", nhAvg:24193, esfMed:22199, nhN:17, esfN:23},
+    {name:"CID/三期", nhAvg:23334, esfMed:20988, nhN:64, esfN:4},
+    {name:"锦业路/二期", nhAvg:20241, esfMed:15377, nhN:20, esfN:77},
+    {name:"科技路/软东", nhAvg:20001, esfMed:13238, nhN:23, esfN:75},
+    {name:"国际社区", nhAvg:15825, esfMed:16401, nhN:13, esfN:29},
+    {name:"大寨路", nhAvg:15000, esfMed:10324, nhN:1, esfN:46}
+];
+
+const topNew = [
+    {name:"望云松间",price:50000,zone:"科技六路"},
+    {name:"曲江文商·檀境",price:42000,zone:"CID/三期"},
+    {name:"赛里斯·壹号",price:38000,zone:"科技路/软东"},
+    {name:"金茂璞逸高新",price:33211,zone:"科技六路"},
+    {name:"高科·云天",price:32000,zone:"软件新城"},
+    {name:"绿城·长安玉华",price:31421,zone:"软件新城"},
+    {name:"中建悦庐·学府",price:29000,zone:"CID/三期"},
+    {name:"紫薇绿城·南山雲庐",price:28417,zone:"其他"},
+    {name:"紫薇云上",price:28000,zone:"CID/三期"},
+    {name:"中国铁建西派玺悦",price:27114,zone:"CID/三期"}
+];
+
+// === Tier chart ===
+const tierEl = document.getElementById("tier-chart");
+const maxTier = Math.max(...tiers.map(t => Math.max(t.nh, t.esf)));
+tiers.forEach(t => {
+    const nhPct = (t.nh / maxTier * 100).toFixed(1);
+    const esfPct = (t.esf / maxTier * 100).toFixed(1);
+    tierEl.innerHTML += `<div class="tier-row">
+        <div class="tier-label">${t.label}</div>
+        <div class="tier-track">
+            <div class="tier-seg" style="width:${nhPct}%;background:#8e44ad">${t.nh}</div>
+            <div class="tier-seg" style="width:${esfPct}%;background:#2980b9">${t.esf}</div>
+        </div>
+    </div>`;
+});
+
+// === Zone dual bars ===
+const zoneDualEl = document.getElementById("zone-dual");
+const maxZone = 28000;
+zones.forEach(z => {
+    const nhPct = (z.nhAvg / maxZone * 100).toFixed(1);
+    const esfPct = (z.esfMed / maxZone * 100).toFixed(1);
+    zoneDualEl.innerHTML += `<div class="dual-row">
+        <div class="dual-label">${z.name}</div>
+        <div class="dual-bars">
+            <div class="dual-bar new-b" style="width:${nhPct}%">新 ${z.nhAvg.toLocaleString()}</div>
+            <div class="dual-bar old-b" style="width:${esfPct}%">旧 ${z.esfMed.toLocaleString()}</div>
+        </div>
+    </div>`;
+});
+
+// === Zone table ===
+const ztbody = document.querySelector("#zone-table tbody");
+zones.forEach(z => {
+    const premium = z.esfMed > 0 ? ((z.nhAvg - z.esfMed) / z.esfMed * 100).toFixed(0) : '—';
+    const premiumNum = parseFloat(premium);
+    let tagHtml;
+    if (premiumNum > 30) tagHtml = `<span class="tag tag-premium">高溢价</span>`;
+    else if (premiumNum > 10) tagHtml = `<span class="tag tag-par">适中</span>`;
+    else if (premiumNum <= 0) tagHtml = `<span class="tag tag-discount">折价</span>`;
+    else tagHtml = `<span class="tag tag-par">低溢价</span>`;
+    ztbody.innerHTML += `<tr>
+        <td>${z.name}</td>
+        <td class="num-cell">${z.nhAvg.toLocaleString()}</td>
+        <td class="num-cell">${z.esfMed.toLocaleString()}</td>
+        <td class="num-cell" style="color:${premiumNum > 30 ? '#e74c3c' : premiumNum <= 0 ? '#27ae60' : '#555'}">+${premium}%</td>
+        <td class="num-cell">${z.nhN}</td>
+        <td class="num-cell">${z.esfN}</td>
+        <td>${tagHtml}</td>
+    </tr>`;
+});
+
+// === Top new ===
+const topEl = document.getElementById("top-new");
+topNew.forEach((t, i) => {
+    const bg = i === 0 ? '#8e44ad' : i === 1 ? '#9b59b6' : i === 2 ? '#a569bd' : '#bdc3c7';
+    topEl.innerHTML += `<div style="display:flex;align-items:center;padding:6px 0;border-bottom:1px solid #f0f0f0;font-size:13px;">
+        <div style="width:24px;height:24px;border-radius:50%;background:${bg};color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;margin-right:10px;flex-shrink:0">${i+1}</div>
+        <div style="flex:1">${t.name}</div>
+        <div style="font-weight:700;color:#8e44ad;margin-left:8px">${t.price.toLocaleString()}</div>
+        <div style="font-size:11px;color:#999;margin-left:8px;width:70px;text-align:right">${t.zone}</div>
+    </div>`;
+});
+</script>
+</body>
+</html>
