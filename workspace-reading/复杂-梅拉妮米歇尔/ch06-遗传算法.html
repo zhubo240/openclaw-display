@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第六章：遗传算法 — 复杂</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: #0a0a0f;
+      color: #e0e0e0;
+      min-height: 100vh;
+    }
+
+    .container { max-width: 780px; margin: 0 auto; padding: 48px 24px; }
+
+    .nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 48px; font-size: 13px; }
+    .nav a { color: #63b3ed; text-decoration: none; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+    .nav a:hover { color: #90cdf4; }
+    .nav .chapter-nav { display: flex; gap: 20px; }
+
+    .chapter-header { margin-bottom: 48px; }
+    .chapter-label { font-size: 12px; letter-spacing: 3px; color: #63b3ed; text-transform: uppercase; margin-bottom: 12px; }
+    .chapter-title { font-size: 36px; font-weight: 700; color: #fff; margin-bottom: 12px; }
+    .chapter-subtitle { font-size: 15px; color: #718096; }
+
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(99, 179, 237, 0.2), transparent); margin: 40px 0; }
+
+    .section-title { font-size: 18px; font-weight: 600; color: #fff; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+    .section-title::before { content: ''; width: 3px; height: 18px; background: #63b3ed; border-radius: 2px; }
+
+    .summary-text { font-size: 15px; line-height: 1.9; color: #a0aec0; margin-bottom: 20px; }
+    .summary-text strong { color: #e2e8f0; }
+
+    .concepts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0 32px; }
+    .concept-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 22px 18px; transition: all 0.25s; }
+    .concept-card:hover { background: rgba(99, 179, 237, 0.05); border-color: rgba(99, 179, 237, 0.15); transform: translateY(-2px); }
+    .concept-card h4 { font-size: 15px; color: #e2e8f0; margin-bottom: 8px; }
+    .concept-card p { font-size: 13px; color: #718096; line-height: 1.7; }
+    .concept-card .icon { font-size: 24px; margin-bottom: 10px; }
+
+    .highlight-box { background: rgba(99, 179, 237, 0.06); border: 1px solid rgba(99, 179, 237, 0.15); border-radius: 12px; padding: 24px; margin: 28px 0; }
+    .highlight-box .label { font-size: 11px; letter-spacing: 2px; color: #63b3ed; text-transform: uppercase; margin-bottom: 10px; }
+    .highlight-box p { font-size: 15px; line-height: 1.8; color: #cbd5e0; }
+    .highlight-box p + p { margin-top: 12px; }
+
+    .quote-block { border-left: 3px solid rgba(99, 179, 237, 0.3); padding: 16px 20px; margin: 24px 0; background: rgba(255,255,255,0.02); border-radius: 0 8px 8px 0; }
+    .quote-block p { font-size: 14px; line-height: 1.8; color: #a0aec0; font-style: italic; }
+    .quote-block .source { font-size: 12px; color: #718096; margin-top: 8px; font-style: normal; }
+
+    .formula { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 20px 24px; margin: 20px 0; font-family: "SF Mono", Monaco, Consolas, monospace; font-size: 14px; color: #90cdf4; text-align: center; line-height: 1.8; }
+
+    /* Steps flow */
+    .steps-flow { display: flex; flex-wrap: wrap; gap: 12px; margin: 24px 0; align-items: stretch; }
+    .step-box { flex: 1; min-width: 140px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 18px 14px; text-align: center; position: relative; }
+    .step-box .step-num { display: inline-block; width: 24px; height: 24px; background: rgba(99, 179, 237, 0.15); border-radius: 50%; font-size: 12px; font-weight: 600; color: #63b3ed; line-height: 24px; margin-bottom: 8px; }
+    .step-box h4 { font-size: 13px; color: #e2e8f0; margin-bottom: 4px; }
+    .step-box p { font-size: 11px; color: #718096; line-height: 1.5; }
+    .step-arrow { display: flex; align-items: center; color: #4a5568; font-size: 18px; flex-shrink: 0; }
+
+    /* Comparison */
+    .cmp-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 13px; }
+    .cmp-table th { text-align: left; padding: 10px 14px; background: rgba(99, 179, 237, 0.08); color: #63b3ed; font-weight: 600; font-size: 12px; border-bottom: 1px solid rgba(99, 179, 237, 0.15); }
+    .cmp-table td { padding: 10px 14px; color: #a0aec0; border-bottom: 1px solid rgba(255,255,255,0.04); line-height: 1.6; }
+    .cmp-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .discussion-placeholder { background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.08); border-radius: 12px; padding: 32px; text-align: center; color: #4a5568; font-size: 14px; margin-top: 24px; }
+
+    .footer-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 64px; padding-top: 32px; border-top: 1px solid rgba(255,255,255,0.06); }
+    .footer-nav a { color: #63b3ed; text-decoration: none; font-size: 14px; display: flex; align-items: center; gap: 8px; transition: color 0.2s; }
+    .footer-nav a:hover { color: #90cdf4; }
+    .footer-nav .prev-chapter { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 12px 24px; border-radius: 8px; }
+    .footer-nav .prev-chapter:hover { background: rgba(255,255,255,0.06); }
+    .footer-nav .next-chapter { background: rgba(99, 179, 237, 0.1); border: 1px solid rgba(99, 179, 237, 0.2); padding: 12px 24px; border-radius: 8px; }
+    .footer-nav .next-chapter:hover { background: rgba(99, 179, 237, 0.15); }
+
+    @media (max-width: 640px) { .concepts { grid-template-columns: 1fr; } .steps-flow { flex-direction: column; } .step-arrow { transform: rotate(90deg); justify-content: center; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <nav class="nav">
+      <a href="index.html">&larr; 返回书目</a>
+      <div class="chapter-nav">
+        <a href="ch05-进化.html">&larr; 上一章</a>
+        <a href="#">下一章 &rarr;</a>
+      </div>
+    </nav>
+
+    <div class="chapter-header">
+      <div class="chapter-label">Chapter 06 &middot; 第二部分：计算机中的生命与进化</div>
+      <h1 class="chapter-title">遗传算法</h1>
+      <p class="chapter-subtitle">Genetic Algorithms</p>
+    </div>
+
+    <div class="divider"></div>
+
+    <section>
+      <h2 class="section-title">章节概要</h2>
+
+      <p class="summary-text">
+        第五章把进化理解为一种计算过程。第六章顺理成章地问：<strong>如果进化是一种搜索算法，我们能不能在计算机里把它跑起来？</strong>答案是可以——这就是约翰·霍兰德（John Holland）在 1960-70 年代发明的<strong>遗传算法（Genetic Algorithms, GA）</strong>。
+      </p>
+
+      <h2 class="section-title">霍兰德与遗传算法的诞生</h2>
+
+      <p class="summary-text">
+        霍兰德是密歇根大学的计算机科学家，也是圣塔菲研究所的核心人物之一。他的出发点不是工程优化，而是一个更深的科学问题：<strong>适应性（adaptation）的一般理论是什么？</strong>他想搞清楚自然界中的适应——从进化到学习到免疫——背后是否有统一的数学原理。
+      </p>
+
+      <p class="summary-text">
+        遗传算法是他给出的答案之一。它直接模拟达尔文进化的三大机制：变异、遗传和选择——但在计算机里运行。
+      </p>
+
+      <h2 class="section-title">遗传算法如何工作</h2>
+
+      <div class="steps-flow">
+        <div class="step-box">
+          <span class="step-num">1</span>
+          <h4>初始化</h4>
+          <p>随机生成一个"种群"——一组候选解，每个用二进制串（染色体）编码</p>
+        </div>
+        <div class="step-arrow">&rarr;</div>
+        <div class="step-box">
+          <span class="step-num">2</span>
+          <h4>评估</h4>
+          <p>用适应度函数给每个个体打分——它解决问题的能力有多强？</p>
+        </div>
+        <div class="step-arrow">&rarr;</div>
+        <div class="step-box">
+          <span class="step-num">3</span>
+          <h4>选择</h4>
+          <p>适应度高的个体更有可能被选中作为"父母"——模拟自然选择</p>
+        </div>
+        <div class="step-arrow">&rarr;</div>
+        <div class="step-box">
+          <span class="step-num">4</span>
+          <h4>交叉</h4>
+          <p>两个父母的染色体在随机位置交换片段——模拟有性重组</p>
+        </div>
+        <div class="step-arrow">&rarr;</div>
+        <div class="step-box">
+          <span class="step-num">5</span>
+          <h4>变异</h4>
+          <p>以小概率随机翻转某些位——模拟基因突变</p>
+        </div>
+      </div>
+
+      <p class="summary-text">
+        重复步骤 2-5，种群会一代一代进化，解的质量逐渐提升。没有人编写"如何解决问题"的具体指令——<strong>解是被进化出来的，不是被设计出来的。</strong>
+      </p>
+
+      <h2 class="section-title">核心概念</h2>
+
+      <div class="concepts">
+        <div class="concept-card">
+          <div class="icon">🧬</div>
+          <h4>编码（Encoding）</h4>
+          <p>把问题的候选解表示为二进制串（或其他编码）。编码方式直接影响搜索效率——好的编码让相近的基因型对应相近的表现型。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">📊</div>
+          <h4>适应度函数（Fitness Function）</h4>
+          <p>定义什么是"好"的解。它是进化的唯一驱动力——你不需要告诉算法怎么走，只需要告诉它走到哪里算赢。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">✂️</div>
+          <h4>交叉（Crossover）</h4>
+          <p>GA 的核心操作。霍兰德认为交叉比变异更重要——它能把两个不同个体中各自好的"积木块"（building blocks）组合在一起，产生更好的后代。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">🎰</div>
+          <h4>积木块假说（Building Block Hypothesis）</h4>
+          <p>霍兰德的核心理论洞察：GA 的力量在于它能同时测试和组合短的、高适应度的基因片段（"积木块"/schemata）。种群隐式地并行搜索了指数级数量的模式。</p>
+        </div>
+      </div>
+
+      <h2 class="section-title">Robby 机器人：米歇尔的经典示例</h2>
+
+      <p class="summary-text">
+        米歇尔在书中用自己设计的一个实验来演示 GA 的威力：<strong>Robby 机器人</strong>。
+      </p>
+
+      <p class="summary-text">
+        场景：一个 10&times;10 的网格世界，地上随机散落着易拉罐。Robby 能做的动作只有五种：上、下、左、右、捡罐子。它的"策略"用一个长度为 243 的基因串编码——对应 243 种可能的局部感知状态（自身位置和上下左右五格的内容），每个状态映射到一个动作。
+      </p>
+
+      <p class="summary-text">
+        <strong>没有人编程告诉 Robby 怎么捡罐子。</strong>初始种群的策略完全随机——Robby 们撞墙、原地打转、视而不见地走过罐子。但经过几百代进化后，最优个体学会了高效的清扫策略：沿着墙走、系统性扫描、不漏罐子。这些策略是进化"发明"的，不是人写的。
+      </p>
+
+      <div class="highlight-box">
+        <div class="label">关键启示</div>
+        <p>Robby 实验完美展示了进化的两个特征：<strong>创造力</strong>和<strong>意外性</strong>。进化出的策略比人类直觉设计的还要巧妙——比如某些个体学会了"如果旁边有罐子，先不捡，走到它旁边再捡"这种反直觉但更高效的策略。</p>
+      </div>
+
+      <h2 class="section-title">GA 的成功与局限</h2>
+
+      <table class="cmp-table">
+        <thead>
+          <tr><th>优势</th><th>局限</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>不需要问题的解析知识——只需适应度函数</td>
+            <td>适应度函数本身可能很难设计</td>
+          </tr>
+          <tr>
+            <td>天然并行——种群同时探索多个方向</td>
+            <td>计算成本高——每一代每个个体都要评估</td>
+          </tr>
+          <tr>
+            <td>能跳出局部最优（靠变异和交叉）</td>
+            <td>可能过早收敛——种群多样性丢失</td>
+          </tr>
+          <tr>
+            <td>能处理巨大的搜索空间</td>
+            <td>编码方式影响巨大，没有通用最优编码</td>
+          </tr>
+          <tr>
+            <td>产出令人意外的创造性解</td>
+            <td>解不可解释——你知道它好用，但不知道为什么</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 class="section-title">探索 vs. 利用：永恒的张力</h2>
+
+      <p class="summary-text">
+        GA 体现了适应系统中最核心的张力：<strong>探索（exploration）vs. 利用（exploitation）</strong>。
+      </p>
+
+      <p class="summary-text">
+        <strong>利用</strong>：集中资源在已知的好区域深挖——选择压力强、种群集中。<strong>探索</strong>：撒网搜索新区域——变异率高、种群多样。过度利用 = 过早收敛到局部最优；过度探索 = 随机游走，永远找不到好解。
+      </p>
+
+      <div class="formula">
+        好的适应系统 = 在探索和利用之间找到动态平衡
+      </div>
+
+      <p class="summary-text">
+        这个张力不只存在于 GA 中。它是所有适应性系统的根本问题：免疫系统在"记住旧病原体"和"准备应对新威胁"之间平衡；企业在"优化现有产品"和"开发新市场"之间平衡；个人在"深耕专业"和"拓展视野"之间平衡。
+      </p>
+
+      <h2 class="section-title">与前几章的连接</h2>
+
+      <p class="summary-text">
+        <strong>第四章（计算）</strong>：GA 把进化变成了具体的计算过程。但它计算的是什么"类"的问题？GA 擅长的是 NP 类问题——验证容易、搜索困难的问题。它不保证找到最优解，但通常能找到足够好的解。
+      </p>
+
+      <p class="summary-text">
+        <strong>第五章（进化）</strong>：GA 是进化理论的计算机实现。但它也反过来帮助我们理解自然进化：积木块假说暗示进化不是完全随机的搜索——交叉让进化能够组合已有的"发明"，这比从零开始高效得多。
+      </p>
+
+      <p class="summary-text">
+        <strong>第二章（混沌）</strong>：适应度景观的动态性（环境变化、物种共进化）使 GA 面对的是一个不断变化的目标——类似混沌系统中追踪移动吸引子的问题。
+      </p>
+
+      <div class="highlight-box">
+        <div class="label">一句话总结</div>
+        <p>遗传算法证明了一件深刻的事：你不需要理解一个问题就能解决它——只要你能定义什么是"好"，进化就能替你搜索。设计不是唯一的路径，进化是另一条。</p>
+      </div>
+
+      <div class="highlight-box">
+        <div class="label">第二部分开始</div>
+        <p>从本章起，全书从"背景理论"转向"计算机实现"。第六章是进化在计算机里的实现，第七章（元胞自动机）将是"简单规则产生复杂行为"在计算机里的实现——两者合起来构成复杂性科学的计算实验基础。</p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section>
+      <h2 class="section-title">读书讨论</h2>
+      <div class="discussion-placeholder">
+        尚无讨论 &middot; 读完这一章后来聊聊？
+      </div>
+    </section>
+
+    <div class="footer-nav">
+      <a class="prev-chapter" href="ch05-进化.html">&larr; 第五章：进化</a>
+      <a class="next-chapter" href="#">第七章：元胞自动机、生命和宇宙 &rarr;</a>
+    </div>
+
+  </div>
+</body>
+</html>
