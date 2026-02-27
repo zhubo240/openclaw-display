@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A股ETF组合配置指南 | 2026年2月</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0f1117;
+    --card: #1a1d2e;
+    --card-alt: #212538;
+    --border: #2a2e42;
+    --text: #e4e4e7;
+    --text-dim: #9ca3af;
+    --accent: #22c55e;
+    --accent2: #3b82f6;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --purple: #a78bfa;
+    --cyan: #06b6d4;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden;
+  }
+
+  .hero {
+    position: relative; padding: 80px 40px 60px; text-align: center;
+    background: linear-gradient(135deg, #1a1d2e 0%, #0f1117 50%, #0f1a17 100%); overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: radial-gradient(ellipse at 30% 50%, rgba(34,197,94,0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 50%, rgba(59,130,246,0.05) 0%, transparent 50%);
+    animation: pulse 8s ease-in-out infinite alternate;
+  }
+  @keyframes pulse { from { opacity: 0.6; transform: scale(1); } to { opacity: 1; transform: scale(1.05); } }
+  .hero-content { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
+  .hero h1 {
+    font-size: 3rem; font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), #4ade80, var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 12px; letter-spacing: 2px;
+  }
+  .hero .subtitle { font-size: 1.1rem; color: var(--text-dim); margin-bottom: 32px; }
+
+  .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; max-width: 900px; margin: 0 auto; }
+  .kpi {
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 16px;
+    padding: 20px 16px; text-align: center; backdrop-filter: blur(10px);
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .kpi:hover { transform: translateY(-4px); border-color: var(--accent); }
+  .kpi .value { font-size: 1.7rem; font-weight: 800; line-height: 1.2; }
+  .kpi .label { font-size: 0.82rem; color: var(--text-dim); margin-top: 4px; }
+  .kpi .tag { display: inline-block; margin-top: 8px; padding: 2px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 600; }
+  .tag-green { background: rgba(34,197,94,0.15); color: var(--accent); }
+  .tag-blue { background: rgba(59,130,246,0.15); color: var(--accent2); }
+  .tag-amber { background: rgba(245,158,11,0.15); color: var(--amber); }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
+  .section { margin-bottom: 56px; }
+  .section-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+  .section-title .icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+  .section-desc { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 24px; }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; transition: border-color 0.2s; }
+  .card:hover { border-color: rgba(34,197,94,0.3); }
+  .card-full { grid-column: 1 / -1; }
+  .card h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 16px; }
+  .chart-wrap { position: relative; width: 100%; max-height: 340px; }
+
+  .data-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  .data-table th { text-align: left; padding: 10px 12px; color: var(--text-dim); font-weight: 500; border-bottom: 1px solid var(--border); font-size: 0.8rem; letter-spacing: 0.5px; }
+  .data-table td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .data-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .pos { color: var(--accent); font-weight: 600; }
+  .neg { color: var(--red); font-weight: 600; }
+
+  .feature-list { list-style: none; }
+  .feature-list li { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .feature-list li:last-child { border-bottom: none; }
+  .feat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 7px; }
+  .feat-title { font-weight: 600; font-size: 0.9rem; }
+  .feat-desc { font-size: 0.82rem; color: var(--text-dim); margin-top: 2px; }
+
+  /* Combo box */
+  .combo-box { background: linear-gradient(135deg, rgba(34,197,94,0.08), rgba(59,130,246,0.06)); border: 1px solid rgba(34,197,94,0.2); border-radius: 16px; padding: 32px; }
+  .combo-box h3 { font-size: 1.2rem; color: var(--accent); margin-bottom: 20px; }
+  .combo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+  .combo-item .combo-label { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 4px; }
+  .combo-item .combo-value { font-size: 1.15rem; font-weight: 700; }
+
+  /* Plan cards */
+  .plan-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+  .plan-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; transition: border-color 0.2s, transform 0.2s; }
+  .plan-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .plan-card.featured { border-color: var(--accent); box-shadow: 0 0 24px rgba(34,197,94,0.1); }
+  .plan-tag { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 0.72rem; font-weight: 600; margin-bottom: 12px; }
+  .plan-card h3 { font-size: 1.1rem; margin-bottom: 8px; }
+  .plan-card .plan-desc { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 16px; line-height: 1.5; }
+  .plan-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .plan-metric { background: rgba(255,255,255,0.03); border-radius: 8px; padding: 10px 12px; }
+  .plan-metric .pm-label { font-size: 0.72rem; color: var(--text-dim); }
+  .plan-metric .pm-value { font-size: 1.05rem; font-weight: 700; margin-top: 2px; }
+
+  /* ETF pills */
+  .etf-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .etf-pill { background: var(--card-alt); border: 1px solid var(--border); border-radius: 20px; padding: 6px 14px; font-size: 0.78rem; }
+  .etf-pill strong { color: var(--accent); }
+
+  /* Steps */
+  .step-list { counter-reset: step; list-style: none; }
+  .step-item { display: flex; gap: 16px; margin-bottom: 20px; }
+  .step-num { counter-increment: step; width: 36px; height: 36px; border-radius: 50%; background: rgba(34,197,94,0.15); border: 1px solid var(--accent); color: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; flex-shrink: 0; }
+  .step-num::after { content: counter(step); }
+  .step-content { flex: 1; }
+  .step-content h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 4px; }
+  .step-content p { font-size: 0.85rem; color: var(--text-dim); }
+
+  /* FAQ */
+  .faq-item { background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
+  .faq-q { padding: 16px 20px; cursor: pointer; font-weight: 600; font-size: 0.92rem; display: flex; justify-content: space-between; align-items: center; }
+  .faq-q:hover { background: rgba(255,255,255,0.02); }
+  .faq-toggle { color: var(--text-dim); font-size: 0.85rem; transition: transform 0.2s; }
+  .faq-item.open .faq-toggle { transform: rotate(180deg); }
+  .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+  .faq-item.open .faq-a { max-height: 300px; }
+  .faq-a-inner { padding: 0 20px 16px; font-size: 0.85rem; color: var(--text-dim); line-height: 1.7; }
+
+  .footer { text-align: center; padding: 40px 24px; color: var(--text-dim); font-size: 0.78rem; border-top: 1px solid var(--border); }
+
+  .fade-in { opacity: 0; transform: translateY(20px); animation: fadeIn 0.6s ease forwards; }
+  @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+  .delay-1 { animation-delay: 0.1s; } .delay-2 { animation-delay: 0.2s; }
+  .delay-3 { animation-delay: 0.3s; } .delay-4 { animation-delay: 0.4s; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 2rem; } .hero { padding: 48px 20px 40px; }
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .cards, .plan-cards { grid-template-columns: 1fr; }
+    .combo-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-content">
+    <h1>A股ETF组合配置指南</h1>
+    <p class="subtitle">红利低波 + A500 哑铃策略 &middot; 定投 &middot; 再平衡 &middot; 从零到可执行的组合方案</p>
+    <div class="kpi-row">
+      <div class="kpi fade-in delay-1">
+        <div class="value" style="color:var(--accent)">~13%</div>
+        <div class="label">均衡组合回测年化</div>
+        <span class="tag tag-green">5:5哑铃</span>
+      </div>
+      <div class="kpi fade-in delay-2">
+        <div class="value" style="color:var(--accent2)">86%</div>
+        <div class="label">年度正收益概率</div>
+        <span class="tag tag-blue">7年6年正收益</span>
+      </div>
+      <div class="kpi fade-in delay-3">
+        <div class="value" style="color:var(--amber)">-8.6%</div>
+        <div class="label">最大年度回撤</div>
+        <span class="tag tag-amber">vs 沪深300 -21.6%</span>
+      </div>
+      <div class="kpi fade-in delay-4">
+        <div class="value" style="color:var(--purple)">0.20%</div>
+        <div class="label">ETF综合费率</div>
+        <span class="tag tag-green">极低持有成本</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- 哑铃策略 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(34,197,94,0.15)">&#9878;</span>
+      哑铃策略：核心理念
+    </div>
+    <p class="section-desc">防守端（红利低波）+ 进攻端（A500）——低相关性资产组合，控制回撤同时获取成长</p>
+    <div class="cards">
+      <div class="card">
+        <h3 style="color:var(--amber)">防守端 &mdash; 红利低波</h3>
+        <ul class="feature-list">
+          <li><span class="feat-dot" style="background:var(--amber)"></span><div><div class="feat-title">高股息 5-6%</div><div class="feat-desc">每年稳定分红收入，熊市中的"安全垫"</div></div></li>
+          <li><span class="feat-dot" style="background:var(--amber)"></span><div><div class="feat-title">低波动</div><div class="feat-desc">回撤显著小于宽基，2022年+2.7%（沪深300 -21.6%）</div></div></li>
+          <li><span class="feat-dot" style="background:var(--amber)"></span><div><div class="feat-title">回测年化 ~12%</div><div class="feat-desc">连续6年正收益，穿越牛熊</div></div></li>
+        </ul>
+        <div class="etf-pills">
+          <span class="etf-pill"><strong>512890</strong> 华泰柏瑞</span>
+          <span class="etf-pill"><strong>563020</strong> 易方达（低费）</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--accent2)">进攻端 &mdash; 中证A500</h3>
+        <ul class="feature-list">
+          <li><span class="feat-dot" style="background:var(--accent2)"></span><div><div class="feat-title">新经济代表</div><div class="feat-desc">信息技术+工业占比~40%，覆盖AI/新能源/半导体龙头</div></div></li>
+          <li><span class="feat-dot" style="background:var(--accent2)"></span><div><div class="feat-title">行业均衡</div><div class="feat-desc">500只成分股，93个二级行业，不被金融"绑架"</div></div></li>
+          <li><span class="feat-dot" style="background:var(--accent2)"></span><div><div class="feat-title">回测年化 ~10.7%</div><div class="feat-desc">持续跑赢沪深300约1.3%/年</div></div></li>
+        </ul>
+        <div class="etf-pills">
+          <span class="etf-pill"><strong>159338</strong> 国泰（规模最大）</span>
+          <span class="etf-pill"><strong>512050</strong> 华夏</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 三套方案 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(59,130,246,0.15)">&#9733;</span>
+      三套组合方案
+    </div>
+    <p class="section-desc">根据风险偏好选择，均衡型适合大多数投资者</p>
+    <div class="plan-cards">
+      <div class="plan-card">
+        <span class="plan-tag" style="background:rgba(245,158,11,0.15);color:var(--amber)">稳健型</span>
+        <h3>低波为主，稳字当头</h3>
+        <p class="plan-desc">适合保守投资者、退休规划、低风险偏好</p>
+        <div class="plan-metrics">
+          <div class="plan-metric"><div class="pm-label">预期年化</div><div class="pm-value" style="color:var(--amber)">7-9%</div></div>
+          <div class="plan-metric"><div class="pm-label">最大回撤</div><div class="pm-value">15-20%</div></div>
+        </div>
+        <div class="etf-pills">
+          <span class="etf-pill"><strong>50%</strong> 红利低波</span>
+          <span class="etf-pill"><strong>30%</strong> A500</span>
+          <span class="etf-pill"><strong>20%</strong> 国债ETF</span>
+        </div>
+      </div>
+      <div class="plan-card featured">
+        <span class="plan-tag" style="background:rgba(34,197,94,0.15);color:var(--accent)">均衡型 (推荐)</span>
+        <h3>攻守兼备，长期持有</h3>
+        <p class="plan-desc">适合大多数投资者，5年以上投资期限</p>
+        <div class="plan-metrics">
+          <div class="plan-metric"><div class="pm-label">预期年化</div><div class="pm-value" style="color:var(--accent)">9-12%</div></div>
+          <div class="plan-metric"><div class="pm-label">最大回撤</div><div class="pm-value">20-30%</div></div>
+        </div>
+        <div class="etf-pills">
+          <span class="etf-pill"><strong>40%</strong> A500</span>
+          <span class="etf-pill"><strong>35%</strong> 红利低波</span>
+          <span class="etf-pill"><strong>15%</strong> 中证1000</span>
+          <span class="etf-pill"><strong>10%</strong> 纳斯达克</span>
+        </div>
+      </div>
+      <div class="plan-card">
+        <span class="plan-tag" style="background:rgba(239,68,68,0.15);color:var(--red)">进取型</span>
+        <h3>成长优先，弹性最大</h3>
+        <p class="plan-desc">适合风险承受力强、看好科技的投资者</p>
+        <div class="plan-metrics">
+          <div class="plan-metric"><div class="pm-label">预期年化</div><div class="pm-value" style="color:var(--red)">10-15%</div></div>
+          <div class="plan-metric"><div class="pm-label">最大回撤</div><div class="pm-value">30-45%</div></div>
+        </div>
+        <div class="etf-pills">
+          <span class="etf-pill"><strong>40%</strong> A500</span>
+          <span class="etf-pill"><strong>25%</strong> 科创50</span>
+          <span class="etf-pill"><strong>20%</strong> 红利低波</span>
+          <span class="etf-pill"><strong>15%</strong> 中概互联</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 回测数据 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(34,197,94,0.15)">&#9650;</span>
+      哑铃组合回测 (5:5)
+    </div>
+    <p class="section-desc">红利低波 50% + A500 50%，2019-2025 逐年表现</p>
+    <div class="cards">
+      <div class="card">
+        <h3>逐年收益对比</h3>
+        <div class="chart-wrap"><canvas id="chartYearly"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>关键指标对比</h3>
+        <table class="data-table">
+          <thead><tr><th>指标</th><th class="num">5:5哑铃</th><th class="num">纯A500</th><th class="num">沪深300</th></tr></thead>
+          <tbody>
+            <tr><td>年均收益</td><td class="num pos">~13.2%</td><td class="num">~15.5%</td><td class="num">~9.4%</td></tr>
+            <tr><td>最大年度回撤</td><td class="num pos">-8.6%</td><td class="num neg">-19.8%</td><td class="num neg">-21.6%</td></tr>
+            <tr><td>年度胜率</td><td class="num pos">86%</td><td class="num">57%</td><td class="num">57%</td></tr>
+            <tr><td>夏普比率</td><td class="num pos">~0.60</td><td class="num">~0.50</td><td class="num">~0.46</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:16px;padding:12px;background:rgba(34,197,94,0.08);border-radius:8px;font-size:0.82rem;color:var(--accent)">
+          核心优势：哑铃组合牺牲少量收益（13.2% vs 15.5%），换来回撤大幅缩减（-8.6% vs -19.8%）和更高的正收益概率。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 不同配比 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(167,139,250,0.15)">&#9881;</span>
+      配比调优
+    </div>
+    <p class="section-desc">不同红利低波:A500比例的风险收益特征</p>
+    <div class="cards">
+      <div class="card card-full">
+        <div class="chart-wrap"><canvas id="chartRatio"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 定投策略 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(245,158,11,0.15)">&#8635;</span>
+      三种定投策略
+    </div>
+    <p class="section-desc">定投不需要择时，坚持纪律是关键</p>
+    <div class="cards">
+      <div class="card">
+        <h3>普通定投</h3>
+        <p style="font-size:0.85rem;color:var(--text-dim);margin-bottom:12px">每月固定金额，最简单</p>
+        <table class="data-table">
+          <tr><td>操作</td><td>每月固定日期、固定金额买入</td></tr>
+          <tr><td>优点</td><td>零门槛，适合自动化</td></tr>
+          <tr><td>适合</td><td class="pos">纯小白 / 没时间盯盘</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--accent)">估值定投 (推荐)</h3>
+        <p style="font-size:0.85rem;color:var(--text-dim);margin-bottom:12px">根据PE分位调整金额，低买多高买少</p>
+        <table class="data-table">
+          <tr><td>PE &lt; 20%</td><td class="pos">2.0x 基础金额</td></tr>
+          <tr><td>PE 20-40%</td><td class="pos">1.5x</td></tr>
+          <tr><td>PE 40-60%</td><td>1.0x（基础）</td></tr>
+          <tr><td>PE 60-80%</td><td class="neg">0.5x</td></tr>
+          <tr><td>PE &gt; 80%</td><td class="neg">暂停</td></tr>
+        </table>
+        <div style="margin-top:12px;font-size:0.82rem;color:var(--accent)">超额约1-2%/年，每月仅需5分钟查PE</div>
+      </div>
+      <div class="card">
+        <h3>智能定投</h3>
+        <p style="font-size:0.85rem;color:var(--text-dim);margin-bottom:12px">根据均线偏离度调整，券商APP直接支持</p>
+        <table class="data-table">
+          <tr><td>低于250日均线&gt;10%</td><td class="pos">1.5x</td></tr>
+          <tr><td>均线附近 &plusmn;10%</td><td>1.0x</td></tr>
+          <tr><td>高于250日均线&gt;10%</td><td class="neg">0.5x</td></tr>
+        </table>
+        <div style="margin-top:12px;font-size:0.82rem;color:var(--text-dim)">超额约1.4%/年，可自动化执行</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 实操步骤 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(6,182,212,0.15)">&#9654;</span>
+      实操步骤
+    </div>
+    <p class="section-desc">从零开始，5步搭建你的ETF组合</p>
+    <div class="cards">
+      <div class="card card-full">
+        <ol class="step-list">
+          <li class="step-item"><div class="step-num"></div><div class="step-content"><h4>开券商账户</h4><p>线上开户，选佣金低的券商（ETF佣金万0.5-万1）。ETF无印花税，交易成本极低。</p></div></li>
+          <li class="step-item"><div class="step-num"></div><div class="step-content"><h4>确定月投金额</h4><p>月收入的10-20%，或"余钱"的50-80%。场内ETF最低几百元，场外联接基金10元起。</p></div></li>
+          <li class="step-item"><div class="step-num"></div><div class="step-content"><h4>选择方案并买入</h4><p>选择稳健/均衡/进取三套方案之一，按比例每月买入对应ETF。</p></div></li>
+          <li class="step-item"><div class="step-num"></div><div class="step-content"><h4>每半年再平衡一次</h4><p>6月底和12月底各检查一次，当某类偏离目标>5%时，卖出涨多的、买入跌少的。</p></div></li>
+          <li class="step-item"><div class="step-num"></div><div class="step-content"><h4>纪律性止盈</h4><p>累计收益30%+分批卖1/3，或PE>80%暂停定投并分批止盈。红利ETF可永不止盈。</p></div></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- 月度示例 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(59,130,246,0.15)">&#9632;</span>
+      月投5000元示例（均衡型）
+    </div>
+    <div class="combo-box">
+      <h3>每月操作清单</h3>
+      <div class="combo-grid">
+        <div class="combo-item">
+          <div class="combo-label">中证A500ETF (159338)</div>
+          <div class="combo-value" style="color:var(--accent2)">2,000元 / 40%</div>
+        </div>
+        <div class="combo-item">
+          <div class="combo-label">红利低波ETF (512890)</div>
+          <div class="combo-value" style="color:var(--amber)">1,750元 / 35%</div>
+        </div>
+        <div class="combo-item">
+          <div class="combo-label">中证1000ETF (512100)</div>
+          <div class="combo-value" style="color:var(--purple)">750元 / 15%</div>
+        </div>
+        <div class="combo-item">
+          <div class="combo-label">纳斯达克ETF (513100)</div>
+          <div class="combo-value" style="color:var(--cyan)">500元 / 10%</div>
+        </div>
+      </div>
+      <div style="margin-top:20px;font-size:0.85rem;color:var(--text-dim)">
+        1年后预期：投入60,000元 → 市值约62,000-68,000元 + 红利分红约800-1,200元
+      </div>
+    </div>
+  </div>
+
+  <!-- 组合配比饼图 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(34,197,94,0.15)">&#9673;</span>
+      均衡型组合结构
+    </div>
+    <div class="cards">
+      <div class="card">
+        <div class="chart-wrap"><canvas id="chartPie"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>再平衡日历</h3>
+        <table class="data-table">
+          <tr><th>时间</th><th>操作</th></tr>
+          <tr><td>每月发工资后</td><td>按比例买入4只ETF</td></tr>
+          <tr><td>每季度末</td><td>检查偏差，>5%则调整</td></tr>
+          <tr><td style="font-weight:600">每半年（6月/12月）</td><td class="pos">正式再平衡（必须执行）</td></tr>
+          <tr><td>PE分位 > 80%</td><td class="neg">暂停对应ETF定投</td></tr>
+          <tr><td>PE分位 < 20%</td><td class="pos">加倍定投</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(245,158,11,0.15)">&#10067;</span>
+      常见问题
+    </div>
+    <div id="faqList"></div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <p>免责声明：以上内容仅为公开信息整理和研究参考，不构成任何投资建议。投资有风险，入市需谨慎。</p>
+  <p style="margin-top:8px">数据来源：中证指数官网、东方财富、中国基金报、中信建投、雪球等公开渠道 &middot; 研究日期 2026-02-27</p>
+</div>
+
+<script>
+Chart.defaults.color = '#9ca3af';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.font.family = '-apple-system, "PingFang SC", sans-serif';
+
+// 1. Yearly returns
+new Chart(document.getElementById('chartYearly'), {
+  type: 'bar',
+  data: {
+    labels: ['2019', '2020', '2021', '2022', '2023', '2024', '2025'],
+    datasets: [
+      { label: '5:5哑铃组合', data: [31.1, 21.8, 10.9, -8.6, 1.7, 19.4, 16.0], backgroundColor: '#22c55e', borderRadius: 4 },
+      { label: '沪深300', data: [36.1, 27.2, -5.2, -21.6, -11.4, 14.7, 19.1], backgroundColor: 'rgba(156,163,175,0.4)', borderRadius: 4 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'top', labels: { boxWidth: 12, padding: 16 } },
+      tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y + '%' } }
+    },
+    scales: {
+      y: { ticks: { callback: v => v + '%' }, grid: { color: 'rgba(255,255,255,0.04)' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// 2. Ratio comparison (scatter-like bar)
+new Chart(document.getElementById('chartRatio'), {
+  type: 'bar',
+  data: {
+    labels: ['红利低波100%', '7:3', '5:5 (推荐)', '3:7', 'A500 100%'],
+    datasets: [
+      { label: '年化收益', data: [12.0, 11.5, 13.2, 14.5, 15.5], backgroundColor: '#22c55e', borderRadius: 4 },
+      { label: '最大回撤(绝对值)', data: [8, 12, 18, 25, 35], backgroundColor: 'rgba(239,68,68,0.5)', borderRadius: 4 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'top', labels: { boxWidth: 12, padding: 16 } },
+      tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y + '%' } }
+    },
+    scales: {
+      y: { ticks: { callback: v => v + '%' }, grid: { color: 'rgba(255,255,255,0.04)' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// 3. Pie chart
+new Chart(document.getElementById('chartPie'), {
+  type: 'doughnut',
+  data: {
+    labels: ['A500 (40%)', '红利低波 (35%)', '中证1000 (15%)', '纳斯达克 (10%)'],
+    datasets: [{
+      data: [40, 35, 15, 10],
+      backgroundColor: ['#3b82f6', '#f59e0b', '#a78bfa', '#06b6d4'],
+      borderWidth: 0,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false, cutout: '55%',
+    plugins: {
+      legend: { position: 'bottom', labels: { boxWidth: 10, padding: 12, font: { size: 12 } } }
+    }
+  }
+});
+
+// FAQ
+const faqs = [
+  { q: '只有1000元/月够吗？', a: '完全够。场外联接基金10元起投。1000元可以：A500联接400 + 红利低波联接350 + 中证1000联接150 + 纳100元。坚持3-5年，复利效果可观。' },
+  { q: '定投亏了怎么办？', a: '下跌恰好是定投优势：同等金额买到更多份额，摊低成本。沪深300定投3年以上，历史正收益概率超85%。关键是不要中途放弃。' },
+  { q: 'A500和沪深300选哪个？', a: '优先选A500。行业更均衡、新经济含量高、回测收益更优。唯一劣势是实际运行时间短（2024年9月才发布）。如果你更看重长历史验证，沪深300也行。' },
+  { q: '牛市来了要追加吗？', a: '不建议。定投的核心是纪律性，牛市追加=高位加仓。如果用估值定投法，牛市（PE高分位）反而应该减少定投金额。' },
+  { q: '多久看一次组合？', a: '最低每半年一次（6月和12月做再平衡）。建议每季度看一眼偏差。避免每天盯盘——这会破坏定投纪律。' },
+  { q: '要不要加债券？', a: '投资期限>5年且能承受20%+回撤，可以全配权益ETF。如果希望回撤<15%，加入20%国债ETF（511010）。' },
+];
+
+const faqEl = document.getElementById('faqList');
+faqs.forEach(f => {
+  const item = document.createElement('div');
+  item.className = 'faq-item';
+  item.innerHTML = `
+    <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">${f.q}<span class="faq-toggle">&#9660;</span></div>
+    <div class="faq-a"><div class="faq-a-inner">${f.a}</div></div>
+  `;
+  faqEl.appendChild(item);
+});
+
+// Scroll animation
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) { entry.target.classList.add('fade-in'); observer.unobserve(entry.target); }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.section').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
