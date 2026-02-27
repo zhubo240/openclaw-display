@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>三月规划 · Q1 收官月 · Lifestyle Workspace</title>
+<style>
+  :root {
+    --bg: #faf9f6;
+    --text: #2d2d2d;
+    --accent: #5a7d64;
+    --accent-light: #e8f0eb;
+    --border: #e0ddd8;
+    --muted: #8a8580;
+    --purple: #7b6b8a;
+    --purple-light: #f0edf3;
+    --orange: #c47d3c;
+    --orange-light: #fdf3e8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Noto Sans SC", "Helvetica Neue", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.8;
+    padding: 3rem 1.5rem;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .breadcrumb { font-size: 0.85rem; color: var(--muted); margin-bottom: 2rem; }
+  header { margin-bottom: 2.5rem; }
+  header h1 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.3rem; }
+  header p { color: var(--muted); font-size: 0.9rem; }
+  .intro {
+    padding: 1.2rem 1.4rem;
+    background: linear-gradient(135deg, var(--purple-light) 0%, #f0ede6 100%);
+    border-left: 3px solid var(--purple);
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 2.5rem;
+    font-size: 0.9rem;
+  }
+  .section {
+    margin-bottom: 2.5rem;
+    padding: 1.5rem;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .section h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--purple);
+  }
+  .section h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 1.2rem 0 0.5rem;
+  }
+  .section p, .section li { font-size: 0.9rem; }
+  .review-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    margin: 0.8rem 0;
+  }
+  .review-card {
+    padding: 1rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+  }
+  .review-card h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem; }
+  .review-card.done { background: var(--accent-light); }
+  .review-card.done h4 { color: var(--accent); }
+  .review-card.gap { background: var(--orange-light); }
+  .review-card.gap h4 { color: var(--orange); }
+  .review-card textarea, .review-card input {
+    width: 100%;
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+    padding: 0.4rem;
+    font-size: 0.82rem;
+    font-family: inherit;
+    background: rgba(255,255,255,0.7);
+    resize: vertical;
+  }
+  .review-card textarea { min-height: 60px; }
+  .goal-framework {
+    border-left: 3px solid var(--purple);
+    padding-left: 1.2rem;
+    margin: 0.8rem 0;
+  }
+  .goal-framework .goal-item {
+    padding: 0.8rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .goal-framework .goal-item:last-child { border-bottom: none; }
+  .goal-framework label {
+    display: block;
+    font-size: 0.82rem;
+    color: var(--purple);
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+  }
+  .goal-framework input[type="text"] {
+    width: 100%;
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+    padding: 0.4rem 0.5rem;
+    font-size: 0.85rem;
+    font-family: inherit;
+    background: var(--purple-light);
+  }
+  .week-table {
+    width: 100%;
+    font-size: 0.82rem;
+    border-collapse: collapse;
+    margin-top: 0.5rem;
+  }
+  .week-table th, .week-table td {
+    padding: 0.5rem 0.6rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .week-table th {
+    color: var(--purple);
+    font-weight: 600;
+    white-space: nowrap;
+    width: 80px;
+  }
+  .week-table td input {
+    width: 100%;
+    border: none;
+    border-bottom: 1px dashed var(--border);
+    padding: 0.2rem 0;
+    font-size: 0.82rem;
+    font-family: inherit;
+    background: transparent;
+  }
+  .habit-tracker {
+    margin-top: 0.8rem;
+  }
+  .habit-row {
+    display: grid;
+    grid-template-columns: 120px repeat(7, 1fr);
+    gap: 2px;
+    margin-bottom: 2px;
+  }
+  .habit-row.header { font-size: 0.7rem; color: var(--muted); font-weight: 500; }
+  .habit-row .habit-name {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.4rem;
+    background: var(--purple-light);
+    border-radius: 3px 0 0 3px;
+    display: flex;
+    align-items: center;
+  }
+  .habit-row .habit-name input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-size: 0.8rem;
+    font-family: inherit;
+  }
+  .habit-row .day-cell {
+    background: #f5f4f1;
+    border-radius: 2px;
+    min-height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.75rem;
+    color: var(--muted);
+    transition: background 0.15s;
+  }
+  .habit-row .day-cell:hover { background: var(--accent-light); }
+  .habit-row .day-cell.header-cell {
+    background: transparent;
+    font-weight: 500;
+    cursor: default;
+    min-height: auto;
+    padding: 0.2rem 0;
+  }
+  .principle-box {
+    padding: 1rem 1.2rem;
+    background: var(--purple-light);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    margin: 0.8rem 0;
+  }
+  .principle-box strong { color: var(--purple); }
+  .tip-box {
+    padding: 0.8rem 1rem;
+    background: var(--accent-light);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    margin-top: 1rem;
+  }
+  .tip-box strong { color: var(--accent); }
+  .numbered-list { padding-left: 1.2rem; }
+  .numbered-list li { margin-bottom: 0.5rem; }
+  footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  @media (max-width: 500px) {
+    .review-grid { grid-template-columns: 1fr; }
+    .habit-row { grid-template-columns: 90px repeat(7, 1fr); }
+  }
+  @media print {
+    body { padding: 1rem; }
+    .section { break-inside: avoid; }
+    input, textarea { border-style: solid !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="breadcrumb"><a href="../index.html">Lifestyle Workspace</a> / 三月规划</div>
+
+<header>
+  <h1>三月：Q1 收官月规划</h1>
+  <p>回顾一二月 · 设定三月目标 · 交出 Q1 答卷</p>
+</header>
+
+<div class="intro">
+  三月是第一季度的最后一个月。不管一二月过得怎样，<strong>你还有 31 天</strong>。这不是补救，是重新对焦——看看年初的想法哪些还值得追，哪些该果断放弃，然后集中精力打完这一局。
+</div>
+
+<!-- Q1 快速复盘 -->
+<div class="section">
+  <h2>Step 1: Q1 快速复盘（15 分钟）</h2>
+  <p>不需要写论文，回答四个问题就够了：</p>
+
+  <div class="review-grid">
+    <div class="review-card done">
+      <h4>做到了什么？</h4>
+      <textarea placeholder="列出 1-2 月真正完成的事情，不管大小。给自己一点credit。"></textarea>
+    </div>
+    <div class="review-card gap">
+      <h4>没做到什么？</h4>
+      <textarea placeholder="年初计划里落空的部分。不是自我批评，是客观记录。"></textarea>
+    </div>
+    <div class="review-card done">
+      <h4>意外收获？</h4>
+      <textarea placeholder="计划之外发生的好事、新发现、意想不到的进展。"></textarea>
+    </div>
+    <div class="review-card gap">
+      <h4>最大的阻碍？</h4>
+      <textarea placeholder="是什么拦住了你？时间？精力？动力？外部因素？"></textarea>
+    </div>
+  </div>
+
+  <div class="principle-box">
+    <strong>复盘原则：</strong>诚实但不苛刻。"我没做到 X"不等于"我很差"，它只意味着 X 的执行方式需要调整，或者 X 本身不够重要。
+  </div>
+</div>
+
+<!-- 三月目标设定 -->
+<div class="section">
+  <h2>Step 2: 设定三月目标（3 个就够）</h2>
+  <p style="margin-bottom: 0.8rem;">目标不在多，在于可执行。每个目标都要回答：<strong>做什么、做多少、怎么验证完成</strong>。</p>
+
+  <div class="goal-framework">
+    <div class="goal-item">
+      <label>目标 1（最重要的一件事）</label>
+      <input type="text" placeholder="例：完成 XX 项目的核心功能并上线">
+      <label style="margin-top: 0.5rem;">完成标志</label>
+      <input type="text" placeholder="例：代码合并到 main 分支，用户可以访问">
+    </div>
+    <div class="goal-item">
+      <label>目标 2（健康/习惯类）</label>
+      <input type="text" placeholder="例：每周跑步 3 次，每次 30 分钟以上">
+      <label style="margin-top: 0.5rem;">完成标志</label>
+      <input type="text" placeholder="例：月底运动记录 ≥ 12 次">
+    </div>
+    <div class="goal-item">
+      <label>目标 3（学习/成长类）</label>
+      <input type="text" placeholder="例：读完《XX》并写 3 条读书笔记">
+      <label style="margin-top: 0.5rem;">完成标志</label>
+      <input type="text" placeholder="例：笔记发布在笔记工具里，可以回顾">
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>"三个目标"法则：</strong>一个核心项目 + 一个身体习惯 + 一个精神输入。三者平衡，防止某个维度被完全忽略。如果某项不适用，可以替换，但总数不要超过三个。
+  </div>
+</div>
+
+<!-- 周计划模板 -->
+<div class="section">
+  <h2>Step 3: 拆解到周</h2>
+  <p style="margin-bottom: 0.8rem;">月目标太远，周目标刚好。每周日花 10 分钟填写下周计划。</p>
+
+  <table class="week-table">
+    <tr>
+      <th>周次</th>
+      <th>日期</th>
+      <th>目标 1 进度</th>
+      <th>目标 2 进度</th>
+      <th>目标 3 进度</th>
+    </tr>
+    <tr>
+      <td style="color: var(--purple); font-weight: 600;">W1</td>
+      <td>3/1 - 3/7</td>
+      <td><input type="text" placeholder="本周要做什么"></td>
+      <td><input type="text" placeholder=""></td>
+      <td><input type="text" placeholder=""></td>
+    </tr>
+    <tr>
+      <td style="color: var(--purple); font-weight: 600;">W2</td>
+      <td>3/8 - 3/14</td>
+      <td><input type="text" placeholder=""></td>
+      <td><input type="text" placeholder=""></td>
+      <td><input type="text" placeholder=""></td>
+    </tr>
+    <tr>
+      <td style="color: var(--purple); font-weight: 600;">W3</td>
+      <td>3/15 - 3/21</td>
+      <td><input type="text" placeholder=""></td>
+      <td><input type="text" placeholder=""></td>
+      <td><input type="text" placeholder=""></td>
+    </tr>
+    <tr>
+      <td style="color: var(--purple); font-weight: 600;">W4</td>
+      <td>3/22 - 3/28</td>
+      <td><input type="text" placeholder=""></td>
+      <td><input type="text" placeholder=""></td>
+      <td><input type="text" placeholder=""></td>
+    </tr>
+    <tr>
+      <td style="color: var(--purple); font-weight: 600;">W5</td>
+      <td>3/29 - 3/31</td>
+      <td><input type="text" placeholder="收尾"></td>
+      <td><input type="text" placeholder=""></td>
+      <td><input type="text" placeholder=""></td>
+    </tr>
+  </table>
+</div>
+
+<!-- 习惯追踪 -->
+<div class="section">
+  <h2>Step 4: 习惯追踪表（第一周示例）</h2>
+  <p style="margin-bottom: 0.6rem;">追踪的目的不是"全绿"，而是看到<strong>模式</strong>——哪天容易断、为什么断、怎么调整。</p>
+
+  <div class="habit-tracker">
+    <div class="habit-row header">
+      <div></div>
+      <div class="day-cell header-cell">一</div>
+      <div class="day-cell header-cell">二</div>
+      <div class="day-cell header-cell">三</div>
+      <div class="day-cell header-cell">四</div>
+      <div class="day-cell header-cell">五</div>
+      <div class="day-cell header-cell">六</div>
+      <div class="day-cell header-cell">日</div>
+    </div>
+    <div class="habit-row">
+      <div class="habit-name"><input placeholder="习惯 1（如：跑步）"></div>
+      <div class="day-cell"></div><div class="day-cell"></div><div class="day-cell"></div>
+      <div class="day-cell"></div><div class="day-cell"></div><div class="day-cell"></div><div class="day-cell"></div>
+    </div>
+    <div class="habit-row">
+      <div class="habit-name"><input placeholder="习惯 2（如：阅读）"></div>
+      <div class="day-cell"></div><div class="day-cell"></div><div class="day-cell"></div>
+      <div class="day-cell"></div><div class="day-cell"></div><div class="day-cell"></div><div class="day-cell"></div>
+    </div>
+    <div class="habit-row">
+      <div class="habit-name"><input placeholder="习惯 3（如：早起）"></div>
+      <div class="day-cell"></div><div class="day-cell"></div><div class="day-cell"></div>
+      <div class="day-cell"></div><div class="day-cell"></div><div class="day-cell"></div><div class="day-cell"></div>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>使用方法：</strong>打印这个页面（Ctrl/Cmd+P），或者把它当作模板，用你习惯的工具（备忘录、Notion、纸笔）复刻格式。追踪工具不重要，坚持记录才重要。
+  </div>
+</div>
+
+<!-- 实用建议 -->
+<div class="section">
+  <h2>让三月不一样的 5 个小策略</h2>
+  <ol class="numbered-list">
+    <li><strong>两分钟规则</strong> — 如果一件事两分钟内能做完，现在就做，不要加入待办清单。清单越短，执行压力越小。</li>
+    <li><strong>每日三件事</strong> — 每天早上只写三件今天要做的事。完成了就是好的一天。不需要填满日程。</li>
+    <li><strong>周日复盘</strong> — 每周日花 10 分钟回顾本周、规划下周。固定时间做，形成仪式感，比随机反思有效。</li>
+    <li><strong>环境设计</strong> — 想跑步？睡前把运动服放在床头。想阅读？把书放在枕头上。降低启动成本比依赖意志力靠谱。</li>
+    <li><strong>允许 80%</strong> — 31 天完美执行不现实。如果 25 天达标，那就是成功。别让一天的中断毁掉整个月的动力。</li>
+  </ol>
+</div>
+
+<footer>
+  <p><a href="../index.html">&larr; 返回首页</a></p>
+  <p>更新：2026-02-27 20:30 GMT+8 · 自主推进生成</p>
+</footer>
+
+</body>
+</html>
