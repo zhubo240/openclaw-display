@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>本周 AI 模型发布速览 · 2026 W09</title>
+<style>
+  :root {
+    --bg: #0d1117; --card: #161b22; --border: #30363d;
+    --text: #e6edf3; --text2: #8b949e; --accent: #58a6ff;
+    --green: #3fb950; --red: #f85149; --orange: #d29922; --purple: #bc8cff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--text);
+    font: 14px/1.7 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    padding: 32px 20px;
+  }
+  .container { max-width: 860px; margin: 0 auto; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  header { text-align: center; margin-bottom: 40px; }
+  header .tag {
+    display: inline-block; padding: 4px 14px; border-radius: 20px;
+    background: rgba(188,140,255,0.12); color: var(--purple);
+    font-size: 12px; font-weight: 600; margin-bottom: 12px;
+  }
+  header h1 { font-size: 24px; margin-bottom: 6px; }
+  header .sub { color: var(--text2); font-size: 13px; }
+
+  /* Model grid */
+  .model-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 36px; }
+
+  .model-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px; position: relative;
+    transition: border-color 0.2s;
+  }
+  .model-card:hover { border-color: rgba(88,166,255,0.4); }
+  .model-card .org {
+    font-size: 11px; color: var(--text2); text-transform: uppercase;
+    letter-spacing: 0.5px; margin-bottom: 4px;
+  }
+  .model-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 6px; line-height: 1.3; }
+  .model-card .type {
+    display: inline-block; font-size: 10px; padding: 2px 8px;
+    border-radius: 8px; font-weight: 600; margin-bottom: 8px;
+  }
+  .type-llm { background: rgba(88,166,255,0.12); color: var(--accent); }
+  .type-video { background: rgba(248,81,73,0.12); color: var(--red); }
+  .type-image { background: rgba(63,185,80,0.12); color: var(--green); }
+  .type-multi { background: rgba(210,153,34,0.12); color: var(--orange); }
+  .type-agent { background: rgba(188,140,255,0.12); color: var(--purple); }
+  .type-world { background: rgba(139,148,158,0.2); color: var(--text2); }
+
+  .model-card .desc { font-size: 12px; color: var(--text2); line-height: 1.6; margin-bottom: 8px; }
+  .model-card .highlight {
+    font-size: 12px; color: var(--text); line-height: 1.5;
+    padding: 6px 10px; background: rgba(88,166,255,0.04);
+    border-left: 2px solid var(--accent); border-radius: 0 4px 4px 0;
+  }
+  .model-card .source-tag {
+    position: absolute; top: 12px; right: 12px;
+    font-size: 10px; color: var(--text2); padding: 1px 6px;
+    border: 1px solid var(--border); border-radius: 4px;
+  }
+  .model-card .origin {
+    display: inline-block; font-size: 10px; padding: 2px 8px;
+    border-radius: 8px; font-weight: 600; margin-left: 4px;
+  }
+  .origin-cn { background: rgba(248,81,73,0.1); color: var(--red); }
+  .origin-us { background: rgba(88,166,255,0.1); color: var(--accent); }
+
+  /* Section divider */
+  .section-title {
+    font-size: 13px; color: var(--text2); text-transform: uppercase;
+    letter-spacing: 1px; margin: 36px 0 16px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Summary box */
+  .summary {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px; margin-bottom: 36px;
+  }
+  .summary h2 { font-size: 16px; margin-bottom: 12px; }
+  .summary ul { list-style: none; font-size: 13px; }
+  .summary li { padding: 4px 0; color: var(--text2); }
+  .summary li strong { color: var(--text); }
+  .summary li::before { content: '→ '; color: var(--accent); }
+
+  .footer { text-align: center; padding: 24px; color: var(--text2); font-size: 12px; border-top: 1px solid var(--border); margin-top: 32px; }
+
+  @media (max-width: 600px) { .model-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="tag">速览卡</div>
+  <h1>本周 AI 模型发布一览</h1>
+  <div class="sub">2026 第 9 周 (2/25–2/27) · 从四平台日报中提取的全部模型发布信息</div>
+</header>
+
+<div class="summary">
+  <h2>一周速读</h2>
+  <ul>
+    <li><strong>12+ 个模型/产品</strong>在 3 天内被提及，覆盖 LLM、视频生成、图像、Agent、世界模型</li>
+    <li><strong>中美分庭抗礼</strong>：中国 7 个（Qwen 3.5、GLM-5、Kimi K2.5、Seedance 2.0、SkyReels-V4、Codex 语音编码、Cosmos 2.5）vs 美国 5 个（Grok 4.20、Gemini 3.1、Nano Banana 2、Claude Sonnet 4.6、Comet）</li>
+    <li><strong>AI 视频赛道最热</strong>：Seedance 2.0 "上春晚" + SkyReels-V4 登顶 AA 榜单，国产 AI 视频从追赶转为竞争</li>
+    <li><strong>Agent 落地尴尬</strong>：ICLR'26 DevOps-Gym 基准显示全链路成功率 0%，模型能力 ≠ 实际可用</li>
+  </ul>
+</div>
+
+<div class="section-title">大语言模型 (LLM)</div>
+
+<div class="model-grid">
+  <div class="model-card">
+    <div class="source-tag">2/27</div>
+    <div class="org">xAI (Elon Musk)</div>
+    <h3>Grok 4.20 <span class="origin origin-us">US</span></h3>
+    <span class="type type-llm">LLM</span>
+    <div class="desc">马斯克发布，搜索能力大幅提升</div>
+    <div class="highlight">社交媒体提及：AI洞察日报（微信）</div>
+  </div>
+
+  <div class="model-card">
+    <div class="source-tag">2/25</div>
+    <div class="org">阿里巴巴</div>
+    <h3>Qwen 3.5 中量级全系 <span class="origin origin-cn">CN</span></h3>
+    <span class="type type-llm">LLM</span>
+    <div class="desc">通义千问新一代中型模型，除夕开源。总参数 3970 亿但仅激活 170 亿，"以小胜大"架构</div>
+    <div class="highlight">社交媒体提及：AI洞察日报（微信）</div>
+  </div>
+
+  <div class="model-card">
+    <div class="source-tag">2/25前</div>
+    <div class="org">智谱 AI</div>
+    <h3>GLM-5 <span class="origin origin-cn">CN</span></h3>
+    <span class="type type-llm">LLM + Agent</span>
+    <div class="desc">2 月 11 日开源，Artificial Analysis 开源排名第一。编程与 Agent 能力突出，开源后提价 30%+</div>
+    <div class="highlight">社交媒体提及：YouTube 科技评论</div>
+  </div>
+
+  <div class="model-card">
+    <div class="source-tag">2/25前</div>
+    <div class="org">月之暗面</div>
+    <h3>Kimi K2.5 <span class="origin origin-cn">CN</span></h3>
+    <span class="type type-agent">Agent Swarm</span>
+    <div class="desc">核心亮点：Agent Swarm（智能体蜂群）技术，支持 100 个子智能体并行协作</div>
+    <div class="highlight">社交媒体提及：YouTube 科技评论；36氪出海报道</div>
+  </div>
+
+  <div class="model-card">
+    <div class="source-tag">2/25前</div>
+    <div class="org">Anthropic</div>
+    <h3>Claude Sonnet 4.6 / Opus 4.6 <span class="origin origin-us">US</span></h3>
+    <span class="type type-llm">LLM</span>
+    <div class="desc">Sonnet 4.6 (2/17) 支持 1M token 上下文；Opus 4.6 (2/5) 先行发布。编程、Computer Use、Agent 规划全面升级</div>
+    <div class="highlight">社交媒体提及：AI洞察日报（微信）；小红书 Claude Code 讨论</div>
+  </div>
+</div>
+
+<div class="section-title">AI 视频生成</div>
+
+<div class="model-grid">
+  <div class="model-card">
+    <div class="source-tag">2/27</div>
+    <div class="org">字节跳动</div>
+    <h3>Seedance 2.0 <span class="origin origin-cn">CN</span></h3>
+    <span class="type type-video">视频生成</span>
+    <div class="desc">文本/图片 → 电影级视频。"上春晚"引爆关注，影视传媒板块大涨</div>
+    <div class="highlight">社交媒体提及：新智元（微信）、AI洞察日报、21经济网</div>
+  </div>
+
+  <div class="model-card">
+    <div class="source-tag">2/27</div>
+    <div class="org">昆仑天工</div>
+    <h3>SkyReels-V4 <span class="origin origin-cn">CN</span></h3>
+    <span class="type type-video">视频生成</span>
+    <div class="desc">冲上全球 AI 视频 Artificial Analysis 榜第二。多模态输入 + 音效生成一体化，"AI 味没了"</div>
+    <div class="highlight">社交媒体提及：新智元（微信）</div>
+  </div>
+</div>
+
+<div class="section-title">图像生成</div>
+
+<div class="model-grid">
+  <div class="model-card">
+    <div class="source-tag">2/27</div>
+    <div class="org">Google DeepMind</div>
+    <h3>Nano Banana 2 <span class="origin origin-us">US</span></h3>
+    <span class="type type-image">图像生成</span>
+    <div class="desc">"深夜突袭"发布。融合 Pro 级能力与极速推理，性能屠榜、速度飞升、价格腰斩</div>
+    <div class="highlight">社交媒体提及：36氪热榜（微信）</div>
+  </div>
+
+  <div class="model-card">
+    <div class="source-tag">2/27</div>
+    <div class="org">Google DeepMind</div>
+    <h3>Gemini 3.1 图像模型 <span class="origin origin-us">US</span></h3>
+    <span class="type type-image">多模态</span>
+    <div class="desc">图像生成专用模型，与 Gemini 主线并行发布</div>
+    <div class="highlight">社交媒体提及：AI洞察日报（微信）</div>
+  </div>
+</div>
+
+<div class="section-title">世界模型 / 其他</div>
+
+<div class="model-grid">
+  <div class="model-card">
+    <div class="source-tag">2/27</div>
+    <div class="org">NVIDIA</div>
+    <h3>Cosmos 2.5 <span class="origin origin-us">US</span></h3>
+    <span class="type type-world">物理 AI 世界模型</span>
+    <div class="desc">面向机器人和自动驾驶的物理世界模拟</div>
+    <div class="highlight">社交媒体提及：AI洞察日报（微信）</div>
+  </div>
+
+  <div class="model-card">
+    <div class="source-tag">2/25</div>
+    <div class="org">Perplexity</div>
+    <h3>Comet 语音模式升级 <span class="origin origin-us">US</span></h3>
+    <span class="type type-multi">语音交互</span>
+    <div class="desc">AI 搜索引擎语音交互能力升级</div>
+    <div class="highlight">社交媒体提及：AI洞察日报（微信）</div>
+  </div>
+</div>
+
+<div class="section-title">值得关注的信号</div>
+
+<div class="summary">
+  <ul>
+    <li><strong>Agent 全链路成功率 0%</strong> (ICLR'26 DevOps-Gym)：顶级模型在真实 DevOps 全链路任务中成功率归零。模型 benchmark 跑分和实际可用之间的鸿沟依然巨大</li>
+    <li><strong>AI 视频赛道格局翻转</strong>：Seedance 2.0 + SkyReels-V4 双双登顶/接近榜首，国产 AI 视频首次形成对海外的竞争压力</li>
+    <li><strong>"春节档"发布策略</strong>：智谱除夕发 GLM-5、阿里除夕发 Qwen 3.5、月之暗面同期推 K2.5 — 春节成为中国 AI 大模型的集中发布窗口</li>
+    <li><strong>Agent Swarm 新范式</strong>：Kimi K2.5 的 100 子智能体并行协作代表了 Agent 架构的新方向 — 从单体智能走向群体智能</li>
+    <li><strong>开源 → 提价路径</strong>：智谱 GLM-5 开源登顶后提价 30%+，验证了"开源获取用户 → 提价商业化"的策略</li>
+  </ul>
+</div>
+
+<div class="footer">
+  数据来源：每日汇总 2026-02-25 / 02-26 / 02-27（微信 Folo RSS · 小红书 · B站 · YouTube）<br>
+  生成时间：2026-02-28 04:30
+</div>
+
+</div>
+</body>
+</html>
