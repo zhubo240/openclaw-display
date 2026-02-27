@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>社交媒体监测站</title>
+<style>
+  :root {
+    --bg: #0d1117; --card: #161b22; --border: #30363d;
+    --text: #e6edf3; --text2: #8b949e; --accent: #58a6ff;
+    --green: #3fb950; --red: #f85149; --orange: #d29922; --purple: #bc8cff;
+    --wechat: #07c160; --xhs: #fe2c55; --bili: #00a1d6; --yt: #ff0000;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--text);
+    font: 15px/1.7 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    padding: 32px 20px; min-height: 100vh;
+  }
+  .container { max-width: 900px; margin: 0 auto; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Header */
+  header { text-align: center; margin-bottom: 48px; }
+  header h1 { font-size: 26px; margin-bottom: 6px; }
+  header .sub { color: var(--text2); font-size: 13px; }
+  .platform-dots {
+    display: flex; justify-content: center; gap: 16px; margin-top: 12px;
+  }
+  .platform-dots .dot-item {
+    display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text2);
+  }
+  .platform-dots .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+
+  /* Stats bar */
+  .stats {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    margin-bottom: 40px;
+  }
+  .stat {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px; text-align: center;
+  }
+  .stat .num { font-size: 28px; font-weight: 800; line-height: 1; }
+  .stat .label { font-size: 11px; color: var(--text2); margin-top: 6px; }
+
+  /* Content cards */
+  .cards { display: grid; gap: 16px; margin-bottom: 40px; }
+
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden;
+    transition: border-color 0.2s, transform 0.1s;
+  }
+  .card:hover { border-color: rgba(88,166,255,0.5); transform: translateY(-1px); }
+  .card a.card-link {
+    display: block; padding: 24px; text-decoration: none; color: inherit;
+  }
+  .card-tag {
+    display: inline-block; padding: 3px 10px; border-radius: 12px;
+    font-size: 11px; font-weight: 600; margin-bottom: 10px;
+  }
+  .tag-daily { background: rgba(88,166,255,0.12); color: var(--accent); }
+  .tag-weekly { background: rgba(188,140,255,0.12); color: var(--purple); }
+  .tag-deep { background: rgba(248,81,73,0.12); color: var(--red); }
+  .tag-new { background: rgba(63,185,80,0.15); color: var(--green); }
+
+  .card h2 { font-size: 18px; margin-bottom: 6px; line-height: 1.3; }
+  .card .desc { font-size: 13px; color: var(--text2); line-height: 1.6; margin-bottom: 12px; }
+  .card .meta { font-size: 12px; color: var(--text2); display: flex; gap: 12px; flex-wrap: wrap; }
+  .card .meta span { display: flex; align-items: center; gap: 4px; }
+
+  /* Featured card (larger) */
+  .card-featured { grid-column: 1 / -1; }
+  .card-featured .card-inner {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  }
+  .card-featured .card-text { padding: 28px; }
+  .card-featured .card-highlight {
+    padding: 28px; background: rgba(88,166,255,0.03);
+    border-left: 1px solid var(--border);
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .card-featured .highlight-item {
+    padding: 8px 0; border-bottom: 1px solid rgba(48,54,61,0.5);
+    font-size: 13px;
+  }
+  .card-featured .highlight-item:last-child { border-bottom: none; }
+  .card-featured .highlight-item strong { color: var(--text); }
+  .card-featured .highlight-item .hl-label { color: var(--text2); font-size: 11px; }
+
+  /* Grid 2-col for smaller cards */
+  .cards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 40px; }
+
+  /* Section title */
+  .section-title {
+    font-size: 13px; color: var(--text2); text-transform: uppercase;
+    letter-spacing: 1px; margin-bottom: 16px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Recent topics */
+  .topics { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 40px; }
+  .topic-tag {
+    padding: 6px 14px; border-radius: 20px; font-size: 12px;
+    background: var(--card); border: 1px solid var(--border);
+    color: var(--text2); cursor: default;
+  }
+  .topic-tag.hot { border-color: rgba(248,81,73,0.4); color: var(--red); }
+  .topic-tag.warm { border-color: rgba(210,153,34,0.4); color: var(--orange); }
+  .topic-tag.rising { border-color: rgba(63,185,80,0.4); color: var(--green); }
+
+  .footer {
+    text-align: center; padding: 24px; color: var(--text2); font-size: 12px;
+    border-top: 1px solid var(--border); margin-top: 20px;
+  }
+
+  @media (max-width: 700px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .cards-grid { grid-template-columns: 1fr; }
+    .card-featured .card-inner { grid-template-columns: 1fr; }
+    .card-featured .card-highlight { border-left: none; border-top: 1px solid var(--border); }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>社交媒体监测站</h1>
+  <div class="sub">每日追踪 · 周度分析 · 深度专题</div>
+  <div class="platform-dots">
+    <div class="dot-item"><span class="dot" style="background:var(--wechat)"></span>微信</div>
+    <div class="dot-item"><span class="dot" style="background:var(--xhs)"></span>小红书</div>
+    <div class="dot-item"><span class="dot" style="background:var(--bili)"></span>B站</div>
+    <div class="dot-item"><span class="dot" style="background:var(--yt)"></span>YouTube</div>
+  </div>
+</header>
+
+<div class="stats">
+  <div class="stat">
+    <div class="num" style="color:var(--accent)">3</div>
+    <div class="label">日报天数</div>
+  </div>
+  <div class="stat">
+    <div class="num" style="color:var(--purple)">1</div>
+    <div class="label">周报</div>
+  </div>
+  <div class="stat">
+    <div class="num" style="color:var(--red)">1</div>
+    <div class="label">深度专题</div>
+  </div>
+  <div class="stat">
+    <div class="num" style="color:var(--green)">~80</div>
+    <div class="label">追踪条目</div>
+  </div>
+</div>
+
+<div class="section-title">本周热点标签</div>
+<div class="topics">
+  <span class="topic-tag hot">AI裁员浪潮</span>
+  <span class="topic-tag hot">Block裁员40%</span>
+  <span class="topic-tag hot">NVDA财报</span>
+  <span class="topic-tag warm">AI模型军备竞赛</span>
+  <span class="topic-tag warm">AI泡沫叙事</span>
+  <span class="topic-tag warm">Seedance 2.0</span>
+  <span class="topic-tag rising">海外生活成本</span>
+  <span class="topic-tag rising">地理套利</span>
+  <span class="topic-tag">春节余热</span>
+  <span class="topic-tag">OpenClaw</span>
+</div>
+
+<div class="section-title">内容导航</div>
+
+<!-- Featured: Deep Dive -->
+<div class="cards">
+  <div class="card card-featured">
+    <a href="深度专题/ai-layoffs-2026-02/index.html" class="card-link" style="padding:0">
+      <div class="card-inner">
+        <div class="card-text">
+          <span class="card-tag tag-deep">深度专题</span>
+          <span class="card-tag tag-new" style="margin-left:6px">NEW</span>
+          <h2>AI 裁员浪潮：从 Block 到行业变局</h2>
+          <div class="desc">
+            Block 一夜裁掉 40% 员工，股价飙涨 25%。当 CEO 亲口说"AI 时代不需要这么多人"，这不再是假设性讨论。聚合三天四平台数据 + 公开报道的深度分析。
+          </div>
+          <div class="meta">
+            <span>2026-02-28</span>
+            <span>跨平台分析</span>
+            <span>6 篇关联报道</span>
+          </div>
+        </div>
+        <div class="card-highlight">
+          <div class="highlight-item">
+            <div class="hl-label">Block 裁员</div>
+            <strong>4,000+ 人 (40%)</strong>
+          </div>
+          <div class="highlight-item">
+            <div class="hl-label">股价反应</div>
+            <strong style="color:var(--green)">+25%</strong>
+          </div>
+          <div class="highlight-item">
+            <div class="hl-label">2026 科技裁员总数</div>
+            <strong>49,318 人</strong>
+          </div>
+          <div class="highlight-item">
+            <div class="hl-label">关键争议</div>
+            <strong>AI Washing (Altman)</strong>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- 2-column grid -->
+<div class="cards-grid">
+  <!-- Weekly Analysis -->
+  <div class="card">
+    <a href="周报分析/2026-W09/index.html" class="card-link">
+      <span class="card-tag tag-weekly">周报分析</span>
+      <h2>W09 跨平台趋势 (2/25–2/27)</h2>
+      <div class="desc">
+        5 大热点主题：AI 就业冲击、模型军备竞赛、美股震荡与泡沫叙事、海外生活"地理套利"、B 站生态变化。
+      </div>
+      <div class="meta">
+        <span>2026-02-27</span>
+        <span>4 平台</span>
+        <span>5 个主题</span>
+      </div>
+    </a>
+  </div>
+
+  <!-- Daily Timeline -->
+  <div class="card">
+    <a href="每日汇总/index.html" class="card-link">
+      <span class="card-tag tag-daily">每日时间线</span>
+      <h2>社交媒体日报</h2>
+      <div class="desc">
+        按日期 → 平台 → 条目三级展开的时间线视图。支持平台筛选，覆盖微信、小红书、B 站、YouTube 四平台。
+      </div>
+      <div class="meta">
+        <span>2/25 – 2/27</span>
+        <span>~80 条内容</span>
+        <span>每日更新</span>
+      </div>
+    </a>
+  </div>
+</div>
+
+<div class="section-title">日报存档</div>
+
+<div class="cards-grid">
+  <div class="card">
+    <a href="每日汇总/2026-02-27/index.md" class="card-link">
+      <span class="card-tag tag-daily">日报</span>
+      <h2>2026-02-27 周四</h2>
+      <div class="desc">
+        Block 裁员引爆全平台 · 张一鸣被删访谈 · Grok 4.20 发布 · 呆呆说万物 913 万登顶 · 投资 TALK 君解读裁员
+      </div>
+    </a>
+  </div>
+  <div class="card">
+    <a href="每日汇总/2026-02-26/index.md" class="card-link">
+      <span class="card-tag tag-daily">日报</span>
+      <h2>2026-02-26 周三</h2>
+      <div class="desc">
+        OpenClaw 封禁风波 · 美国物价讨论 3991 赞 · NVDA 财报超预期 · 34 岁程序员失业 · 听妈妈的话 531 万
+      </div>
+    </a>
+  </div>
+  <div class="card">
+    <a href="每日汇总/2026-02-25/index.md" class="card-link">
+      <span class="card-tag tag-daily">日报</span>
+      <h2>2026-02-25 周二</h2>
+      <div class="desc">
+        Qwen 3.5 发布 · 春晚上镜妆秘诀 · 干嘛猫 596 万 · 高盛中国经济展望 · 35 岁被刀纪录片 26 万观看
+      </div>
+    </a>
+  </div>
+</div>
+
+<div class="footer">
+  社交媒体监测站 · 自动运行中<br>
+  数据覆盖：微信（Folo RSS）· 小红书 · B站 · YouTube<br>
+  最近更新：2026-02-28 03:00
+</div>
+
+</div>
+</body>
+</html>
