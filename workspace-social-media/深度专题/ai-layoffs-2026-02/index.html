@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 裁员浪潮：从 Block 到行业变局 | 深度专题</title>
+<style>
+  :root {
+    --bg: #0d1117; --card: #161b22; --border: #30363d;
+    --text: #e6edf3; --text2: #8b949e; --accent: #58a6ff;
+    --green: #3fb950; --red: #f85149; --orange: #d29922; --purple: #bc8cff;
+    --wechat: #07c160; --xhs: #fe2c55; --bili: #00a1d6; --yt: #ff0000;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--text);
+    font: 15px/1.8 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    padding: 32px 20px;
+  }
+  .container { max-width: 780px; margin: 0 auto; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Header */
+  .hero { text-align: center; margin-bottom: 48px; padding: 40px 20px; }
+  .hero .tag {
+    display: inline-block; padding: 4px 14px; border-radius: 20px;
+    background: rgba(248,81,73,0.12); color: var(--red);
+    font-size: 12px; font-weight: 600; margin-bottom: 16px;
+  }
+  .hero h1 { font-size: 28px; line-height: 1.3; margin-bottom: 12px; }
+  .hero .sub { color: var(--text2); font-size: 14px; line-height: 1.6; }
+  .hero .meta { color: var(--text2); font-size: 12px; margin-top: 16px; }
+
+  /* Big numbers */
+  .big-numbers {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    margin-bottom: 40px;
+  }
+  .big-num {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px 12px; text-align: center;
+  }
+  .big-num .n { font-size: 32px; font-weight: 800; line-height: 1; }
+  .big-num .u { font-size: 12px; color: var(--text2); margin-top: 6px; }
+
+  /* Section */
+  .section { margin-bottom: 40px; }
+  .section h2 {
+    font-size: 18px; margin-bottom: 16px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section h3 {
+    font-size: 15px; color: var(--accent); margin: 20px 0 10px;
+  }
+  .section p { margin-bottom: 12px; color: var(--text); font-size: 14px; line-height: 1.8; }
+
+  /* Quote card */
+  .quote {
+    background: var(--card); border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 16px 0;
+    font-size: 14px; line-height: 1.7;
+  }
+  .quote .attr { color: var(--text2); font-size: 12px; margin-top: 8px; }
+
+  /* Timeline */
+  .tl { position: relative; padding-left: 24px; margin: 16px 0; }
+  .tl::before {
+    content: ''; position: absolute; left: 5px; top: 4px; bottom: 4px;
+    width: 2px; background: var(--border);
+  }
+  .tl-item { position: relative; margin-bottom: 16px; }
+  .tl-item::before {
+    content: ''; position: absolute; left: -24px; top: 6px;
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--accent); border: 2px solid var(--bg);
+  }
+  .tl-date { font-size: 11px; color: var(--accent); font-weight: 600; }
+  .tl-content { font-size: 13px; color: var(--text2); margin-top: 2px; }
+  .tl-content strong { color: var(--text); }
+
+  /* Comparison table */
+  .cmp-table {
+    width: 100%; border-collapse: collapse; margin: 16px 0;
+    font-size: 13px;
+  }
+  .cmp-table th {
+    text-align: left; padding: 8px 12px; background: var(--card);
+    border: 1px solid var(--border); color: var(--accent); font-size: 12px;
+  }
+  .cmp-table td {
+    padding: 8px 12px; border: 1px solid var(--border);
+    vertical-align: top; line-height: 1.6;
+  }
+  .cmp-table tr:nth-child(even) td { background: rgba(22,27,34,0.5); }
+
+  /* Platform voice cards */
+  .voice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+  .voice-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px; font-size: 13px;
+  }
+  .voice-card .plat {
+    font-size: 11px; font-weight: 600; padding: 2px 10px;
+    border-radius: 10px; display: inline-block; margin-bottom: 8px;
+  }
+  .voice-card .plat-wechat { background: rgba(7,193,96,0.12); color: var(--wechat); }
+  .voice-card .plat-xhs { background: rgba(254,44,85,0.12); color: var(--xhs); }
+  .voice-card .plat-bili { background: rgba(0,161,214,0.12); color: var(--bili); }
+  .voice-card .plat-yt { background: rgba(255,0,0,0.12); color: var(--yt); }
+  .voice-card .tone { font-weight: 600; margin-bottom: 4px; }
+  .voice-card .detail { color: var(--text2); line-height: 1.6; }
+
+  /* Insight box */
+  .insight-box {
+    background: rgba(88,166,255,0.06); border: 1px solid rgba(88,166,255,0.2);
+    border-radius: 10px; padding: 20px; margin: 20px 0;
+  }
+  .insight-box h4 { color: var(--accent); font-size: 14px; margin-bottom: 8px; }
+  .insight-box p { font-size: 13px; color: var(--text); line-height: 1.7; margin-bottom: 8px; }
+  .insight-box p:last-child { margin-bottom: 0; }
+
+  /* Source list */
+  .sources { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border); }
+  .sources h3 { font-size: 14px; color: var(--text2); margin-bottom: 12px; }
+  .sources ul { list-style: none; font-size: 12px; }
+  .sources li { padding: 4px 0; color: var(--text2); }
+
+  .footer { text-align: center; padding: 24px; color: var(--text2); font-size: 12px; margin-top: 32px; }
+
+  @media (max-width: 600px) {
+    .big-numbers { grid-template-columns: repeat(2, 1fr); }
+    .voice-grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="hero">
+  <div class="tag">深度专题</div>
+  <h1>AI 裁员浪潮<br>从 Block 到行业变局</h1>
+  <div class="sub">Block 一夜裁掉 40% 员工，股价飙涨 25%。<br>当 CEO 亲口说"AI 时代不需要这么多人"，这不再是假设性讨论。</div>
+  <div class="meta">基于 2026.02.25–02.27 四平台数据 + 公开报道 | 生成于 2026-02-28</div>
+</div>
+
+<div class="big-numbers">
+  <div class="big-num">
+    <div class="n" style="color:var(--red)">4,000+</div>
+    <div class="u">Block 裁员人数</div>
+  </div>
+  <div class="big-num">
+    <div class="n" style="color:var(--green)">+25%</div>
+    <div class="u">Block 股价反应</div>
+  </div>
+  <div class="big-num">
+    <div class="n" style="color:var(--orange)">49,318</div>
+    <div class="u">2026 年科技裁员总数</div>
+  </div>
+  <div class="big-num">
+    <div class="n" style="color:var(--purple)">850</div>
+    <div class="u">日均裁员人数</div>
+  </div>
+</div>
+
+<!-- Section 1: What happened -->
+<div class="section">
+  <h2>一、发生了什么</h2>
+
+  <p>2026 年 2 月 26 日，Jack Dorsey 向 Block 全体员工发送内部信，宣布公司将从约 10,000 名员工缩减至约 6,000 人 — 裁员幅度接近 <strong>40%</strong>。</p>
+
+  <div class="quote">
+    "The intelligence tools we're creating and using, paired with smaller and flatter teams, are enabling a new way of working which fundamentally changes what it means to build and run a company, and that's accelerating rapidly."
+    <div class="attr">— Jack Dorsey, Block CEO, 全员信 (2026.02.26)</div>
+  </div>
+
+  <p>更具冲击力的是 Dorsey 对其他公司的预言：</p>
+
+  <div class="quote">
+    "I believe the majority of companies will reach the same conclusion and make similar structural changes within the next year. I'd rather get there honestly and on our own terms than be forced into it reactively."
+    <div class="attr">— Jack Dorsey, 同一封信</div>
+  </div>
+
+  <h3>离职补偿</h3>
+  <p>美国员工获得：20 周薪资 + 每工作一年加 1 周、股票归属延至 5 月底、6 个月医疗保险、保留公司设备、$5,000 转型补贴。</p>
+
+  <h3>市场反应</h3>
+  <p>Block 股价当日飙涨超 <strong>25%</strong>。华尔街用真金白银投票：在 AI 时代，市场奖励"精简高效"，而非"人力密集型增长"。</p>
+</div>
+
+<!-- Section 2: Context -->
+<div class="section">
+  <h2>二、2026 年 AI 裁员全景</h2>
+
+  <p>Block 不是孤例。2026 年开年仅 6 周，科技行业裁员总数已达 <strong>30,700 人</strong>，按此速度将超过 2025 全年。截至 2 月底，累计已有 <strong>130 家科技公司</strong> 裁员 49,318 人。</p>
+
+  <table class="cmp-table">
+    <tr>
+      <th>公司</th><th>裁员规模</th><th>声明理由</th><th>时间</th>
+    </tr>
+    <tr>
+      <td><strong>Block</strong></td>
+      <td>~4,000 人 (40%)</td>
+      <td>AI 工具 + 精简团队</td>
+      <td>2026.02.26</td>
+    </tr>
+    <tr>
+      <td><strong>Salesforce</strong></td>
+      <td>~4,000 + 1,300 人</td>
+      <td>AI 接管客服请求</td>
+      <td>2026 Q1</td>
+    </tr>
+    <tr>
+      <td><strong>Meta (Reality Labs)</strong></td>
+      <td>~1,500 人 (10%)</td>
+      <td>从元宇宙转向 AI</td>
+      <td>2026.02</td>
+    </tr>
+    <tr>
+      <td><strong>Pinterest</strong></td>
+      <td>675 人 (15%)</td>
+      <td>AI 战略转型</td>
+      <td>2026.02</td>
+    </tr>
+    <tr>
+      <td><strong>Baker McKenzie (律所)</strong></td>
+      <td>600–1,000 人 (10%)</td>
+      <td>转向 AI 法律服务</td>
+      <td>2026.02</td>
+    </tr>
+  </table>
+
+  <div class="insight-box">
+    <h4>"AI Washing" — 真裁还是假裁？</h4>
+    <p>OpenAI CEO Sam Altman 在 2 月印度 AI 峰会上公开指出：<strong>"有些公司在 AI washing — 用 AI 作为裁员的借口，实际上这些裁员本来就会发生。"</strong></p>
+    <p>数据支撑：2026 年 1 月美国记录了 108,435 次裁员，但仅约 7,600 次明确归因于 AI。美国国家经济研究局（NBER）的论文发现，<strong>90% 的受访高管表示 AI 在过去三年对就业没有实际影响</strong>。</p>
+    <p>然而 Block 的案例难以用"AI washing"解释 — Dorsey 不仅用 AI 解释裁员，还将其写入公司战略的核心叙事，并预言全行业将跟进。这是真信仰，还是更精致的 AI washing？</p>
+  </div>
+</div>
+
+<!-- Section 3: Cross-platform reactions -->
+<div class="section">
+  <h2>三、四平台反应对比</h2>
+
+  <p>Block 裁员在 2 月 27 日（北京时间）全面引爆中文社交媒体。不同平台的讨论调性形成了鲜明对比：</p>
+
+  <div class="voice-grid">
+    <div class="voice-card">
+      <span class="plat plat-wechat">微信/科技媒体</span>
+      <div class="tone">调性：行业分析 + 趋势判断</div>
+      <div class="detail">
+        36氪标题："一夜暴裁4000人，股价飙涨25%"<br>
+        聚焦商业逻辑：AI工具 + 精简团队 = 股价奖励<br>
+        同时关注"AI四小龙出海"、"黄仁勋AI工具抢金融饭碗"<br>
+        <strong>核心叙事：</strong>这是不可逆的结构变化
+      </div>
+    </div>
+    <div class="voice-card">
+      <span class="plat plat-xhs">小红书</span>
+      <div class="tone">调性：情绪化 + 个人焦虑</div>
+      <div class="detail">
+        "见证历史了：Block裁员40%，AI的第一刀" (403赞)<br>
+        "搞了ai裁员一半，美国这ai叙事越来越魔幻" (645赞)<br>
+        与 2/26 帖子形成联动："美国物价贵到离谱" (3991赞)、"湾区中产贫民窟" (354赞)<br>
+        <strong>核心叙事：</strong>AI + 物价 = 海外生活越来越难
+      </div>
+    </div>
+    <div class="voice-card">
+      <span class="plat plat-yt">YouTube 中文财经</span>
+      <div class="tone">调性：数据驱动 + 投资视角</div>
+      <div class="detail">
+        投资TALK君：深度拆解裁员对软件行业估值的影响<br>
+        美投侃新闻：AI毁灭论 + 高盛喊话抄底<br>
+        Terry Chen：AI写代码这么强，工程师怎么生存？(15万观看)<br>
+        <strong>核心叙事：</strong>裁员 = 投资信号，关注受益/受损股
+      </div>
+    </div>
+    <div class="voice-card">
+      <span class="plat plat-bili">B站</span>
+      <div class="tone">调性：间接关联 + 下沉讨论</div>
+      <div class="detail">
+        没有直接讨论 Block 裁员的爆款视频<br>
+        但 AI 议题以"下沉"形式出现：《说谎的马卡龙》是不是AI编曲？(38万播放)、FARS科研直播 (12.5万)<br>
+        用户更关心"AI影响我的生活"而非"AI影响华尔街"<br>
+        <strong>核心叙事：</strong>AI 渗透日常，但还没到恐慌的程度
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Section 4: The bigger thread -->
+<div class="section">
+  <h2>四、三天叙事演进</h2>
+
+  <p>Block 裁员不是孤立事件。回溯三天的跨平台数据，一条清晰的叙事链浮现：</p>
+
+  <div class="tl">
+    <div class="tl-item">
+      <div class="tl-date">2月25日 · 个体故事阶段</div>
+      <div class="tl-content">
+        <strong>YouTube</strong>: 网易纪录片"学历再高也逃不过35岁被刀" (26万观看) — 个体叙事，引发共情<br>
+        <strong>YouTube</strong>: Terry Chen "AI写代码这么强，工程师怎么生存？" (14万) — 职业焦虑开始升温<br>
+        <strong>YouTube</strong>: 课代表立正 "设计师前途：少用Figma，多操作代码" — 角色融合趋势
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">2月26日 · 焦虑弥漫阶段</div>
+      <div class="tl-content">
+        <strong>微信 V2EX</strong>: "34岁大龄失业程序员的迷茫" — 从YouTube个体故事蔓延到技术社区<br>
+        <strong>小红书</strong>: "2026对新入场投资者非常不友好" (413赞) + "美股疯了" (276赞) — 投资焦虑<br>
+        <strong>微信</strong>: NVIDIA Q4超预期 + "2028全球智能危机"报告 — 多空极端叙事同日出现
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">2月27日 · 引爆点</div>
+      <div class="tl-content">
+        <strong>全平台</strong>: Block裁员40%消息全面传播<br>
+        <strong>微信</strong>: 36氪头条 + 新智元关注 Agent 全链路成功率0%（反面证据）<br>
+        <strong>小红书</strong>: 情绪化讨论 + Claude Code创始人"永远不要跟模型对赌"<br>
+        <strong>YouTube</strong>: 投资TALK君实时解读，将裁员与软件行业估值框架挂钩
+      </div>
+    </div>
+  </div>
+
+  <div class="insight-box">
+    <h4>关键洞察：叙事从"个体"升级为"结构性"</h4>
+    <p>2/25 还是"某个 35 岁程序员失业了"的个体故事，2/27 已经是"Block CEO 宣布整个行业都会这样"的结构性宣言。三天之内，讨论性质发生了质变。</p>
+    <p>与此同时，一组有趣的对冲出现：ICLR'26 论文显示 Agent 全链路成功率为 0%（AI 没那么强），但 Block 已经用 AI 的"预期能力"而非"当前能力"做出了裁员决策。正如 HBR 文章标题所言：<strong>"Companies Are Laying Off Workers Because of AI's Potential — Not Its Performance"</strong>。</p>
+  </div>
+</div>
+
+<!-- Section 5: What to watch -->
+<div class="section">
+  <h2>五、后续关注点</h2>
+
+  <p>基于本周数据，以下信号值得持续追踪：</p>
+
+  <table class="cmp-table">
+    <tr><th>信号</th><th>关注点</th><th>追踪平台</th></tr>
+    <tr>
+      <td><strong>跟进裁员</strong></td>
+      <td>Dorsey 预言"多数公司一年内跟进"，观察 3 月是否出现模仿效应</td>
+      <td>微信 36氪 / YouTube 财经</td>
+    </tr>
+    <tr>
+      <td><strong>AI Washing 争论</strong></td>
+      <td>Altman 发声后，"真裁 vs 假裁"讨论是否进入主流舆论</td>
+      <td>小红书 / YouTube</td>
+    </tr>
+    <tr>
+      <td><strong>中国企业反应</strong></td>
+      <td>国内科技公司是否会以 AI 效率为由进行类似调整</td>
+      <td>微信 / V2EX / 小红书</td>
+    </tr>
+    <tr>
+      <td><strong>Agent 成熟度</strong></td>
+      <td>从 0% 到可用还有多远？学术基准 vs 商业落地的差距</td>
+      <td>微信 AI 日报 / B站科技区</td>
+    </tr>
+    <tr>
+      <td><strong>"地理套利"叙事</strong></td>
+      <td>AI裁员 + 物价飙升 → 更多科技人才考虑回流亚洲？</td>
+      <td>小红书</td>
+    </tr>
+  </table>
+</div>
+
+<div class="sources">
+  <h3>数据来源</h3>
+  <ul>
+    <li>社交媒体数据：每日汇总 2026-02-25 / 02-26 / 02-27（微信 Folo RSS、小红书、B站、YouTube）</li>
+    <li><a href="https://www.cnbc.com/2026/02/26/block-laying-off-about-4000-employees-nearly-half-of-its-workforce.html">CNBC: Block laying off about 4,000 employees</a></li>
+    <li><a href="https://techcrunch.com/2026/02/26/jack-dorsey-block-layoffs-4000-halved-employees-your-company-is-next/">TechCrunch: Jack Dorsey says your company is next</a></li>
+    <li><a href="https://fortune.com/2026/02/19/sam-altman-confirms-ai-washing-job-displacement-layoffs/">Fortune: Sam Altman confirms AI washing</a></li>
+    <li><a href="https://hbr.org/2026/01/companies-are-laying-off-workers-because-of-ais-potential-not-its-performance">HBR: Laying Off Because of AI's Potential, Not Performance</a></li>
+    <li><a href="https://technode.global/2026/02/13/tech-sector-layoffs-reach-30700-just-6-weeks-into-2026/">TechNode: Tech layoffs reach 30,700 in 6 weeks</a></li>
+    <li><a href="https://www.trueup.io/layoffs">TrueUp Layoffs Tracker</a></li>
+  </ul>
+</div>
+
+<div class="footer">
+  社交媒体日报 · 深度专题系列<br>
+  生成时间：2026-02-28 01:00
+</div>
+
+</div>
+</body>
+</html>
