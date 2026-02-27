@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026年A股市场展望 | 2026年2月</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0f1117;
+    --card: #1a1d2e;
+    --card-alt: #212538;
+    --border: #2a2e42;
+    --text: #e4e4e7;
+    --text-dim: #9ca3af;
+    --accent: #f59e0b;
+    --blue: #3b82f6;
+    --green: #22c55e;
+    --red: #ef4444;
+    --purple: #a78bfa;
+    --cyan: #06b6d4;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+
+  .hero { position: relative; padding: 80px 40px 60px; text-align: center; background: linear-gradient(135deg, #1a1d2e 0%, #0f1117 50%, #1a1020 100%); overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(ellipse at 30% 50%, rgba(245,158,11,0.06) 0%, transparent 50%), radial-gradient(ellipse at 70% 50%, rgba(239,68,68,0.04) 0%, transparent 50%); animation: pulse 8s ease-in-out infinite alternate; }
+  @keyframes pulse { from { opacity: 0.6; transform: scale(1); } to { opacity: 1; transform: scale(1.05); } }
+  .hero-content { position: relative; z-index: 1; max-width: 850px; margin: 0 auto; }
+  .hero h1 { font-size: 3rem; font-weight: 800; background: linear-gradient(135deg, var(--accent), #fbbf24, var(--red)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px; letter-spacing: 2px; }
+  .hero .subtitle { font-size: 1.1rem; color: var(--text-dim); margin-bottom: 32px; }
+
+  .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; max-width: 950px; margin: 0 auto; }
+  .kpi { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 16px; padding: 18px 14px; text-align: center; backdrop-filter: blur(10px); transition: transform 0.2s, border-color 0.2s; }
+  .kpi:hover { transform: translateY(-4px); border-color: var(--accent); }
+  .kpi .value { font-size: 1.6rem; font-weight: 800; line-height: 1.2; }
+  .kpi .label { font-size: 0.78rem; color: var(--text-dim); margin-top: 4px; }
+  .kpi .tag { display: inline-block; margin-top: 6px; padding: 2px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; }
+  .tag-green { background: rgba(34,197,94,0.15); color: var(--green); }
+  .tag-amber { background: rgba(245,158,11,0.15); color: var(--accent); }
+  .tag-red { background: rgba(239,68,68,0.15); color: var(--red); }
+  .tag-blue { background: rgba(59,130,246,0.15); color: var(--blue); }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
+  .section { margin-bottom: 56px; }
+  .section-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+  .section-title .icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+  .section-desc { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 24px; }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; transition: border-color 0.2s; }
+  .card:hover { border-color: rgba(245,158,11,0.3); }
+  .card-full { grid-column: 1 / -1; }
+  .card h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 16px; }
+  .chart-wrap { position: relative; width: 100%; max-height: 340px; }
+
+  .data-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  .data-table th { text-align: left; padding: 10px 12px; color: var(--text-dim); font-weight: 500; border-bottom: 1px solid var(--border); font-size: 0.8rem; }
+  .data-table td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .data-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .pos { color: var(--green); font-weight: 600; }
+  .neg { color: var(--red); font-weight: 600; }
+
+  .feature-list { list-style: none; }
+  .feature-list li { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .feature-list li:last-child { border-bottom: none; }
+  .feat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 7px; }
+  .feat-title { font-weight: 600; font-size: 0.9rem; }
+  .feat-desc { font-size: 0.82rem; color: var(--text-dim); margin-top: 2px; }
+
+  /* Timeline */
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: var(--border); }
+  .tl-item { position: relative; margin-bottom: 24px; }
+  .tl-dot { position: absolute; left: -24px; top: 4px; width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--bg); }
+  .tl-item h4 { font-size: 0.92rem; font-weight: 600; margin-bottom: 4px; }
+  .tl-item .tl-date { font-size: 0.78rem; color: var(--text-dim); }
+  .tl-item p { font-size: 0.85rem; color: var(--text-dim); margin-top: 4px; }
+
+  /* Risk matrix */
+  .risk-card { background: var(--card); border-radius: 12px; padding: 20px; margin-bottom: 12px; border-left: 4px solid; display: flex; gap: 16px; align-items: flex-start; }
+  .risk-level { font-size: 0.72rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
+  .risk-info { flex: 1; }
+  .risk-info h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 4px; }
+  .risk-info p { font-size: 0.82rem; color: var(--text-dim); line-height: 1.5; }
+  .risk-info .risk-action { font-size: 0.82rem; color: var(--green); margin-top: 6px; }
+
+  .combo-box { background: linear-gradient(135deg, rgba(245,158,11,0.08), rgba(239,68,68,0.04)); border: 1px solid rgba(245,158,11,0.2); border-radius: 16px; padding: 32px; }
+  .combo-box h3 { font-size: 1.2rem; color: var(--accent); margin-bottom: 20px; }
+  .combo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+  .combo-item .combo-label { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 4px; }
+  .combo-item .combo-value { font-size: 1.15rem; font-weight: 700; }
+
+  .footer { text-align: center; padding: 40px 24px; color: var(--text-dim); font-size: 0.78rem; border-top: 1px solid var(--border); }
+
+  .fade-in { opacity: 0; transform: translateY(20px); animation: fadeIn 0.6s ease forwards; }
+  @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+  .delay-1 { animation-delay: 0.1s; } .delay-2 { animation-delay: 0.2s; }
+  .delay-3 { animation-delay: 0.3s; } .delay-4 { animation-delay: 0.4s; }
+  .delay-5 { animation-delay: 0.5s; } .delay-6 { animation-delay: 0.6s; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 2rem; } .hero { padding: 48px 20px 40px; }
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .cards { grid-template-columns: 1fr; }
+    .combo-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-content">
+    <h1>2026年A股市场展望</h1>
+    <p class="subtitle">结构性慢牛 &middot; AI主线 &middot; 红利防守 &middot; 宏观前低后高 &middot; 截至2月28日</p>
+    <div class="kpi-row">
+      <div class="kpi fade-in delay-1">
+        <div class="value" style="color:var(--accent)">~4100</div>
+        <div class="label">上证指数（当前）</div>
+        <span class="tag tag-amber">年内目标4500+</span>
+      </div>
+      <div class="kpi fade-in delay-2">
+        <div class="value" style="color:var(--blue)">~13x</div>
+        <div class="label">沪深300 PE</div>
+        <span class="tag tag-blue">历史45%分位</span>
+      </div>
+      <div class="kpi fade-in delay-3">
+        <div class="value" style="color:var(--green)">双宽松</div>
+        <div class="label">财政+货币</div>
+        <span class="tag tag-green">赤字率或达4%</span>
+      </div>
+      <div class="kpi fade-in delay-4">
+        <div class="value" style="color:var(--red)">13.8%</div>
+        <div class="label">1月DeepSeek指数涨幅</div>
+        <span class="tag tag-red">AI为最强主线</span>
+      </div>
+      <div class="kpi fade-in delay-5">
+        <div class="value" style="color:var(--purple)">~5%</div>
+        <div class="label">GDP增速目标</div>
+        <span class="tag tag-amber">前低后高</span>
+      </div>
+      <div class="kpi fade-in delay-6">
+        <div class="value" style="color:var(--cyan)">8万亿+</div>
+        <div class="label">ETF总规模预期</div>
+        <span class="tag tag-green">被动基金持续扩容</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- 宏观仪表盘 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(245,158,11,0.15)">&#9673;</span>
+      宏观仪表盘
+    </div>
+    <p class="section-desc">经济弱复苏 + 政策强支撑 + 流动性充裕 = "慢牛"环境</p>
+    <div class="cards">
+      <div class="card">
+        <h3>经济与政策</h3>
+        <table class="data-table">
+          <tr><td>GDP目标</td><td class="num">~5%</td><td><span class="tag tag-amber" style="font-size:0.7rem">前低后高</span></td></tr>
+          <tr><td>赤字率</td><td class="num pos">~4%</td><td><span class="tag tag-green" style="font-size:0.7rem">历史新高</span></td></tr>
+          <tr><td>专项债</td><td class="num">~4.5-5万亿</td><td><span class="tag tag-green" style="font-size:0.7rem">加码</span></td></tr>
+          <tr><td>LPR 1年期</td><td class="num pos">或降至2.8%</td><td><span class="tag tag-green" style="font-size:0.7rem">继续宽松</span></td></tr>
+          <tr><td>CPI</td><td class="num">0-1%</td><td><span class="tag tag-amber" style="font-size:0.7rem">低通胀</span></td></tr>
+          <tr><td>M2增速</td><td class="num">7-8%</td><td><span class="tag tag-blue" style="font-size:0.7rem">流动性充裕</span></td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3>估值定位</h3>
+        <div class="chart-wrap"><canvas id="chartValuation"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 五大行业主线 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(239,68,68,0.15)">&#9733;</span>
+      五大行业主线
+    </div>
+    <p class="section-desc">AI是最强确定性主线，红利是防守基石，消费和半导体提供弹性</p>
+    <div class="cards">
+      <div class="card card-full">
+        <div class="chart-wrap"><canvas id="chartLines"></canvas></div>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--red)">主线一：AI产业链</h3>
+        <ul class="feature-list">
+          <li><span class="feat-dot" style="background:var(--red)"></span><div><div class="feat-title">算力/GPU</div><div class="feat-desc">海光信息、寒武纪 — 确定性高、弹性高</div></div></li>
+          <li><span class="feat-dot" style="background:var(--red)"></span><div><div class="feat-title">光模块</div><div class="feat-desc">中际旭创、新易盛 — 数据中心核心需求</div></div></li>
+          <li><span class="feat-dot" style="background:var(--red)"></span><div><div class="feat-title">AI应用</div><div class="feat-desc">金山办公、科大讯飞 — 弹性极高但兑现待验</div></div></li>
+          <li><span class="feat-dot" style="background:var(--red)"></span><div><div class="feat-title">机器人</div><div class="feat-desc">拓普集团、绿的谐波 — 下一个爆发点</div></div></li>
+        </ul>
+        <div style="margin-top:12px;padding:10px;background:rgba(239,68,68,0.08);border-radius:8px;font-size:0.82rem;color:var(--red)">催化剂：DeepSeek新模型(2月)、两会AI政策(3月)、大厂AI收入占比(全年财报)</div>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--blue)">其他四条主线</h3>
+        <ul class="feature-list">
+          <li><span class="feat-dot" style="background:var(--blue)"></span><div><div class="feat-title">半导体国产替代</div><div class="feat-desc">大基金三期落地、晶圆厂扩产 — 北方华创、中微公司</div></div></li>
+          <li><span class="feat-dot" style="background:var(--accent)"></span><div><div class="feat-title">红利资产（防守）</div><div class="feat-desc">险资增配+低利率环境 — 512890红利低波ETF</div></div></li>
+          <li><span class="feat-dot" style="background:var(--green)"></span><div><div class="feat-title">消费复苏</div><div class="feat-desc">以旧换新扩围、服务消费回暖 — 家电、汽车智能化</div></div></li>
+          <li><span class="feat-dot" style="background:var(--purple)"></span><div><div class="feat-title">高景气细分</div><div class="feat-desc">固态电池、低空经济、创新药、储能 — 事件驱动</div></div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 操作日历 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(6,182,212,0.15)">&#128197;</span>
+      季度操作日历
+    </div>
+    <p class="section-desc">按节奏配置，不追高、不恐惧</p>
+    <div class="cards">
+      <div class="card card-full">
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-dot" style="background:var(--green)"></div>
+            <div class="tl-date">Q1 · 1-3月</div>
+            <h4 style="color:var(--green)">春季躁动 + 两会行情</h4>
+            <p>保持中高仓位（75-80%）。DeepSeek催化AI板块，两会揭晓财政力度。适度加配AI和政策受益方向。</p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot" style="background:var(--blue)"></div>
+            <div class="tl-date">Q2 · 4-6月</div>
+            <h4 style="color:var(--blue)">业绩验证期</h4>
+            <p>一季报分化调仓。减持业绩不达预期板块。科技高估值面临"杀估值"风险。仓位70-75%。</p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot" style="background:var(--accent)"></div>
+            <div class="tl-date">Q3 · 7-9月</div>
+            <h4 style="color:var(--accent)">中期调整（历史最弱季度）</h4>
+            <p>降仓至60-70%，增配红利和国债。关注7月政治局会议的政策微调信号。等待下半年机会。</p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot" style="background:var(--red)"></div>
+            <div class="tl-date">Q4 · 10-12月</div>
+            <h4 style="color:var(--red)">年末布局 + 跨年行情</h4>
+            <p>逢低加仓下一年主线。中央经济工作会议定调2027。红利股年末因分红预期走强。仓位回升至75%。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 风险矩阵 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(239,68,68,0.15)">&#9888;</span>
+      风险矩阵
+    </div>
+    <p class="section-desc">五大核心风险及应对策略</p>
+
+    <div class="risk-card" style="border-color:var(--red)">
+      <span class="risk-level" style="background:rgba(239,68,68,0.15);color:var(--red)">高</span>
+      <div class="risk-info">
+        <h4>中美贸易摩擦</h4>
+        <p>关税政策不确定+AI芯片出口管制可能升级，影响出口企业盈利和科技板块情绪</p>
+        <div class="risk-action">应对：降低出口敏感配置，增配内需+国产替代</div>
+      </div>
+    </div>
+    <div class="risk-card" style="border-color:var(--red)">
+      <span class="risk-level" style="background:rgba(239,68,68,0.15);color:var(--red)">中高</span>
+      <div class="risk-info">
+        <h4>地产尾部风险</h4>
+        <p>一线微弱回暖但三四线下行，房企债务未根本解决，拖累银行资产质量和土地财政</p>
+        <div class="risk-action">应对：回避地产及相关产业链，关注"收储"政策</div>
+      </div>
+    </div>
+    <div class="risk-card" style="border-color:var(--accent)">
+      <span class="risk-level" style="background:rgba(245,158,11,0.15);color:var(--accent)">中</span>
+      <div class="risk-info">
+        <h4>全球流动性拐点</h4>
+        <p>美联储降息节奏可能慢于预期，美元走强→人民币贬值压力→外资流出</p>
+        <div class="risk-action">应对：关注美联储会议，人民币快速贬值时减仓外资重仓股</div>
+      </div>
+    </div>
+    <div class="risk-card" style="border-color:var(--accent)">
+      <span class="risk-level" style="background:rgba(245,158,11,0.15);color:var(--accent)">中</span>
+      <div class="risk-info">
+        <h4>估值中枢已回升</h4>
+        <p>沪深300 PE~13x处历史中位，科创50 PE~55x有泡沫倾向，继续上行需盈利兑现</p>
+        <div class="risk-action">应对：不追高、重估值纪律、分批建仓</div>
+      </div>
+    </div>
+    <div class="risk-card" style="border-color:var(--blue)">
+      <span class="risk-level" style="background:rgba(59,130,246,0.15);color:var(--blue)">中</span>
+      <div class="risk-info">
+        <h4>风格极端化</h4>
+        <p>AI虹吸资金导致"AI涨其他跌"的极端分化，AI回调可能引发连锁抛售</p>
+        <div class="risk-action">应对：保持组合均衡，不过度集中单一主线</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 推荐组合 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(34,197,94,0.15)">&#10070;</span>
+      2026年推荐组合
+    </div>
+    <p class="section-desc">核心策略：不追高、不悲观、在结构性机会中做组合</p>
+
+    <div class="combo-box" style="margin-bottom:24px">
+      <h3>均衡型组合（适合大多数人）</h3>
+      <div class="combo-grid">
+        <div class="combo-item">
+          <div class="combo-label">中证A500ETF (159338)</div>
+          <div class="combo-value" style="color:var(--blue)">35% · 宽基底仓</div>
+        </div>
+        <div class="combo-item">
+          <div class="combo-label">红利低波ETF (512890)</div>
+          <div class="combo-value" style="color:var(--accent)">25% · 防守+分红</div>
+        </div>
+        <div class="combo-item">
+          <div class="combo-label">科创50ETF (588000)</div>
+          <div class="combo-value" style="color:var(--red)">15% · 科技进攻</div>
+        </div>
+        <div class="combo-item">
+          <div class="combo-label">纳斯达克ETF (513100)</div>
+          <div class="combo-value" style="color:var(--cyan)">10% · 全球分散</div>
+        </div>
+        <div class="combo-item">
+          <div class="combo-label">中证1000ETF (512100)</div>
+          <div class="combo-value" style="color:var(--purple)">10% · 小盘弹性</div>
+        </div>
+        <div class="combo-item">
+          <div class="combo-label">国债ETF (511010)</div>
+          <div class="combo-value" style="color:var(--text-dim)">5% · 避风港</div>
+        </div>
+      </div>
+      <div style="margin-top:20px;display:flex;gap:24px;flex-wrap:wrap;font-size:0.85rem">
+        <span>预期年化 <strong style="color:var(--green)">9-13%</strong></span>
+        <span>最大回撤 <strong style="color:var(--red)">20-25%</strong></span>
+        <span>操作频率 <strong style="color:var(--blue)">月定投+半年再平衡</strong></span>
+        <span>最低持有 <strong style="color:var(--accent)">3年+</strong></span>
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <h3>当前定投建议</h3>
+        <table class="data-table">
+          <tr><td>沪深300 PE分位</td><td class="num">~45%</td></tr>
+          <tr><td>定投倍数</td><td class="num pos">1.0x（正常定投）</td></tr>
+          <tr><td>仓位建议</td><td class="num">70-80%</td></tr>
+          <tr><td>当前阶段</td><td class="num" style="color:var(--green)">春季躁动中</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3>组合结构</h3>
+        <div class="chart-wrap"><canvas id="chartPie"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 核心认知 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(167,139,250,0.15)">&#9883;</span>
+      三个核心认知
+    </div>
+    <div class="cards">
+      <div class="card">
+        <h3 style="color:var(--accent)">"慢牛" ≠ 不回撤</h3>
+        <p style="font-size:0.88rem;color:var(--text-dim);line-height:1.7">全年涨10-15%的过程中，可能有2-3次5-10%级别的回调。不要因为短期回调就否定慢牛判断，这些回调恰好是加仓机会。</p>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--blue)">"AI涨了没买" ≠ 亏损</h3>
+        <p style="font-size:0.88rem;color:var(--text-dim);line-height:1.7">FOMO是定投最大的敌人。你的组合赚了8%但AI涨了30%？你赚了8%，这是事实。追着AI买大概率在高位站岗。</p>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--green)">长期主义是唯一正确策略</h3>
+        <p style="font-size:0.88rem;color:var(--text-dim);line-height:1.7">散户亏损率>80%的原因不是选错基金，而是拿不住。定投3年以上正收益概率>85%，关键是不中途下车。</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <p>免责声明：以上内容仅为公开信息整理和研究参考，不构成任何投资建议。投资有风险，入市需谨慎。</p>
+  <p style="margin-top:8px">数据来源：中证指数官网、中信建投、中泰证券、中国基金报、东方财富、21世纪经济报道等 &middot; 研究日期 2026-02-28</p>
+</div>
+
+<script>
+Chart.defaults.color = '#9ca3af';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.font.family = '-apple-system, "PingFang SC", sans-serif';
+
+// Valuation chart
+new Chart(document.getElementById('chartValuation'), {
+  type: 'bar',
+  data: {
+    labels: ['上证指数', '沪深300', '中证A500', '中证红利', '科创50', '创业板指'],
+    datasets: [{
+      label: 'PE(TTM)',
+      data: [14, 13, 15, 8, 55, 35],
+      backgroundColor: ctx => {
+        const v = ctx.parsed.y;
+        if (v > 40) return 'rgba(239,68,68,0.6)';
+        if (v > 15) return 'rgba(245,158,11,0.6)';
+        return 'rgba(34,197,94,0.6)';
+      },
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => 'PE: ' + ctx.parsed.x + 'x' } }
+    },
+    scales: {
+      x: { ticks: { callback: v => v + 'x' }, grid: { color: 'rgba(255,255,255,0.04)' } },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// Lines radar
+new Chart(document.getElementById('chartLines'), {
+  type: 'radar',
+  data: {
+    labels: ['确定性', '弹性', '估值吸引力', '政策支持', '资金关注度'],
+    datasets: [
+      { label: 'AI产业链', data: [85, 95, 40, 80, 95], borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.1)', pointBackgroundColor: '#ef4444' },
+      { label: '红利资产', data: [90, 30, 85, 70, 60], borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.1)', pointBackgroundColor: '#f59e0b' },
+      { label: '半导体', data: [70, 80, 50, 85, 70], borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.1)', pointBackgroundColor: '#3b82f6' },
+      { label: '消费复苏', data: [55, 60, 70, 75, 45], borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,0.1)', pointBackgroundColor: '#22c55e' },
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'top', labels: { boxWidth: 10, padding: 14 } } },
+    scales: { r: { beginAtZero: true, max: 100, ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.08)' }, pointLabels: { font: { size: 11 } } } }
+  }
+});
+
+// Pie
+new Chart(document.getElementById('chartPie'), {
+  type: 'doughnut',
+  data: {
+    labels: ['A500 35%', '红利低波 25%', '科创50 15%', '纳100 10%', '中证1000 10%', '国债 5%'],
+    datasets: [{ data: [35, 25, 15, 10, 10, 5], backgroundColor: ['#3b82f6','#f59e0b','#ef4444','#06b6d4','#a78bfa','#64748b'], borderWidth: 0 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false, cutout: '55%',
+    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, padding: 10, font: { size: 11 } } } }
+  }
+});
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('fade-in'); observer.unobserve(entry.target); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.section').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
