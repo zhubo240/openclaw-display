@@ -1052,6 +1052,46 @@
     </div>
   </div>
 
+  <!-- AI CapEx 可持续性 -->
+  <div class="grid-2" style="margin-bottom:40px">
+    <div class="card">
+      <h3>超级计算厂商 AI CapEx（2026）</h3>
+      <div style="text-align:center;margin-bottom:16px">
+        <div style="font-size:2.4rem;font-weight:800;background:linear-gradient(135deg,#3b82f6,#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent">$660-690B</div>
+        <div style="font-size:0.85rem;color:var(--muted)">Top 5 合计 CapEx（+136% YoY）</div>
+      </div>
+      <div class="chart-container" style="height:220px">
+        <canvas id="chartHyperCapex"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <h3>AI CapEx 核心矛盾</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+        <div style="text-align:center;background:rgba(59,130,246,0.08);border-radius:12px;padding:14px">
+          <div style="font-size:1.3rem;font-weight:800;color:var(--accent)">~$500B</div>
+          <div style="font-size:0.75rem;color:var(--muted)">2026 AI 基础设施投入</div>
+        </div>
+        <div style="text-align:center;background:rgba(239,68,68,0.08);border-radius:12px;padding:14px">
+          <div style="font-size:1.3rem;font-weight:800;color:var(--red)">~$50-60B</div>
+          <div style="font-size:0.75rem;color:var(--muted)">2026 AI 直接营收</div>
+        </div>
+      </div>
+      <div style="text-align:center;font-size:0.85rem;color:var(--amber);font-weight:700;margin-bottom:16px">投入产出比 ≈ 10:1</div>
+      <table>
+        <thead><tr><th>风险因子</th><th>数据</th></tr></thead>
+        <tbody>
+          <tr><td>GPU 经济寿命 vs 会计寿命</td><td style="color:var(--red)">2-3 年 vs 5 年</td></tr>
+          <tr><td>隐含折旧低估（2026-28）</td><td style="color:var(--red);font-weight:700">$1,760 亿</td></tr>
+          <tr><td>2026 举债预期</td><td style="font-weight:700">>$4,000 亿</td></tr>
+          <tr><td>Amazon 2026 FCF</td><td style="color:var(--red)">-$170 至 -$280 亿</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:12px;padding:12px;background:rgba(34,197,94,0.06);border-radius:8px;font-size:0.82rem;color:var(--muted)">
+        <b style="color:var(--green)">不是 1999 翻版</b>：投资方是全球最赚钱的 5 家公司，合计 FCF >$2,000 亿，AI 产能"部署即售罄"。但 2027 年 ROI 验证是分水岭。
+      </div>
+    </div>
+  </div>
+
   <!-- Section 9: 风险 -->
   <div class="section-title"><span class="num">9</span> 风险提示</div>
   <div class="risk-list" style="margin-bottom:40px">
@@ -1383,6 +1423,26 @@ new Chart(document.getElementById('chartCoWoSCustomer'), {
   options: {
     responsive: true, maintainAspectRatio: false,
     plugins: { legend: { position: 'right', labels: { padding: 12, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } } } }
+  }
+});
+
+// 超级计算厂商 AI CapEx
+new Chart(document.getElementById('chartHyperCapex'), {
+  type: 'bar',
+  data: {
+    labels: ['Amazon', 'Google', 'Microsoft', 'Meta', 'Oracle'],
+    datasets: [
+      { label: '2025 CapEx ($B)', data: [84, 75, 63, 40, 18], backgroundColor: COLORS.blue + '66', borderRadius: 6, barPercentage: 0.6 },
+      { label: '2026E CapEx ($B)', data: [200, 180, 120, 125, 50], backgroundColor: COLORS.purple, borderRadius: 6, barPercentage: 0.6 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', padding: 12, font: { size: 11 } } } },
+    scales: {
+      x: { grid: { display: false } },
+      y: { grid: { color: '#1e293b33' }, ticks: { callback: v => `$${v}B` } }
+    }
   }
 });
 
