@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>风险与前景 — 中国宏观经济分析框架</title>
+<style>
+  :root {
+    --bg: #0a0a0f; --surface: #12121a; --surface2: #1a1a25; --border: #2a2a3a;
+    --text: #e0e0e8; --text2: #9090a0; --accent: #f0c040;
+    --red: #e05050; --green: #40c080; --blue: #5080e0; --orange: #e08040;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.7; -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  a { color: var(--accent); text-decoration: none; }
+
+  .header {
+    padding: 60px 0 40px; text-align: center; border-bottom: 1px solid var(--border);
+  }
+  .header .back { font-size: 0.85em; color: var(--text2); margin-bottom: 16px; display: block; }
+  .header h1 { font-size: 2em; font-weight: 700; letter-spacing: 0.04em; margin-bottom: 10px; }
+  .header .dim-label {
+    display: inline-block; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 6px; padding: 3px 12px; font-size: 0.8em; color: var(--accent);
+    font-weight: 600; margin-bottom: 14px;
+  }
+  .header .subtitle { font-size: 0.95em; color: var(--text2); max-width: 740px; margin: 0 auto; }
+
+  .key-nums {
+    display: flex; justify-content: center; gap: 24px; padding: 28px 0;
+    border-bottom: 1px solid var(--border); flex-wrap: wrap;
+  }
+  .kn-item { text-align: center; min-width: 100px; }
+  .kn-value { font-size: 1.5em; font-weight: 700; color: var(--accent); }
+  .kn-value.danger { color: var(--red); }
+  .kn-label { font-size: 0.72em; color: var(--text2); margin-top: 2px; }
+
+  .section { padding: 44px 0; border-bottom: 1px solid var(--border); }
+  .section h2 {
+    text-align: center; font-size: 1.25em; font-weight: 600;
+    color: var(--text2); letter-spacing: 0.06em; margin-bottom: 24px;
+  }
+  .section .sub {
+    text-align: center; font-size: 0.88em; color: var(--text2);
+    margin-top: -16px; margin-bottom: 24px;
+  }
+
+  .bar-section { max-width: 700px; margin: 0 auto; }
+  .bar-group { margin-bottom: 12px; }
+  .bar-header { display: flex; justify-content: space-between; font-size: 0.82em; margin-bottom: 4px; }
+  .bar-header .lbl { color: var(--text2); }
+  .bar-header .val { font-weight: 600; }
+  .bar-track { height: 10px; background: var(--surface2); border-radius: 5px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 5px; }
+
+  .cmp-table {
+    width: 100%; border-collapse: collapse; font-size: 0.85em;
+  }
+  .cmp-table th, .cmp-table td {
+    padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border);
+  }
+  .cmp-table th { color: var(--accent); font-weight: 600; font-size: 0.82em; background: var(--surface); }
+  .cmp-table tr:hover td { background: var(--surface); }
+  .cmp-table .hl { color: var(--accent); font-weight: 600; }
+  .cmp-table .warn { color: var(--red); font-weight: 600; }
+
+  .card-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px;
+  }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 20px;
+  }
+  .card h3 { font-size: 0.88em; font-weight: 600; margin-bottom: 8px; }
+  .card p { font-size: 0.8em; color: var(--text2); line-height: 1.5; }
+  .card .big { font-size: 1.4em; font-weight: 700; margin-bottom: 6px; }
+  .card .stars { color: var(--red); font-size: 1.1em; letter-spacing: 2px; margin-bottom: 6px; }
+
+  .wide-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 14px;
+  }
+  .wide-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px 22px;
+  }
+  .wide-card h3 { font-size: 0.92em; font-weight: 600; color: var(--accent); margin-bottom: 8px; }
+  .wide-card p { font-size: 0.85em; color: var(--text2); line-height: 1.6; }
+
+  .ascii-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 24px; max-width: 700px; margin: 0 auto;
+    font-family: "SF Mono", "Fira Code", monospace; font-size: 0.84em;
+    line-height: 1.8; color: var(--text2); white-space: pre; overflow-x: auto;
+  }
+  .ascii-box .hl { color: var(--accent); font-weight: 600; }
+  .ascii-box .r { color: var(--red); font-weight: 600; }
+  .ascii-box .g { color: var(--green); }
+  .ascii-box .b { color: var(--blue); }
+  .ascii-box .o { color: var(--orange); }
+
+  .callout {
+    margin-top: 18px; padding: 16px 20px; background: var(--surface);
+    border: 1px solid var(--border); border-left: 3px solid var(--red);
+    border-radius: 8px; font-size: 0.84em; max-width: 700px; margin-left: auto; margin-right: auto;
+  }
+  .callout .cl-title { color: var(--accent); font-weight: 600; margin-bottom: 6px; }
+  .callout .cl-body { color: var(--text2); line-height: 1.5; }
+
+  .scenario-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+  }
+  .scenario-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px; text-align: center;
+  }
+  .scenario-card .sc-label { font-size: 0.78em; color: var(--text2); margin-bottom: 6px; }
+  .scenario-card .sc-rate { font-size: 1.6em; font-weight: 700; margin-bottom: 4px; }
+  .scenario-card .sc-prob { font-size: 0.9em; font-weight: 600; margin-bottom: 10px; }
+  .scenario-card .sc-desc { font-size: 0.78em; color: var(--text2); line-height: 1.5; text-align: left; }
+
+  .footer { padding: 36px 0; text-align: center; color: var(--text2); font-size: 0.8em; }
+
+  @media (max-width: 600px) {
+    .key-nums { gap: 12px; }
+    .kn-value { font-size: 1.2em; }
+    .card-grid, .wide-grid { grid-template-columns: 1fr; }
+    .scenario-grid { grid-template-columns: 1fr; }
+    .ascii-box { font-size: 0.72em; padding: 14px; }
+    .cmp-table { font-size: 0.75em; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <section class="header">
+    <a class="back" href="../index.html">&larr; 返回总览</a>
+    <div class="dim-label">维度十</div>
+    <h1>风险与前景</h1>
+    <p class="subtitle">七大短期风险相互强化、中等收入陷阱成功率仅13%、中美博弈每年拖累0.5-1pp增长。但中国仍有政策空间和产业优势——结局取决于改革意愿，而非资源禀赋。</p>
+  </section>
+
+  <div class="key-nums">
+    <div class="kn-item"><div class="kn-value">3.5-4.5%</div><div class="kn-label">基准潜在增长率</div></div>
+    <div class="kn-item"><div class="kn-value danger">55%</div><div class="kn-label">基准情景概率</div></div>
+    <div class="kn-item"><div class="kn-value danger">13%</div><div class="kn-label">中等收入跨越历史成功率</div></div>
+    <div class="kn-item"><div class="kn-value">120亿吨</div><div class="kn-label">年碳排放（全球第一）</div></div>
+    <div class="kn-item"><div class="kn-value danger">-0.5~1pp</div><div class="kn-label">中美博弈年化GDP拖累</div></div>
+  </div>
+
+  <!-- Seven risks -->
+  <section class="section">
+    <h2>七 大 短 期 风 险</h2>
+    <p class="sub">不是单一风险致命，而是多个风险相互强化的"叠加效应"</p>
+    <div class="card-grid" style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));">
+      <div class="card">
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <h3>需求不足与通缩</h3>
+        <p>CPI 0.2%，PPI负增长超20月，GDP平减指数连续为负。所有其他风险的放大器。</p>
+      </div>
+      <div class="card">
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <h3>房地产持续调整</h3>
+        <p>销售较峰值腰斩，房价仍在跌。拖累GDP约1-1.5pp。居民财富、地方财政、银行资产三路传导。</p>
+      </div>
+      <div class="card">
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9734;</div>
+        <h3>地方政府债务</h3>
+        <p>广义100-110万亿。化债缓解流动性但不治本。挤出民生和基建支出。</p>
+      </div>
+      <div class="card">
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9734;</div>
+        <h3>青年失业</h3>
+        <p>调整口径15-17%。每年1000万+毕业生。"失去的一代"对消费和生育的长期压制。</p>
+      </div>
+      <div class="card">
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9734;</div>
+        <h3>地缘政治冲击</h3>
+        <p>特朗普可能60%+全面关税。台海风险。芯片封锁收紧。最大不确定性来自非经济因素。</p>
+      </div>
+      <div class="card">
+        <div class="stars">&#9733;&#9733;&#9733;&#9734;&#9734;</div>
+        <h3>资本外流与汇率</h3>
+        <p>FDI持续下降，中美利差倒挂。"净误差与遗漏"长期大额负值。资本管制是安全阀。</p>
+      </div>
+      <div class="card">
+        <div class="stars">&#9733;&#9733;&#9733;&#9734;&#9734;</div>
+        <h3>金融体系</h3>
+        <p>中小银行承压，净息差1.5%历史最低。不会系统性崩盘，但可能"日本化"——保守、僵化。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Risk interaction -->
+  <section class="section">
+    <h2>风 险 相 互 强 化 ：负 反 馈 循 环</h2>
+    <div class="ascii-box"><span class="hl">风险传导网络</span>
+
+<span class="r">需求不足</span> ←──────→ <span class="r">通缩压力</span>
+    ↕                       ↕
+<span class="o">房地产调整</span> ←──────→ <span class="o">地方债务</span>
+    ↕                       ↕
+<span class="o">就业压力</span> ←──────→ 消费低迷
+    ↕
+社会稳定风险
+
+<span class="hl">传导示例</span>
+房价跌 → 土地卖不出 → 地方没钱 → 压缩支出
+  ↓                                    ↓
+居民财富缩水 → 消费下降          基建停 → 就业差
+  ↓                                    ↓
+企业降价 → 利润降 → 裁员   ←───────┘
+  ↓
+<span class="r">通缩螺旋</span>
+
+单一风险可控，多个同时恶化 → <span class="r">"叠加效应"</span></div>
+  </section>
+
+  <!-- Policy space -->
+  <section class="section">
+    <h2>短 期 政 策 空 间</h2>
+    <div style="overflow-x:auto;">
+      <table class="cmp-table">
+        <thead><tr><th>政策工具</th><th>空间</th><th>主要约束</th><th>效果评估</th></tr></thead>
+        <tbody>
+          <tr><td>降息</td><td class="warn">有限</td><td>银行息差 + 汇率 + 资本外流</td><td>边际效果递减</td></tr>
+          <tr><td>降准</td><td>中等</td><td>资金空转，传导不畅</td><td>边际效果递减</td></tr>
+          <tr><td>财政赤字</td><td class="hl">有空间</td><td>政治意愿 + 使用效率</td><td>最直接有效</td></tr>
+          <tr><td>特别国债</td><td class="hl">有空间</td><td>需要更大力度</td><td>中央加杠杆的主渠道</td></tr>
+          <tr><td>消费补贴</td><td class="hl">有空间</td><td>覆盖面和可持续性</td><td>直达需求端</td></tr>
+          <tr><td>房地产松绑</td><td class="warn">已大幅松绑</td><td>市场信心比政策更重要</td><td>效果有限</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout" style="margin-top:20px;border-left-color:var(--orange);">
+      <div class="cl-title">2025-2026 是关键窗口期</div>
+      <div class="cl-body">如果政策力度足够（财政为主、货币为辅、直达需求端），有望企稳。否则可能进入更长的低增长期。越早干预，修复成本越低。</div>
+    </div>
+  </section>
+
+  <!-- Middle income trap -->
+  <section class="section">
+    <h2>中 等 收 入 陷 阱 ：13% 的 成 功 率</h2>
+    <p class="sub">人均 ~$13,000 正处门槛附近 — 历史上 101 个中等收入经济体只有 13 个跨过</p>
+    <div style="overflow-x:auto;">
+      <table class="cmp-table">
+        <thead><tr><th>维度</th><th>日本（1970-90）</th><th>韩国（1990-2010）</th><th>拉美</th><th>中国（2020s）</th></tr></thead>
+        <tbody>
+          <tr><td>跨越结果</td><td class="hl">成功（后停滞）</td><td class="hl">成功</td><td class="warn">失败</td><td>待定</td></tr>
+          <tr><td>制造业基础</td><td>强</td><td>强</td><td class="warn">弱</td><td class="hl">强</td></tr>
+          <tr><td>人口红利</td><td>有</td><td>有</td><td>有</td><td class="warn">已无</td></tr>
+          <tr><td>制度改革</td><td>渐进</td><td class="hl">危机倒逼深改</td><td class="warn">停滞</td><td class="warn">缓慢</td></tr>
+          <tr><td>外部环境</td><td>全球化上升期</td><td>全球化上升期</td><td>波动</td><td class="warn">逆全球化</td></tr>
+          <tr><td>治理能力</td><td>强</td><td>强</td><td class="warn">弱</td><td>强</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="wide-grid" style="margin-top:20px;">
+      <div class="wide-card">
+        <h3>有利条件</h3>
+        <p>14亿人口市场规模；全产业链制造业基础；STEM人才充裕；新能源/AI/5G自主技术；基础设施全球领先；政府动员能力。</p>
+      </div>
+      <div class="wide-card">
+        <h3>不利条件</h3>
+        <p>"未富先老"人口负增长；TFP从4%降至~1%；总杠杆率300%；房地产泡沫调整；制度改革进入深水区；技术封锁和逆全球化；基尼系数0.47。</p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:20px;">
+      <div class="cl-title">概率评估</div>
+      <div class="cl-body">跨越但低增长（60%）&gt; 陷入中等收入陷阱（25%）&gt; 成功实现高质量增长（15%）。最大风险不是"不具备能力"，而是"改革意愿不足"。</div>
+    </div>
+  </section>
+
+  <!-- US-China -->
+  <section class="section">
+    <h2>中 美 博 弈 ：慢 性 病 ，不 是 急 性 病</h2>
+    <p class="sub">长期结构性趋势 — 不会因某一届政府根本改变</p>
+    <div style="overflow-x:auto;">
+      <table class="cmp-table">
+        <thead><tr><th>阶段</th><th>时期</th><th>焦点</th><th>烈度</th></tr></thead>
+        <tbody>
+          <tr><td>贸易摩擦</td><td>2018-2019</td><td>关税 + 贸易逆差</td><td>中</td></tr>
+          <tr><td>科技战</td><td>2019-2022</td><td>华为 + 芯片 + 实体清单</td><td class="warn">高</td></tr>
+          <tr><td>全面博弈</td><td>2022-至今</td><td>芯片 + AI + 投资审查 + 台海</td><td class="warn">很高</td></tr>
+          <tr><td>可能升级</td><td>2025-?</td><td>全面关税 + 金融制裁?</td><td class="warn">极高?</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="overflow-x:auto;margin-top:20px;">
+      <table class="cmp-table">
+        <thead><tr><th>维度</th><th>GDP年化影响</th><th>可控性</th></tr></thead>
+        <tbody>
+          <tr><td>贸易关税</td><td class="warn">-0.3~-0.5pp</td><td>中等（可转口）</td></tr>
+          <tr><td>科技封锁</td><td class="warn">-0.2~-1.0pp</td><td class="warn">低（需自主突破）</td></tr>
+          <tr><td>金融制裁（如发生）</td><td class="warn">-1~-3pp</td><td class="warn">低</td></tr>
+          <tr><td>供应链重组</td><td>-0.2~-0.3pp</td><td>中等</td></tr>
+          <tr><td>信心和预期</td><td>难以量化</td><td class="warn">低</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="ascii-box" style="margin-top:20px;"><span class="hl">中国的应对准备</span>
+
+减持美债  $1.3万亿(峰值) → <span class="o">$0.8万亿</span>
+增持黄金  1,900吨(2019) → <span class="hl">2,300吨</span>(2024)
+CIPS系统  人民币跨境支付替代方案
+本币结算  推动与贸易伙伴去美元化
+制造业份额  仍占全球 <span class="hl">~30%</span>，并未下降
+出口结构变化  低端流出 → 中高端+中间品增长
+
+<span class="o">"脱钩"更多是"重新布线"，中国仍是核心节点</span>
+<span class="r">但短期内无法完全摆脱美元体系依赖</span></div>
+  </section>
+
+  <!-- Dual carbon -->
+  <section class="section">
+    <h2>双 碳 转 型 ：约 束 与 机 遇</h2>
+    <p class="sub">碳达峰 2030 前 / 碳中和 2060 — 绿色产业正替代房地产成为新引擎</p>
+    <div class="bar-section">
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">煤炭 — 仍是主角</span><span class="val" style="color:var(--red)">54%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:54%;background:var(--red)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">石油</span><span class="val" style="color:var(--orange)">18%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:18%;background:var(--orange)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">非化石能源 — 从12%→19%</span><span class="val" style="color:var(--green)">19%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:19%;background:var(--green)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">天然气</span><span class="val" style="color:var(--blue)">9%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:9%;background:var(--blue)"></div></div>
+      </div>
+    </div>
+    <div class="card-grid" style="margin-top:24px;">
+      <div class="card">
+        <div class="big" style="color:var(--green)">13亿kW</div>
+        <h3>风电+光伏装机</h3>
+        <p>已超过煤电。2024年新增可再生能源装机约3亿kW，全球最多。</p>
+      </div>
+      <div class="card">
+        <div class="big" style="color:var(--green)">40%+</div>
+        <h3>新能源车渗透率</h3>
+        <p>电动汽车保有量约2,800万辆，全球第一。"新三样"出口快速增长。</p>
+      </div>
+      <div class="card">
+        <div class="big" style="color:var(--accent)">6800亿$</div>
+        <h3>绿色能源投资</h3>
+        <p>全球最多，约占全球40%。绿色贷款余额超30万亿元。</p>
+      </div>
+      <div class="card">
+        <div class="big" style="color:var(--orange)">140-175万亿</div>
+        <h3>碳中和总投资需求</h3>
+        <p>2020-2060年，年均3.5-4.5万亿，占GDP约3-4%。</p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:20px;border-left-color:var(--green);">
+      <div class="cl-title">长期机遇大于约束</div>
+      <div class="cl-body">碳强度较2005年已降~60%。光伏、锂电池、电动车技术领先可维持10-20年。减少石油天然气进口依赖（石油对外依存度72%、天然气44%）。碳达峰可能提前至2025-2028年。关键风险：转型速度与短期增长的平衡。</div>
+    </div>
+  </section>
+
+  <!-- Three scenarios -->
+  <section class="section">
+    <h2>三 大 情 景 ：未 来 5-10 年</h2>
+    <p class="sub">政策选择（而非资源禀赋）将决定走向哪个情景</p>
+    <div class="scenario-grid">
+      <div class="scenario-card" style="border-color:var(--green);">
+        <div class="sc-label">乐观情景</div>
+        <div class="sc-rate" style="color:var(--green);">4.5-5.5%</div>
+        <div class="sc-prob" style="color:var(--green);">概率 20%</div>
+        <div class="sc-desc">深化市场化改革；科技自主重大突破；房地产2025-26年触底；中美关系趋稳；消费升级释放内需。</div>
+      </div>
+      <div class="scenario-card" style="border-color:var(--accent);">
+        <div class="sc-label">基准情景</div>
+        <div class="sc-rate" style="color:var(--accent);">3.5-4.5%</div>
+        <div class="sc-prob" style="color:var(--accent);">概率 55%</div>
+        <div class="sc-desc">渐进式改革部分突破；"卡脖子"有进展；房地产L型底2-3年；中美紧张但可控；消费恢复但不强劲。</div>
+      </div>
+      <div class="scenario-card" style="border-color:var(--red);">
+        <div class="sc-label">悲观情景</div>
+        <div class="sc-rate" style="color:var(--red);">2-3.5%</div>
+        <div class="sc-prob" style="color:var(--red);">概率 25%</div>
+        <div class="sc-desc">改革停滞或倒退；技术封锁全面升级；房地产日本式长期阴跌；地缘冲突升级；通缩循环——"失去的十年"。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Growth accounting -->
+  <section class="section">
+    <h2>增 长 核 算 ：三 驾 马 车 的 前 景</h2>
+    <div style="overflow-x:auto;">
+      <table class="cmp-table">
+        <thead><tr><th>要素</th><th>2025-2030 贡献</th><th>2031-2035 贡献</th><th>趋势</th></tr></thead>
+        <tbody>
+          <tr><td>劳动投入（净）</td><td class="warn">-0.1pp</td><td class="warn">-0.4pp</td><td class="warn">人口负增长加速</td></tr>
+          <tr><td>资本投入</td><td>+2.0-2.5pp</td><td>+1.5-2.0pp</td><td>仍是主力但边际递减</td></tr>
+          <tr><td>TFP（关键变量）</td><td>+1.0-1.5pp</td><td>+1.0-1.5pp</td><td class="hl">取决于改革和创新</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="ascii-box" style="margin-top:20px;"><span class="hl">中国增速下降轨迹 — 与日韩同阶段对比</span>
+
+        中国           日本           韩国
+1978-2000  <span class="g">~10%</span>
+2000-2010  <span class="g">~10.5%</span>
+2011-2019  <span class="o">~7%</span>     1978-90 <span class="o">~4.5%</span>  1994-07 <span class="o">~5%</span>
+2020-2024  <span class="o">~5%</span>
+2025-2030  <span class="hl">~4%?</span>    （人均$10k-20k阶段）
+
+增速下降是经济发展的自然规律
+关键问题：是<span class="g">"正常减速"</span>还是<span class="r">"失速停滞"</span>？</div>
+  </section>
+
+  <!-- Beyond GDP -->
+  <section class="section">
+    <h2>增 长 质 量 比 增 速 更 重 要</h2>
+    <p class="sub">即使增速降至4%也不意味着"失败" — 关键看这些指标</p>
+    <div class="card-grid" style="grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));">
+      <div class="card">
+        <h3>人均GDP增速</h3>
+        <p>人口在减少 → 人均增速可能高于总量增速。</p>
+      </div>
+      <div class="card">
+        <h3>居民收入增长</h3>
+        <p>是否跑赢GDP？劳动报酬占比是否上升？</p>
+      </div>
+      <div class="card">
+        <h3>就业质量</h3>
+        <p>不仅看失业率，还看工作质量和收入水平。</p>
+      </div>
+      <div class="card">
+        <h3>创新产出</h3>
+        <p>专利质量、技术突破、全球竞争力。</p>
+      </div>
+      <div class="card">
+        <h3>环境质量</h3>
+        <p>碳排放下降、空气质量、生态改善。</p>
+      </div>
+      <div class="card">
+        <h3>分配公平</h3>
+        <p>基尼系数、社会流动性、中产厚度。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Core judgments -->
+  <section class="section">
+    <h2>核 心 判 断</h2>
+    <div class="wide-grid">
+      <div class="wide-card">
+        <h3>"温水煮青蛙"比"硬着陆"更可能</h3>
+        <p>中国不太可能爆发金融危机式的突然崩盘——政府掌控力强、内债为主、有政策空间。更可能的是增长持续放缓、效率持续降低、活力持续流失的"慢性病"。这比危机更难应对，因为缺乏改革的紧迫感。</p>
+      </div>
+      <div class="wide-card">
+        <h3>改革意愿是最大的变量</h3>
+        <p>中国有跨越中等收入陷阱的硬件条件（制造业、人才、基建），缺的是"软件升级"——要素市场化、国企改革、财税改革、户籍改革。韩国的经验：危机倒逼了深改才成功跨越。中国是否愿意"不靠危机也改革"？</p>
+      </div>
+      <div class="wide-card">
+        <h3>中美博弈是长期背景板</h3>
+        <p>当前实际拖累约0.5-1pp/年，可控。但如果升级至全面关税+金融制裁，影响可达2-3pp。最极端情景（台海冲突）将是灾难性的。"竞争性共存"是最可能的长期格局。中国的应对空间在，但代价在增加。</p>
+      </div>
+      <div class="wide-card">
+        <h3>绿色转型是最确定的增长引擎</h3>
+        <p>在所有不确定性中，双碳转型是方向最明确、产业优势最大、全球需求最刚性的赛道。光伏、电动车、锂电池的技术领先可维持10-20年。年均3.5-4.5万亿的绿色投资需求本身就是巨大的增长动力。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="footer">
+    <p>数据基准：2024 年 &middot; 来源：IMF、世界银行、BIS、IEA、Global Carbon Project、各投行研报</p>
+    <p style="margin-top:8px;"><a href="../index.html">&larr; 返回中国宏观经济分析框架总览</a></p>
+  </section>
+
+</div>
+
+</body>
+</html>

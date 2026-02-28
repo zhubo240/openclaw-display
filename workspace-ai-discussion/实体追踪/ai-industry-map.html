@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 行业主要玩家图谱</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --card: #12121a;
+    --border: #1e1e2e;
+    --text: #e0e0e0;
+    --dim: #888;
+    --accent: #6c5ce7;
+    --green: #00b894;
+    --red: #e74c3c;
+    --orange: #f39c12;
+    --blue: #0984e3;
+    --cyan: #00cec9;
+    --pink: #fd79a8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  .header {
+    text-align: center;
+    padding: 60px 20px 30px;
+    position: relative;
+  }
+  .header h1 {
+    font-size: 2.4rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #6c5ce7, #00cec9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .header .subtitle {
+    color: var(--dim);
+    margin-top: 8px;
+    font-size: 0.95rem;
+  }
+
+  .nav {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 20px;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav button {
+    padding: 8px 18px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: transparent;
+    color: var(--dim);
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+  .nav button:hover, .nav button.active {
+    border-color: var(--accent);
+    color: #fff;
+    background: rgba(108,92,231,0.15);
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .section {
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .section.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- Cards --- */
+  .grid {
+    display: grid;
+    gap: 16px;
+  }
+  .grid-2 { grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .grid-4 { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+  .card-sub {
+    font-size: 0.8rem;
+    color: var(--dim);
+  }
+
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 0.88rem;
+  }
+  .stat-row:last-child { border-bottom: none; }
+  .stat-label { color: var(--dim); }
+  .stat-value { font-weight: 600; text-align: right; }
+  .stat-value.green { color: var(--green); }
+  .stat-value.red { color: var(--red); }
+  .stat-value.orange { color: var(--orange); }
+  .stat-value.blue { color: var(--blue); }
+  .stat-value.cyan { color: var(--cyan); }
+  .stat-value.pink { color: var(--pink); }
+
+  .tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin: 2px;
+  }
+  .tag-closed { background: rgba(108,92,231,0.2); color: #a29bfe; }
+  .tag-open { background: rgba(0,184,148,0.2); color: #55efc4; }
+  .tag-chip { background: rgba(9,132,227,0.2); color: #74b9ff; }
+  .tag-cloud { background: rgba(0,206,201,0.2); color: #81ecec; }
+  .tag-vc { background: rgba(253,121,168,0.2); color: #fd79a8; }
+  .tag-geo { background: rgba(243,156,18,0.2); color: #ffeaa7; }
+  .tag-neo { background: rgba(162,155,254,0.2); color: #a29bfe; }
+
+  /* --- Bar Chart --- */
+  .bar-chart { margin: 20px 0; }
+  .bar-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    gap: 12px;
+  }
+  .bar-label {
+    width: 140px;
+    text-align: right;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+  .bar-track {
+    flex: 1;
+    height: 28px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #fff;
+    transition: width 0.8s ease;
+    min-width: fit-content;
+  }
+
+  /* --- Relationship lines --- */
+  .rel-section { margin: 24px 0; }
+  .rel-title {
+    font-size: 0.85rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .rel-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    margin-bottom: 6px;
+    background: rgba(255,255,255,0.02);
+    border-radius: 8px;
+    font-size: 0.88rem;
+    transition: background 0.2s;
+  }
+  .rel-item:hover { background: rgba(255,255,255,0.05); }
+  .rel-arrow {
+    color: var(--accent);
+    font-weight: 700;
+    flex-shrink: 0;
+    width: 24px;
+    text-align: center;
+  }
+  .rel-amount {
+    color: var(--green);
+    font-weight: 600;
+    flex-shrink: 0;
+    min-width: 60px;
+  }
+  .rel-note {
+    color: var(--dim);
+    font-size: 0.8rem;
+    margin-left: auto;
+  }
+
+  /* --- Flow diagram --- */
+  .flow {
+    text-align: center;
+    padding: 30px 0;
+  }
+  .flow-box {
+    display: inline-block;
+    padding: 14px 24px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin: 6px;
+    background: var(--card);
+    font-size: 0.88rem;
+  }
+  .flow-arrow {
+    display: block;
+    color: var(--accent);
+    font-size: 1.5rem;
+    margin: 4px 0;
+  }
+
+  /* --- Table --- */
+  .rel-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 0.88rem;
+  }
+  .rel-table th {
+    text-align: left;
+    padding: 10px 14px;
+    color: var(--dim);
+    font-weight: 500;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .rel-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    vertical-align: top;
+  }
+  .rel-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .section-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 32px 0 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-desc {
+    color: var(--dim);
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+  }
+
+  .highlight-box {
+    background: rgba(108,92,231,0.08);
+    border: 1px solid rgba(108,92,231,0.2);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 16px 0;
+    font-size: 0.9rem;
+  }
+
+  .footer {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--dim);
+    font-size: 0.8rem;
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+  }
+
+  @media (max-width: 600px) {
+    .header h1 { font-size: 1.6rem; }
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .bar-label { width: 80px; font-size: 0.75rem; }
+    .nav button { padding: 6px 12px; font-size: 0.78rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>AI 行业主要玩家图谱</h1>
+  <div class="subtitle">前沿实验室 / 基础算力 / 云计算 / 国际格局 / 资本与VC &mdash; 更新于 2026-02-28</div>
+</div>
+
+<div class="nav">
+  <button class="active" onclick="show('overview')">总览</button>
+  <button onclick="show('labs')">前沿实验室</button>
+  <button onclick="show('silicon')">基础算力</button>
+  <button onclick="show('cloud')">云与计算</button>
+  <button onclick="show('global')">国际格局</button>
+  <button onclick="show('capital')">资本与VC</button>
+  <button onclick="show('relations')">关系速查</button>
+</div>
+
+<div class="container">
+
+<!-- ==================== OVERVIEW ==================== -->
+<div id="overview" class="section active">
+
+  <div class="section-title">体量对比</div>
+  <div class="section-desc">市值/估值 (美元)</div>
+  <div class="bar-chart">
+    <div class="bar-row">
+      <div class="bar-label">NVIDIA</div>
+      <div class="bar-track"><div class="bar-fill" style="width:100%;background:linear-gradient(90deg,#6c5ce7,#00cec9)">$3.3 万亿</div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">Microsoft</div>
+      <div class="bar-track"><div class="bar-fill" style="width:91%;background:linear-gradient(90deg,#0984e3,#74b9ff)">$3.0 万亿</div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">Alphabet</div>
+      <div class="bar-track"><div class="bar-fill" style="width:70%;background:linear-gradient(90deg,#00b894,#55efc4)">$2.3 万亿</div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">Meta</div>
+      <div class="bar-track"><div class="bar-fill" style="width:55%;background:linear-gradient(90deg,#0984e3,#00cec9)">$1.8 万亿</div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">OpenAI</div>
+      <div class="bar-track"><div class="bar-fill" style="width:9%;background:#a29bfe">$3000 亿</div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">xAI</div>
+      <div class="bar-track"><div class="bar-fill" style="width:2.4%;background:#fd79a8;min-width:80px">$800 亿</div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">Anthropic</div>
+      <div class="bar-track"><div class="bar-fill" style="width:1.8%;background:#00cec9;min-width:80px">$600 亿</div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">CoreWeave</div>
+      <div class="bar-track"><div class="bar-fill" style="width:1.5%;background:#f39c12;min-width:80px">$490 亿</div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">SSI</div>
+      <div class="bar-track"><div class="bar-fill" style="width:0.5%;background:#636e72;min-width:60px">$50 亿</div></div>
+    </div>
+  </div>
+
+  <div class="section-desc" style="margin-top:30px">年化 AI 相关收入 (美元)</div>
+  <div class="bar-chart">
+    <div class="bar-row">
+      <div class="bar-label">NVIDIA</div>
+      <div class="bar-track"><div class="bar-fill" style="width:100%;background:linear-gradient(90deg,#6c5ce7,#00cec9)">$2600 亿+</div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">MS 智能云</div>
+      <div class="bar-track"><div class="bar-fill" style="width:26%;background:#0984e3">$680 亿</div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">OpenAI</div>
+      <div class="bar-track"><div class="bar-fill" style="width:4.9%;background:#a29bfe;min-width:80px">$127 亿 ARR</div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">CoreWeave</div>
+      <div class="bar-track"><div class="bar-fill" style="width:1.9%;background:#f39c12;min-width:70px">$50 亿</div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">Anthropic</div>
+      <div class="bar-track"><div class="bar-fill" style="width:0.5%;background:#00cec9;min-width:70px">$14 亿 ARR</div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">Mistral</div>
+      <div class="bar-track"><div class="bar-fill" style="width:0.15%;background:#fd79a8;min-width:60px">$4 亿 ARR</div></div>
+    </div>
+  </div>
+
+  <div class="highlight-box">
+    <strong>核心洞察:</strong> 所有 AI 投资最终都流向 NVIDIA。AI 行业本质是一个「资本 → 算力 → 模型 → 应用 → 收入 → 再投资算力」的飞轮。NVIDIA 在飞轮中枢截取了最大份额。
+  </div>
+
+  <div class="section-title">资金终极流向</div>
+  <div class="flow">
+    <div class="flow-box">主权资本 / 超级LP<br><small style="color:var(--dim)">沙特PIF, Mubadala, 淡马锡</small></div>
+    <span class="flow-arrow">↓</span>
+    <div class="flow-box">VC 基金 / 科技巨头直投<br><small style="color:var(--dim)">a16z, Sequoia, Thrive, SoftBank</small></div>
+    <span class="flow-arrow">↓</span>
+    <div class="flow-box">前沿实验室<br><small style="color:var(--dim)">OpenAI $3000亿 / Anthropic $600亿 / xAI $800亿</small></div>
+    <span class="flow-arrow">↓ 买算力</span>
+    <div class="flow-box">云 & 算力提供者<br><small style="color:var(--dim)">CoreWeave, AWS, Azure, GCP</small></div>
+    <span class="flow-arrow">↓ 买GPU</span>
+    <div class="flow-box" style="border-color:var(--accent)"><strong>NVIDIA</strong><br><small style="color:var(--green)">$2600亿+ 营收</small></div>
+  </div>
+</div>
+
+<!-- ==================== LABS ==================== -->
+<div id="labs" class="section">
+  <div class="section-title">前沿实验室 &mdash; 闭源阵营</div>
+  <div class="section-desc">直接训练和发布最强大模型的公司</div>
+
+  <div class="grid grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(108,92,231,0.2);color:#a29bfe">O</div>
+        <div><div class="card-title">OpenAI</div><div class="card-sub">Sam Altman &middot; San Francisco</div></div>
+      </div>
+      <div class="stat-row"><span class="stat-label">旗舰模型</span><span class="stat-value">GPT-5.3 Codex</span></div>
+      <div class="stat-row"><span class="stat-label">估值</span><span class="stat-value green">$3000 亿</span></div>
+      <div class="stat-row"><span class="stat-label">ARR</span><span class="stat-value">$127 亿</span></div>
+      <div class="stat-row"><span class="stat-label">用户</span><span class="stat-value">3 亿</span></div>
+      <div class="stat-row"><span class="stat-label">核心投资人</span><span class="stat-value">Microsoft $13B+</span></div>
+      <div class="stat-row"><span class="stat-label">基础设施</span><span class="stat-value blue">Stargate $5000亿</span></div>
+      <div class="stat-row"><span class="stat-label">策略</span><span class="stat-value">速度优先, AGI竞赛</span></div>
+      <div style="margin-top:10px"><span class="tag tag-closed">闭源</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(0,206,201,0.2);color:#00cec9">A</div>
+        <div><div class="card-title">Anthropic</div><div class="card-sub">Dario Amodei &middot; San Francisco</div></div>
+      </div>
+      <div class="stat-row"><span class="stat-label">旗舰模型</span><span class="stat-value">Claude 4.6 Opus</span></div>
+      <div class="stat-row"><span class="stat-label">估值</span><span class="stat-value green">$600 亿</span></div>
+      <div class="stat-row"><span class="stat-label">ARR</span><span class="stat-value">$14 亿</span></div>
+      <div class="stat-row"><span class="stat-label">外部融资</span><span class="stat-value">$400 亿+</span></div>
+      <div class="stat-row"><span class="stat-label">投资人</span><span class="stat-value">MS+Amazon+Google</span></div>
+      <div class="stat-row"><span class="stat-label">五角大楼</span><span class="stat-value red">拒绝无限制访问</span></div>
+      <div class="stat-row"><span class="stat-label">策略</span><span class="stat-value">安全优先, 企业路线</span></div>
+      <div style="margin-top:10px"><span class="tag tag-closed">闭源</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(0,184,148,0.2);color:#00b894">G</div>
+        <div><div class="card-title">Google DeepMind</div><div class="card-sub">Demis Hassabis &middot; London</div></div>
+      </div>
+      <div class="stat-row"><span class="stat-label">旗舰模型</span><span class="stat-value">Gemini 2.5 Pro</span></div>
+      <div class="stat-row"><span class="stat-label">母公司市值</span><span class="stat-value green">$2.3 万亿</span></div>
+      <div class="stat-row"><span class="stat-label">算力</span><span class="stat-value">TPU自研, 近乎无限</span></div>
+      <div class="stat-row"><span class="stat-label">2026 Capex</span><span class="stat-value">$1750-1850 亿</span></div>
+      <div class="stat-row"><span class="stat-label">成就</span><span class="stat-value cyan">诺贝尔奖 (AlphaFold)</span></div>
+      <div class="stat-row"><span class="stat-label">策略</span><span class="stat-value">科研驱动, 全栈自主</span></div>
+      <div style="margin-top:10px"><span class="tag tag-closed">闭源</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(253,121,168,0.2);color:#fd79a8">X</div>
+        <div><div class="card-title">xAI / Grok</div><div class="card-sub">Elon Musk &middot; Austin</div></div>
+      </div>
+      <div class="stat-row"><span class="stat-label">旗舰模型</span><span class="stat-value">Grok 3.5</span></div>
+      <div class="stat-row"><span class="stat-label">估值</span><span class="stat-value green">$800 亿</span></div>
+      <div class="stat-row"><span class="stat-label">算力</span><span class="stat-value">Colossus 超级集群</span></div>
+      <div class="stat-row"><span class="stat-label">五角大楼</span><span class="stat-value green">获批机密访问</span></div>
+      <div class="stat-row"><span class="stat-label">争议</span><span class="stat-value red">深度伪造调查</span></div>
+      <div class="stat-row"><span class="stat-label">策略</span><span class="stat-value">无限制, 反建制</span></div>
+      <div style="margin-top:10px"><span class="tag tag-closed">闭源</span></div>
+    </div>
+  </div>
+
+  <div class="section-title">前沿实验室 &mdash; 开源阵营</div>
+  <div class="grid grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(9,132,227,0.2);color:#74b9ff">M</div>
+        <div><div class="card-title">Meta AI / LLaMA</div><div class="card-sub">Mark Zuckerberg &middot; Menlo Park</div></div>
+      </div>
+      <div class="stat-row"><span class="stat-label">旗舰模型</span><span class="stat-value">LLaMA 4 (2T 参数)</span></div>
+      <div class="stat-row"><span class="stat-label">母公司市值</span><span class="stat-value green">$1.8 万亿</span></div>
+      <div class="stat-row"><span class="stat-label">2026 Capex</span><span class="stat-value">$1350 亿</span></div>
+      <div class="stat-row"><span class="stat-label">芯片</span><span class="stat-value">NVIDIA + AMD 6GW</span></div>
+      <div class="stat-row"><span class="stat-label">策略</span><span class="stat-value">开源搅局, 自用为主</span></div>
+      <div style="margin-top:10px"><span class="tag tag-open">开源</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(231,76,60,0.2);color:#e74c3c">D</div>
+        <div><div class="card-title">DeepSeek</div><div class="card-sub">梁文锋 &middot; 杭州</div></div>
+      </div>
+      <div class="stat-row"><span class="stat-label">旗舰模型</span><span class="stat-value">V4 (即将发布)</span></div>
+      <div class="stat-row"><span class="stat-label">背景</span><span class="stat-value">幻方量化</span></div>
+      <div class="stat-row"><span class="stat-label">下载量</span><span class="stat-value">7500 万+</span></div>
+      <div class="stat-row"><span class="stat-label">成本优势</span><span class="stat-value green">1/10 硅谷成本</span></div>
+      <div class="stat-row"><span class="stat-label">芯片争议</span><span class="stat-value red">疑似违规使用Blackwell</span></div>
+      <div class="stat-row"><span class="stat-label">策略</span><span class="stat-value">极致效率, 转向华为</span></div>
+      <div style="margin-top:10px"><span class="tag tag-open">开源</span><span class="tag tag-geo">芯片战争焦点</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(243,156,18,0.2);color:#f39c12">Mi</div>
+        <div><div class="card-title">Mistral AI</div><div class="card-sub">Arthur Mensch &middot; Paris</div></div>
+      </div>
+      <div class="stat-row"><span class="stat-label">旗舰模型</span><span class="stat-value">Large 2, Devstral 2</span></div>
+      <div class="stat-row"><span class="stat-label">ARR</span><span class="stat-value">$4 亿+</span></div>
+      <div class="stat-row"><span class="stat-label">收购</span><span class="stat-value">Koyeb (全栈转型)</span></div>
+      <div class="stat-row"><span class="stat-label">定位</span><span class="stat-value cyan">欧洲 AI 旗手</span></div>
+      <div class="stat-row"><span class="stat-label">策略</span><span class="stat-value">数字主权, MIT许可</span></div>
+      <div style="margin-top:10px"><span class="tag tag-open">开源</span><span class="tag tag-geo">欧洲</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(255,255,255,0.1);color:var(--dim)">Q</div>
+        <div><div class="card-title">阿里 Qwen / 字节豆包 / 百度文心</div><div class="card-sub">中国开源三巨头</div></div>
+      </div>
+      <div class="stat-row"><span class="stat-label">阿里 Qwen</span><span class="stat-value">开源, 阿里云生态</span></div>
+      <div class="stat-row"><span class="stat-label">字节 豆包</span><span class="stat-value">中国最大用户基数</span></div>
+      <div class="stat-row"><span class="stat-label">百度 文心</span><span class="stat-value">搜索+大模型</span></div>
+      <div class="stat-row"><span class="stat-label">共同挑战</span><span class="stat-value red">芯片封锁</span></div>
+      <div style="margin-top:10px"><span class="tag tag-open">开源</span><span class="tag tag-geo">中国</span></div>
+    </div>
+  </div>
+
+  <div class="section-title">人员出走图谱</div>
+  <div class="section-desc">OpenAI 是行业人才的摇篮和分裂源头</div>
+  <div class="card" style="max-width:700px">
+    <table class="rel-table">
+      <tr><th>谁</th><th>从哪</th><th>去哪</th><th>时间</th><th>意义</th></tr>
+      <tr><td><strong>Dario Amodei</strong></td><td>OpenAI 研究VP</td><td>Anthropic</td><td>2021</td><td>安全派核心出走</td></tr>
+      <tr><td><strong>Ilya Sutskever</strong></td><td>OpenAI 首席科学家</td><td>SSI</td><td>2024</td><td>追求安全超级智能</td></tr>
+      <tr><td><strong>Elon Musk</strong></td><td>OpenAI 联合创始人</td><td>xAI</td><td>2023</td><td>最bitter的分手</td></tr>
+      <tr><td><strong>Jan Leike</strong></td><td>OpenAI 对齐负责人</td><td>Anthropic</td><td>2024</td><td>安全团队二次出走</td></tr>
+      <tr><td><strong>Arthur Mensch</strong></td><td>Google DeepMind</td><td>Mistral</td><td>2023</td><td>创建欧洲旗手</td></tr>
+      <tr><td><strong>Max Jaderberg</strong></td><td>DeepMind VP</td><td>Isomorphic Labs CTO</td><td>2021</td><td>AlphaFold商业化</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ==================== SILICON ==================== -->
+<div id="silicon" class="section">
+  <div class="section-title">基础算力提供者</div>
+  <div class="section-desc">芯片和硬件 &mdash; AI 的物理基础</div>
+
+  <div class="bar-chart">
+    <div class="section-desc">AI 相关营收对比 (美元, 2025-2026)</div>
+    <div class="bar-row">
+      <div class="bar-label">NVIDIA</div>
+      <div class="bar-track"><div class="bar-fill" style="width:100%;background:linear-gradient(90deg,#6c5ce7,#00cec9)">$2600 亿+ (FY2026)</div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">Broadcom</div>
+      <div class="bar-track"><div class="bar-fill" style="width:10%;background:#f39c12;min-width:120px">~$260 亿 (AI芯片)</div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">AMD</div>
+      <div class="bar-track"><div class="bar-fill" style="width:1.9%;background:#e74c3c;min-width:100px">~$50 亿 (AI GPU)</div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">Intel</div>
+      <div class="bar-track"><div class="bar-fill" style="width:0.4%;background:#636e72;min-width:100px">&lt;$10 亿 (AI加速器)</div></div>
+    </div>
+  </div>
+
+  <div class="grid grid-2" style="margin-top:24px">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(108,92,231,0.2);color:#a29bfe">N</div>
+        <div><div class="card-title">NVIDIA</div><div class="card-sub">绝对霸主 &middot; 卖铲人</div></div>
+      </div>
+      <div class="stat-row"><span class="stat-label">市值</span><span class="stat-value green">$3.3 万亿</span></div>
+      <div class="stat-row"><span class="stat-label">FY2026 营收</span><span class="stat-value">$2600 亿+</span></div>
+      <div class="stat-row"><span class="stat-label">数据中心增长</span><span class="stat-value green">13x (自ChatGPT)</span></div>
+      <div class="stat-row"><span class="stat-label">最新架构</span><span class="stat-value">Blackwell → Vera Rubin</span></div>
+      <div class="stat-row"><span class="stat-label">策略</span><span class="stat-value">不做模型, 只卖基础设施</span></div>
+      <div class="highlight-box" style="margin-top:12px;font-size:0.82rem">
+        客户: Microsoft, Google, Meta, Amazon, OpenAI, Anthropic, xAI, CoreWeave, 中东主权...<br>
+        <strong>所有人都依赖 NVIDIA, 但所有人都在偷偷自研芯片</strong>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(243,156,18,0.2);color:#f39c12">B</div>
+        <div><div class="card-title">Broadcom</div><div class="card-sub">定制ASIC之王</div></div>
+      </div>
+      <div class="stat-row"><span class="stat-label">AI芯片营收</span><span class="stat-value">Q4: $65亿 (+74%)</span></div>
+      <div class="stat-row"><span class="stat-label">ASIC市场份额</span><span class="stat-value green">~70%</span></div>
+      <div class="stat-row"><span class="stat-label">AI积压订单</span><span class="stat-value">$730 亿</span></div>
+      <div class="stat-row"><span class="stat-label">策略</span><span class="stat-value">帮大厂做自研芯片</span></div>
+      <div class="highlight-box" style="margin-top:12px;font-size:0.82rem">
+        已知客户: Google (TPU), Meta (MTIA), 字节, OpenAI ($100亿订单)<br>
+        <strong>NVIDIA 越垄断 → 大厂越想自研 → Broadcom 越受益</strong>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(231,76,60,0.2);color:#e74c3c">A</div>
+        <div><div class="card-title">AMD</div><div class="card-sub">第二选择</div></div>
+      </div>
+      <div class="stat-row"><span class="stat-label">AI GPU营收</span><span class="stat-value">~$50 亿</span></div>
+      <div class="stat-row"><span class="stat-label">关键合同</span><span class="stat-value">Meta 多年 6GW</span></div>
+      <div class="stat-row"><span class="stat-label">优势</span><span class="stat-value">推理成本</span></div>
+      <div class="stat-row"><span class="stat-label">劣势</span><span class="stat-value red">CUDA 生态差距</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(255,255,255,0.1);color:var(--dim)">自</div>
+        <div><div class="card-title">大厂自研芯片</div><div class="card-sub">去NVIDIA化的长期努力</div></div>
+      </div>
+      <div class="stat-row"><span class="stat-label">Google</span><span class="stat-value cyan">TPU v6e (最成熟)</span></div>
+      <div class="stat-row"><span class="stat-label">Amazon</span><span class="stat-value">Trainium 2</span></div>
+      <div class="stat-row"><span class="stat-label">Meta</span><span class="stat-value">MTIA v2</span></div>
+      <div class="stat-row"><span class="stat-label">Microsoft</span><span class="stat-value">Maia 100</span></div>
+      <div class="stat-row"><span class="stat-label">华为</span><span class="stat-value orange">昇腾 (中国唯一替代)</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CLOUD ==================== -->
+<div id="cloud" class="section">
+  <div class="section-title">云与大规模计算</div>
+  <div class="section-desc">把算力变成可用服务的中间层 &mdash; 季度市场规模 $1070 亿 (Q3 2025)</div>
+
+  <div class="bar-chart">
+    <div class="section-desc">市场份额 (2025 Q3)</div>
+    <div class="bar-row">
+      <div class="bar-label">AWS</div>
+      <div class="bar-track"><div class="bar-fill" style="width:100%;background:linear-gradient(90deg,#f39c12,#e74c3c)">30%</div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">Azure</div>
+      <div class="bar-track"><div class="bar-fill" style="width:67%;background:linear-gradient(90deg,#0984e3,#74b9ff)">20%</div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">Google Cloud</div>
+      <div class="bar-track"><div class="bar-fill" style="width:43%;background:linear-gradient(90deg,#00b894,#55efc4)">13%</div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">Oracle</div>
+      <div class="bar-track"><div class="bar-fill" style="width:13%;background:#a29bfe">4%</div></div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">其他</div>
+      <div class="bar-track"><div class="bar-fill" style="width:110%;background:#636e72">33%</div></div>
+    </div>
+  </div>
+
+  <div class="highlight-box">
+    <strong>Anthropic 是三大云的共同棋子:</strong> AWS (Bedrock独家首发) + Azure + Google Cloud 三家竞争对手同时投资了 Anthropic &mdash; 史上最奇特的资本关系
+  </div>
+
+  <div class="section-title">新云 (Neoclouds) &mdash; AI原生算力</div>
+  <div class="grid grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(243,156,18,0.2);color:#f39c12">CW</div>
+        <div><div class="card-title">CoreWeave</div><div class="card-sub">Nasdaq: CRWV &middot; 新云之王</div></div>
+      </div>
+      <div class="stat-row"><span class="stat-label">市值</span><span class="stat-value green">~$490 亿</span></div>
+      <div class="stat-row"><span class="stat-label">2025 营收</span><span class="stat-value">$50 亿</span></div>
+      <div class="stat-row"><span class="stat-label">营收积压</span><span class="stat-value green">$668 亿</span></div>
+      <div class="stat-row"><span class="stat-label">IPO以来涨幅</span><span class="stat-value green">+200%</span></div>
+      <div class="stat-row"><span class="stat-label">最大客户</span><span class="stat-value orange">Microsoft (62%)</span></div>
+      <div class="stat-row"><span class="stat-label">风险</span><span class="stat-value red">客户集中度极高</span></div>
+      <div style="margin-top:10px"><span class="tag tag-neo">Neocloud</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(162,155,254,0.2);color:#a29bfe">...</div>
+        <div><div class="card-title">其他新云玩家</div><div class="card-sub">AI原生算力挑战者</div></div>
+      </div>
+      <div class="stat-row"><span class="stat-label">Lambda Labs</span><span class="stat-value">$25亿估值, ~$6亿营收</span></div>
+      <div class="stat-row"><span class="stat-label">Nebius</span><span class="stat-value">MS $190亿合作</span></div>
+      <div class="stat-row"><span class="stat-label">Crusoe</span><span class="stat-value">$6亿融资, 绿色算力</span></div>
+      <div style="margin-top:12px">
+        <div class="highlight-box" style="font-size:0.82rem">
+          新云 vs 传统云: 大厂算力不够时 → 溢出到新云<br>
+          Microsoft 既是 CoreWeave 最大客户, 又是其竞争对手
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== GLOBAL ==================== -->
+<div id="global" class="section">
+  <div class="section-title">国际格局</div>
+
+  <div class="grid grid-2">
+    <div class="card" style="border-color:rgba(9,132,227,0.3)">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(9,132,227,0.2);color:#74b9ff">US</div>
+        <div><div class="card-title">美国</div><div class="card-sub">规则制定者 + 技术领先</div></div>
+      </div>
+      <div class="stat-row"><span class="stat-label">前沿Lab</span><span class="stat-value">OpenAI, Anthropic, xAI, Google, Meta</span></div>
+      <div class="stat-row"><span class="stat-label">芯片</span><span class="stat-value">NVIDIA, AMD, Broadcom</span></div>
+      <div class="stat-row"><span class="stat-label">云</span><span class="stat-value">AWS, Azure, GCP, CoreWeave</span></div>
+      <div class="stat-row"><span class="stat-label">资本</span><span class="stat-value">a16z, Sequoia, Thrive</span></div>
+      <div class="stat-row"><span class="stat-label">Stargate</span><span class="stat-value green">$5000 亿基础设施</span></div>
+      <div class="stat-row"><span class="stat-label">政府</span><span class="stat-value">放松监管 + 强制配合国防</span></div>
+      <div class="stat-row"><span class="stat-label">优势</span><span class="stat-value cyan">人才/资本/算力 全维度领先</span></div>
+    </div>
+
+    <div class="card" style="border-color:rgba(231,76,60,0.3)">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(231,76,60,0.2);color:#e74c3c">CN</div>
+        <div><div class="card-title">中国</div><div class="card-sub">芯片封锁下的突围</div></div>
+      </div>
+      <div class="stat-row"><span class="stat-label">前沿Lab</span><span class="stat-value">DeepSeek, 阿里, 字节, 百度</span></div>
+      <div class="stat-row"><span class="stat-label">芯片</span><span class="stat-value orange">华为昇腾 (唯一替代)</span></div>
+      <div class="stat-row"><span class="stat-label">云</span><span class="stat-value">阿里云, 华为云, 腾讯云</span></div>
+      <div class="stat-row"><span class="stat-label">2025 AI支出</span><span class="stat-value">~$1250 亿 (公私合计)</span></div>
+      <div class="stat-row"><span class="stat-label">核心挑战</span><span class="stat-value red">先进制程+HBM封锁</span></div>
+      <div class="stat-row"><span class="stat-label">核心优势</span><span class="stat-value green">DeepSeek 低成本路线</span></div>
+      <div class="stat-row"><span class="stat-label">应用</span><span class="stat-value">6/10最大AI应用来自中国</span></div>
+    </div>
+
+    <div class="card" style="border-color:rgba(243,156,18,0.3)">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(243,156,18,0.2);color:#f39c12">EU</div>
+        <div><div class="card-title">欧洲</div><div class="card-sub">监管先行 + 主权叙事</div></div>
+      </div>
+      <div class="stat-row"><span class="stat-label">旗手</span><span class="stat-value">Mistral (ARR $4亿)</span></div>
+      <div class="stat-row"><span class="stat-label">政策</span><span class="stat-value">AI Act 全球最严</span></div>
+      <div class="stat-row"><span class="stat-label">资金</span><span class="stat-value cyan">InvestAI &euro;2000 亿</span></div>
+      <div class="stat-row"><span class="stat-label">芯片</span><span class="stat-value red">无 (完全依赖美国)</span></div>
+      <div class="stat-row"><span class="stat-label">叙事</span><span class="stat-value">"数字主权"</span></div>
+      <div class="stat-row"><span class="stat-label">现实</span><span class="stat-value orange">除Mistral外缺乏全球竞争力</span></div>
+    </div>
+
+    <div class="card" style="border-color:rgba(253,121,168,0.3)">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(253,121,168,0.2);color:#fd79a8">ME</div>
+        <div><div class="card-title">中东</div><div class="card-sub">石油 → 算力 转型</div></div>
+      </div>
+      <div class="stat-row"><span class="stat-label">UAE G42</span><span class="stat-value">OpenAI/NVIDIA合建 1GW</span></div>
+      <div class="stat-row"><span class="stat-label">沙特 Humain</span><span class="stat-value">35,000块 Blackwell</span></div>
+      <div class="stat-row"><span class="stat-label">沙特PIF</span><span class="stat-value green">→ Stargate 投资</span></div>
+      <div class="stat-row"><span class="stat-label">代价</span><span class="stat-value red">G42被迫脱钩华为</span></div>
+      <div class="stat-row"><span class="stat-label">策略</span><span class="stat-value">石油美元换算力, 选边美国</span></div>
+    </div>
+
+    <div class="card" style="border-color:rgba(255,255,255,0.1)">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(255,255,255,0.08);color:var(--dim)">JP</div>
+        <div><div class="card-title">日本 / 韩国 / 印度</div><div class="card-sub">各有角色</div></div>
+      </div>
+      <div class="stat-row"><span class="stat-label">日本 SoftBank</span><span class="stat-value">Stargate $400亿出资</span></div>
+      <div class="stat-row"><span class="stat-label">韩国 SK Hynix</span><span class="stat-value cyan">HBM芯片关键供应</span></div>
+      <div class="stat-row"><span class="stat-label">韩国 三星</span><span class="stat-value orange">HBM3e良率问题</span></div>
+      <div class="stat-row"><span class="stat-label">印度</span><span class="stat-value">AI服务外包中心</span></div>
+    </div>
+  </div>
+
+  <div class="highlight-box" style="margin-top:20px">
+    <strong>地缘核心逻辑:</strong> 美国用芯片出口管制施压 → 中国被迫自主化(华为) → 中东被迫选边(脱钩华为换NVIDIA) → 欧洲用监管争话语权但缺算力
+  </div>
+</div>
+
+<!-- ==================== CAPITAL ==================== -->
+<div id="capital" class="section">
+  <div class="section-title">资本与 VC</div>
+  <div class="section-desc">谁在出钱, 出了多少, 押注在哪</div>
+
+  <div class="rel-section">
+    <div class="rel-title">科技巨头直投 (既是投资人又是竞争者)</div>
+    <div class="rel-item"><span>Microsoft</span><span class="rel-arrow">→</span><span class="rel-amount">$13B+</span><span>OpenAI</span><span class="rel-note">最大投资人, 20%收入分成→2032</span></div>
+    <div class="rel-item"><span>Microsoft</span><span class="rel-arrow">→</span><span class="rel-amount">$15B</span><span>Anthropic</span><span class="rel-note">Series G, 终极对冲</span></div>
+    <div class="rel-item"><span>Microsoft</span><span class="rel-arrow">→</span><span class="rel-amount">$19B</span><span>Nebius</span><span class="rel-note">算力供应链多元化</span></div>
+    <div class="rel-item"><span>Amazon</span><span class="rel-arrow">→</span><span class="rel-amount">$8B</span><span>Anthropic</span><span class="rel-note">Bedrock 核心差异化</span></div>
+    <div class="rel-item"><span>Google</span><span class="rel-arrow">→</span><span class="rel-amount">$2B+</span><span>Anthropic</span><span class="rel-note">竞争对手也投: 防倒向对手</span></div>
+    <div class="rel-item"><span>Meta</span><span class="rel-arrow">→</span><span class="rel-amount">$14.3B</span><span>Scale AI (49%)</span><span class="rel-note">数据标注基础设施</span></div>
+  </div>
+
+  <div class="rel-section">
+    <div class="rel-title">顶级 VC 基金</div>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(0,206,201,0.2);color:#00cec9">T</div>
+          <div><div class="card-title">Thrive Capital</div><div class="card-sub">Josh Kushner</div></div>
+        </div>
+        <div class="stat-row"><span class="stat-label">核心押注</span><span class="stat-value">OpenAI + Isomorphic Labs</span></div>
+        <div class="stat-row"><span class="stat-label">策略</span><span class="stat-value">每个赛道只投第一名</span></div>
+        <div style="margin-top:8px"><span class="tag tag-vc">VC</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(253,121,168,0.2);color:#fd79a8">a</div>
+          <div><div class="card-title">a16z</div><div class="card-sub">Andreessen Horowitz</div></div>
+        </div>
+        <div class="stat-row"><span class="stat-label">核心押注</span><span class="stat-value">xAI, Genesis, 广泛布局</span></div>
+        <div class="stat-row"><span class="stat-label">策略</span><span class="stat-value">"AI will save the world"</span></div>
+        <div style="margin-top:8px"><span class="tag tag-vc">VC</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(0,184,148,0.2);color:#00b894">S</div>
+          <div><div class="card-title">Sequoia Capital</div><div class="card-sub"></div></div>
+        </div>
+        <div class="stat-row"><span class="stat-label">核心押注</span><span class="stat-value">OpenAI, xAI, Xaira</span></div>
+        <div class="stat-row"><span class="stat-label">策略</span><span class="stat-value">同时投竞争对手</span></div>
+        <div style="margin-top:8px"><span class="tag tag-vc">VC</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(9,132,227,0.2);color:#74b9ff">L</div>
+          <div><div class="card-title">Lightspeed</div><div class="card-sub">Venture Partners</div></div>
+        </div>
+        <div class="stat-row"><span class="stat-label">核心押注</span><span class="stat-value">Anthropic 联合领投</span></div>
+        <div class="stat-row"><span class="stat-label">策略</span><span class="stat-value">晚期大额轮, 追确定性</span></div>
+        <div style="margin-top:8px"><span class="tag tag-vc">VC</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(243,156,18,0.2);color:#f39c12">SB</div>
+          <div><div class="card-title">SoftBank / 孙正义</div><div class="card-sub">Vision Fund → AI All-in</div></div>
+        </div>
+        <div class="stat-row"><span class="stat-label">核心押注</span><span class="stat-value green">Stargate $400亿领投</span></div>
+        <div class="stat-row"><span class="stat-label">其他</span><span class="stat-value">ARM (AI芯片入口)</span></div>
+        <div class="stat-row"><span class="stat-label">策略</span><span class="stat-value">与沙特资本深度绑定</span></div>
+        <div style="margin-top:8px"><span class="tag tag-vc">VC</span><span class="tag tag-geo">日本</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(253,121,168,0.2);color:#fd79a8">FF</div>
+          <div><div class="card-title">Founders Fund</div><div class="card-sub">Peter Thiel</div></div>
+        </div>
+        <div class="stat-row"><span class="stat-label">核心押注</span><span class="stat-value">xAI, 多家AI初创</span></div>
+        <div class="stat-row"><span class="stat-label">策略</span><span class="stat-value">偏好"反建制"AI公司</span></div>
+        <div style="margin-top:8px"><span class="tag tag-vc">VC</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rel-section">
+    <div class="rel-title">主权资本</div>
+    <div class="rel-item"><span>沙特 PIF</span><span class="rel-arrow">→</span><span class="rel-amount">$$$</span><span>Stargate (OpenAI/SoftBank)</span><span class="rel-note">石油→算力</span></div>
+    <div class="rel-item"><span>Mubadala (UAE)</span><span class="rel-arrow">→</span><span class="rel-amount">$$$</span><span>G42, 多家AI公司</span><span class="rel-note">中东AI枢纽</span></div>
+    <div class="rel-item"><span>淡马锡 (新加坡)</span><span class="rel-arrow">→</span><span class="rel-amount">$$$</span><span>英矽智能, 多家AI公司</span><span class="rel-note">亚洲桥梁</span></div>
+    <div class="rel-item"><span>Bpifrance (法国)</span><span class="rel-arrow">→</span><span class="rel-amount">$$$</span><span>Mistral</span><span class="rel-note">欧洲主权</span></div>
+  </div>
+
+  <div class="highlight-box">
+    <strong>2025 关键数字:</strong> OpenAI + Anthropic 两家占全球VC投资额的 14%。55家美国AI初创融资超$1亿。OpenAI 单轮融$400亿创历史记录。
+  </div>
+</div>
+
+<!-- ==================== RELATIONS ==================== -->
+<div id="relations" class="section">
+  <div class="section-title">关系速查表</div>
+
+  <table class="rel-table">
+    <tr><th>关系</th><th>本质</th></tr>
+    <tr>
+      <td><strong>NVIDIA → 所有人</strong></td>
+      <td>卖铲人: 所有AI投资最终都流向NVIDIA的GPU</td>
+    </tr>
+    <tr>
+      <td><strong>Broadcom → 大厂</strong></td>
+      <td>帮大厂做自研芯片: NVIDIA越垄断它越受益</td>
+    </tr>
+    <tr>
+      <td><strong>Microsoft ↔ OpenAI</strong></td>
+      <td>最深绑定: $13B + 20%收入分成, 但OpenAI在争独立</td>
+    </tr>
+    <tr>
+      <td><strong>Microsoft → Anthropic</strong></td>
+      <td>终极对冲: 万一OpenAI出问题还有备胎</td>
+    </tr>
+    <tr>
+      <td><strong>Amazon → Anthropic</strong></td>
+      <td>Bedrock核心供应商, AWS的AI差异化筹码</td>
+    </tr>
+    <tr>
+      <td><strong>Google → Anthropic</strong></td>
+      <td>竞争对手也投了: 怕它完全倒向微软</td>
+    </tr>
+    <tr>
+      <td><strong>Meta vs 所有闭源</strong></td>
+      <td>开源搅局者: LLaMA让所有闭源商业模式承压</td>
+    </tr>
+    <tr>
+      <td><strong>DeepSeek vs 所有人</strong></td>
+      <td>成本颠覆者: 1/10成本 + 芯片战争焦点</td>
+    </tr>
+    <tr>
+      <td><strong>xAI vs Anthropic</strong></td>
+      <td>五角大楼"二选一": 无限制 vs 有底线</td>
+    </tr>
+    <tr>
+      <td><strong>CoreWeave → Microsoft</strong></td>
+      <td>新云之王但62%收入来自单一客户</td>
+    </tr>
+    <tr>
+      <td><strong>SoftBank → Stargate</strong></td>
+      <td>$5000亿: 史上最大AI基础设施赌注</td>
+    </tr>
+    <tr>
+      <td><strong>中东 → 美国阵营</strong></td>
+      <td>石油换算力: G42脱钩华为是代价</td>
+    </tr>
+    <tr>
+      <td><strong>Mistral ↔ 欧盟</strong></td>
+      <td>欧洲AI主权的代言人和&euro;2000亿InvestAI的受益者</td>
+    </tr>
+    <tr>
+      <td><strong>Musk 帝国</strong></td>
+      <td>一人控制模型(xAI)+数据(X)+算力(Colossus)+硬件(Tesla)+分发(X)的唯一玩家</td>
+    </tr>
+    <tr>
+      <td><strong>Ilya → SSI</strong></td>
+      <td>行业精神分裂的象征: 速度 vs 安全</td>
+    </tr>
+  </table>
+</div>
+
+</div><!-- /container -->
+
+<div class="footer">
+  数据来源: Crunchbase, Synergy Research, Deloitte, Yahoo Finance, CNBC, Bloomberg, CoreWeave IR<br>
+  更新于 2026-02-28 &middot; 实体追踪系统
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  window.scrollTo({ top: 200, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
