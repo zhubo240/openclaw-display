@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第八章：粒子计算 — 复杂</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; background: #0a0a0f; color: #e0e0e0; min-height: 100vh; }
+    .container { max-width: 780px; margin: 0 auto; padding: 48px 24px; }
+    .nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 48px; font-size: 13px; }
+    .nav a { color: #63b3ed; text-decoration: none; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+    .nav a:hover { color: #90cdf4; }
+    .nav .chapter-nav { display: flex; gap: 20px; }
+    .chapter-header { margin-bottom: 48px; }
+    .chapter-label { font-size: 12px; letter-spacing: 3px; color: #63b3ed; text-transform: uppercase; margin-bottom: 12px; }
+    .chapter-title { font-size: 36px; font-weight: 700; color: #fff; margin-bottom: 12px; }
+    .chapter-subtitle { font-size: 15px; color: #718096; }
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(99, 179, 237, 0.2), transparent); margin: 40px 0; }
+    .section-title { font-size: 18px; font-weight: 600; color: #fff; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+    .section-title::before { content: ''; width: 3px; height: 18px; background: #63b3ed; border-radius: 2px; }
+    .summary-text { font-size: 15px; line-height: 1.9; color: #a0aec0; margin-bottom: 20px; }
+    .summary-text strong { color: #e2e8f0; }
+    .concepts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0 32px; }
+    .concept-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 22px 18px; transition: all 0.25s; }
+    .concept-card:hover { background: rgba(99, 179, 237, 0.05); border-color: rgba(99, 179, 237, 0.15); transform: translateY(-2px); }
+    .concept-card h4 { font-size: 15px; color: #e2e8f0; margin-bottom: 8px; }
+    .concept-card p { font-size: 13px; color: #718096; line-height: 1.7; }
+    .concept-card .icon { font-size: 24px; margin-bottom: 10px; }
+    .highlight-box { background: rgba(99, 179, 237, 0.06); border: 1px solid rgba(99, 179, 237, 0.15); border-radius: 12px; padding: 24px; margin: 28px 0; }
+    .highlight-box .label { font-size: 11px; letter-spacing: 2px; color: #63b3ed; text-transform: uppercase; margin-bottom: 10px; }
+    .highlight-box p { font-size: 15px; line-height: 1.8; color: #cbd5e0; }
+    .highlight-box p + p { margin-top: 12px; }
+    .quote-block { border-left: 3px solid rgba(99, 179, 237, 0.3); padding: 16px 20px; margin: 24px 0; background: rgba(255,255,255,0.02); border-radius: 0 8px 8px 0; }
+    .quote-block p { font-size: 14px; line-height: 1.8; color: #a0aec0; font-style: italic; }
+    .quote-block .source { font-size: 12px; color: #718096; margin-top: 8px; font-style: normal; }
+    .formula { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 20px 24px; margin: 20px 0; font-family: "SF Mono", Monaco, Consolas, monospace; font-size: 14px; color: #90cdf4; text-align: center; line-height: 1.8; }
+
+    /* Process diagram */
+    .process-box { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 24px; margin: 24px 0; }
+    .process-box h4 { font-size: 14px; color: #e2e8f0; margin-bottom: 12px; }
+    .process-step { display: flex; gap: 12px; margin-bottom: 12px; align-items: flex-start; }
+    .process-step .num { width: 24px; height: 24px; background: rgba(99, 179, 237, 0.12); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #63b3ed; font-weight: 600; flex-shrink: 0; margin-top: 2px; }
+    .process-step p { font-size: 13px; color: #a0aec0; line-height: 1.7; }
+    .process-step p strong { color: #e2e8f0; }
+
+    .discussion-placeholder { background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.08); border-radius: 12px; padding: 32px; text-align: center; color: #4a5568; font-size: 14px; margin-top: 24px; }
+    .footer-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 64px; padding-top: 32px; border-top: 1px solid rgba(255,255,255,0.06); }
+    .footer-nav a { color: #63b3ed; text-decoration: none; font-size: 14px; display: flex; align-items: center; gap: 8px; transition: color 0.2s; }
+    .footer-nav a:hover { color: #90cdf4; }
+    .footer-nav .prev-chapter { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 12px 24px; border-radius: 8px; }
+    .footer-nav .prev-chapter:hover { background: rgba(255,255,255,0.06); }
+    .footer-nav .next-chapter { background: rgba(99, 179, 237, 0.1); border: 1px solid rgba(99, 179, 237, 0.2); padding: 12px 24px; border-radius: 8px; }
+    .footer-nav .next-chapter:hover { background: rgba(99, 179, 237, 0.15); }
+    @media (max-width: 640px) { .concepts { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <nav class="nav">
+      <a href="index.html">&larr; 返回书目</a>
+      <div class="chapter-nav">
+        <a href="ch07-元胞自动机.html">&larr; 上一章</a>
+        <a href="#">下一章 &rarr;</a>
+      </div>
+    </nav>
+
+    <div class="chapter-header">
+      <div class="chapter-label">Chapter 08 &middot; 第三部分：大写的计算</div>
+      <h1 class="chapter-title">粒子计算</h1>
+      <p class="chapter-subtitle">Particle Computation</p>
+    </div>
+
+    <div class="divider"></div>
+
+    <section>
+      <h2 class="section-title">章节概要</h2>
+
+      <p class="summary-text">
+        第六章展示了遗传算法，第七章展示了元胞自动机。第八章是米歇尔自己研究的核心——<strong>把两者结合起来：用遗传算法进化出能执行特定计算任务的元胞自动机规则。</strong>这是全书最"硬核"的一章，也是从理论到实验的关键跨越。
+      </p>
+
+      <h2 class="section-title">问题：CA 能计算吗？</h2>
+
+      <p class="summary-text">
+        第七章告诉我们某些 CA（如 Rule 110、生命游戏）是图灵完备的。但图灵完备是一种"存在性"——它只说明<strong>原则上</strong>可以计算，并没有说如何让 CA 执行<strong>特定的</strong>有用任务。
+      </p>
+
+      <p class="summary-text">
+        米歇尔和她的合作者吉姆·克拉奇菲尔德（Jim Crutchfield）选择了一个具体的测试任务：<strong>密度分类问题</strong>（density classification task）。
+      </p>
+
+      <h2 class="section-title">密度分类问题</h2>
+
+      <p class="summary-text">
+        规则很简单：给定一个一维 CA 的初始配置（一排 0 和 1），如果 1 的数量超过一半，CA 最终应该全部变成 1；如果 0 的数量超过一半，最终应该全部变成 0。
+      </p>
+
+      <div class="formula">
+        初始状态：0110110100111010011...<br>
+        如果 1 多于 0 → 最终：1111111111111111111...<br>
+        如果 0 多于 1 → 最终：0000000000000000000...
+      </div>
+
+      <p class="summary-text">
+        听起来简单？但对 CA 来说，这是一个极难的任务——因为 CA 的规则是<strong>局部的</strong>：每个格子只能看到它左右几个邻居的状态。没有任何格子知道整条链上有多少个 1。整条链的"多数投票"必须通过纯粹的局部交互涌现出来。
+      </p>
+
+      <div class="highlight-box">
+        <div class="label">为什么这个问题深刻</div>
+        <p>密度分类问题是一个<strong>全局信息 vs. 局部规则</strong>的矛盾：答案依赖于全局统计量（1 的总比例），但计算工具只有局部规则（每个格子只看邻居）。这正是复杂系统面对的根本困境——蚁群中没有任何蚂蚁知道全局地图，但蚁群整体能找到最短路径。</p>
+      </div>
+
+      <h2 class="section-title">用 GA 进化 CA 规则</h2>
+
+      <p class="summary-text">
+        人类设计的最佳密度分类规则（Gacs-Kurdyumov-Levin 规则，简称 GKL）的准确率约为 81%。米歇尔和克拉奇菲尔德用遗传算法来自动搜索更好的规则：
+      </p>
+
+      <div class="process-box">
+        <h4>GA 进化 CA 规则的流程</h4>
+        <div class="process-step">
+          <span class="num">1</span>
+          <p><strong>编码</strong>：一个 CA 规则被编码为一个二进制串（对于 r=3 的一维 CA，是一个 128 位的串，对应 128 种邻域模式到下一状态的映射）。</p>
+        </div>
+        <div class="process-step">
+          <span class="num">2</span>
+          <p><strong>评估</strong>：让每个候选规则在大量随机初始配置上运行，统计它正确判断多数的比例作为适应度。</p>
+        </div>
+        <div class="process-step">
+          <span class="num">3</span>
+          <p><strong>进化</strong>：选择、交叉、变异——标准 GA 操作。让种群一代代进化。</p>
+        </div>
+        <div class="process-step">
+          <span class="num">4</span>
+          <p><strong>结果</strong>：GA 进化出的规则准确率超过了人类设计的 GKL 规则，某些达到约 82%——而且策略完全不同。</p>
+        </div>
+      </div>
+
+      <h2 class="section-title">粒子：理解 CA 计算的关键</h2>
+
+      <p class="summary-text">
+        GA 进化出了好规则，但<strong>这些规则是如何工作的？</strong>这才是最深刻的问题。米歇尔和克拉奇菲尔德发明了一种分析方法，揭示了 CA 中"计算"的本质机制。
+      </p>
+
+      <p class="summary-text">
+        当你观察这些 CA 的时空图（每行是一个时间步，纵向是时间），你会看到大片均匀的区域（"域"，domains）和域之间的边界。这些边界在时空中移动，形成<strong>类似物理学中"粒子"的结构</strong>。
+      </p>
+
+      <div class="concepts">
+        <div class="concept-card">
+          <div class="icon">🔲</div>
+          <h4>域（Domains）</h4>
+          <p>CA 中大片重复相同模式的区域。它们是"已经达成局部共识"的区域——要么倾向于全 1，要么倾向于全 0。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">⚡</div>
+          <h4>粒子（Particles）</h4>
+          <p>两个不同域之间的边界。它们在时空中移动和碰撞。粒子携带的是<strong>关于局部密度差异的信息</strong>。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">💥</div>
+          <h4>粒子碰撞</h4>
+          <p>当两个粒子相遇，它们可能湮灭、合并或产生新粒子。<strong>信息在碰撞中被处理</strong>——碰撞就是计算操作。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">📡</div>
+          <h4>信息传递</h4>
+          <p>粒子的移动就是信息传递。局部密度信息通过粒子从 CA 的一端传向另一端，最终汇聚成全局判断。</p>
+        </div>
+      </div>
+
+      <div class="formula">
+        域 = 存储（局部共识）<br>
+        粒子 = 信号（携带信息）<br>
+        碰撞 = 计算（处理信息）<br>
+        三者合一 = CA 中的"信息处理架构"
+      </div>
+
+      <h2 class="section-title">核心洞察：涌现的计算</h2>
+
+      <p class="summary-text">
+        粒子分析揭示了一个深刻的事实：<strong>CA 的计算能力不在任何单个格子里，而是涌现于格子之间的集体动力学中。</strong>没有哪个格子"知道"自己在做密度分类——计算发生在域和粒子的宏观层面。
+      </p>
+
+      <div class="quote-block">
+        <p>"这些元胞自动机中的计算不是被编程进去的——它是涌现出来的。规则只定义了局部交互，但计算发生在由这些交互产生的宏观结构中。"</p>
+        <div class="source">&mdash; 梅拉妮·米歇尔</div>
+      </div>
+
+      <p class="summary-text">
+        这正是复杂系统的核心特征在计算语言中的精确表达：<strong>微观规则是简单的、局部的、没有全局信息的——但宏观行为是复杂的、全局协调的、能执行有意义的计算的。</strong>
+      </p>
+
+      <h2 class="section-title">与前几章的连接</h2>
+
+      <p class="summary-text">
+        <strong>第一章（复杂性）</strong>：密度分类问题是复杂系统核心特征的完美缩影——没有中央控制，局部规则产生全局协调行为。
+      </p>
+
+      <p class="summary-text">
+        <strong>第三章（信息）</strong>：粒子分析让我们能精确说出"信息在 CA 中如何流动和被处理"。域是信息存储，粒子是信息传输，碰撞是信息处理——香农的信息论在这里有了动态的、空间化的版本。
+      </p>
+
+      <p class="summary-text">
+        <strong>第六章（GA）</strong>：GA 不只找到了好规则，它找到的规则比人类设计的更巧妙——使用了人类没想到的粒子交互模式。进化的创造力再次得到验证。
+      </p>
+
+      <p class="summary-text">
+        <strong>第七章（CA）</strong>：沃尔弗拉姆分类了 CA 的行为类型，但没有解释 Class IV 的"计算"到底是什么。粒子分析给出了一个具体答案：<strong>计算就是粒子的产生、移动和碰撞。</strong>
+      </p>
+
+      <div class="highlight-box">
+        <div class="label">一句话总结</div>
+        <p>粒子计算揭示了涌现计算的机制：全局计算不需要全局信息——局部规则产生的粒子在时空中移动和碰撞，自发地将局部信息汇聚成全局判断。这是"没人指挥却有秩序"在计算层面的精确表达。</p>
+      </div>
+
+      <div class="highlight-box">
+        <div class="label">米歇尔的贡献</div>
+        <p>本章是全书中最接近作者自身研究的一章。米歇尔与克拉奇菲尔德合作，不仅用 GA 进化出了优秀的 CA 规则，更重要的是发展出了"粒子分析"框架——这是理解分布式系统中涌现计算的一种通用方法，影响远超 CA 本身。</p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section>
+      <h2 class="section-title">读书讨论</h2>
+      <div class="discussion-placeholder">
+        尚无讨论 &middot; 读完这一章后来聊聊？
+      </div>
+    </section>
+
+    <div class="footer-nav">
+      <a class="prev-chapter" href="ch07-元胞自动机.html">&larr; 第七章：元胞自动机、生命和宇宙</a>
+      <a class="next-chapter" href="#">第九章：生命系统中的信息处理 &rarr;</a>
+    </div>
+
+  </div>
+</body>
+</html>
