@@ -328,11 +328,63 @@
     margin-top: 40px;
   }
 
+  /* --- Stance Matrix --- */
+  .stance-matrix { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.82rem; }
+  .stance-matrix th { padding: 10px 8px; color: var(--dim); font-weight: 500; border-bottom: 1px solid var(--border); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; text-align: center; }
+  .stance-matrix th:first-child { text-align: left; min-width: 100px; }
+  .stance-matrix td { padding: 10px 8px; border-bottom: 1px solid rgba(255,255,255,0.03); text-align: center; cursor: default; position: relative; }
+  .stance-matrix tr:hover td { background: rgba(255,255,255,0.02); }
+  .stance-matrix tr.row-highlight td { background: rgba(108,92,231,0.1); }
+  .stance-cell { border-radius: 6px; padding: 4px 6px; font-size: 0.78rem; display: inline-block; min-width: 60px; }
+  .stance-green { background: rgba(0,184,148,0.15); color: #55efc4; }
+  .stance-yellow { background: rgba(243,156,18,0.15); color: #ffeaa7; }
+  .stance-red { background: rgba(231,76,60,0.15); color: #fab1a0; }
+  .stance-blue { background: rgba(9,132,227,0.15); color: #74b9ff; }
+  .stance-gray { background: rgba(255,255,255,0.05); color: var(--dim); }
+  .stance-tooltip { display: none; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: #1e1e2e; border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 0.78rem; color: var(--text); white-space: nowrap; z-index: 50; pointer-events: none; }
+  .stance-matrix td:hover .stance-tooltip { display: block; }
+
+  /* --- Roadmap Timeline --- */
+  .timeline { position: relative; padding: 20px 0; }
+  .timeline-header { display: flex; gap: 0; margin-bottom: 20px; border-bottom: 2px solid var(--border); }
+  .timeline-q { flex: 1; text-align: center; padding: 8px; font-size: 0.8rem; color: var(--dim); font-weight: 500; }
+  .timeline-q.current { color: var(--accent); border-bottom: 2px solid var(--accent); margin-bottom: -2px; }
+  .timeline-row { display: flex; align-items: center; margin-bottom: 12px; gap: 12px; }
+  .timeline-label { width: 120px; font-size: 0.85rem; font-weight: 600; flex-shrink: 0; text-align: right; }
+  .timeline-track { flex: 1; display: flex; gap: 0; height: 40px; position: relative; }
+  .timeline-slot { flex: 1; display: flex; align-items: center; justify-content: center; border-right: 1px solid rgba(255,255,255,0.03); }
+  .timeline-slot:last-child { border-right: none; }
+  .timeline-node { padding: 4px 10px; border-radius: 6px; font-size: 0.72rem; font-weight: 500; white-space: nowrap; cursor: default; }
+  .tn-product { background: rgba(108,92,231,0.2); color: #a29bfe; border: 1px solid rgba(108,92,231,0.3); }
+  .tn-infra { background: rgba(0,184,148,0.2); color: #55efc4; border: 1px solid rgba(0,184,148,0.3); }
+  .tn-strategy { background: rgba(243,156,18,0.2); color: #ffeaa7; border: 1px solid rgba(243,156,18,0.3); }
+  .tn-funding { background: rgba(253,121,168,0.2); color: #fd79a8; border: 1px solid rgba(253,121,168,0.3); }
+
+  /* --- Network Graph --- */
+  .network-container { position: relative; width: 100%; height: 520px; background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid var(--border); margin: 16px 0; overflow: hidden; }
+  .network-container canvas { width: 100%; height: 100%; }
+  .network-legend { display: flex; gap: 16px; justify-content: center; margin: 12px 0; flex-wrap: wrap; }
+  .network-legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--dim); }
+  .network-legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+  .network-legend-line { width: 20px; height: 3px; border-radius: 2px; }
+
+  /* --- Attitude Tags --- */
+  .tag-safe { background: rgba(0,184,148,0.2); color: #55efc4; }
+  .tag-fast { background: rgba(243,156,18,0.2); color: #ffeaa7; }
+  .tag-mil-no { background: rgba(231,76,60,0.2); color: #fab1a0; }
+  .tag-mil-yes { background: rgba(108,92,231,0.2); color: #a29bfe; }
+
   @media (max-width: 600px) {
     .header h1 { font-size: 1.6rem; }
     .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
     .bar-label { width: 80px; font-size: 0.75rem; }
     .nav button { padding: 6px 12px; font-size: 0.78rem; }
+    .stance-matrix { font-size: 0.7rem; }
+    .stance-matrix th, .stance-matrix td { padding: 6px 4px; }
+    .stance-cell { min-width: 40px; font-size: 0.68rem; }
+    .timeline-label { width: 70px; font-size: 0.75rem; }
+    .timeline-node { font-size: 0.65rem; padding: 3px 6px; }
+    .network-container { height: 400px; }
   }
 </style>
 </head>
@@ -351,6 +403,8 @@
   <button onclick="show('global')">国际格局</button>
   <button onclick="show('capital')">资本与VC</button>
   <button onclick="show('relations')">关系速查</button>
+  <button onclick="show('stance')">立场光谱</button>
+  <button onclick="show('roadmap')">未来路线</button>
 </div>
 
 <div class="container">
@@ -427,6 +481,35 @@
     </div>
   </div>
 
+  <div class="section-desc" style="margin-top:30px">员工规模</div>
+  <div class="bar-chart">
+    <div class="bar-row"><div class="bar-label">OpenAI</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:linear-gradient(90deg,#a29bfe,#6c5ce7)">~3,800</div></div></div>
+    <div class="bar-row"><div class="bar-label">Google DeepMind</div><div class="bar-track"><div class="bar-fill" style="width:79%;background:linear-gradient(90deg,#00b894,#55efc4)">~3,000</div></div></div>
+    <div class="bar-row"><div class="bar-label">Anthropic</div><div class="bar-track"><div class="bar-fill" style="width:39%;background:#00cec9">~1,500</div></div></div>
+    <div class="bar-row"><div class="bar-label">Mistral</div><div class="bar-track"><div class="bar-fill" style="width:18%;background:#f39c12;min-width:60px">~700</div></div></div>
+    <div class="bar-row"><div class="bar-label">xAI</div><div class="bar-track"><div class="bar-fill" style="width:13%;background:#fd79a8;min-width:60px">~500</div></div></div>
+    <div class="bar-row"><div class="bar-label">DeepSeek</div><div class="bar-track"><div class="bar-fill" style="width:5%;background:#e74c3c;min-width:60px">~200</div></div></div>
+    <div class="bar-row"><div class="bar-label">SSI</div><div class="bar-track"><div class="bar-fill" style="width:1%;background:#636e72;min-width:50px">~30</div></div></div>
+  </div>
+
+  <div class="section-desc" style="margin-top:30px">用户/月活规模</div>
+  <div class="bar-chart">
+    <div class="bar-row"><div class="bar-label">Meta AI</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:linear-gradient(90deg,#0984e3,#74b9ff)">7 亿月活</div></div></div>
+    <div class="bar-row"><div class="bar-label">Gemini</div><div class="bar-track"><div class="bar-fill" style="width:50%;background:linear-gradient(90deg,#00b894,#55efc4)">3.5 亿月活 (含搜索)</div></div></div>
+    <div class="bar-row"><div class="bar-label">ChatGPT</div><div class="bar-track"><div class="bar-fill" style="width:43%;background:#a29bfe">3 亿周活</div></div></div>
+    <div class="bar-row"><div class="bar-label">Grok</div><div class="bar-track"><div class="bar-fill" style="width:10%;background:#fd79a8;min-width:80px">X平台内嵌</div></div></div>
+    <div class="bar-row"><div class="bar-label">Claude</div><div class="bar-track"><div class="bar-fill" style="width:8%;background:#00cec9;min-width:80px">企业级为主</div></div></div>
+    <div class="bar-row"><div class="bar-label">Mistral</div><div class="bar-track"><div class="bar-fill" style="width:6%;background:#f39c12;min-width:80px">企业API为主</div></div></div>
+  </div>
+
+  <div class="section-desc" style="margin-top:30px">算力规模 (GPU 保有量估算)</div>
+  <div class="bar-chart">
+    <div class="bar-row"><div class="bar-label">Meta</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:linear-gradient(90deg,#0984e3,#00cec9)">~60 万 H100</div></div></div>
+    <div class="bar-row"><div class="bar-label">MS / OpenAI</div><div class="bar-track"><div class="bar-fill" style="width:60%;background:linear-gradient(90deg,#a29bfe,#6c5ce7)">数十万</div></div></div>
+    <div class="bar-row"><div class="bar-label">Google</div><div class="bar-track"><div class="bar-fill" style="width:55%;background:linear-gradient(90deg,#00b894,#55efc4)">自研 TPU 等价</div></div></div>
+    <div class="bar-row"><div class="bar-label">xAI Colossus</div><div class="bar-track"><div class="bar-fill" style="width:33%;background:#fd79a8">20 万 H100</div></div></div>
+  </div>
+
   <div class="highlight-box">
     <strong>核心洞察:</strong> 所有 AI 投资最终都流向 NVIDIA。AI 行业本质是一个「资本 → 算力 → 模型 → 应用 → 收入 → 再投资算力」的飞轮。NVIDIA 在飞轮中枢截取了最大份额。
   </div>
@@ -462,8 +545,9 @@
       <div class="stat-row"><span class="stat-label">用户</span><span class="stat-value">3 亿</span></div>
       <div class="stat-row"><span class="stat-label">核心投资人</span><span class="stat-value">Microsoft $13B+</span></div>
       <div class="stat-row"><span class="stat-label">基础设施</span><span class="stat-value blue">Stargate $5000亿</span></div>
+      <div class="stat-row"><span class="stat-label">员工</span><span class="stat-value">~3,800</span></div>
       <div class="stat-row"><span class="stat-label">策略</span><span class="stat-value">速度优先, AGI竞赛</span></div>
-      <div style="margin-top:10px"><span class="tag tag-closed">闭源</span></div>
+      <div style="margin-top:10px"><span class="tag tag-closed">闭源</span><span class="tag tag-fast">中间偏快</span></div>
     </div>
 
     <div class="card">
@@ -477,8 +561,9 @@
       <div class="stat-row"><span class="stat-label">外部融资</span><span class="stat-value">$400 亿+</span></div>
       <div class="stat-row"><span class="stat-label">投资人</span><span class="stat-value">MS+Amazon+Google</span></div>
       <div class="stat-row"><span class="stat-label">五角大楼</span><span class="stat-value red">拒绝无限制访问</span></div>
+      <div class="stat-row"><span class="stat-label">员工</span><span class="stat-value">~1,500</span></div>
       <div class="stat-row"><span class="stat-label">策略</span><span class="stat-value">安全优先, 企业路线</span></div>
-      <div style="margin-top:10px"><span class="tag tag-closed">闭源</span></div>
+      <div style="margin-top:10px"><span class="tag tag-closed">闭源</span><span class="tag tag-safe">安全优先</span><span class="tag tag-mil-no">拒绝军事</span></div>
     </div>
 
     <div class="card">
@@ -491,8 +576,10 @@
       <div class="stat-row"><span class="stat-label">算力</span><span class="stat-value">TPU自研, 近乎无限</span></div>
       <div class="stat-row"><span class="stat-label">2026 Capex</span><span class="stat-value">$1750-1850 亿</span></div>
       <div class="stat-row"><span class="stat-label">成就</span><span class="stat-value cyan">诺贝尔奖 (AlphaFold)</span></div>
+      <div class="stat-row"><span class="stat-label">员工</span><span class="stat-value">~3,000</span></div>
+      <div class="stat-row"><span class="stat-label">用户</span><span class="stat-value">3.5 亿月活 (含搜索)</span></div>
       <div class="stat-row"><span class="stat-label">策略</span><span class="stat-value">科研驱动, 全栈自主</span></div>
-      <div style="margin-top:10px"><span class="tag tag-closed">闭源</span></div>
+      <div style="margin-top:10px"><span class="tag tag-closed">闭源</span><span class="tag tag-safe">谨慎</span></div>
     </div>
 
     <div class="card">
@@ -505,8 +592,9 @@
       <div class="stat-row"><span class="stat-label">算力</span><span class="stat-value">Colossus 超级集群</span></div>
       <div class="stat-row"><span class="stat-label">五角大楼</span><span class="stat-value green">获批机密访问</span></div>
       <div class="stat-row"><span class="stat-label">争议</span><span class="stat-value red">深度伪造调查</span></div>
+      <div class="stat-row"><span class="stat-label">员工</span><span class="stat-value">~500</span></div>
       <div class="stat-row"><span class="stat-label">策略</span><span class="stat-value">无限制, 反建制</span></div>
-      <div style="margin-top:10px"><span class="tag tag-closed">闭源</span></div>
+      <div style="margin-top:10px"><span class="tag tag-closed">闭源</span><span class="tag tag-fast">全速</span><span class="tag tag-mil-yes">军事合作</span></div>
     </div>
   </div>
 
@@ -521,8 +609,10 @@
       <div class="stat-row"><span class="stat-label">母公司市值</span><span class="stat-value green">$1.8 万亿</span></div>
       <div class="stat-row"><span class="stat-label">2026 Capex</span><span class="stat-value">$1350 亿</span></div>
       <div class="stat-row"><span class="stat-label">芯片</span><span class="stat-value">NVIDIA + AMD 6GW</span></div>
+      <div class="stat-row"><span class="stat-label">用户</span><span class="stat-value">Meta AI 7 亿月活</span></div>
+      <div class="stat-row"><span class="stat-label">算力</span><span class="stat-value">~60 万 H100</span></div>
       <div class="stat-row"><span class="stat-label">策略</span><span class="stat-value">开源搅局, 自用为主</span></div>
-      <div style="margin-top:10px"><span class="tag tag-open">开源</span></div>
+      <div style="margin-top:10px"><span class="tag tag-open">开源</span><span class="tag tag-fast">速度快</span></div>
     </div>
 
     <div class="card">
@@ -535,6 +625,7 @@
       <div class="stat-row"><span class="stat-label">下载量</span><span class="stat-value">7500 万+</span></div>
       <div class="stat-row"><span class="stat-label">成本优势</span><span class="stat-value green">1/10 硅谷成本</span></div>
       <div class="stat-row"><span class="stat-label">芯片争议</span><span class="stat-value red">疑似违规使用Blackwell</span></div>
+      <div class="stat-row"><span class="stat-label">员工</span><span class="stat-value">~200</span></div>
       <div class="stat-row"><span class="stat-label">策略</span><span class="stat-value">极致效率, 转向华为</span></div>
       <div style="margin-top:10px"><span class="tag tag-open">开源</span><span class="tag tag-geo">芯片战争焦点</span></div>
     </div>
@@ -548,8 +639,9 @@
       <div class="stat-row"><span class="stat-label">ARR</span><span class="stat-value">$4 亿+</span></div>
       <div class="stat-row"><span class="stat-label">收购</span><span class="stat-value">Koyeb (全栈转型)</span></div>
       <div class="stat-row"><span class="stat-label">定位</span><span class="stat-value cyan">欧洲 AI 旗手</span></div>
+      <div class="stat-row"><span class="stat-label">员工</span><span class="stat-value">~700</span></div>
       <div class="stat-row"><span class="stat-label">策略</span><span class="stat-value">数字主权, MIT许可</span></div>
-      <div style="margin-top:10px"><span class="tag tag-open">开源</span><span class="tag tag-geo">欧洲</span></div>
+      <div style="margin-top:10px"><span class="tag tag-open">开源</span><span class="tag tag-geo">欧洲</span><span class="tag tag-safe">务实</span></div>
     </div>
 
     <div class="card">
@@ -900,7 +992,19 @@
 
 <!-- ==================== RELATIONS ==================== -->
 <div id="relations" class="section">
-  <div class="section-title">关系速查表</div>
+  <div class="section-title">关系网络图</div>
+  <div class="section-desc">节点大小按估值缩放，连线颜色按关系类型区分。悬浮节点高亮相关连线。</div>
+  <div class="network-legend">
+    <div class="network-legend-item"><div class="network-legend-line" style="background:#00b894"></div>投资</div>
+    <div class="network-legend-item"><div class="network-legend-line" style="background:#e74c3c"></div>竞争</div>
+    <div class="network-legend-item"><div class="network-legend-line" style="background:#0984e3"></div>合作</div>
+    <div class="network-legend-item"><div class="network-legend-line" style="background:#636e72"></div>人员流动</div>
+  </div>
+  <div class="network-container">
+    <canvas id="networkCanvas"></canvas>
+  </div>
+
+  <div class="section-title" style="margin-top:32px">关系速查表</div>
 
   <table class="rel-table">
     <tr><th>关系</th><th>本质</th></tr>
@@ -967,6 +1071,209 @@
   </table>
 </div>
 
+<!-- ==================== STANCE ==================== -->
+<div id="stance" class="section">
+  <div class="section-title">立场光谱</div>
+  <div class="section-desc">七大关键议题上的主要玩家态度对比。悬浮查看详细说明，点击议题行高亮。</div>
+
+  <div style="overflow-x:auto">
+  <table class="stance-matrix" id="stanceTable">
+    <tr>
+      <th>议题</th><th>OpenAI</th><th>Anthropic</th><th>Google</th><th>xAI</th><th>Meta</th><th>DeepSeek</th><th>Mistral</th>
+    </tr>
+    <tr onclick="toggleRowHL(this)">
+      <td style="text-align:left;font-weight:600">安全 vs 速度</td>
+      <td><span class="stance-cell stance-yellow">中间偏快</span><div class="stance-tooltip">追求AGI速度但保留安全团队</div></td>
+      <td><span class="stance-cell stance-green">安全优先</span><div class="stance-tooltip">Constitutional AI，安全是核心卖点</div></td>
+      <td><span class="stance-cell stance-green">谨慎</span><div class="stance-tooltip">内部安全评审严格，发布相对保守</div></td>
+      <td><span class="stance-cell stance-red">全速</span><div class="stance-tooltip">Musk: 不受约束地推进，最少安全限制</div></td>
+      <td><span class="stance-cell stance-yellow">快</span><div class="stance-tooltip">快速迭代开源模型，依靠社区反馈</div></td>
+      <td><span class="stance-cell stance-gray">不表态</span><div class="stance-tooltip">专注技术效率，较少公开讨论安全</div></td>
+      <td><span class="stance-cell stance-yellow">务实</span><div class="stance-tooltip">安全是必要的但不是核心卖点</div></td>
+    </tr>
+    <tr onclick="toggleRowHL(this)">
+      <td style="text-align:left;font-weight:600">开源 vs 闭源</td>
+      <td><span class="stance-cell stance-red">闭源</span><div class="stance-tooltip">曾开源GPT-2，现完全闭源</div></td>
+      <td><span class="stance-cell stance-red">闭源</span><div class="stance-tooltip">模型权重不公开，安全考量</div></td>
+      <td><span class="stance-cell stance-yellow">混合</span><div class="stance-tooltip">Gemma开源 + Gemini闭源双轨</div></td>
+      <td><span class="stance-cell stance-red">闭源</span><div class="stance-tooltip">Grok模型权重不公开</div></td>
+      <td><span class="stance-cell stance-green">开源领袖</span><div class="stance-tooltip">LLaMA系列全面开源，行业最大贡献者</div></td>
+      <td><span class="stance-cell stance-green">开源</span><div class="stance-tooltip">MIT许可，完全开放权重</div></td>
+      <td><span class="stance-cell stance-green">开源</span><div class="stance-tooltip">Apache/MIT许可，欧洲开源旗手</div></td>
+    </tr>
+    <tr onclick="toggleRowHL(this)">
+      <td style="text-align:left;font-weight:600">军事合作</td>
+      <td><span class="stance-cell stance-yellow">有限接受</span><div class="stance-tooltip">取消军事禁令，接受部分国防合同</div></td>
+      <td><span class="stance-cell stance-red">拒绝无底线</span><div class="stance-tooltip">拒绝五角大楼无限制访问，保留底线</div></td>
+      <td><span class="stance-cell stance-yellow">有限</span><div class="stance-tooltip">曾退出Maven项目，但逐步重新参与</div></td>
+      <td><span class="stance-cell stance-blue">全力配合</span><div class="stance-tooltip">获批机密访问，深度政府/军事整合</div></td>
+      <td><span class="stance-cell stance-gray">不参与</span><div class="stance-tooltip">开源模型，不直接参与军事合同</div></td>
+      <td><span class="stance-cell stance-gray">N/A</span><div class="stance-tooltip">中国公司，不适用美国军事合作</div></td>
+      <td><span class="stance-cell stance-gray">不参与</span><div class="stance-tooltip">欧洲公司，不参与美国军事</div></td>
+    </tr>
+    <tr onclick="toggleRowHL(this)">
+      <td style="text-align:left;font-weight:600">AGI 时间线</td>
+      <td><span class="stance-cell stance-blue">2-3年</span><div class="stance-tooltip">Altman: AGI可能在2027-2028到来</div></td>
+      <td><span class="stance-cell stance-green">谨慎不预测</span><div class="stance-tooltip">Dario: 不给时间线，专注安全扩展</div></td>
+      <td><span class="stance-cell stance-yellow">5-10年</span><div class="stance-tooltip">Hassabis: 需要重大突破，不会很快</div></td>
+      <td><span class="stance-cell stance-blue">很快</span><div class="stance-tooltip">Musk: AI很快将超越人类</div></td>
+      <td><span class="stance-cell stance-gray">不强调</span><div class="stance-tooltip">Zuckerberg: 关注实用性而非AGI</div></td>
+      <td><span class="stance-cell stance-gray">不表态</span><div class="stance-tooltip">专注模型效率，不讨论AGI</div></td>
+      <td><span class="stance-cell stance-gray">不强调</span><div class="stance-tooltip">Mensch: 专注商业应用而非AGI</div></td>
+    </tr>
+    <tr onclick="toggleRowHL(this)">
+      <td style="text-align:left;font-weight:600">监管态度</td>
+      <td><span class="stance-cell stance-yellow">支持自律</span><div class="stance-tooltip">参与政策讨论，偏好行业自我监管</div></td>
+      <td><span class="stance-cell stance-green">支持立法</span><div class="stance-tooltip">积极推动AI安全立法，RSP框架</div></td>
+      <td><span class="stance-cell stance-yellow">支持适度</span><div class="stance-tooltip">配合监管但不希望过严</div></td>
+      <td><span class="stance-cell stance-red">反对</span><div class="stance-tooltip">Musk/DOGE: 削减政府监管</div></td>
+      <td><span class="stance-cell stance-red">反对</span><div class="stance-tooltip">Zuckerberg: 反对过度监管限制创新</div></td>
+      <td><span class="stance-cell stance-gray">随中国政策</span><div class="stance-tooltip">遵循中国AI管理规定</div></td>
+      <td><span class="stance-cell stance-green">支持欧盟</span><div class="stance-tooltip">支持AI Act，帮助塑造欧洲框架</div></td>
+    </tr>
+    <tr onclick="toggleRowHL(this)">
+      <td style="text-align:left;font-weight:600">对中国竞争</td>
+      <td><span class="stance-cell stance-red">威胁论</span><div class="stance-tooltip">Altman: 必须保持对中国的技术领先</div></td>
+      <td><span class="stance-cell stance-yellow">关注但克制</span><div class="stance-tooltip">承认竞争但不夸大威胁</div></td>
+      <td><span class="stance-cell stance-yellow">竞争</span><div class="stance-tooltip">全球竞争视角，不过度政治化</div></td>
+      <td><span class="stance-cell stance-red">冷战思维</span><div class="stance-tooltip">Musk: AI是国家安全问题</div></td>
+      <td><span class="stance-cell stance-blue">开源对冲</span><div class="stance-tooltip">用开源削弱闭源对手(包括中国)</div></td>
+      <td><span class="stance-cell stance-blue">自身就是</span><div class="stance-tooltip">中国AI的代表，证明低成本路线可行</div></td>
+      <td><span class="stance-cell stance-gray">中立</span><div class="stance-tooltip">欧洲视角，专注自身</div></td>
+    </tr>
+    <tr onclick="toggleRowHL(this)">
+      <td style="text-align:left;font-weight:600">商业模式</td>
+      <td><span class="stance-cell stance-blue">API+订阅+企业</span><div class="stance-tooltip">ChatGPT订阅 + API + 企业合同</div></td>
+      <td><span class="stance-cell stance-blue">API+企业</span><div class="stance-tooltip">Claude API + 企业合同为主</div></td>
+      <td><span class="stance-cell stance-blue">云+搜索+订阅</span><div class="stance-tooltip">GCP + 搜索广告 + Gemini订阅</div></td>
+      <td><span class="stance-cell stance-yellow">X内嵌+政府</span><div class="stance-tooltip">X平台内嵌 + 政府/军事合同</div></td>
+      <td><span class="stance-cell stance-green">自用+开源</span><div class="stance-tooltip">自用为主，不卖API，开源建生态</div></td>
+      <td><span class="stance-cell stance-green">API(低价)</span><div class="stance-tooltip">极低价API，开发者生态</div></td>
+      <td><span class="stance-cell stance-blue">API+企业</span><div class="stance-tooltip">企业API + 云平台(收购Koyeb)</div></td>
+    </tr>
+  </table>
+  </div>
+
+  <div class="highlight-box" style="margin-top:20px">
+    <strong>关键分裂线:</strong> 安全(Anthropic/Google) vs 速度(xAI/Meta) | 开源(Meta/DeepSeek/Mistral) vs 闭源(OpenAI/Anthropic/xAI) | 亲军事(xAI) vs 拒绝(Anthropic)
+  </div>
+</div>
+
+<!-- ==================== ROADMAP ==================== -->
+<div id="roadmap" class="section">
+  <div class="section-title">未来路线图</div>
+  <div class="section-desc">各主要玩家 2026 年公开计划和战略方向</div>
+
+  <div class="network-legend" style="margin-bottom:20px">
+    <div class="network-legend-item"><div class="network-legend-dot" style="background:#a29bfe"></div>产品发布</div>
+    <div class="network-legend-item"><div class="network-legend-dot" style="background:#55efc4"></div>基础设施</div>
+    <div class="network-legend-item"><div class="network-legend-dot" style="background:#ffeaa7"></div>战略转变</div>
+    <div class="network-legend-item"><div class="network-legend-dot" style="background:#fd79a8"></div>融资/商业</div>
+  </div>
+
+  <div class="timeline">
+    <div class="timeline-header">
+      <div class="timeline-q current">2026 Q1</div>
+      <div class="timeline-q">Q2</div>
+      <div class="timeline-q">Q3</div>
+      <div class="timeline-q">Q4</div>
+      <div class="timeline-q">2027+</div>
+    </div>
+
+    <div class="timeline-row">
+      <div class="timeline-label" style="color:#a29bfe">OpenAI</div>
+      <div class="timeline-track">
+        <div class="timeline-slot"></div>
+        <div class="timeline-slot"><span class="timeline-node tn-product">GPT-5</span></div>
+        <div class="timeline-slot"><span class="timeline-node tn-strategy">转型盈利公司</span></div>
+        <div class="timeline-slot"><span class="timeline-node tn-product">Jony Ive设备</span></div>
+        <div class="timeline-slot"><span class="timeline-node tn-infra">Stargate扩建</span></div>
+      </div>
+    </div>
+
+    <div class="timeline-row">
+      <div class="timeline-label" style="color:#00cec9">Anthropic</div>
+      <div class="timeline-track">
+        <div class="timeline-slot"><span class="timeline-node tn-funding">ARR冲刺</span></div>
+        <div class="timeline-slot"><span class="timeline-node tn-product">Claude 5</span></div>
+        <div class="timeline-slot"><span class="timeline-node tn-strategy">政府合同</span></div>
+        <div class="timeline-slot"></div>
+        <div class="timeline-slot"><span class="timeline-node tn-strategy">负责任规模化</span></div>
+      </div>
+    </div>
+
+    <div class="timeline-row">
+      <div class="timeline-label" style="color:#00b894">Google</div>
+      <div class="timeline-track">
+        <div class="timeline-slot"><span class="timeline-node tn-infra">TPU扩建</span></div>
+        <div class="timeline-slot"><span class="timeline-node tn-product">Gemini 3</span></div>
+        <div class="timeline-slot"><span class="timeline-node tn-product">Astra代理</span></div>
+        <div class="timeline-slot"><span class="timeline-node tn-product">AlphaFold+</span></div>
+        <div class="timeline-slot"><span class="timeline-node tn-infra">$1800亿capex</span></div>
+      </div>
+    </div>
+
+    <div class="timeline-row">
+      <div class="timeline-label" style="color:#fd79a8">xAI</div>
+      <div class="timeline-track">
+        <div class="timeline-slot"><span class="timeline-node tn-strategy">军事整合</span></div>
+        <div class="timeline-slot"><span class="timeline-node tn-product">Grok 4</span></div>
+        <div class="timeline-slot"><span class="timeline-node tn-infra">Colossus扩建</span></div>
+        <div class="timeline-slot"></div>
+        <div class="timeline-slot"><span class="timeline-node tn-infra">卫星算力</span></div>
+      </div>
+    </div>
+
+    <div class="timeline-row">
+      <div class="timeline-label" style="color:#74b9ff">Meta</div>
+      <div class="timeline-track">
+        <div class="timeline-slot"><span class="timeline-node tn-infra">$1350亿capex</span></div>
+        <div class="timeline-slot"><span class="timeline-node tn-product">LLaMA 5</span></div>
+        <div class="timeline-slot"><span class="timeline-node tn-product">AR/VR+AI</span></div>
+        <div class="timeline-slot"><span class="timeline-node tn-strategy">10亿用户</span></div>
+        <div class="timeline-slot"></div>
+      </div>
+    </div>
+
+    <div class="timeline-row">
+      <div class="timeline-label" style="color:#e74c3c">DeepSeek</div>
+      <div class="timeline-track">
+        <div class="timeline-slot"><span class="timeline-node tn-product">V4发布</span></div>
+        <div class="timeline-slot"><span class="timeline-node tn-infra">昇腾适配</span></div>
+        <div class="timeline-slot"><span class="timeline-node tn-strategy">低价API</span></div>
+        <div class="timeline-slot"></div>
+        <div class="timeline-slot"><span class="timeline-node tn-infra">芯片自研?</span></div>
+      </div>
+    </div>
+
+    <div class="timeline-row">
+      <div class="timeline-label" style="color:#f39c12">Mistral</div>
+      <div class="timeline-track">
+        <div class="timeline-slot"><span class="timeline-node tn-strategy">Koyeb整合</span></div>
+        <div class="timeline-slot"><span class="timeline-node tn-product">Large 3</span></div>
+        <div class="timeline-slot"><span class="timeline-node tn-funding">InvestAI</span></div>
+        <div class="timeline-slot"></div>
+        <div class="timeline-slot"><span class="timeline-node tn-funding">ARR $10亿</span></div>
+      </div>
+    </div>
+
+    <div class="timeline-row">
+      <div class="timeline-label" style="color:#6c5ce7">NVIDIA</div>
+      <div class="timeline-track">
+        <div class="timeline-slot"><span class="timeline-node tn-product">NIM/NEMO</span></div>
+        <div class="timeline-slot"></div>
+        <div class="timeline-slot"><span class="timeline-node tn-product">Vera Rubin</span></div>
+        <div class="timeline-slot"><span class="timeline-node tn-product">Cosmos机器人</span></div>
+        <div class="timeline-slot"><span class="timeline-node tn-strategy">AI平台化</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="highlight-box" style="margin-top:20px">
+    <strong>2026 关键节点:</strong> GPT-5 vs Claude 5 vs Gemini 3 的新一轮模型大战 | Meta + DeepSeek 开源攻势 | Stargate + Colossus 算力军备竞赛 | OpenAI 转型盈利公司的关键一年
+  </div>
+</div>
+
 </div><!-- /container -->
 
 <div class="footer">
@@ -981,6 +1288,164 @@ function show(id) {
   document.getElementById(id).classList.add('active');
   event.target.classList.add('active');
   window.scrollTo({ top: 200, behavior: 'smooth' });
+  if (id === 'relations' && !window._networkDrawn) { initNetwork(); window._networkDrawn = true; }
+}
+
+function toggleRowHL(row) {
+  row.classList.toggle('row-highlight');
+}
+
+/* ===== Force-directed Network Graph ===== */
+function initNetwork() {
+  const canvas = document.getElementById('networkCanvas');
+  if (!canvas) return;
+  const container = canvas.parentElement;
+  const dpr = window.devicePixelRatio || 1;
+  const W = container.clientWidth, H = container.clientHeight;
+  canvas.width = W * dpr; canvas.height = H * dpr;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  const nodes = [
+    { id:'openai', label:'OpenAI', x:W*0.35, y:H*0.3, r:28, color:'#a29bfe', val:3000 },
+    { id:'anthropic', label:'Anthropic', x:W*0.55, y:H*0.25, r:18, color:'#00cec9', val:600 },
+    { id:'google', label:'Google', x:W*0.7, y:H*0.4, r:32, color:'#00b894', val:2300 },
+    { id:'xai', label:'xAI', x:W*0.2, y:H*0.5, r:20, color:'#fd79a8', val:800 },
+    { id:'meta', label:'Meta', x:W*0.5, y:H*0.6, r:30, color:'#74b9ff', val:1800 },
+    { id:'nvidia', label:'NVIDIA', x:W*0.5, y:H*0.42, r:34, color:'#6c5ce7', val:3300 },
+    { id:'microsoft', label:'Microsoft', x:W*0.35, y:H*0.55, r:32, color:'#0984e3', val:3000 },
+    { id:'deepseek', label:'DeepSeek', x:W*0.8, y:H*0.6, r:12, color:'#e74c3c', val:100 },
+    { id:'mistral', label:'Mistral', x:W*0.8, y:H*0.25, r:11, color:'#f39c12', val:80 },
+    { id:'softbank', label:'SoftBank', x:W*0.2, y:H*0.3, r:14, color:'#ffeaa7', val:200 },
+    { id:'coreweave', label:'CoreWeave', x:W*0.25, y:H*0.7, r:14, color:'#f39c12', val:490 },
+    { id:'amazon', label:'Amazon', x:W*0.65, y:H*0.7, r:24, color:'#e17055', val:1000 },
+    { id:'broadcom', label:'Broadcom', x:W*0.65, y:H*0.55, r:15, color:'#fdcb6e', val:300 },
+    { id:'ssi', label:'SSI', x:W*0.45, y:H*0.15, r:8, color:'#636e72', val:50 },
+  ];
+  const edges = [
+    { from:'microsoft', to:'openai', type:'invest', label:'$13B+' },
+    { from:'microsoft', to:'anthropic', type:'invest', label:'$15B' },
+    { from:'amazon', to:'anthropic', type:'invest', label:'$8B' },
+    { from:'google', to:'anthropic', type:'invest', label:'$2B+' },
+    { from:'softbank', to:'openai', type:'invest', label:'Stargate' },
+    { from:'meta', to:'deepseek', type:'compete', label:'' },
+    { from:'openai', to:'anthropic', type:'compete', label:'核心对抗' },
+    { from:'openai', to:'google', type:'compete', label:'GPT vs Gemini' },
+    { from:'xai', to:'anthropic', type:'compete', label:'五角大楼' },
+    { from:'meta', to:'openai', type:'compete', label:'开源vs闭源' },
+    { from:'deepseek', to:'openai', type:'compete', label:'成本颠覆' },
+    { from:'nvidia', to:'openai', type:'collab', label:'GPU供应' },
+    { from:'nvidia', to:'google', type:'collab', label:'GPU供应' },
+    { from:'nvidia', to:'meta', type:'collab', label:'60万H100' },
+    { from:'nvidia', to:'xai', type:'collab', label:'Colossus' },
+    { from:'nvidia', to:'coreweave', type:'collab', label:'GPU供应' },
+    { from:'microsoft', to:'coreweave', type:'collab', label:'62%收入' },
+    { from:'broadcom', to:'google', type:'collab', label:'TPU定制' },
+    { from:'broadcom', to:'meta', type:'collab', label:'MTIA' },
+    { from:'openai', to:'ssi', type:'people', label:'Ilya出走' },
+    { from:'openai', to:'anthropic', type:'people', label:'Dario出走' },
+    { from:'openai', to:'xai', type:'people', label:'Musk出走' },
+    { from:'google', to:'mistral', type:'people', label:'Mensch出走' },
+  ];
+  const typeColors = { invest:'#00b894', compete:'#e74c3c', collab:'#0984e3', people:'#636e72' };
+
+  // Simple force simulation
+  const ns = nodes.map(n => ({...n, vx:0, vy:0}));
+  const nodeMap = {}; ns.forEach(n => nodeMap[n.id] = n);
+
+  function simulate() {
+    for (let iter = 0; iter < 120; iter++) {
+      // Repulsion
+      for (let i = 0; i < ns.length; i++) {
+        for (let j = i+1; j < ns.length; j++) {
+          let dx = ns[j].x - ns[i].x, dy = ns[j].y - ns[i].y;
+          let d = Math.sqrt(dx*dx+dy*dy) || 1;
+          let f = 8000 / (d * d);
+          ns[i].vx -= dx/d*f; ns[i].vy -= dy/d*f;
+          ns[j].vx += dx/d*f; ns[j].vy += dy/d*f;
+        }
+      }
+      // Attraction via edges
+      edges.forEach(e => {
+        let a = nodeMap[e.from], b = nodeMap[e.to]; if(!a||!b) return;
+        let dx = b.x-a.x, dy = b.y-a.y, d = Math.sqrt(dx*dx+dy*dy)||1;
+        let f = (d - 140) * 0.01;
+        a.vx += dx/d*f; a.vy += dy/d*f;
+        b.vx -= dx/d*f; b.vy -= dy/d*f;
+      });
+      // Center gravity
+      ns.forEach(n => {
+        n.vx += (W/2 - n.x)*0.001; n.vy += (H/2 - n.y)*0.001;
+        n.vx *= 0.85; n.vy *= 0.85;
+        n.x += n.vx; n.y += n.vy;
+        n.x = Math.max(n.r+10, Math.min(W-n.r-10, n.x));
+        n.y = Math.max(n.r+10, Math.min(H-n.r-10, n.y));
+      });
+    }
+  }
+  simulate();
+
+  let hoveredNode = null;
+
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    // Edges
+    edges.forEach(e => {
+      let a = nodeMap[e.from], b = nodeMap[e.to]; if(!a||!b) return;
+      let highlighted = hoveredNode && (hoveredNode.id===e.from || hoveredNode.id===e.to);
+      let dimmed = hoveredNode && !highlighted;
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+      ctx.strokeStyle = dimmed ? 'rgba(60,60,80,0.2)' : typeColors[e.type];
+      ctx.lineWidth = highlighted ? 2.5 : 1;
+      ctx.globalAlpha = dimmed ? 0.3 : (highlighted ? 1 : 0.5);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+      // Edge label
+      if (highlighted && e.label) {
+        let mx = (a.x+b.x)/2, my = (a.y+b.y)/2;
+        ctx.font = '11px -apple-system, sans-serif';
+        ctx.fillStyle = '#fff';
+        ctx.textAlign = 'center';
+        ctx.fillText(e.label, mx, my - 6);
+      }
+    });
+    // Nodes
+    ns.forEach(n => {
+      let highlighted = hoveredNode && hoveredNode.id === n.id;
+      let connected = hoveredNode && edges.some(e => (e.from===hoveredNode.id && e.to===n.id) || (e.to===hoveredNode.id && e.from===n.id));
+      let dimmed = hoveredNode && !highlighted && !connected;
+      ctx.globalAlpha = dimmed ? 0.25 : 1;
+      // Glow
+      if (highlighted) {
+        ctx.beginPath(); ctx.arc(n.x, n.y, n.r+6, 0, Math.PI*2);
+        ctx.fillStyle = n.color + '33'; ctx.fill();
+      }
+      ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI*2);
+      ctx.fillStyle = n.color + '30'; ctx.fill();
+      ctx.strokeStyle = n.color; ctx.lineWidth = highlighted ? 2.5 : 1.5; ctx.stroke();
+      ctx.font = (highlighted ? 'bold ' : '') + (n.r > 20 ? '12' : '10') + 'px -apple-system, sans-serif';
+      ctx.fillStyle = dimmed ? '#555' : '#e0e0e0';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(n.label, n.x, n.y);
+      ctx.globalAlpha = 1;
+    });
+  }
+  draw();
+
+  canvas.addEventListener('mousemove', function(evt) {
+    const rect = canvas.getBoundingClientRect();
+    const mx = evt.clientX - rect.left, my = evt.clientY - rect.top;
+    hoveredNode = null;
+    for (let n of ns) {
+      let dx = mx-n.x, dy = my-n.y;
+      if (dx*dx+dy*dy < (n.r+8)*(n.r+8)) { hoveredNode = n; break; }
+    }
+    canvas.style.cursor = hoveredNode ? 'pointer' : 'default';
+    draw();
+  });
+  canvas.addEventListener('mouseleave', function() { hoveredNode = null; draw(); });
 }
 </script>
 </body>
