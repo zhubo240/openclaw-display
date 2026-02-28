@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 态势周报 | 2026 W09</title>
+<style>
+:root {
+  --bg: #0f172a;
+  --bg2: #1e293b;
+  --bg3: #334155;
+  --border: #475569;
+  --text: #f1f5f9;
+  --text2: #94a3b8;
+  --text3: #64748b;
+  --blue: #3b82f6;
+  --green: #10b981;
+  --amber: #f59e0b;
+  --red: #ef4444;
+  --purple: #a78bfa;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+}
+.container { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+/* Header */
+.header { text-align: center; margin-bottom: 48px; padding-bottom: 32px; border-bottom: 1px solid var(--border); }
+.header .week { font-size: 14px; color: var(--blue); font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.header h1 { font-size: 28px; font-weight: 700; margin-bottom: 16px; }
+.header .tagline {
+  font-size: 18px; color: var(--text2); line-height: 1.6; max-width: 700px; margin: 0 auto;
+  padding: 16px 24px; background: var(--bg2); border-radius: 8px; border-left: 3px solid var(--blue);
+}
+
+/* Section */
+.section { margin-bottom: 48px; }
+.section-title {
+  font-size: 13px; font-weight: 700; color: var(--blue); letter-spacing: 2px;
+  text-transform: uppercase; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 1px solid var(--bg3);
+}
+
+/* Narrative blocks */
+.narrative { margin-bottom: 36px; }
+.narrative h3 {
+  font-size: 20px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;
+}
+.narrative h3 .num {
+  background: var(--blue); color: white; width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;
+}
+.narrative p { color: var(--text2); margin-bottom: 12px; }
+.narrative strong { color: var(--text); }
+.narrative .highlight {
+  background: var(--bg2); border-radius: 8px; padding: 16px 20px; margin: 12px 0;
+  border-left: 3px solid var(--amber); color: var(--text2); font-size: 15px;
+}
+
+/* Entity list */
+.entity-list { list-style: none; padding: 0; }
+.entity-list li {
+  padding: 10px 16px; background: var(--bg2); border-radius: 6px; margin-bottom: 6px;
+  font-size: 15px; color: var(--text2); display: flex; gap: 8px;
+}
+.entity-list li strong { color: var(--text); min-width: 120px; flex-shrink: 0; }
+
+/* Table */
+.data-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+.data-table th {
+  background: var(--bg3); color: var(--text2); padding: 10px 14px; text-align: left;
+  font-weight: 600; font-size: 12px; letter-spacing: 1px; text-transform: uppercase;
+}
+.data-table td { padding: 10px 14px; border-bottom: 1px solid var(--bg3); color: var(--text2); }
+.data-table tr:hover td { background: var(--bg2); }
+.data-table td:nth-child(2) { color: var(--amber); font-weight: 600; font-family: "SF Mono", Menlo, monospace; }
+
+/* Regulation grid */
+.reg-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0; }
+.reg-card {
+  background: var(--bg2); border-radius: 8px; padding: 16px; border-top: 3px solid var(--blue);
+}
+.reg-card.eu { border-top-color: var(--green); }
+.reg-card.uk { border-top-color: var(--purple); }
+.reg-card h4 { font-size: 14px; margin-bottom: 6px; }
+.reg-card .rep { font-size: 13px; color: var(--text3); margin-bottom: 8px; }
+.reg-card p { font-size: 13px; color: var(--text2); }
+
+/* Investor grid */
+.inv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; margin: 16px 0; }
+.inv-card {
+  background: var(--bg2); border-radius: 8px; padding: 14px; text-align: center;
+}
+.inv-card .name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.inv-card .stance { font-size: 12px; padding: 2px 8px; border-radius: 10px; display: inline-block; margin-bottom: 6px; }
+.inv-card .stance.bear { background: rgba(239,68,68,0.2); color: var(--red); }
+.inv-card .stance.bull { background: rgba(16,185,129,0.2); color: var(--green); }
+.inv-card .stance.mixed { background: rgba(245,158,11,0.2); color: var(--amber); }
+.inv-card .stance.avoid { background: rgba(100,116,139,0.2); color: var(--text3); }
+.inv-card .detail { font-size: 12px; color: var(--text3); }
+
+/* Watchlist */
+.watchlist { list-style: none; padding: 0; counter-reset: watch; }
+.watchlist li {
+  padding: 12px 16px; background: var(--bg2); border-radius: 6px; margin-bottom: 6px;
+  font-size: 15px; color: var(--text2); display: flex; gap: 12px; align-items: baseline;
+  counter-increment: watch;
+}
+.watchlist li::before {
+  content: counter(watch); background: var(--bg3); color: var(--text3); width: 24px; height: 24px;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; flex-shrink: 0;
+}
+.watchlist li strong { color: var(--text); }
+
+/* Chip war */
+.chipwar {
+  background: linear-gradient(135deg, var(--bg2), rgba(239,68,68,0.08));
+  border: 1px solid rgba(239,68,68,0.2); border-radius: 10px; padding: 24px; margin: 16px 0;
+}
+.chipwar h4 { color: var(--red); font-size: 16px; margin-bottom: 12px; }
+.chipwar p { color: var(--text2); font-size: 15px; margin-bottom: 8px; }
+
+/* Footer */
+.footer { text-align: center; color: var(--text3); font-size: 13px; padding-top: 32px; border-top: 1px solid var(--bg3); }
+
+@media (max-width: 768px) {
+  .container { padding: 24px 16px 60px; }
+  .reg-grid { grid-template-columns: 1fr; }
+  .inv-grid { grid-template-columns: repeat(2, 1fr); }
+  .header h1 { font-size: 22px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <div class="week">2026 W09 &middot; 2/24 &ndash; 2/28</div>
+  <h1>AI 态势周报</h1>
+  <div class="tagline">Anthropic 拒绝五角大楼、NVIDIA 财报炸裂、全球 AI 监管分裂加剧——这是 AI 产业从"能力竞赛"转向"权力博弈"的一周。</div>
+</div>
+
+<!-- 1. AI vs Military -->
+<div class="section">
+  <div class="section-title">一 &middot; 五大主线</div>
+
+  <div class="narrative">
+    <h3><span class="num">1</span> AI 与军事伦理的正面碰撞</h3>
+    <p>Anthropic CEO Dario Amodei <strong>正式拒绝五角大楼最后通牒</strong>（2/26），画出两条不可逾越的红线：大规模国内监控和完全自主武器。国防部长 Hegseth 要求在本周末前签署授予军方"所有合法用途"的完全访问文件。</p>
+    <p>与此同时，<strong>xAI 的 Grok 获批进入五角大楼机密系统</strong>（2/23），直接填补 Claude 可能留下的空白。到了 2/27，Trump 将 Anthropic 列为"供应链风险"，OpenAI 数小时后签下五角大楼合同。</p>
+    <div class="highlight">
+      <strong>核心张力：</strong>AI 安全公司能否在充当国防承包商的同时维持伦理底线？市场正在用合同投票——xAI 和 OpenAI 选择了"无限制"，Anthropic 选择了"有原则"。
+    </div>
+  </div>
+
+  <div class="narrative">
+    <h3><span class="num">2</span> NVIDIA 交出满分答卷</h3>
+    <p><strong>Q4 FY2026 营收 $680 亿</strong>（vs 共识 $662 亿），下季指引 <strong>$780 亿</strong>（vs 预期 $726 亿），数据中心业务自 ChatGPT 发布以来增长 <strong>13 倍</strong>。Jensen Huang 宣布"agentic AI 拐点已至"。</p>
+    <p>更有趣的是 Huang 的"市场搞错了"声明（2/26）：他驳斥了 AI agent 将消灭 SaaS 行业的恐慌，认为 agentic AI 会<strong>更多地使用</strong>软件工具而非替代它们。这直接回应了 OpenAI "Frontier Alliances" 引发的近 $1 万亿 SaaS 市值蒸发。</p>
+  </div>
+
+  <div class="narrative">
+    <h3><span class="num">3</span> 全球 AI 监管的"大分裂"</h3>
+    <p>三个阵营正在成形：</p>
+    <div class="reg-grid">
+      <div class="reg-card">
+        <h4>美国联邦</h4>
+        <div class="rep">Trump / Sacks</div>
+        <p>去监管化，联邦抢先权打压州法。Sacks 系统性阻击犹他和佛州 AI 立法。犹他以 90% 民意支持和广告牌运动反击。</p>
+      </div>
+      <div class="reg-card eu">
+        <h4>欧盟</h4>
+        <div class="rep">冯德莱恩 / EU AI Office</div>
+        <p>强监管 + 大投资。巴黎峰会推出 &euro;2000 亿 InvestAI 计划，"AI 版 CERN"。AI Act 8 月全面适用。</p>
+      </div>
+      <div class="reg-card uk">
+        <h4>英国</h4>
+        <div class="rep">Starmer</div>
+        <p>聚焦安全。深度伪造入刑 + AI 聊天机器人纳入在线安全法。"要和大科技公司打，那就来吧。"</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="narrative">
+    <h3><span class="num">4</span> 企业 AI 重组进入实操阶段</h3>
+    <p>AI 不再只是产品——它正在重塑企业内部运作方式：</p>
+    <ul class="entity-list">
+      <li><strong>JPMorgan</strong> 15 万人周活 LLM，运营/支持岗减 4%，客户岗增 4%，技术支出 $198 亿</li>
+      <li><strong>Meta</strong> 2026 是"个人超级智能"之年，capex 高达 $1350 亿</li>
+      <li><strong>Microsoft</strong> 全球 AI 巡演，OpenAI 已贡献 $76 亿净利润</li>
+      <li><strong>Anthropic</strong> Claude Cowork 集成 Excel/PowerPoint/Google Drive，NYSE 全组织部署</li>
+    </ul>
+    <div class="highlight">
+      Dimon 的质问最为尖锐："如果让 200 万人失业，你还做吗？"拉加德从 ECB 角度回应：将对 AI 裁员"极度关注"。吴恩达给出另一个角度："用 AI 的人会替代不用 AI 的人。"
+    </div>
+  </div>
+
+  <div class="narrative">
+    <h3><span class="num">5</span> 投资者的"信仰分裂"</h3>
+    <div class="inv-grid">
+      <div class="inv-card">
+        <div class="name">Dalio</div>
+        <span class="stance bear">泡沫警告</span>
+        <div class="detail">"更危险阶段"<br>"早期泡沫"</div>
+      </div>
+      <div class="inv-card">
+        <div class="name">Wood</div>
+        <span class="stance bull">极度乐观</span>
+        <div class="detail">"Goldilocks" 经济<br>BTC $80 万</div>
+      </div>
+      <div class="inv-card">
+        <div class="name">Ackman</div>
+        <span class="stance bull">选择性押注</span>
+        <div class="detail">40% 仓位 AI 股<br>$2B Meta</div>
+      </div>
+      <div class="inv-card">
+        <div class="name">Buffett</div>
+        <span class="stance avoid">完全回避</span>
+        <div class="detail">退休<br>$3817 亿现金</div>
+      </div>
+      <div class="inv-card">
+        <div class="name">Fink</div>
+        <span class="stance mixed">基础设施优先</span>
+        <div class="detail">代币化 = "96 年互联网"<br>BUIDL $20 亿</div>
+      </div>
+    </div>
+    <p>Bridgewater 操作最具启示性：减持 GOOG/META/MSFT（AI 消费端），加仓 NVDA/ORCL/MU（AI 基础设施端）。逻辑是"铲子"比"淘金"更安全。</p>
+  </div>
+</div>
+
+<!-- Chip War -->
+<div class="section">
+  <div class="section-title">二 &middot; 地缘芯片战升级</div>
+  <div class="chipwar">
+    <h4>DeepSeek &times; 华为 &times; NVIDIA Blackwell</h4>
+    <p><strong>DeepSeek 对美国芯片商封锁最新模型</strong>，打破行业惯例，转而优先向华为开放。Trump 政府官员透露 DeepSeek 最新模型使用中国大陆的 <strong>NVIDIA Blackwell 芯片集群</strong>训练，疑似违反出口管制。</p>
+    <p>同时，OpenAI 威胁报告揭露一名中国执法官员将 ChatGPT 当作"工作日记"，意外暴露了跨国镇压行动的细节。</p>
+  </div>
+</div>
+
+<!-- Key Numbers -->
+<div class="section">
+  <div class="section-title">三 &middot; 本周关键数字</div>
+  <table class="data-table">
+    <thead><tr><th>指标</th><th>数字</th><th>来源</th></tr></thead>
+    <tbody>
+      <tr><td>NVIDIA Q4 营收</td><td>$680 亿 (+73% YoY)</td><td>财报</td></tr>
+      <tr><td>NVIDIA 下季指引</td><td>$780 亿</td><td>财报</td></tr>
+      <tr><td>Anthropic 年化收入</td><td>$140 亿</td><td>多家媒体</td></tr>
+      <tr><td>Anthropic 估值</td><td>$3800 亿</td><td>Series G</td></tr>
+      <tr><td>Meta AI capex</td><td>$1350 亿</td><td>Zuckerberg</td></tr>
+      <tr><td>JPMorgan 技术支出</td><td>$198 亿</td><td>投资者日</td></tr>
+      <tr><td>InvestAI 计划</td><td>&euro;2000 亿</td><td>冯德莱恩</td></tr>
+      <tr><td>Berkshire 现金</td><td>$3817 亿</td><td>Abel 股东信</td></tr>
+      <tr><td>Mistral 年化收入</td><td>$4 亿+</td><td>Mensch CNBC</td></tr>
+      <tr><td>SaaS 市值蒸发</td><td>~$1 万亿</td><td>多家媒体</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Watchlist -->
+<div class="section">
+  <div class="section-title">四 &middot; 下周关注</div>
+  <ol class="watchlist">
+    <li><strong>Anthropic 五角大楼后续</strong> — 被列为"供应链风险"后，是否会失去所有政府合同？</li>
+    <li><strong>DeepSeek V4 发布窗口</strong> — 仍在等待，每天都是潜在催化剂</li>
+    <li><strong>3 月 11 日商务部评估</strong> — 识别"繁重的"州 AI 法律，监管权之争下一战场</li>
+    <li><strong>GTC 2026（3/16-19）</strong> — Huang 预告的"世界从未见过的芯片"</li>
+    <li><strong>Berkshire 股东信市场反应</strong> — Abel 时代首秀</li>
+  </ol>
+</div>
+
+<div class="footer">
+  数据截至 2026-02-28 17:30 GMT+8 &middot; 基于 32 个实体的持续追踪<br>
+  AI 态势周报 &middot; W09 2026
+</div>
+
+</div>
+</body>
+</html>
