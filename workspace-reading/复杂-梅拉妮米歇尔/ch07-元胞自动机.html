@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第七章：元胞自动机、生命和宇宙 — 复杂</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; background: #0a0a0f; color: #e0e0e0; min-height: 100vh; }
+    .container { max-width: 780px; margin: 0 auto; padding: 48px 24px; }
+    .nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 48px; font-size: 13px; }
+    .nav a { color: #63b3ed; text-decoration: none; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+    .nav a:hover { color: #90cdf4; }
+    .nav .chapter-nav { display: flex; gap: 20px; }
+    .chapter-header { margin-bottom: 48px; }
+    .chapter-label { font-size: 12px; letter-spacing: 3px; color: #63b3ed; text-transform: uppercase; margin-bottom: 12px; }
+    .chapter-title { font-size: 36px; font-weight: 700; color: #fff; margin-bottom: 12px; }
+    .chapter-subtitle { font-size: 15px; color: #718096; }
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(99, 179, 237, 0.2), transparent); margin: 40px 0; }
+    .section-title { font-size: 18px; font-weight: 600; color: #fff; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+    .section-title::before { content: ''; width: 3px; height: 18px; background: #63b3ed; border-radius: 2px; }
+    .summary-text { font-size: 15px; line-height: 1.9; color: #a0aec0; margin-bottom: 20px; }
+    .summary-text strong { color: #e2e8f0; }
+    .timeline { position: relative; padding-left: 28px; margin: 28px 0 36px; }
+    .timeline::before { content: ''; position: absolute; left: 6px; top: 4px; bottom: 4px; width: 2px; background: rgba(99, 179, 237, 0.15); }
+    .timeline-item { position: relative; margin-bottom: 24px; }
+    .timeline-item::before { content: ''; position: absolute; left: -25px; top: 7px; width: 10px; height: 10px; background: #1a202c; border: 2px solid #63b3ed; border-radius: 50%; }
+    .timeline-item h4 { font-size: 14px; color: #e2e8f0; margin-bottom: 6px; }
+    .timeline-item h4 .year { color: #63b3ed; font-family: "SF Mono", Monaco, Consolas, monospace; font-size: 12px; margin-right: 8px; }
+    .timeline-item p { font-size: 13px; line-height: 1.8; color: #718096; }
+    .concepts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0 32px; }
+    .concept-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 22px 18px; transition: all 0.25s; }
+    .concept-card:hover { background: rgba(99, 179, 237, 0.05); border-color: rgba(99, 179, 237, 0.15); transform: translateY(-2px); }
+    .concept-card h4 { font-size: 15px; color: #e2e8f0; margin-bottom: 8px; }
+    .concept-card p { font-size: 13px; color: #718096; line-height: 1.7; }
+    .concept-card .icon { font-size: 24px; margin-bottom: 10px; }
+    .highlight-box { background: rgba(99, 179, 237, 0.06); border: 1px solid rgba(99, 179, 237, 0.15); border-radius: 12px; padding: 24px; margin: 28px 0; }
+    .highlight-box .label { font-size: 11px; letter-spacing: 2px; color: #63b3ed; text-transform: uppercase; margin-bottom: 10px; }
+    .highlight-box p { font-size: 15px; line-height: 1.8; color: #cbd5e0; }
+    .highlight-box p + p { margin-top: 12px; }
+    .quote-block { border-left: 3px solid rgba(99, 179, 237, 0.3); padding: 16px 20px; margin: 24px 0; background: rgba(255,255,255,0.02); border-radius: 0 8px 8px 0; }
+    .quote-block p { font-size: 14px; line-height: 1.8; color: #a0aec0; font-style: italic; }
+    .quote-block .source { font-size: 12px; color: #718096; margin-top: 8px; font-style: normal; }
+    .formula { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 20px 24px; margin: 20px 0; font-family: "SF Mono", Monaco, Consolas, monospace; font-size: 14px; color: #90cdf4; text-align: center; line-height: 1.8; }
+
+    /* CA grid visualization */
+    .ca-demo { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 24px 0; padding: 24px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; }
+    .ca-row { display: flex; gap: 2px; }
+    .ca-cell { width: 10px; height: 10px; border-radius: 2px; }
+    .ca-cell.on { background: #63b3ed; }
+    .ca-cell.off { background: rgba(255,255,255,0.05); }
+    .ca-label { font-size: 11px; color: #718096; margin-top: 8px; }
+
+    /* Wolfram classes */
+    .class-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 20px 0; }
+    .class-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 18px 16px; }
+    .class-card .class-num { font-size: 11px; letter-spacing: 2px; color: #63b3ed; text-transform: uppercase; margin-bottom: 6px; }
+    .class-card h4 { font-size: 14px; color: #e2e8f0; margin-bottom: 6px; }
+    .class-card p { font-size: 12px; color: #718096; line-height: 1.7; }
+
+    .cmp-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 13px; }
+    .cmp-table th { text-align: left; padding: 10px 14px; background: rgba(99, 179, 237, 0.08); color: #63b3ed; font-weight: 600; font-size: 12px; border-bottom: 1px solid rgba(99, 179, 237, 0.15); }
+    .cmp-table td { padding: 10px 14px; color: #a0aec0; border-bottom: 1px solid rgba(255,255,255,0.04); line-height: 1.6; }
+    .cmp-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .discussion-placeholder { background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.08); border-radius: 12px; padding: 32px; text-align: center; color: #4a5568; font-size: 14px; margin-top: 24px; }
+    .footer-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 64px; padding-top: 32px; border-top: 1px solid rgba(255,255,255,0.06); }
+    .footer-nav a { color: #63b3ed; text-decoration: none; font-size: 14px; display: flex; align-items: center; gap: 8px; transition: color 0.2s; }
+    .footer-nav a:hover { color: #90cdf4; }
+    .footer-nav .prev-chapter { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 12px 24px; border-radius: 8px; }
+    .footer-nav .prev-chapter:hover { background: rgba(255,255,255,0.06); }
+    .footer-nav .next-chapter { background: rgba(99, 179, 237, 0.1); border: 1px solid rgba(99, 179, 237, 0.2); padding: 12px 24px; border-radius: 8px; }
+    .footer-nav .next-chapter:hover { background: rgba(99, 179, 237, 0.15); }
+    @media (max-width: 640px) { .concepts, .class-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <nav class="nav">
+      <a href="index.html">&larr; 返回书目</a>
+      <div class="chapter-nav">
+        <a href="ch06-遗传算法.html">&larr; 上一章</a>
+        <a href="#">下一章 &rarr;</a>
+      </div>
+    </nav>
+
+    <div class="chapter-header">
+      <div class="chapter-label">Chapter 07 &middot; 第二部分：计算机中的生命与进化</div>
+      <h1 class="chapter-title">元胞自动机、生命和宇宙</h1>
+      <p class="chapter-subtitle">Cellular Automata, Life, and the Universe</p>
+    </div>
+
+    <div class="divider"></div>
+
+    <section>
+      <h2 class="section-title">章节概要</h2>
+
+      <p class="summary-text">
+        第六章展示了如何在计算机中模拟进化。第七章问一个更基本的问题：<strong>极其简单的规则能产生多复杂的行为？</strong>元胞自动机（Cellular Automata, CA）是回答这个问题的完美实验场——它们是最简单的能展示复杂行为的计算系统。
+      </p>
+
+      <h2 class="section-title">什么是元胞自动机</h2>
+
+      <p class="summary-text">
+        元胞自动机由三部分组成：
+      </p>
+
+      <p class="summary-text">
+        <strong>1. 网格</strong>——一维（一排格子）、二维（棋盘格）或更高维。每个格子叫一个"元胞"（cell）。<br>
+        <strong>2. 状态</strong>——每个元胞在任意时刻处于有限个状态之一（最简单的情况：0 或 1，黑或白）。<br>
+        <strong>3. 规则</strong>——一个确定性的局部规则：每个元胞的下一状态由它自己和邻居的当前状态决定。所有元胞同时更新。
+      </p>
+
+      <div class="formula">
+        简单的格子 + 简单的状态 + 简单的局部规则 + 同步更新 = 元胞自动机
+      </div>
+
+      <h2 class="section-title">历史：从冯·诺依曼到沃尔弗拉姆</h2>
+
+      <div class="timeline">
+        <div class="timeline-item">
+          <h4><span class="year">1940s</span>冯·诺依曼的自复制自动机</h4>
+          <p>冯·诺依曼想搞清楚一个根本问题：机器能否自我复制？在乌拉姆（Stanislaw Ulam）的建议下，他构造了一个二维元胞自动机，证明了自复制机器在理论上是可能的——远在 DNA 结构被发现之前。</p>
+        </div>
+        <div class="timeline-item">
+          <h4><span class="year">1970</span>康威的"生命游戏"（Game of Life）</h4>
+          <p>数学家约翰·康威（John Conway）设计了一个极其简单的二维 CA：每个格子是"活"或"死"，规则只有四条。结果这个"游戏"能产生出滑翔机（gliders）、振荡器、甚至能执行任意计算的结构——它是图灵完备的。</p>
+        </div>
+        <div class="timeline-item">
+          <h4><span class="year">1980s</span>沃尔弗拉姆的系统研究</h4>
+          <p>物理学家斯蒂芬·沃尔弗拉姆（Stephen Wolfram）对一维 CA 做了系统性分类。他编号了所有 256 种最简单的一维 CA 规则（"初等元胞自动机"），发现它们的行为可以分为四类。</p>
+        </div>
+        <div class="timeline-item">
+          <h4><span class="year">2002</span>《一种新科学》</h4>
+          <p>沃尔弗拉姆出版了 1200 页的《一种新科学》（A New Kind of Science），主张简单程序是理解自然的关键，并提出了激进的"计算等价原理"。这本书引发了巨大争议。</p>
+        </div>
+      </div>
+
+      <h2 class="section-title">生命游戏的规则</h2>
+
+      <p class="summary-text">
+        康威生命游戏的全部规则只有四条，却产生出了令人惊叹的复杂性：
+      </p>
+
+      <table class="cmp-table">
+        <thead>
+          <tr><th>条件</th><th>结果</th><th>隐喻</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>活细胞，邻居 &lt; 2</td><td>死亡</td><td style="color:#718096">孤独致死</td></tr>
+          <tr><td>活细胞，邻居 = 2 或 3</td><td>存活</td><td style="color:#718096">恰好合适</td></tr>
+          <tr><td>活细胞，邻居 &gt; 3</td><td>死亡</td><td style="color:#718096">过于拥挤</td></tr>
+          <tr><td>死细胞，邻居 = 3</td><td>复活</td><td style="color:#718096">繁殖</td></tr>
+        </tbody>
+      </table>
+
+      <p class="summary-text">
+        从这四条规则中涌现出的结构包括：稳定结构（不变的"静物"）、周期结构（振荡器）、移动结构（滑翔机，gliders）、甚至能发射滑翔机的"枪"（glider guns）。人们还在生命游戏中构造出了完整的计算机——<strong>证明了这四条规则足以执行任何可计算的运算</strong>。
+      </p>
+
+      <h2 class="section-title">沃尔弗拉姆的四类行为</h2>
+
+      <p class="summary-text">
+        沃尔弗拉姆发现，256 种初等一维 CA 的行为可以归为四类：
+      </p>
+
+      <div class="class-grid">
+        <div class="class-card">
+          <div class="class-num">Class I</div>
+          <h4>均匀态</h4>
+          <p>无论初始条件如何，系统最终收敛到单一均匀状态。所有格子全黑或全白。类比：死寂。</p>
+        </div>
+        <div class="class-card">
+          <div class="class-num">Class II</div>
+          <h4>周期态</h4>
+          <p>系统进入简单的重复模式或稳定结构。可预测、有秩序、但不复杂。类比：钟摆。</p>
+        </div>
+        <div class="class-card">
+          <div class="class-num">Class III</div>
+          <h4>混沌态</h4>
+          <p>看起来完全随机，没有明显结构。对初始条件敏感。类比：噪声/混沌。</p>
+        </div>
+        <div class="class-card">
+          <div class="class-num">Class IV</div>
+          <h4>复杂态</h4>
+          <p>既不完全有序也不完全随机。出现局部化结构、移动粒子、复杂交互。<strong>最有趣的一类</strong>——生命游戏属于此类。类比：生命。</p>
+        </div>
+      </div>
+
+      <p class="summary-text">
+        最有趣的发现：<strong>Class IV 恰好处在 Class II（秩序）和 Class III（混沌）的边界上。</strong>这呼应了考夫曼的"混沌边缘"（edge of chaos）概念——复杂行为、甚至计算能力，似乎在秩序和混沌的过渡区域达到最大值。
+      </p>
+
+      <h2 class="section-title">核心概念</h2>
+
+      <div class="concepts">
+        <div class="concept-card">
+          <div class="icon">🖥️</div>
+          <h4>图灵完备性</h4>
+          <p>生命游戏和某些一维 CA（如 Rule 110）被证明是<strong>图灵完备的</strong>——它们能执行任何图灵机能执行的计算。极其简单的规则就能产生通用计算能力。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">🌊</div>
+          <h4>混沌边缘</h4>
+          <p>兰顿（Chris Langton）发现，当 CA 的规则参数（&lambda; 参数）从有序区调向混沌区时，在边界处出现了最复杂的行为和最长的"瞬态"（transient）。复杂性似乎在"相变点"达到峰值。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">🔬</div>
+          <h4>计算不可约性</h4>
+          <p>沃尔弗拉姆提出：某些 CA 的行为<strong>没有捷径可以预测</strong>——要知道第 1000 步的状态，你必须实际运行 1000 步。这意味着某些系统的行为在根本上不可被"压缩"。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">⚡</div>
+          <h4>计算等价原理</h4>
+          <p>沃尔弗拉姆最激进的主张：几乎所有不明显简单的系统都等价于通用图灵机。如果为真，这意味着自然界中的复杂系统（天气、生态、大脑）在计算能力上都是等价的。</p>
+        </div>
+      </div>
+
+      <h2 class="section-title">争议：沃尔弗拉姆的主张</h2>
+
+      <p class="summary-text">
+        米歇尔对沃尔弗拉姆的工作给予了公正但审慎的评价。沃尔弗拉姆的核心主张引发了激烈的科学争论：
+      </p>
+
+      <table class="cmp-table">
+        <thead>
+          <tr><th>主张</th><th>支持</th><th>质疑</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color:#e2e8f0">简单程序是理解自然的关键</td>
+            <td>CA 确实展示了简单规则产生复杂行为</td>
+            <td>从简单 CA 到真实自然现象的跨越缺乏验证</td>
+          </tr>
+          <tr>
+            <td style="color:#e2e8f0">计算等价原理</td>
+            <td>Rule 110 等例子提供了支持</td>
+            <td>没有严格定义"不明显简单"，更像信念而非定理</td>
+          </tr>
+          <tr>
+            <td style="color:#e2e8f0">CA 代替微分方程</td>
+            <td>在某些模拟中 CA 更自然（流体、交通）</td>
+            <td>在很多物理问题中微分方程仍然更有效</td>
+          </tr>
+          <tr>
+            <td style="color:#e2e8f0">"新科学"的新颖性</td>
+            <td>系统性分类确实是贡献</td>
+            <td>很多想法前人已有，如冯·诺依曼、兰顿等</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="quote-block">
+        <p>"沃尔弗拉姆的工作引发的最重要的问题不是他的答案是否正确，而是他的问题是否值得问。而这些问题确实值得问。"</p>
+        <div class="source">&mdash; 米歇尔对沃尔弗拉姆争议的总结</div>
+      </div>
+
+      <h2 class="section-title">与前几章的连接</h2>
+
+      <p class="summary-text">
+        <strong>第二章（混沌）</strong>：混沌系统是连续的、确定性但不可预测的。CA 是离散版本的同一主题——确定性规则产生不可预测的行为。Class III 的 CA 是"离散混沌"。
+      </p>
+
+      <p class="summary-text">
+        <strong>第四章（计算）</strong>：图灵机是计算的终极抽象。CA 提供了另一种等价的计算模型——更"自然"，因为它是并行的、局部的、没有中央控制的。这直接联系到复杂系统的核心特征。
+      </p>
+
+      <p class="summary-text">
+        <strong>第六章（遗传算法）</strong>：GA 用进化搜索解空间。米歇尔自己的研究正是用 GA 来进化 CA 的规则——让进化来设计能执行特定计算任务的 CA，这是第三部分（"大写的计算"）的核心主题。
+      </p>
+
+      <div class="highlight-box">
+        <div class="label">一句话总结</div>
+        <p>元胞自动机是复杂性科学的显微镜——它们展示了一个惊人的事实：你不需要复杂的成分来产生复杂的行为，你甚至不需要连续的物理定律。一排格子、两种颜色、一条局部规则就够了。</p>
+      </div>
+
+      <div class="highlight-box">
+        <div class="label">第二部分完结</div>
+        <p>"计算机中的生命与进化"到此结束。GA 展示了进化如何在计算机中产生创造性解。CA 展示了简单规则如何产生复杂行为和通用计算。从第三部分开始，米歇尔将这两条线合在一起：<strong>用 GA 来进化 CA</strong>——这正是她自己的研究领域。</p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section>
+      <h2 class="section-title">读书讨论</h2>
+      <div class="discussion-placeholder">
+        尚无讨论 &middot; 读完这一章后来聊聊？
+      </div>
+    </section>
+
+    <div class="footer-nav">
+      <a class="prev-chapter" href="ch06-遗传算法.html">&larr; 第六章：遗传算法</a>
+      <a class="next-chapter" href="#">第八章：粒子计算 &rarr;</a>
+    </div>
+
+  </div>
+</body>
+</html>
