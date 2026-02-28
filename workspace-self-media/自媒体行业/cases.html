@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 时代创作者转型案例集</title>
+    <style>
+        :root {
+            --bg: #0f1117;
+            --card: #1a1d28;
+            --border: #2a2d3a;
+            --text: #e4e4e7;
+            --text-dim: #9ca3af;
+            --accent: #6366f1;
+            --accent-light: #818cf8;
+            --green: #34d399;
+            --orange: #fb923c;
+            --red: #f87171;
+            --yellow: #fbbf24;
+            --cyan: #22d3ee;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+        }
+
+        .nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            background: rgba(15,17,23,0.92); backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 24px; display: flex; align-items: center; gap: 12px; font-size: 0.85rem;
+        }
+        .nav a { color: var(--text-dim); text-decoration: none; }
+        .nav a:hover { color: var(--accent-light); }
+        .nav .sep { color: var(--border); }
+        .nav .current { color: var(--text); font-weight: 500; }
+
+        .hero {
+            padding: 120px 24px 60px; text-align: center;
+            background: linear-gradient(135deg, #1a1d28 0%, #0f1117 40%, #1a1520 70%, #0f1117 100%);
+            border-bottom: 1px solid var(--border);
+        }
+        .hero .badge {
+            display: inline-block; padding: 4px 14px;
+            background: rgba(251,146,60,0.12); border: 1px solid rgba(251,146,60,0.3);
+            border-radius: 16px; font-size: 0.8rem; color: var(--orange); margin-bottom: 24px;
+        }
+        .hero h1 {
+            font-size: 2.2rem; font-weight: 700; margin-bottom: 18px;
+            background: linear-gradient(135deg, #fb923c, #fbbf24, #34d399);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            max-width: 700px; margin-left: auto; margin-right: auto;
+        }
+        .hero .lead { font-size: 1.1rem; color: var(--text-dim); max-width: 640px; margin: 0 auto; }
+
+        .content { max-width: 860px; margin: 0 auto; padding: 60px 24px 80px; }
+
+        .content h2 {
+            font-size: 1.45rem; font-weight: 700; margin: 56px 0 12px;
+            padding-left: 16px; border-left: 4px solid var(--orange);
+        }
+        .content h2:first-child { margin-top: 0; }
+        .content > p { margin-bottom: 16px; color: #d1d5db; font-size: 1rem; }
+        .section-desc { color: var(--text-dim); font-size: 0.95rem; margin-bottom: 28px; }
+
+        /* Case card */
+        .case {
+            background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+            padding: 28px 30px; margin-bottom: 20px;
+            transition: border-color 0.2s;
+        }
+        .case:hover { border-color: rgba(251,146,60,0.4); }
+
+        .case-header { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; flex-wrap: wrap; }
+
+        .case-avatar {
+            width: 44px; height: 44px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; flex-shrink: 0;
+        }
+
+        .case-header h3 { font-size: 1.15rem; flex: 1; }
+
+        .case-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+        .case-tag {
+            padding: 2px 10px; border-radius: 10px; font-size: 0.7rem; font-weight: 600;
+        }
+        .case-tag.trust { background: rgba(52,211,153,0.12); color: var(--green); }
+        .case-tag.personality { background: rgba(129,140,248,0.12); color: var(--accent-light); }
+        .case-tag.community { background: rgba(34,211,238,0.12); color: var(--cyan); }
+        .case-tag.experience { background: rgba(251,146,60,0.12); color: var(--orange); }
+        .case-tag.hybrid { background: rgba(251,191,36,0.12); color: var(--yellow); }
+        .case-tag.china { background: rgba(248,113,113,0.12); color: var(--red); }
+        .case-tag.global { background: rgba(99,102,241,0.08); color: var(--text-dim); }
+
+        .case-body { font-size: 0.92rem; color: #d1d5db; margin-bottom: 16px; }
+        .case-body strong { color: var(--text); }
+
+        .case-metrics {
+            display: flex; gap: 14px; flex-wrap: wrap;
+        }
+        .metric {
+            background: rgba(255,255,255,0.03); border-radius: 8px;
+            padding: 8px 14px; text-align: center; min-width: 100px;
+        }
+        .metric .val { font-size: 1.15rem; font-weight: 700; margin-bottom: 2px; }
+        .metric .val.green { color: var(--green); }
+        .metric .val.orange { color: var(--orange); }
+        .metric .val.cyan { color: var(--cyan); }
+        .metric .val.purple { color: var(--accent-light); }
+        .metric .lbl { font-size: 0.7rem; color: var(--text-dim); }
+
+        .case-takeaway {
+            margin-top: 14px; padding: 12px 16px;
+            background: rgba(52,211,153,0.05); border-left: 3px solid var(--green);
+            border-radius: 0 8px 8px 0; font-size: 0.85rem; color: #d1d5db;
+        }
+        .case-takeaway strong { color: var(--green); }
+
+        /* Insight box */
+        .insight {
+            background: linear-gradient(135deg, rgba(251,146,60,0.06), rgba(251,191,36,0.04));
+            border: 1px solid rgba(251,146,60,0.2); border-radius: 10px;
+            padding: 22px 26px; margin: 32px 0; font-size: 0.95rem; color: #d1d5db;
+        }
+        .insight strong { color: var(--orange); }
+
+        /* Pattern summary */
+        .patterns {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 28px 0;
+        }
+        .pattern {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 10px; padding: 20px;
+        }
+        .pattern .num {
+            font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.1em; margin-bottom: 6px;
+        }
+        .pattern .num.a { color: var(--green); }
+        .pattern .num.b { color: var(--cyan); }
+        .pattern .num.c { color: var(--orange); }
+        .pattern .num.d { color: var(--accent-light); }
+        .pattern h4 { font-size: 0.95rem; margin-bottom: 4px; }
+        .pattern p { font-size: 0.8rem; color: var(--text-dim); margin: 0; }
+
+        .footer {
+            max-width: 860px; margin: 0 auto; padding: 40px 24px;
+            border-top: 1px solid var(--border); font-size: 0.85rem; color: var(--text-dim);
+        }
+        .footer a { color: var(--accent-light); text-decoration: none; }
+        .footer a:hover { text-decoration: underline; }
+
+        @media (max-width: 640px) {
+            .hero h1 { font-size: 1.6rem; }
+            .hero { padding: 100px 16px 40px; }
+            .content { padding: 40px 16px 60px; }
+            .patterns { grid-template-columns: 1fr; }
+            .case-metrics { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+    <a href="../index.html">首页</a>
+    <span class="sep">/</span>
+    <a href="index.html">调研总览</a>
+    <span class="sep">/</span>
+    <span class="current">案例集</span>
+</nav>
+
+<header class="hero">
+    <div class="badge">案例研究 / 2026 年 2 月</div>
+    <h1>AI 时代创作者转型案例集</h1>
+    <p class="lead">来自中国和全球的真实案例——他们如何在 AI 冲击下找到护城河、重建商业模式、实现逆势增长。</p>
+</header>
+
+<div class="content">
+
+    <!-- Strategy 1: Trust & Subscription -->
+    <h2>策略一：信任飞轮 + 订阅制</h2>
+    <p class="section-desc">通过长期一致的深度输出建立信任，以订阅制实现独立于平台广告的稳定收入。</p>
+
+    <div class="case">
+        <div class="case-header">
+            <div class="case-avatar" style="background: rgba(52,211,153,0.12);">📝</div>
+            <h3>Ben Thompson — Stratechery</h3>
+            <div class="case-tags">
+                <span class="case-tag trust">信任</span>
+                <span class="case-tag global">全球</span>
+            </div>
+        </div>
+        <div class="case-body">
+            科技行业分析师，独立运营 Stratechery 超过 <strong>10 年</strong>。在 AI 可以生成无限分析文章的时代，Thompson 的竞争优势完全建立在不可复制的判断力和长期信任之上。他创造了"聚合理论"（Aggregation Theory）等影响行业思维的原创框架，并在 2025 年明确提出：<strong>AI 时代的出路是"内容 + 社区"</strong>——内容是社区形成的"文化制品"，社区才是真正的护城河。
+        </div>
+        <div class="case-metrics">
+            <div class="metric"><div class="val green">7 位数</div><div class="lbl">年收入（美元）</div></div>
+            <div class="metric"><div class="val orange">10 年+</div><div class="lbl">持续输出</div></div>
+            <div class="metric"><div class="val cyan">1 人</div><div class="lbl">核心团队</div></div>
+            <div class="metric"><div class="val purple">订阅制</div><div class="lbl">商业模式</div></div>
+        </div>
+        <div class="case-takeaway">
+            <strong>可复制的模式：</strong>选择一个细分领域 → 持续输出原创判断（不是信息搬运）→ 用免费内容引流 → 付费订阅变现 → 信任积累形成复利。AI 用于研究加速，但核心观点 100% 原创。
+        </div>
+    </div>
+
+    <div class="case">
+        <div class="case-header">
+            <div class="case-avatar" style="background: rgba(129,140,248,0.12);">💡</div>
+            <h3>Lenny Rachitsky — Lenny's Newsletter</h3>
+            <div class="case-tags">
+                <span class="case-tag trust">信任</span>
+                <span class="case-tag community">社区</span>
+                <span class="case-tag global">全球</span>
+            </div>
+        </div>
+        <div class="case-body">
+            前 Airbnb 产品经理，创办的 Newsletter 跻身 <strong>Substack 前五</strong>。核心飞轮：更多订阅者 → 能采访更多行业大咖（独家访谈） → 内容更有价值 → 更多订阅者。这种"信任飞轮"一旦转起来，AI 无法复制——因为独家人脉和行业信任是线下积累的资产。
+        </div>
+        <div class="case-metrics">
+            <div class="metric"><div class="val green">Top 5</div><div class="lbl">Substack 排名</div></div>
+            <div class="metric"><div class="val orange">产品管理</div><div class="lbl">细分领域</div></div>
+            <div class="metric"><div class="val cyan">独家访谈</div><div class="lbl">核心内容形态</div></div>
+        </div>
+        <div class="case-takeaway">
+            <strong>可复制的模式：</strong>利用个人行业经验建立初始信任 → 以独家采访/案例作为内容壁垒 → 订阅者规模反哺内容获取能力。关键：你的"人脉"和"业内信誉"是 AI 无法生成的。
+        </div>
+    </div>
+
+    <!-- Strategy 2: Personality-Driven -->
+    <h2>策略二：人格化 IP + 不可预测性</h2>
+    <p class="section-desc">以强烈的个人风格和真人魅力构建不可复制的内容体验。</p>
+
+    <div class="case">
+        <div class="case-header">
+            <div class="case-avatar" style="background: rgba(248,113,113,0.12);">🎙</div>
+            <h3>Joe Rogan — The Joe Rogan Experience</h3>
+            <div class="case-tags">
+                <span class="case-tag personality">人格化</span>
+                <span class="case-tag experience">独特经历</span>
+                <span class="case-tag global">全球</span>
+            </div>
+        </div>
+        <div class="case-body">
+            全球最大的播客。Rogan 的护城河在于 <strong>3 小时长对谈中的即兴反应、真实好奇心和不可预测性</strong>。每期嘉宾不同，每次对话走向完全无法预设。AI 可以模拟知识，但无法模拟一个活生生的人在面对意外信息时的真实反应——惊讶、困惑、大笑、被说服。这种"人味"正是 AI 内容饱和时代最稀缺的东西。
+        </div>
+        <div class="case-metrics">
+            <div class="metric"><div class="val green">$250M</div><div class="lbl">Spotify 合约</div></div>
+            <div class="metric"><div class="val orange">3 小时</div><div class="lbl">单期时长</div></div>
+            <div class="metric"><div class="val cyan">即兴</div><div class="lbl">内容风格</div></div>
+        </div>
+        <div class="case-takeaway">
+            <strong>可复制的模式：</strong>不需要做到 Rogan 的规模。关键是选择"真人对话"这种 AI 最难替代的形式——播客、直播对谈、Q&A。你的真实反应和人际化学反应就是护城河。
+        </div>
+    </div>
+
+    <div class="case">
+        <div class="case-header">
+            <div class="case-avatar" style="background: rgba(251,146,60,0.12);">🎬</div>
+            <h3>MrBeast — 极限挑战 + AI 效率</h3>
+            <div class="case-tags">
+                <span class="case-tag personality">人格化</span>
+                <span class="case-tag hybrid">混合创作</span>
+                <span class="case-tag global">全球</span>
+            </div>
+        </div>
+        <div class="case-body">
+            YouTube 第一大个人创作者。MrBeast 的内容核心是<strong>真人极限挑战</strong>——"在孤岛生存 100 天""花光 100 万美元"——这类内容需要真实的人类参与物理世界，AI 完全无法替代。同时他是 AI 工具的深度使用者，其前策略师创办的 <strong>Palo</strong> 公司专门用 AI 帮创作者分析什么内容最有效。他自己也公开警告：<strong>"当 AI 视频和普通视频一样好时，数百万创作者将面临生存威胁。"</strong>
+        </div>
+        <div class="case-metrics">
+            <div class="metric"><div class="val green">3.4 亿+</div><div class="lbl">订阅者</div></div>
+            <div class="metric"><div class="val orange">真人</div><div class="lbl">内容不可替代</div></div>
+            <div class="metric"><div class="val cyan">Palo</div><div class="lbl">AI 策略工具</div></div>
+        </div>
+        <div class="case-takeaway">
+            <strong>可复制的模式：</strong>内容"前台"做 AI 无法替代的事（真人体验、实地挑战），"后台"全面使用 AI 提效（选题分析、缩略图测试、数据优化）。前台的"人味"越重，后台的 AI 用得越深——这就是"AI 80% + 人工 20%"的最佳实践。
+        </div>
+    </div>
+
+    <!-- Strategy 3: China cases -->
+    <h2>策略三：AI 工具 + 平台红利（中国案例）</h2>
+    <p class="section-desc">在中国市场的独特生态中，利用 AI 工具实现效率飞跃或开辟新赛道的案例。</p>
+
+    <div class="case">
+        <div class="case-header">
+            <div class="case-avatar" style="background: rgba(248,113,113,0.12);">🛒</div>
+            <h3>京东 — 刘强东 AI 数字人直播</h3>
+            <div class="case-tags">
+                <span class="case-tag hybrid">混合创作</span>
+                <span class="case-tag china">中国</span>
+            </div>
+        </div>
+        <div class="case-body">
+            2024 年 <strong>618 大促</strong>期间，京东大规模部署 AI 数字人直播。刘强东 AI 分身首秀不到 1 小时观看量超 <strong>2000 万</strong>，成交额超 <strong>5000 万元</strong>。618 期间超 5000 个品牌直播间使用言犀数字人，观看人次超 1 亿。关键数据：数字人直播成本仅为真人的 <strong>1/10</strong>（日均不到 100 元），中小商家 ROI 从 1.2 升至 3.8。
+        </div>
+        <div class="case-metrics">
+            <div class="metric"><div class="val green">5000 万</div><div class="lbl">首秀成交额</div></div>
+            <div class="metric"><div class="val orange">1/10</div><div class="lbl">成本 vs 真人</div></div>
+            <div class="metric"><div class="val cyan">3.8</div><div class="lbl">中小商家 ROI</div></div>
+            <div class="metric"><div class="val purple">5000+</div><div class="lbl">品牌使用数字人</div></div>
+        </div>
+        <div class="case-takeaway">
+            <strong>启示：</strong>数字人直播已从"噱头"变为"基础设施"，特别适合中小商家降本增效。但注意：一二线城市用户付费意愿低 15-18%，且微信视频号拟禁止虚拟直播。数字人适合做"基础时段覆盖"，黄金时段仍需真人。
+        </div>
+    </div>
+
+    <div class="case">
+        <div class="case-header">
+            <div class="case-avatar" style="background: rgba(34,211,238,0.12);">📹</div>
+            <h3>大象融媒 — AI 短视频工厂</h3>
+            <div class="case-tags">
+                <span class="case-tag hybrid">混合创作</span>
+                <span class="case-tag china">中国</span>
+            </div>
+        </div>
+        <div class="case-body">
+            传统媒体转型标杆。通过 AI 工具矩阵将短视频制作周期从 <strong>1 天缩至数小时</strong>，团队从 <strong>4 人减至 1 人</strong>，日产量增至 <strong>8 条</strong>。这是"一人 MCN"概念的媒体版实践——一个人配合 AI 工具，完成过去一个小团队的产能。
+        </div>
+        <div class="case-metrics">
+            <div class="metric"><div class="val green">8 条/天</div><div class="lbl">日产量</div></div>
+            <div class="metric"><div class="val orange">4→1 人</div><div class="lbl">团队精简</div></div>
+            <div class="metric"><div class="val cyan">数小时</div><div class="lbl">单条制作周期</div></div>
+        </div>
+        <div class="case-takeaway">
+            <strong>启示：</strong>AI 让"一人军团"成为现实，但产能提升 ≠ 质量保证。78% 的创作者买了 3+ 个 AI 工具，仅 23% 觉得效率明显提升。关键不是工具数量，而是找到最适合你流程的 2-3 个核心工具。
+        </div>
+    </div>
+
+    <div class="case">
+        <div class="case-header">
+            <div class="case-avatar" style="background: rgba(251,191,36,0.12);">💰</div>
+            <h3>DeepSeek 课程博主 — AI 知识付费新浪潮</h3>
+            <div class="case-tags">
+                <span class="case-tag experience">独特经历</span>
+                <span class="case-tag china">中国</span>
+            </div>
+        </div>
+        <div class="case-body">
+            DeepSeek 爆火后，有博主通过卖 AI 付费课程 <strong>4 天赚 20 万元</strong>。这展示了 AI 浪潮中的"卖铲子"机会——不是用 AI 做内容，而是教别人怎么用 AI。但这个案例也是<strong>警示</strong>：AI 课程乱象严重，消费投诉平台相关投诉超过 4000 条，同比增长超 1000 条。短期暴利模式不可持续。
+        </div>
+        <div class="case-metrics">
+            <div class="metric"><div class="val green">20 万</div><div class="lbl">4 天收入</div></div>
+            <div class="metric"><div class="val orange">4000+</div><div class="lbl">相关投诉</div></div>
+        </div>
+        <div class="case-takeaway">
+            <strong>启示（含警示）：</strong>"教人用 AI"是一个真实的短期窗口，但课程完成率不足 15%、复购率低于 8%。可持续的做法是"陪伴式教学 + 社群" 而非"一锤子卖课"。信任一旦崩坏，再也回不来。
+        </div>
+    </div>
+
+    <!-- Strategy 4: New formats -->
+    <h2>策略四：AI 原生新形态</h2>
+    <p class="section-desc">利用 AI 技术创造全新的内容形态和商业模式，不是"AI 辅助旧模式"，而是"AI 驱动新物种"。</p>
+
+    <div class="case">
+        <div class="case-header">
+            <div class="case-avatar" style="background: rgba(99,102,241,0.12);">🎧</div>
+            <h3>Google NotebookLM — AI 播客革命</h3>
+            <div class="case-tags">
+                <span class="case-tag hybrid">混合创作</span>
+                <span class="case-tag global">全球</span>
+            </div>
+        </div>
+        <div class="case-body">
+            Google 的 NotebookLM 开创了一种全新的内容形态：将文档自动转化为两位 AI 主持人的<strong>对话式播客</strong>，用户甚至可以"加入"对话提问。这意味着任何一篇深度文章、研究报告、甚至一本书都可以秒变播客节目。对创作者的启示：你的文字内容可以低成本转化为多种形态，一鱼多吃。
+        </div>
+        <div class="case-takeaway">
+            <strong>可复制的模式：</strong>写一篇深度文章 → 用 AI 转化为播客/视频脚本/社交媒体系列帖 → 多平台分发。核心知识只生产一次，AI 负责形态转换和分发效率。
+        </div>
+    </div>
+
+    <div class="case">
+        <div class="case-header">
+            <div class="case-avatar" style="background: rgba(251,146,60,0.12);">🤖</div>
+            <h3>HeyGen + Lil Miquela — 虚拟影响者经济</h3>
+            <div class="case-tags">
+                <span class="case-tag personality">人格化</span>
+                <span class="case-tag hybrid">混合创作</span>
+                <span class="case-tag global">全球</span>
+            </div>
+        </div>
+        <div class="case-body">
+            HeyGen（AI 数字人视频平台）ARR 达 <strong>9500 万美元</strong>，超过 10 万家企业使用。虚拟影响者 Lil Miquela 拥有 <strong>280 万粉丝</strong>，年收入据传 1000 万美元。整个虚拟影响者市场从 2024 年 60.6 亿美元预计增长到 2030 年 <strong>458.8 亿美元</strong>。<strong>58%</strong> 的美国成年人关注至少一位虚拟影响者。
+        </div>
+        <div class="case-metrics">
+            <div class="metric"><div class="val green">$9500 万</div><div class="lbl">HeyGen ARR</div></div>
+            <div class="metric"><div class="val orange">280 万</div><div class="lbl">Lil Miquela 粉丝</div></div>
+            <div class="metric"><div class="val cyan">$458.8 亿</div><div class="lbl">2030 年市场预测</div></div>
+        </div>
+        <div class="case-takeaway">
+            <strong>启示：</strong>虚拟影响者是一个真实的新赛道，但研究表明用户赋予虚拟角色的"心理人性"更低，限制了准社会关系深度。适合品牌营销和特定垂类，但目前还无法完全替代真人 KOL 的信任深度。
+        </div>
+    </div>
+
+    <!-- Patterns -->
+    <h2>跨案例规律总结</h2>
+
+    <div class="patterns">
+        <div class="pattern">
+            <div class="num a">规律 1</div>
+            <h4>前台"人味" + 后台 AI</h4>
+            <p>所有成功案例的共同点：面对用户的部分保持真实人类特征，背后全面使用 AI 提效。前台越"人"，后台越"机器"。</p>
+        </div>
+        <div class="pattern">
+            <div class="num b">规律 2</div>
+            <h4>信任 > 流量</h4>
+            <p>Ben Thompson、Lenny Rachitsky 证明：1000 个深度信任的订阅者 > 100 万浅层粉丝。AI 时代的变现核心是"关系密度"而非"触达广度"。</p>
+        </div>
+        <div class="pattern">
+            <div class="num c">规律 3</div>
+            <h4>物理世界 = 终极护城河</h4>
+            <p>MrBeast 的极限挑战、旅行博主的实地探访、直播中的即兴互动——凡是需要真人出现在物理世界中的内容，AI 替代难度最高。</p>
+        </div>
+        <div class="pattern">
+            <div class="num d">规律 4</div>
+            <h4>"卖铲子"有窗口期</h4>
+            <p>DeepSeek 课程博主的案例说明：教人用 AI 是短期暴利，但窗口期正在关闭。可持续的做法是从"卖课"转向"卖社群陪伴"。</p>
+        </div>
+    </div>
+
+    <div class="insight">
+        <strong>一句话总结：</strong>在 AI 能生成无限内容的时代，成功的创作者不是产出最多内容的人，而是<strong>最不可替代</strong>的人。不可替代性来自三个维度：真实的经历、积累的信任、围绕你形成的社区。这三样东西都需要时间，都无法被 AI 加速——这恰恰是它们珍贵的原因。
+    </div>
+
+</div>
+
+<footer class="footer">
+    <p>案例数据来源于 <a href="index.html">8 篇系统性调研报告</a>。更多实操建议请参阅 <a href="guide.html">创作者行动指南</a>。</p>
+    <p style="margin-top: 12px;"><a href="../index.html">&larr; 返回首页</a></p>
+</footer>
+
+</body>
+</html>

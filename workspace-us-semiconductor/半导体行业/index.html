@@ -1130,6 +1130,61 @@
     </div>
   </div>
 
+  <!-- 半导体设备商竞争格局 -->
+  <div class="grid-2" style="margin-bottom:40px">
+    <div class="card">
+      <h3>设备商估值雷达对比</h3>
+      <div class="chart-container" style="height:280px">
+        <canvas id="chartEquipRadar"></canvas>
+      </div>
+      <div style="margin-top:8px;font-size:0.8rem;color:var(--muted)">
+        各维度归一化至 0-100 分：Forward P/E 取反（低=好）、毛利率/OPM/收入增速/AI受益度取正
+      </div>
+    </div>
+    <div class="card">
+      <h3>设备商 AI 受益梯度 & 估值</h3>
+      <table>
+        <thead><tr><th>公司</th><th>核心壁垒</th><th>Fwd P/E</th><th>毛利率</th><th>AI 受益</th><th>评级</th></tr></thead>
+        <tbody>
+          <tr><td><b>ASML</b></td><td>EUV 100% 垄断</td><td>~33x</td><td style="color:var(--green);font-weight:700">51-53%</td><td>★★★★★</td><td><span class="tag tag-amber">持有</span></td></tr>
+          <tr><td><b>AMAT</b></td><td>最广产品线 + GAA</td><td style="color:var(--green);font-weight:700">~26x</td><td>~47%</td><td>★★★★</td><td><span class="tag tag-green">买入</span></td></tr>
+          <tr><td><b>LRCX</b></td><td>刻蚀 #1 + HBM 纯受益</td><td>~28x</td><td style="color:var(--green);font-weight:700">~48%</td><td>★★★★★</td><td><span class="tag tag-green">买入</span></td></tr>
+          <tr><td><b>KLAC</b></td><td>检测量测垄断</td><td>~30x</td><td style="color:var(--green);font-weight:700">~62%</td><td>★★★★</td><td><span class="tag tag-amber">持有</span></td></tr>
+          <tr><td><b>TEL</b></td><td>涂胶/显影 85% 份额</td><td>~28x</td><td>~44%</td><td>★★★</td><td><span class="tag tag-blue">关注</span></td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:12px;padding:12px;background:rgba(59,130,246,0.06);border-radius:8px;font-size:0.82rem;color:var(--muted)">
+        <b style="color:var(--accent)">核心观点</b>：设备股 vs 芯片股 = 更高下行保护 + 更低上行弹性。AMAT Forward P/E 仅 26x 是最被低估的设备龙头；LRCX 是 HBM 堆叠趋势的纯受益者。
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:40px">
+    <div class="card">
+      <h3>工艺环节市场份额分布</h3>
+      <div class="chart-container" style="height:280px">
+        <canvas id="chartEquipShare"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <h3>设备商催化剂时间线</h3>
+      <table>
+        <thead><tr><th>时间</th><th>催化剂</th><th>受益标的</th></tr></thead>
+        <tbody>
+          <tr><td><b>2026 H1</b></td><td>TSMC N2 量产加速</td><td style="color:var(--purple)">ASML, TEL</td></tr>
+          <tr><td><b>2026 H1</b></td><td>HBM4 验证 → 12Hi/16Hi</td><td style="color:var(--green)">LRCX, AMAT</td></tr>
+          <tr><td><b>2026 H2</b></td><td>Intel 18A 量产进展</td><td style="color:var(--blue)">ASML, AMAT</td></tr>
+          <tr><td><b>2026-27</b></td><td>CHIPS Act 新 fab 设备采购高峰</td><td style="color:var(--cyan)">全线受益</td></tr>
+          <tr><td><b>2027+</b></td><td>High-NA EUV 量产放量</td><td style="color:var(--purple)">ASML</td></tr>
+          <tr><td><b>2027+</b></td><td>3D NAND 300+ 层</td><td style="color:var(--amber)">LRCX, TEL</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:12px;padding:12px;background:rgba(239,68,68,0.06);border-radius:8px;font-size:0.82rem;color:var(--muted)">
+        <b style="color:var(--red)">主要风险</b>：中国出口管制进一步收紧（TEL/AMAT 中国收入占比 27-30%）、AI CapEx 周期放缓、中国国产替代（北方华创/中微公司在成熟制程蚕食）
+      </div>
+    </div>
+  </div>
+
   <!-- Section 9: 风险 -->
   <div class="section-title"><span class="num">9</span> 风险提示</div>
   <div class="risk-list" style="margin-bottom:40px">
@@ -1564,6 +1619,51 @@ new Chart(document.getElementById('chartBubble'), {
     scales: {
       x: { title: { display: true, text: '毛利率 %' }, grid: { color: '#1e293b33' }, min: 25, max: 85 },
       y: { title: { display: true, text: 'P/E 倍数' }, grid: { color: '#1e293b33' }, min: 0, max: 100 }
+    }
+  }
+});
+
+// 设备商估值雷达图
+new Chart(document.getElementById('chartEquipRadar'), {
+  type: 'radar',
+  data: {
+    labels: ['估值吸引力', '毛利率', '营业利润率', '收入增速', 'AI 受益度'],
+    datasets: [
+      { label: 'ASML', data: [40, 85, 75, 90, 100], borderColor: COLORS.purple, backgroundColor: COLORS.purple + '22', pointBackgroundColor: COLORS.purple, borderWidth: 2 },
+      { label: 'AMAT', data: [75, 72, 60, 55, 80], borderColor: COLORS.amber, backgroundColor: COLORS.amber + '22', pointBackgroundColor: COLORS.amber, borderWidth: 2 },
+      { label: 'LRCX', data: [65, 75, 65, 70, 100], borderColor: COLORS.green, backgroundColor: COLORS.green + '22', pointBackgroundColor: COLORS.green, borderWidth: 2 },
+      { label: 'KLAC', data: [55, 100, 85, 60, 80], borderColor: COLORS.cyan, backgroundColor: COLORS.cyan + '22', pointBackgroundColor: COLORS.cyan, borderWidth: 2 },
+      { label: 'TEL', data: [70, 55, 50, 40, 60], borderColor: COLORS.pink, backgroundColor: COLORS.pink + '22', pointBackgroundColor: COLORS.pink, borderWidth: 2 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', padding: 10, font: { size: 10 } } } },
+    scales: { r: { beginAtZero: true, max: 100, grid: { color: '#1e293b44' }, angleLines: { color: '#1e293b44' }, pointLabels: { color: '#94a3b8', font: { size: 10 } }, ticks: { display: false } } }
+  }
+});
+
+// 工艺环节市场份额 - 水平堆叠柱状图
+new Chart(document.getElementById('chartEquipShare'), {
+  type: 'bar',
+  data: {
+    labels: ['光刻', '刻蚀', 'CVD沉积', 'PVD', '检测/量测', '涂胶/显影', 'CMP', '离子注入'],
+    datasets: [
+      { label: 'ASML', data: [90, 0, 0, 0, 0, 0, 0, 0], backgroundColor: COLORS.purple, borderRadius: 4, barPercentage: 0.7 },
+      { label: 'AMAT', data: [0, 20, 35, 75, 15, 0, 65, 70], backgroundColor: COLORS.amber, borderRadius: 4, barPercentage: 0.7 },
+      { label: 'LRCX', data: [0, 33, 25, 0, 0, 0, 0, 0], backgroundColor: COLORS.green, borderRadius: 4, barPercentage: 0.7 },
+      { label: 'KLAC', data: [0, 0, 0, 0, 55, 0, 0, 0], backgroundColor: COLORS.cyan, borderRadius: 4, barPercentage: 0.7 },
+      { label: 'TEL', data: [0, 25, 20, 0, 0, 85, 0, 0], backgroundColor: COLORS.pink, borderRadius: 4, barPercentage: 0.7 },
+      { label: '其他', data: [10, 22, 20, 25, 30, 15, 35, 30], backgroundColor: '#334155', borderRadius: 4, barPercentage: 0.7 }
+    ]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', padding: 8, font: { size: 10 } } } },
+    scales: {
+      x: { max: 100, stacked: true, grid: { color: '#1e293b33' }, ticks: { callback: v => `${v}%` } },
+      y: { stacked: true, grid: { display: false } }
     }
   }
 });
