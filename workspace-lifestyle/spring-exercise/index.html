@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>春季运动指南 · Lifestyle Workspace</title>
+<style>
+  :root {
+    --bg: #faf9f6;
+    --text: #2d2d2d;
+    --accent: #5a7d64;
+    --accent-light: #e8f0eb;
+    --border: #e0ddd8;
+    --muted: #8a8580;
+    --energy: #d4813b;
+    --energy-light: #fdf3e8;
+    --calm: #5a7d9b;
+    --calm-light: #e6f0f5;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Noto Sans SC", "Helvetica Neue", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.8;
+    padding: 3rem 1.5rem;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .breadcrumb { font-size: 0.85rem; color: var(--muted); margin-bottom: 2rem; }
+  header { margin-bottom: 2.5rem; }
+  header h1 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.3rem; }
+  header p { color: var(--muted); font-size: 0.9rem; }
+  .intro {
+    padding: 1.2rem 1.4rem;
+    background: linear-gradient(135deg, var(--accent-light) 0%, var(--energy-light) 100%);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 2.5rem;
+    font-size: 0.9rem;
+  }
+  .section {
+    margin-bottom: 2.5rem;
+    padding: 1.5rem;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .section h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--energy);
+  }
+  .section p, .section li { font-size: 0.9rem; }
+
+  /* Phase progression */
+  .phase-container { margin: 1rem 0; }
+  .phase {
+    padding: 1.2rem;
+    border-radius: 6px;
+    margin-bottom: 0.8rem;
+    position: relative;
+  }
+  .phase::after {
+    content: '↓';
+    display: block;
+    text-align: center;
+    color: var(--muted);
+    font-size: 1.2rem;
+    margin-top: 0.5rem;
+  }
+  .phase:last-child::after { display: none; }
+  .phase h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.5rem; }
+  .phase .duration {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  .phase ul { padding-left: 1.2rem; font-size: 0.85rem; }
+  .phase li { margin-bottom: 0.2rem; }
+  .phase-1 { background: var(--calm-light); }
+  .phase-1 h3 { color: var(--calm); }
+  .phase-2 { background: var(--accent-light); }
+  .phase-2 h3 { color: var(--accent); }
+  .phase-3 { background: var(--energy-light); }
+  .phase-3 h3 { color: var(--energy); }
+
+  /* Activity cards */
+  .activity-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    margin: 0.8rem 0;
+  }
+  .activity-card {
+    padding: 1rem;
+    background: #f8f7f4;
+    border-radius: 6px;
+    border-left: 3px solid var(--accent);
+  }
+  .activity-card h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    color: var(--energy);
+  }
+  .activity-card p { font-size: 0.82rem; color: var(--muted); margin-bottom: 0.3rem; }
+  .activity-card .meta-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.4rem;
+  }
+  .activity-card .meta-tag {
+    font-size: 0.7rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    background: var(--accent-light);
+    color: var(--accent);
+  }
+
+  /* Week plan */
+  .week-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+    margin: 0.8rem 0;
+  }
+  .day-block {
+    padding: 0.5rem 0.3rem;
+    background: #f8f7f4;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 0.78rem;
+  }
+  .day-block .day-name {
+    font-weight: 600;
+    color: var(--energy);
+    margin-bottom: 0.3rem;
+    font-size: 0.72rem;
+  }
+  .day-block.rest { background: var(--calm-light); }
+  .day-block.active { background: var(--accent-light); }
+  .day-block.intense { background: var(--energy-light); }
+
+  /* Stretch routine */
+  .stretch-list { list-style: none; counter-reset: stretch; }
+  .stretch-list li {
+    counter-increment: stretch;
+    padding: 0.6rem 0 0.6rem 2.5rem;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    font-size: 0.88rem;
+  }
+  .stretch-list li:last-child { border-bottom: none; }
+  .stretch-list li::before {
+    content: counter(stretch);
+    position: absolute;
+    left: 0;
+    top: 0.55rem;
+    width: 1.8rem;
+    height: 1.8rem;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .tip-box {
+    padding: 0.8rem 1rem;
+    background: var(--accent-light);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    margin-top: 1rem;
+  }
+  .tip-box strong { color: var(--accent); }
+  .warn-box {
+    padding: 0.8rem 1rem;
+    background: var(--energy-light);
+    border-left: 3px solid var(--energy);
+    border-radius: 0 6px 6px 0;
+    font-size: 0.85rem;
+    margin-top: 1rem;
+  }
+  footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  @media (max-width: 500px) {
+    .activity-grid { grid-template-columns: 1fr; }
+    .week-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="breadcrumb"><a href="../index.html">Lifestyle Workspace</a> / 春季运动指南</div>
+
+<header>
+  <h1>从冬眠到春动</h1>
+  <p>渐进过渡 · 不受伤 · 能坚持</p>
+</header>
+
+<div class="intro">
+  冬天窝了三个月，开春不能直接上强度。身体需要一个"唤醒期"——关节要重新润滑、心肺要逐步适应、肌肉要找回弹性。这份指南帮你用 4 周时间从"完全不动"安全过渡到"规律运动"。
+</div>
+
+<!-- 渐进方案 -->
+<div class="section">
+  <h2>4 周渐进过渡方案</h2>
+  <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 0.8rem;">不管你之前的运动基础如何，春季重新开始都建议走这个节奏。跳级是受伤的第一大原因。</p>
+
+  <div class="phase-container">
+    <div class="phase phase-1">
+      <h3>第 1 周：激活</h3>
+      <div class="duration">目标：每天 15-20 分钟 · 心率不超过 120</div>
+      <ul>
+        <li>以散步为主，每次 15-30 分钟</li>
+        <li>早晚各做一次 5 分钟拉伸（见下方动作）</li>
+        <li>可以加入楼梯走（不是跑）2-3 层</li>
+        <li>重点感受身体反应：哪里僵、哪里紧、哪里疼</li>
+      </ul>
+    </div>
+    <div class="phase phase-2">
+      <h3>第 2-3 周：建立</h3>
+      <div class="duration">目标：每次 30-40 分钟 · 心率 120-140 · 一周 3-4 次</div>
+      <ul>
+        <li>散步升级为快走（步频 100-120 步/分钟）</li>
+        <li>可以尝试"走跑交替"：快走 3 分钟 + 慢跑 1 分钟，循环</li>
+        <li>加入简单自重训练：深蹲、俯卧撑（跪姿）、平板支撑</li>
+        <li>每次运动前 5 分钟动态热身，运动后 5 分钟静态拉伸</li>
+      </ul>
+    </div>
+    <div class="phase phase-3">
+      <h3>第 4 周：巩固</h3>
+      <div class="duration">目标：形成固定时间 · 固定项目 · 可持续的节奏</div>
+      <ul>
+        <li>确定 2-3 个你喜欢的运动项目（见下方推荐）</li>
+        <li>固定每周运动日和时间（放入日历）</li>
+        <li>慢跑可以连续跑 20-30 分钟不停</li>
+        <li>力量训练可以做 2-3 组，每组 10-15 次</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="warn-box">
+    <strong>停下来的信号：</strong>关节锐痛（不是肌肉酸痛）、头晕、胸闷、呼吸困难。肌肉酸痛是正常的（延迟性酸痛，24-72 小时消退），但关节痛不是——休息 + 冰敷，3 天不好转去看医生。
+  </div>
+</div>
+
+<!-- 推荐运动 -->
+<div class="section">
+  <h2>春季推荐运动</h2>
+  <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 0.8rem;">选你觉得"还行"的，不需要觉得"很喜欢"。能坚持的运动才是最好的运动。</p>
+
+  <div class="activity-grid">
+    <div class="activity-card">
+      <h4>快走 / 健走</h4>
+      <p>最被低估的运动。步频 100+ 就有心肺效果，膝盖压力仅为跑步的 1/3。</p>
+      <div class="meta-row">
+        <span class="meta-tag">零门槛</span>
+        <span class="meta-tag">膝盖友好</span>
+        <span class="meta-tag">户外</span>
+      </div>
+    </div>
+    <div class="activity-card">
+      <h4>慢跑</h4>
+      <p>经典有氧。配速不重要，"能边跑边说话"的速度就对了。从 10 分钟开始，每周加 10%。</p>
+      <div class="meta-row">
+        <span class="meta-tag">低成本</span>
+        <span class="meta-tag">心肺强化</span>
+        <span class="meta-tag">户外</span>
+      </div>
+    </div>
+    <div class="activity-card">
+      <h4>骑行</h4>
+      <p>春天最舒服的户外运动。共享单车即可开始，不需要装备。城市绿道是最佳场地。</p>
+      <div class="meta-row">
+        <span class="meta-tag">膝盖友好</span>
+        <span class="meta-tag">可通勤</span>
+        <span class="meta-tag">户外</span>
+      </div>
+    </div>
+    <div class="activity-card">
+      <h4>跳绳</h4>
+      <p>时间效率最高的有氧之一。10 分钟跳绳 ≈ 30 分钟慢跑的热量消耗。但对膝盖有要求。</p>
+      <div class="meta-row">
+        <span class="meta-tag">高效</span>
+        <span class="meta-tag">低成本</span>
+        <span class="meta-tag">室内外</span>
+      </div>
+    </div>
+    <div class="activity-card">
+      <h4>瑜伽 / 拉伸</h4>
+      <p>不追求柔韧性，追求身体意识。冬天缩了三个月的身体需要重新"打开"。</p>
+      <div class="meta-row">
+        <span class="meta-tag">零装备</span>
+        <span class="meta-tag">放松</span>
+        <span class="meta-tag">室内</span>
+      </div>
+    </div>
+    <div class="activity-card">
+      <h4>自重训练</h4>
+      <p>深蹲、俯卧撑、平板支撑、弓步蹲。不需要器械，在家就能做，弥补纯有氧的肌力不足。</p>
+      <div class="meta-row">
+        <span class="meta-tag">零装备</span>
+        <span class="meta-tag">力量</span>
+        <span class="meta-tag">室内</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 一周样板 -->
+<div class="section">
+  <h2>一周运动样板（第 3 周起适用）</h2>
+  <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 0.8rem;">绿色=有氧 · 橙色=力量 · 蓝色=休息/拉伸。根据你的时间和喜好调整。</p>
+
+  <div class="week-grid">
+    <div class="day-block active">
+      <div class="day-name">周一</div>
+      快走<br>30min
+    </div>
+    <div class="day-block intense">
+      <div class="day-name">周二</div>
+      自重<br>20min
+    </div>
+    <div class="day-block rest">
+      <div class="day-name">周三</div>
+      休息<br>拉伸
+    </div>
+    <div class="day-block active">
+      <div class="day-name">周四</div>
+      慢跑<br>25min
+    </div>
+    <div class="day-block intense">
+      <div class="day-name">周五</div>
+      自重<br>20min
+    </div>
+    <div class="day-block active">
+      <div class="day-name">周六</div>
+      骑行<br>40min
+    </div>
+    <div class="day-block rest">
+      <div class="day-name">周日</div>
+      休息<br>散步
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>核心原则：</strong>不连续两天练同一类型。有氧和力量交替，中间穿插休息日。休息日不是"什么都不做"——轻度散步和拉伸算恢复性活动。
+  </div>
+</div>
+
+<!-- 5 分钟拉伸 -->
+<div class="section">
+  <h2>5 分钟全身拉伸（每天可做）</h2>
+  <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 0.8rem;">每个动作保持 30 秒，不要弹振，缓慢拉到有牵拉感但不痛的程度。</p>
+
+  <ol class="stretch-list">
+    <li><strong>颈部侧拉</strong> — 右手轻压头部向右肩方向，感受左侧颈部拉伸。换边。久坐族必做。</li>
+    <li><strong>猫牛式</strong> — 四点跪姿，吸气抬头塌腰（牛），呼气低头拱背（猫）。交替 5 次。唤醒整条脊柱。</li>
+    <li><strong>站立体前屈</strong> — 双脚与肩同宽，缓慢弯腰向下，手尽量触地。膝盖可以微弯。拉伸整个后链（腰+腿后侧）。</li>
+    <li><strong>髂腰肌拉伸</strong> — 弓步姿势，后腿膝盖着地，重心前移，感受后侧髋前方拉伸。久坐最紧的一块肌肉。</li>
+    <li><strong>靠墙扩胸</strong> — 手臂呈 L 型贴墙，身体缓慢转离墙面，感受胸部和肩膀前侧打开。对抗驼背。</li>
+    <li><strong>臀桥</strong> — 仰卧屈膝，收紧臀部抬起骨盆，顶部停 3 秒。既是拉伸也是激活。做 10 次。</li>
+  </ol>
+</div>
+
+<!-- 运动与饮食 -->
+<div class="section">
+  <h2>运动前后吃什么</h2>
+
+  <div class="activity-grid">
+    <div class="activity-card" style="border-left-color: var(--energy);">
+      <h4>运动前（30-60 分钟）</h4>
+      <p>需要一点能量但不能太饱。</p>
+      <ul style="padding-left: 1rem; font-size: 0.82rem; margin-top: 0.3rem;">
+        <li>一根香蕉</li>
+        <li>一片全麦面包 + 少量花生酱</li>
+        <li>一小把坚果 + 几颗葡萄干</li>
+        <li>空腹晨跑没问题（30 分钟以内）</li>
+      </ul>
+    </div>
+    <div class="activity-card" style="border-left-color: var(--calm);">
+      <h4>运动后（30 分钟内）</h4>
+      <p>补充蛋白质 + 碳水化合物，帮助肌肉修复。</p>
+      <ul style="padding-left: 1rem; font-size: 0.82rem; margin-top: 0.3rem;">
+        <li>一杯牛奶/豆浆</li>
+        <li>鸡蛋 + 一片面包</li>
+        <li>酸奶 + 水果</li>
+        <li>正餐时间运动的就正常吃饭</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>水分：</strong>运动前 30 分钟喝 200-300ml 水。运动中每 15-20 分钟补 100-200ml。不要等口渴才喝——渴的时候已经脱水 1-2%。1 小时以内的运动喝白水就够，不需要运动饮料。
+  </div>
+</div>
+
+<!-- 坚持策略 -->
+<div class="section">
+  <h2>让运动变成习惯的 4 个诀窍</h2>
+  <ol style="padding-left: 1.2rem;">
+    <li style="margin-bottom: 0.8rem;">
+      <strong>绑定已有习惯</strong><br>
+      <span style="font-size: 0.85rem;">"下班后换鞋就出门走 20 分钟"比"每天运动"具体 10 倍。触发条件越明确，越容易启动。</span>
+    </li>
+    <li style="margin-bottom: 0.8rem;">
+      <strong>降低最低标准</strong><br>
+      <span style="font-size: 0.85rem;">不想跑步？出门走 10 分钟也算。关键是"不断档"。烂的一天也比缺席好。</span>
+    </li>
+    <li style="margin-bottom: 0.8rem;">
+      <strong>找一个具体目标</strong><br>
+      <span style="font-size: 0.85rem;">不是"减肥"或"健康"这种模糊目标，而是"3 月底连续跑 3 公里不停"。可衡量、有期限。</span>
+    </li>
+    <li style="margin-bottom: 0.8rem;">
+      <strong>记录，不评判</strong><br>
+      <span style="font-size: 0.85rem;">用备忘录或<a href="../march-plan/index.html">习惯追踪表</a>记下每次运动内容。不需要打分，只需要记录。数据会自己说话。</span>
+    </li>
+  </ol>
+</div>
+
+<footer>
+  <p><a href="../index.html">&larr; 返回首页</a></p>
+  <p>更新：2026-02-28 12:00 GMT+8 · 自主推进生成</p>
+</footer>
+
+</body>
+</html>
