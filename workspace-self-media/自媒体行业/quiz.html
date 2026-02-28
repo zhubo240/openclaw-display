@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>创作者 AI 准备度自测</title>
+    <style>
+        :root {
+            --bg: #0f1117; --card: #1a1d28; --border: #2a2d3a;
+            --text: #e4e4e7; --text-dim: #9ca3af;
+            --accent: #6366f1; --accent-light: #818cf8;
+            --green: #34d399; --orange: #fb923c; --red: #f87171;
+            --yellow: #fbbf24; --cyan: #22d3ee;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: var(--bg); color: var(--text); line-height: 1.8;
+        }
+        .nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            background: rgba(15,17,23,0.92); backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 24px; display: flex; align-items: center; gap: 12px; font-size: 0.85rem;
+        }
+        .nav a { color: var(--text-dim); text-decoration: none; }
+        .nav a:hover { color: var(--accent-light); }
+        .nav .sep { color: var(--border); }
+        .nav .current { color: var(--text); font-weight: 500; }
+
+        .hero {
+            padding: 120px 24px 50px; text-align: center;
+            background: linear-gradient(135deg, #1a1d28 0%, #0f1117 40%, #151a2a 70%, #0f1117 100%);
+            border-bottom: 1px solid var(--border);
+        }
+        .hero .badge {
+            display: inline-block; padding: 4px 14px;
+            background: rgba(34,211,238,0.12); border: 1px solid rgba(34,211,238,0.3);
+            border-radius: 16px; font-size: 0.8rem; color: var(--cyan); margin-bottom: 24px;
+        }
+        .hero h1 {
+            font-size: 2.1rem; font-weight: 700; margin-bottom: 16px;
+            background: linear-gradient(135deg, #22d3ee, #818cf8, #c084fc);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero .lead { font-size: 1.05rem; color: var(--text-dim); max-width: 560px; margin: 0 auto; }
+
+        .container { max-width: 700px; margin: 0 auto; padding: 48px 24px 80px; }
+
+        /* Progress bar */
+        .progress-wrap { margin-bottom: 36px; }
+        .progress-label { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 8px; display: flex; justify-content: space-between; }
+        .progress-track { height: 6px; background: var(--card); border-radius: 3px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--cyan), var(--accent-light)); border-radius: 3px; transition: width 0.4s ease; }
+
+        /* Question card */
+        .question-card {
+            background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+            padding: 32px; margin-bottom: 20px; display: none;
+        }
+        .question-card.active { display: block; }
+        .question-card .q-num { font-size: 0.75rem; color: var(--cyan); font-weight: 600; letter-spacing: 0.1em; margin-bottom: 10px; }
+        .question-card h3 { font-size: 1.15rem; margin-bottom: 20px; }
+
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option {
+            display: block; padding: 14px 18px; background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border); border-radius: 10px;
+            cursor: pointer; transition: all 0.2s; font-size: 0.92rem; color: #d1d5db;
+        }
+        .option:hover { border-color: var(--accent); background: rgba(99,102,241,0.05); }
+        .option.selected { border-color: var(--cyan); background: rgba(34,211,238,0.08); color: var(--text); }
+        .option .score-hint { display: none; }
+
+        /* Buttons */
+        .btn-row { display: flex; justify-content: space-between; margin-top: 24px; }
+        .btn {
+            padding: 10px 28px; border-radius: 8px; border: none;
+            font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+        }
+        .btn-next {
+            background: linear-gradient(135deg, var(--cyan), var(--accent-light));
+            color: #0f1117;
+        }
+        .btn-next:hover { transform: translateY(-1px); filter: brightness(1.1); }
+        .btn-next:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+        .btn-back { background: transparent; border: 1px solid var(--border); color: var(--text-dim); }
+        .btn-back:hover { border-color: var(--text-dim); }
+
+        /* Results */
+        #results { display: none; }
+        #results.show { display: block; }
+
+        .score-hero {
+            text-align: center; padding: 40px 0 32px;
+        }
+        .score-circle {
+            width: 140px; height: 140px; border-radius: 50%; margin: 0 auto 20px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border: 4px solid var(--border); position: relative;
+        }
+        .score-circle .num { font-size: 2.4rem; font-weight: 700; }
+        .score-circle .of { font-size: 0.8rem; color: var(--text-dim); }
+
+        .score-level { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
+        .score-desc { font-size: 0.95rem; color: var(--text-dim); max-width: 500px; margin: 0 auto; }
+
+        /* Dimension bars */
+        .dim-section {
+            background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+            padding: 28px; margin: 28px 0;
+        }
+        .dim-section h4 { font-size: 0.85rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 18px; }
+
+        .dim-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+        .dim-label { width: 90px; font-size: 0.85rem; flex-shrink: 0; text-align: right; }
+        .dim-track { flex: 1; height: 24px; background: rgba(255,255,255,0.04); border-radius: 6px; overflow: hidden; }
+        .dim-fill { height: 100%; border-radius: 6px; transition: width 0.6s ease; display: flex; align-items: center; padding-left: 8px; font-size: 0.7rem; font-weight: 600; color: white; }
+        .dim-score { width: 40px; font-size: 0.8rem; color: var(--text-dim); flex-shrink: 0; text-align: center; }
+
+        /* Recommendations */
+        .recs { margin: 28px 0; }
+        .rec {
+            background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+            padding: 18px 22px; margin-bottom: 12px;
+        }
+        .rec .priority { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
+        .rec .priority.urgent { color: var(--red); }
+        .rec .priority.important { color: var(--orange); }
+        .rec .priority.growth { color: var(--green); }
+        .rec h4 { font-size: 1rem; margin-bottom: 4px; }
+        .rec p { font-size: 0.85rem; color: var(--text-dim); margin: 0; }
+        .rec a { color: var(--cyan); text-decoration: none; }
+        .rec a:hover { text-decoration: underline; }
+
+        .restart-btn {
+            display: block; margin: 32px auto 0; padding: 12px 32px;
+            background: transparent; border: 1px solid var(--border); border-radius: 8px;
+            color: var(--text-dim); font-size: 0.9rem; cursor: pointer;
+        }
+        .restart-btn:hover { border-color: var(--text-dim); color: var(--text); }
+
+        .footer {
+            max-width: 700px; margin: 0 auto; padding: 40px 24px;
+            border-top: 1px solid var(--border); font-size: 0.85rem; color: var(--text-dim); text-align: center;
+        }
+        .footer a { color: var(--accent-light); text-decoration: none; }
+
+        @media (max-width: 640px) {
+            .hero h1 { font-size: 1.5rem; }
+            .hero { padding: 100px 16px 40px; }
+            .container { padding: 36px 16px 60px; }
+            .dim-label { width: 70px; font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+    <a href="../index.html">首页</a>
+    <span class="sep">/</span>
+    <a href="index.html">调研总览</a>
+    <span class="sep">/</span>
+    <span class="current">自测</span>
+</nav>
+
+<header class="hero">
+    <div class="badge">互动工具 / 3 分钟</div>
+    <h1>创作者 AI 准备度自测</h1>
+    <p class="lead">8 道题，帮你快速诊断在 AI 时代的竞争位置，并获得个性化行动建议。</p>
+</header>
+
+<div class="container">
+    <!-- Quiz Section -->
+    <div id="quiz">
+        <div class="progress-wrap">
+            <div class="progress-label">
+                <span>进度</span>
+                <span id="progress-text">0 / 8</span>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Q1 -->
+        <div class="question-card active" data-q="0" data-dim="uniqueness">
+            <div class="q-num">问题 1 / 8</div>
+            <h3>如果隐去你的名字和头像，读者/观众能认出"这是你的内容"吗？</h3>
+            <div class="options">
+                <div class="option" data-score="3" onclick="selectOption(this)">肯定能——我的风格非常鲜明，粉丝经常说"一看就是你"</div>
+                <div class="option" data-score="2" onclick="selectOption(this)">大概率能——我有一些标志性的表达方式</div>
+                <div class="option" data-score="1" onclick="selectOption(this)">不太确定——我的内容和同赛道其他人差别不大</div>
+                <div class="option" data-score="0" onclick="selectOption(this)">完全不能——我主要是搬运/整理公开信息</div>
+            </div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="question-card" data-q="1" data-dim="experience">
+            <div class="q-num">问题 2 / 8</div>
+            <h3>你的内容中，有多少比例是基于你的亲身经历或独家信息？</h3>
+            <div class="options">
+                <div class="option" data-score="3" onclick="selectOption(this)">大部分（70%+）——我主要分享真实体验和一手信息</div>
+                <div class="option" data-score="2" onclick="selectOption(this)">差不多一半——混合个人经历和公开信息</div>
+                <div class="option" data-score="1" onclick="selectOption(this)">少量（20%以下）——偶尔加入个人看法</div>
+                <div class="option" data-score="0" onclick="selectOption(this)">几乎没有——主要是整理和转述公开资料</div>
+            </div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="question-card" data-q="2" data-dim="community">
+            <div class="q-num">问题 3 / 8</div>
+            <h3>你和粉丝/读者之间的互动深度如何？</h3>
+            <div class="options">
+                <div class="option" data-score="3" onclick="selectOption(this)">很深——有活跃的社群/私域，粉丝之间也互相交流</div>
+                <div class="option" data-score="2" onclick="selectOption(this)">中等——评论区互动还行，但没有独立社群</div>
+                <div class="option" data-score="1" onclick="selectOption(this)">浅层——主要是被动的点赞和转发</div>
+                <div class="option" data-score="0" onclick="selectOption(this)">几乎没有互动——纯单向内容输出</div>
+            </div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="question-card" data-q="3" data-dim="ai_usage">
+            <div class="q-num">问题 4 / 8</div>
+            <h3>你目前在创作流程中使用 AI 工具的程度？</h3>
+            <div class="options">
+                <div class="option" data-score="3" onclick="selectOption(this)">深度整合——AI 贯穿选题、调研、初稿、视觉等环节，但核心判断是我的</div>
+                <div class="option" data-score="2" onclick="selectOption(this)">部分使用——用 AI 辅助某些环节（如写初稿或做图）</div>
+                <div class="option" data-score="1" onclick="selectOption(this)">偶尔试试——知道有些工具但没形成固定流程</div>
+                <div class="option" data-score="0" onclick="selectOption(this)">完全不用——还没接触过 AI 创作工具</div>
+            </div>
+        </div>
+
+        <!-- Q5 -->
+        <div class="question-card" data-q="4" data-dim="monetization">
+            <div class="q-num">问题 5 / 8</div>
+            <h3>你的收入来源构成是怎样的？</h3>
+            <div class="options">
+                <div class="option" data-score="3" onclick="selectOption(this)">多元化——社群会员/订阅 + 品牌合作 + 咨询等多种渠道</div>
+                <div class="option" data-score="2" onclick="selectOption(this)">中等——主要靠品牌合作/带货，有一定议价能力</div>
+                <div class="option" data-score="1" onclick="selectOption(this)">单一——主要靠平台分成/流量主收入</div>
+                <div class="option" data-score="0" onclick="selectOption(this)">还没变现 / 收入极少</div>
+            </div>
+        </div>
+
+        <!-- Q6 -->
+        <div class="question-card" data-q="5" data-dim="trust">
+            <div class="q-num">问题 6 / 8</div>
+            <h3>当你推荐一个产品或观点时，粉丝的信任度如何？</h3>
+            <div class="options">
+                <div class="option" data-score="3" onclick="selectOption(this)">非常高——粉丝说"你推的我直接买/信"，转化率很好</div>
+                <div class="option" data-score="2" onclick="selectOption(this)">还不错——部分核心粉丝很信任我</div>
+                <div class="option" data-score="1" onclick="selectOption(this)">一般——粉丝会参考但不会直接行动</div>
+                <div class="option" data-score="0" onclick="selectOption(this)">不确定/没测试过——还没做过推荐</div>
+            </div>
+        </div>
+
+        <!-- Q7 -->
+        <div class="question-card" data-q="6" data-dim="track">
+            <div class="q-num">问题 7 / 8</div>
+            <h3>你的内容赛道属于以下哪种？</h3>
+            <div class="options">
+                <div class="option" data-score="3" onclick="selectOption(this)">现场体验类（旅行/美食/探店/极限运动）或深度调查/个人故事</div>
+                <div class="option" data-score="2" onclick="selectOption(this)">深度分析/独特观点/专业领域解读</div>
+                <div class="option" data-score="1" onclick="selectOption(this)">知识教程/产品评测/行业资讯</div>
+                <div class="option" data-score="0" onclick="selectOption(this)">新闻摘要/信息聚合/SEO 内容/纯搬运</div>
+            </div>
+        </div>
+
+        <!-- Q8 -->
+        <div class="question-card" data-q="7" data-dim="compliance">
+            <div class="q-num">问题 8 / 8</div>
+            <h3>你对所在平台的 AI 内容政策了解多少？</h3>
+            <div class="options">
+                <div class="option" data-score="3" onclick="selectOption(this)">很清楚——知道平台标注要求、处罚规则，已按要求合规</div>
+                <div class="option" data-score="2" onclick="selectOption(this)">大概知道——了解需要标注 AI 内容，但细节不太确定</div>
+                <div class="option" data-score="1" onclick="selectOption(this)">模糊——知道有规定但没仔细看</div>
+                <div class="option" data-score="0" onclick="selectOption(this)">完全不了解——不知道有什么规定</div>
+            </div>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-back" id="btn-back" onclick="goBack()" style="visibility: hidden;">上一题</button>
+            <button class="btn btn-next" id="btn-next" onclick="goNext()" disabled>下一题</button>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div id="results">
+        <div class="score-hero">
+            <div class="score-circle" id="score-circle">
+                <div class="num" id="total-score">0</div>
+                <div class="of">/ 24</div>
+            </div>
+            <div class="score-level" id="score-level"></div>
+            <div class="score-desc" id="score-desc"></div>
+        </div>
+
+        <div class="dim-section">
+            <h4>各维度得分</h4>
+            <div class="dim-row">
+                <span class="dim-label">不可替代性</span>
+                <div class="dim-track"><div class="dim-fill" id="dim-unique" style="width:0; background: linear-gradient(90deg, var(--green), #059669);"></div></div>
+                <span class="dim-score" id="dim-unique-s">0/6</span>
+            </div>
+            <div class="dim-row">
+                <span class="dim-label">社区深度</span>
+                <div class="dim-track"><div class="dim-fill" id="dim-community" style="width:0; background: linear-gradient(90deg, var(--cyan), #0891b2);"></div></div>
+                <span class="dim-score" id="dim-community-s">0/6</span>
+            </div>
+            <div class="dim-row">
+                <span class="dim-label">AI 就绪度</span>
+                <div class="dim-track"><div class="dim-fill" id="dim-ai" style="width:0; background: linear-gradient(90deg, var(--accent-light), var(--accent));"></div></div>
+                <span class="dim-score" id="dim-ai-s">0/6</span>
+            </div>
+            <div class="dim-row">
+                <span class="dim-label">变现韧性</span>
+                <div class="dim-track"><div class="dim-fill" id="dim-biz" style="width:0; background: linear-gradient(90deg, var(--orange), #ea580c);"></div></div>
+                <span class="dim-score" id="dim-biz-s">0/6</span>
+            </div>
+        </div>
+
+        <div class="recs" id="recs-container"></div>
+
+        <button class="restart-btn" onclick="restart()">重新测试</button>
+    </div>
+</div>
+
+<footer class="footer">
+    <p>基于 <a href="index.html">8 篇系统性调研</a> 的数据模型。更多详情：<a href="article.html">深度分析</a> · <a href="guide.html">行动指南</a> · <a href="cases.html">案例集</a></p>
+    <p style="margin-top: 8px;"><a href="../index.html">&larr; 返回首页</a></p>
+</footer>
+
+<script>
+const answers = new Array(8).fill(null);
+let current = 0;
+const cards = document.querySelectorAll('.question-card');
+const progressFill = document.getElementById('progress-fill');
+const progressText = document.getElementById('progress-text');
+const btnNext = document.getElementById('btn-next');
+const btnBack = document.getElementById('btn-back');
+
+function selectOption(el) {
+    const card = el.closest('.question-card');
+    card.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    answers[current] = parseInt(el.dataset.score);
+    btnNext.disabled = false;
+}
+
+function updateUI() {
+    cards.forEach((c, i) => c.classList.toggle('active', i === current));
+    const answered = answers.filter(a => a !== null).length;
+    progressFill.style.width = ((current) / 8 * 100) + '%';
+    progressText.textContent = current + ' / 8';
+    btnBack.style.visibility = current > 0 ? 'visible' : 'hidden';
+    btnNext.textContent = current === 7 ? '查看结果' : '下一题';
+    btnNext.disabled = answers[current] === null;
+}
+
+function goNext() {
+    if (answers[current] === null) return;
+    if (current < 7) { current++; updateUI(); }
+    else { showResults(); }
+}
+
+function goBack() {
+    if (current > 0) { current--; updateUI(); }
+}
+
+function showResults() {
+    document.getElementById('quiz').style.display = 'none';
+    const r = document.getElementById('results');
+    r.classList.add('show');
+
+    // Dimension scores
+    const dimUnique = answers[0] + answers[1]; // uniqueness + experience
+    const dimCommunity = answers[2] + answers[5]; // community + trust
+    const dimAI = answers[3] + answers[7]; // ai_usage + compliance
+    const dimBiz = answers[4] + answers[6]; // monetization + track
+    const total = dimUnique + dimCommunity + dimAI + dimBiz;
+
+    document.getElementById('total-score').textContent = total;
+
+    // Score circle color
+    const circle = document.getElementById('score-circle');
+    if (total >= 19) circle.style.borderColor = '#34d399';
+    else if (total >= 13) circle.style.borderColor = '#fbbf24';
+    else if (total >= 7) circle.style.borderColor = '#fb923c';
+    else circle.style.borderColor = '#f87171';
+
+    // Level
+    const levelEl = document.getElementById('score-level');
+    const descEl = document.getElementById('score-desc');
+    if (total >= 19) {
+        levelEl.textContent = '放大层 — AI 是你的杠杆';
+        levelEl.style.color = '#34d399';
+        descEl.textContent = '你已经具备强大的不可替代性。AI 对你来说是效率工具而非威胁。继续深耕人格化和社区，用 AI 扩大产能。';
+    } else if (total >= 13) {
+        levelEl.textContent = '过渡区 — 需要主动进化';
+        levelEl.style.color = '#fbbf24';
+        descEl.textContent = '你有一定基础，但部分维度存在短板。AI 时代的窗口期约 3-5 年，现在是加固护城河的关键时刻。';
+    } else if (total >= 7) {
+        levelEl.textContent = '挤压层 — 必须尽快转型';
+        levelEl.style.color = '#fb923c';
+        descEl.textContent = '你的内容正处于 AI 可以匹敌的水平。中间层受冲击最大——AI 从下方拉低内容价值，头部从上方吸走注意力。需要立即行动。';
+    } else {
+        levelEl.textContent = '替代层 — 紧急警报';
+        levelEl.style.color = '#f87171';
+        descEl.textContent = '你的内容模式已经或即将被 AI 直接替代。Google 2024 年更新蒸发了 45% 低价值网站流量。必须立即转型赛道和内容策略。';
+    }
+
+    // Dimension bars
+    const setBar = (id, score) => {
+        const pct = (score / 6 * 100);
+        document.getElementById(id).style.width = pct + '%';
+        document.getElementById(id + '-s').textContent = score + '/6';
+    };
+    setTimeout(() => {
+        setBar('dim-unique', dimUnique);
+        setBar('dim-community', dimCommunity);
+        setBar('dim-ai', dimAI);
+        setBar('dim-biz', dimBiz);
+    }, 100);
+
+    // Recommendations
+    const recs = [];
+    if (dimUnique < 3) recs.push({ p: 'urgent', t: '提升不可替代性', d: '你的内容缺乏独特印记。最优先的事：在每篇内容中加入至少一个只有你才能提供的元素——亲身经历、独家数据或独特判断。<a href="guide.html#第二步：选对赛道">查看赛道选择矩阵 &rarr;</a>' });
+    if (dimCommunity < 3) recs.push({ p: 'urgent', t: '建立深度社区', d: '你和粉丝的关系还比较浅。研究表明，100-300 个超级粉丝比百万浅层粉丝更有价值。从建一个 50 人微信群开始。<a href="cases.html">看 Ben Thompson 和 Lenny 的案例 &rarr;</a>' });
+    if (dimAI < 3) recs.push({ p: 'important', t: '建立 AI 工作流', d: '你的 AI 工具使用还不成熟。83% 的头部创作者已深度整合 AI。选定 2-3 个核心工具，建立标准流程。<a href="guide.html#第三步：划清-ai-使用边界">查看 AI 使用边界建议 &rarr;</a>' });
+    if (dimBiz < 3) recs.push({ p: 'important', t: '升级变现模式', d: '你的收入来源或赛道抗 AI 能力偏弱。广告 CPM 持续承压，平台分成在缩水。考虑向社群订阅和咨询服务转型。<a href="guide.html#第五步：重建变现路径">查看变现路径升级 &rarr;</a>' });
+    if (answers[7] < 2) recs.push({ p: 'important', t: '了解平台 AI 政策', d: '2025 年 9 月起进入强制标识时代。小红书全年处置 460 万篇 AI 虚假笔记。不了解规则就可能踩雷。<a href="guide.html#第四步：按平台制定策略">查看各平台策略 &rarr;</a>' });
+    if (dimUnique >= 4 && dimAI >= 4) recs.push({ p: 'growth', t: '你已具备放大优势的条件', d: '你的不可替代性和 AI 使用水平都很高。下一步考虑：多平台分发（AI 负责形态转换）、推出付费社群、或将方法论产品化。<a href="cases.html">看 MrBeast 如何用 AI 放大优势 &rarr;</a>' });
+    if (recs.length === 0) recs.push({ p: 'growth', t: '继续保持', d: '各维度表现均衡。持续迭代内容和社区，关注行业变化。<a href="article.html">阅读完整行业分析 &rarr;</a>' });
+
+    const recsHtml = recs.map(r => `
+        <div class="rec">
+            <div class="priority ${r.p}">${r.p === 'urgent' ? '紧急' : r.p === 'important' ? '重要' : '成长方向'}</div>
+            <h4>${r.t}</h4>
+            <p>${r.d}</p>
+        </div>
+    `).join('');
+    document.getElementById('recs-container').innerHTML = '<h3 style="font-size:1.1rem;margin-bottom:16px;">个性化行动建议</h3>' + recsHtml;
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restart() {
+    answers.fill(null);
+    current = 0;
+    cards.forEach(c => {
+        c.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+    });
+    document.getElementById('results').classList.remove('show');
+    document.getElementById('quiz').style.display = 'block';
+    updateUI();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+updateUI();
+</script>
+
+</body>
+</html>
