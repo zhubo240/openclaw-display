@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>增长动力与转型 — 中国宏观经济分析框架</title>
+<style>
+  :root {
+    --bg: #0a0a0f; --surface: #12121a; --surface2: #1a1a25; --border: #2a2a3a;
+    --text: #e0e0e8; --text2: #9090a0; --accent: #f0c040;
+    --red: #e05050; --green: #40c080; --blue: #5080e0; --orange: #e08040;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.7; -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  a { color: var(--accent); text-decoration: none; }
+
+  .header {
+    padding: 60px 0 40px; text-align: center; border-bottom: 1px solid var(--border);
+  }
+  .header .back { font-size: 0.85em; color: var(--text2); margin-bottom: 16px; display: block; }
+  .header h1 { font-size: 2em; font-weight: 700; letter-spacing: 0.04em; margin-bottom: 10px; }
+  .header .dim-label {
+    display: inline-block; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 6px; padding: 3px 12px; font-size: 0.8em; color: var(--accent);
+    font-weight: 600; margin-bottom: 14px;
+  }
+  .header .subtitle { font-size: 0.95em; color: var(--text2); max-width: 740px; margin: 0 auto; }
+
+  .key-nums {
+    display: flex; justify-content: center; gap: 24px; padding: 28px 0;
+    border-bottom: 1px solid var(--border); flex-wrap: wrap;
+  }
+  .kn-item { text-align: center; min-width: 100px; }
+  .kn-value { font-size: 1.5em; font-weight: 700; color: var(--accent); }
+  .kn-value.danger { color: var(--red); }
+  .kn-label { font-size: 0.72em; color: var(--text2); margin-top: 2px; }
+
+  .section { padding: 44px 0; border-bottom: 1px solid var(--border); }
+  .section h2 {
+    text-align: center; font-size: 1.25em; font-weight: 600;
+    color: var(--text2); letter-spacing: 0.06em; margin-bottom: 24px;
+  }
+  .section .sub {
+    text-align: center; font-size: 0.88em; color: var(--text2);
+    margin-top: -16px; margin-bottom: 24px;
+  }
+
+  .bar-section { max-width: 700px; margin: 0 auto; }
+  .bar-group { margin-bottom: 12px; }
+  .bar-header { display: flex; justify-content: space-between; font-size: 0.82em; margin-bottom: 4px; }
+  .bar-header .lbl { color: var(--text2); }
+  .bar-header .val { font-weight: 600; }
+  .bar-track { height: 10px; background: var(--surface2); border-radius: 5px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 5px; }
+
+  .cmp-table {
+    width: 100%; border-collapse: collapse; font-size: 0.85em;
+  }
+  .cmp-table th, .cmp-table td {
+    padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border);
+  }
+  .cmp-table th { color: var(--accent); font-weight: 600; font-size: 0.82em; background: var(--surface); }
+  .cmp-table tr:hover td { background: var(--surface); }
+  .cmp-table .hl { color: var(--accent); font-weight: 600; }
+  .cmp-table .warn { color: var(--red); font-weight: 600; }
+
+  .card-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px;
+  }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 20px;
+  }
+  .card h3 { font-size: 0.88em; font-weight: 600; margin-bottom: 8px; }
+  .card p { font-size: 0.8em; color: var(--text2); line-height: 1.5; }
+  .card .big { font-size: 1.4em; font-weight: 700; margin-bottom: 6px; }
+
+  .wide-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 14px;
+  }
+  .wide-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px 22px;
+  }
+  .wide-card h3 { font-size: 0.92em; font-weight: 600; color: var(--accent); margin-bottom: 8px; }
+  .wide-card p { font-size: 0.85em; color: var(--text2); line-height: 1.6; }
+
+  .ascii-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 24px; max-width: 700px; margin: 0 auto;
+    font-family: "SF Mono", "Fira Code", monospace; font-size: 0.84em;
+    line-height: 1.8; color: var(--text2); white-space: pre; overflow-x: auto;
+  }
+  .ascii-box .hl { color: var(--accent); font-weight: 600; }
+  .ascii-box .r { color: var(--red); font-weight: 600; }
+  .ascii-box .g { color: var(--green); }
+  .ascii-box .b { color: var(--blue); }
+  .ascii-box .o { color: var(--orange); }
+
+  .callout {
+    margin-top: 18px; padding: 16px 20px; background: var(--surface);
+    border: 1px solid var(--border); border-left: 3px solid var(--red);
+    border-radius: 8px; font-size: 0.84em; max-width: 700px; margin-left: auto; margin-right: auto;
+  }
+  .callout .cl-title { color: var(--accent); font-weight: 600; margin-bottom: 6px; }
+  .callout .cl-body { color: var(--text2); line-height: 1.5; }
+
+  .footer { padding: 36px 0; text-align: center; color: var(--text2); font-size: 0.8em; }
+
+  @media (max-width: 600px) {
+    .key-nums { gap: 12px; }
+    .kn-value { font-size: 1.2em; }
+    .card-grid, .wide-grid { grid-template-columns: 1fr; }
+    .ascii-box { font-size: 0.72em; padding: 14px; }
+    .cmp-table { font-size: 0.75em; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <section class="header">
+    <a class="back" href="../index.html">&larr; 返回总览</a>
+    <div class="dim-label">维度二</div>
+    <h1>增长动力与转型</h1>
+    <p class="subtitle">从廉价劳动力到工程师红利，从4%的TFP到1%——中国正处于增长模式转型的"中途"。已经不能回头，但尚未到达。转型是否成功，决定了中国能否跨越中等收入陷阱。</p>
+  </section>
+
+  <div class="key-nums">
+    <div class="kn-item"><div class="kn-value danger">~1-1.5%</div><div class="kn-label">TFP 增速（曾达 4%）</div></div>
+    <div class="kn-item"><div class="kn-value">2.7%</div><div class="kn-label">R&D / GDP</div></div>
+    <div class="kn-item"><div class="kn-value danger">7-8</div><div class="kn-label">ICOR（曾为 3-4）</div></div>
+    <div class="kn-item"><div class="kn-value">470台</div><div class="kn-label">机器人密度/万人</div></div>
+    <div class="kn-item"><div class="kn-value">13-15%</div><div class="kn-label">战略新兴产业/GDP</div></div>
+    <div class="kn-item"><div class="kn-value">1.1万亿</div><div class="kn-label">"新三样"出口额</div></div>
+  </div>
+
+  <!-- Three stages -->
+  <section class="section">
+    <h2>增 长 模 式 三 阶 段</h2>
+    <p class="sub">从要素驱动 → 效率驱动 → 创新驱动：正处于第二到第三阶段的转换中</p>
+    <div class="ascii-box"><span class="hl">阶段一：要素驱动（1978-2010）</span> GDP ~10%/年
+
+  廉价劳动力 ─── 农村→城市大迁徙
+  高储蓄→高投资 ── 40-50% 储蓄率
+  土地要素 ────── 低价工业用地招商
+  外资+技术引进 ── WTO后融入全球链
+  → <span class="g">年均10%，"中国奇迹"</span>
+
+<span class="hl">阶段二：效率驱动（2010-2020）</span> GDP ~7%/年
+
+  要素成本上升 → 劳动力不再廉价
+  规模经济+产业集聚+基建网络效应
+  互联网经济爆发 → 数字化提效
+  <span class="o">但仍高度依赖投资，房地产+基建是支柱</span>
+
+<span class="hl">阶段三：创新驱动（2020-）</span> GDP ~5%/年
+
+  R&D占GDP从1.98%→2.7%
+  新能源、5G、高铁、电动车技术突破
+  <span class="r">但基础研究仅6-7%（发达国家15-20%）</span>
+  <span class="r">关键核心技术仍受制于人</span></div>
+  </section>
+
+  <!-- TFP decline -->
+  <section class="section">
+    <h2>TFP ：增 长 质 量 的 核 心 指 标</h2>
+    <p class="sub">从 4% 跌至 1% — 中国 TFP 水平仅为美国的 40-45%</p>
+    <div class="bar-section">
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">1978-1990 改革开放红利</span><span class="val" style="color:var(--green)">~3.5-4%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:80%;background:var(--green)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">1990-2000 国企改革+市场化</span><span class="val" style="color:var(--green)">~3-3.5%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:70%;background:var(--green)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">2001-2007 WTO+全球化</span><span class="val" style="color:var(--green)">~4%+</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:85%;background:var(--green)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">2008-2015 投资驱动、效率下降</span><span class="val" style="color:var(--orange)">~1.5-2%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:38%;background:var(--orange)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">2016-2024 结构性放缓</span><span class="val" style="color:var(--red)">~1-1.5%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:25%;background:var(--red)"></div></div>
+      </div>
+    </div>
+    <div style="overflow-x:auto;margin-top:24px;">
+      <table class="cmp-table">
+        <thead><tr><th>指标</th><th>中国</th><th>韩国（同阶段）</th><th>日本（同阶段）</th></tr></thead>
+        <tbody>
+          <tr><td>R&D / GDP</td><td>~2.7%</td><td>~3.0%</td><td>~2.8%</td></tr>
+          <tr><td>基础研究占比</td><td class="warn">~6%</td><td class="hl">~15%</td><td class="hl">~13%</td></tr>
+          <tr><td>专利质量（三方专利）</td><td class="warn">中等</td><td>较高</td><td class="hl">高</td></tr>
+          <tr><td>TFP贡献占GDP增长</td><td class="warn">~30%</td><td>~40%</td><td class="hl">~45%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout" style="margin-top:20px;">
+      <div class="cl-title">TFP 不回升到 2%+，增长将降至 4% 以下</div>
+      <div class="cl-body">未来GDP增速 = 劳动投入（负贡献）+ 资本投入（边际递减）+ TFP。劳动力每年净减300-500万，投资效率恶化（ICOR翻倍），TFP是唯一能"扭转乾坤"的变量。但提升TFP需要的恰恰是最难推进的改革：要素市场化、国企改革、产权保护、竞争中性。</div>
+    </div>
+  </section>
+
+  <!-- Investment efficiency -->
+  <section class="section">
+    <h2>投 资 效 率 ：翻 倍 恶 化</h2>
+    <p class="sub">ICOR 从 3-4 升至 7-8 — 产生同样 1 元 GDP 需要两倍的投资</p>
+    <div class="ascii-box"><span class="hl">增量资本产出比（ICOR）= 投资 / GDP增量</span>
+
+2000年代  ICOR <span class="g">3-4</span>   投1元产0.25-0.33元增长  <span class="g">效率尚可</span>
+2010年代  ICOR <span class="o">5-6</span>   投1元产0.17-0.20元增长  <span class="o">开始恶化</span>
+2020年代  ICOR <span class="r">7-8</span>   投1元产0.13-0.14元增长  <span class="r">严重低效</span>
+
+<span class="hl">资源去了哪里？</span>
+
+<span class="r">低效领域</span>（吞噬了大部分资源）：
+├── 房地产过度开发 ── 空城、鬼城
+├── 重复基建 ──────── 利用率低的高铁站、机场
+├── 僵尸企业 ──────── 靠借新还旧存活
+└── 地方融资平台 ──── 回报远低于融资成本
+
+<span class="g">高效领域</span>（得到的资源不够）：
+├── 民营创新企业 ──── 融资难融资贵
+├── 服务业 ──────── 管制过多
+└── 基础研究 ──── 占R&D仅6%</div>
+  </section>
+
+  <!-- New productive forces -->
+  <section class="section">
+    <h2>"新 质 生 产 力 " 仪 表 盘</h2>
+    <p class="sub">战略性新兴产业占 GDP 13-15%，10 年翻一倍 — 但"量大质不强"</p>
+    <div class="card-grid" style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));">
+      <div class="card">
+        <div class="big" style="color:var(--green)">13-15%</div>
+        <h3>战略新兴产业/GDP</h3>
+        <p>2014年仅7-8%。目标2025年达17%+。高技术制造业占工业16-17%。</p>
+      </div>
+      <div class="card">
+        <div class="big" style="color:var(--blue)">~40%</div>
+        <h3>数字经济/GDP（广义）</h3>
+        <p>核心产业~10%。产业数字化贡献最大。软件、电商、云计算。</p>
+      </div>
+      <div class="card">
+        <div class="big" style="color:var(--accent)">1.1万亿</div>
+        <h3>"新三样"出口</h3>
+        <p>电动车+锂电池+光伏。2020年不到3000亿，4年增长近4倍。</p>
+      </div>
+      <div class="card">
+        <div class="big" style="color:var(--green)">660万</div>
+        <h3>研发人员（人年）</h3>
+        <p>全球第一。STEM毕业生年500万。但基础研究人才不足。</p>
+      </div>
+    </div>
+    <div class="wide-grid" style="margin-top:16px;">
+      <div class="wide-card">
+        <h3>已形成全球竞争优势</h3>
+        <p>光伏（全球80%产能）、锂电池（全球70%产能）、电动车（渗透率40%+）、5G基站（全球60%+）、高铁（4.5万公里全球第一）。高技术制造业增速持续快于整体工业5-8个百分点。</p>
+      </div>
+      <div class="wide-card">
+        <h3>仍然"卡脖子"</h3>
+        <p>高端芯片（7nm以下制程）、EUV光刻机（ASML独家）、航空发动机、高端医疗器械（MRI/CT核心零件）、工业软件（EDA/CAD）、高端轴承和减速器。基础研究薄弱，诺贝尔科学奖仅1人。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Regional distribution -->
+  <section class="section">
+    <h2>新 质 生 产 力 区 域 版 图</h2>
+    <div class="ascii-box"><span class="hl">长三角</span>  集成电路 · 生物医药 · AI
+         上海张江+苏州工业园+杭州数字经济
+
+<span class="hl">珠三角</span>  消费电子 · 新能源车 · 机器人
+         深圳硬件+东莞制造+广州汽车
+
+<span class="hl">京津冀</span>  AI · 航天 · 信息安全
+         中关村+亦庄+雄安
+
+<span class="hl">成渝</span>    电子信息 · 新能源车
+         重庆笔电+成都芯片
+
+<span class="o">中西部</span>  光伏（青海/宁夏）· 锂电（四川/江西）
+         依托资源优势，但深加工能力弱
+
+<span class="r">争议</span>：光伏、锂电池等已出现严重产能过剩
+      政府引导基金投资失败率高
+      部分地方盲目跟风"新质生产力"概念</div>
+  </section>
+
+  <!-- Four replacements -->
+  <section class="section">
+    <h2>人 口 红 利 消 退 ：四 大 替 代 力 量</h2>
+    <p class="sub">劳动年龄人口每年减少 300-500 万 — 靠什么弥补？</p>
+    <div class="card-grid" style="grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));">
+      <div class="card">
+        <div class="big" style="color:var(--blue)">+0.5-1.0pp</div>
+        <h3>工程师红利</h3>
+        <p>年培养1000万大学生，STEM 500万（全球最多）。劳均受教育年限9年→11年。实现度：中等。局限：学历通胀、基础研究人才不足。</p>
+      </div>
+      <div class="card">
+        <div class="big" style="color:var(--green)">+0.3-0.5pp</div>
+        <h3>自动化与机器人</h3>
+        <p>工业机器人保有量180万台（全球50%+）。密度470台/万人，已超美国。实现度：较高。局限：服务业自动化慢、核心零件进口。</p>
+      </div>
+      <div class="card">
+        <div class="big" style="color:var(--accent)">+0.5-1.5pp</div>
+        <h3>人工智能</h3>
+        <p>产业规模仅次于美国。大模型竞赛激烈（文心/通义/豆包）。长期可能是最大变量。实现度：早期。局限：高端芯片受限、基础能力差距。</p>
+      </div>
+      <div class="card">
+        <div class="big" style="color:var(--orange)">+0.5-1.0pp</div>
+        <h3>制度红利</h3>
+        <p>要素市场化、统一大市场、国企改革释放效率空间。实现度：较低。局限：改革进入深水区，部分领域出现倒退。</p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:20px;border-left-color:var(--orange);">
+      <div class="cl-title">人口红利拖累 ~0.5-1pp/年 — 替代力量能否弥补？</div>
+      <div class="cl-body">四大替代力量合计潜在贡献 1.8-4.0pp/年，理论上足够。但实现度参差不齐：自动化最实在，制度改革最不确定。短期靠工程师红利+自动化，中长期靠AI。如果改革停滞，技术替代的效果也会打折扣——技术需要配套的制度环境才能充分发挥。</div>
+    </div>
+  </section>
+
+  <!-- Robot density -->
+  <section class="section">
+    <h2>机 器 人 密 度 ：十 年 十 倍 的 跃 升</h2>
+    <div class="bar-section">
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">韩国</span><span class="val" style="color:var(--accent)">~1,000</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--accent)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">日本</span><span class="val" style="color:var(--blue)">~397</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:40%;background:var(--blue)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">中国 2024</span><span class="val" style="color:var(--green)">~470</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:47%;background:var(--green)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">德国</span><span class="val" style="color:var(--text2)">~415</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:42%;background:var(--text2)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">美国</span><span class="val" style="color:var(--text2)">~295</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:30%;background:var(--text2)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">中国 2015</span><span class="val" style="color:var(--red)">49</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:5%;background:var(--red)"></div></div>
+      </div>
+    </div>
+    <p style="text-align:center;font-size:0.8em;color:var(--text2);margin-top:14px;">每万名工人拥有的工业机器人数量 | 来源：IFR</p>
+  </section>
+
+  <!-- Core judgments -->
+  <section class="section">
+    <h2>核 心 判 断</h2>
+    <div class="wide-grid">
+      <div class="wide-card">
+        <h3>转型"中途"：不能回头，尚未到达</h3>
+        <p>要素驱动已经走不通（劳动力贵了、土地紧了、环境约束了），创新驱动还没完全建立。正处于最难的中间地带——旧引擎熄火、新引擎未满功率。这个过渡期的长短和平滑度，决定了中国经济的未来。</p>
+      </div>
+      <div class="wide-card">
+        <h3>TFP 是"生死指标"</h3>
+        <p>从4%跌到1%，TFP追赶速度显著放缓。中国TFP水平仅为美国的40-45%——同等投入、产出不到一半。根因：资源错配（国企vs民企）、制度改革放缓、技术引进红利减少。TFP不回升，增长注定下台阶。</p>
+      </div>
+      <div class="wide-card">
+        <h3>"新质生产力"有亮点但有泡沫</h3>
+        <p>光伏、锂电池、电动车已形成真正的全球竞争优势。但产能过剩风险在累积、政府产业基金效率存疑、"新瓶装旧酒"现象普遍。从"制造大国"到"创新强国"，差的不是规模而是基础研究和原始创新。</p>
+      </div>
+      <div class="wide-card">
+        <h3>机器换人是最确定的替代</h3>
+        <p>机器人密度十年从49到470，已超美德。工业自动化是弥补人口红利的最现实路径。中长期，AI可能是最大变量——但受限于芯片封锁。制度红利潜力最大但实现度最低——改革意愿是关键约束。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="footer">
+    <p>数据基准：2024 年 &middot; 来源：国家统计局、科技部、WIPO、IFR、Penn World Table、世界银行</p>
+    <p style="margin-top:8px;"><a href="../index.html">&larr; 返回中国宏观经济分析框架总览</a></p>
+  </section>
+
+</div>
+
+</body>
+</html>
