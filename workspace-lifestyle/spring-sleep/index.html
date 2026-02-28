@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>春困与睡眠 · Lifestyle Workspace</title>
+<style>
+  :root {
+    --bg: #faf9f6;
+    --text: #2d2d2d;
+    --accent: #5a7d64;
+    --accent-light: #e8f0eb;
+    --border: #e0ddd8;
+    --muted: #8a8580;
+    --night: #3d4f6f;
+    --night-light: #e8ecf3;
+    --dawn: #c47d3c;
+    --dawn-light: #fdf3e8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Noto Sans SC", "Helvetica Neue", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.8;
+    padding: 3rem 1.5rem;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .breadcrumb { font-size: 0.85rem; color: var(--muted); margin-bottom: 2rem; }
+  header { margin-bottom: 2.5rem; }
+  header h1 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.3rem; }
+  header p { color: var(--muted); font-size: 0.9rem; }
+  .intro {
+    padding: 1.2rem 1.4rem;
+    background: linear-gradient(135deg, var(--night-light) 0%, var(--dawn-light) 100%);
+    border-left: 3px solid var(--night);
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 2.5rem;
+    font-size: 0.9rem;
+  }
+  .section {
+    margin-bottom: 2.5rem;
+    padding: 1.5rem;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .section h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--night);
+  }
+  .section p, .section li { font-size: 0.9rem; }
+  .mechanism-box {
+    padding: 1rem 1.2rem;
+    background: var(--night-light);
+    border-radius: 6px;
+    margin: 0.8rem 0;
+    font-size: 0.88rem;
+  }
+  .mechanism-box strong { color: var(--night); }
+
+  /* Timeline */
+  .timeline { position: relative; margin: 1.2rem 0; padding-left: 2rem; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.5rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--night), var(--dawn), var(--night));
+  }
+  .time-block {
+    position: relative;
+    padding: 0.6rem 0 0.6rem 1rem;
+    font-size: 0.88rem;
+  }
+  .time-block::before {
+    content: '';
+    position: absolute;
+    left: -1.55rem;
+    top: 1rem;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid var(--night);
+    background: #fff;
+  }
+  .time-block .time-label {
+    font-weight: 600;
+    color: var(--night);
+    font-size: 0.82rem;
+  }
+
+  /* Cards */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    margin: 0.8rem 0;
+  }
+  .env-card {
+    padding: 1rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+  }
+  .env-card h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.4rem; }
+  .env-card ul { padding-left: 1rem; }
+  .env-card li { margin-bottom: 0.2rem; font-size: 0.82rem; }
+  .env-card.dark { background: var(--night-light); }
+  .env-card.dark h4 { color: var(--night); }
+  .env-card.light { background: var(--dawn-light); }
+  .env-card.light h4 { color: var(--dawn); }
+
+  /* Caffeine chart */
+  .caffeine-bar {
+    display: flex;
+    align-items: center;
+    margin: 0.4rem 0;
+    font-size: 0.82rem;
+  }
+  .caffeine-bar .drink-name {
+    width: 100px;
+    flex-shrink: 0;
+    font-weight: 500;
+  }
+  .caffeine-bar .bar-track {
+    flex: 1;
+    height: 18px;
+    background: #f0f0ed;
+    border-radius: 3px;
+    position: relative;
+    overflow: hidden;
+  }
+  .caffeine-bar .bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: var(--dawn);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 0.4rem;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+
+  /* Myth busters */
+  .myth {
+    padding: 0.8rem 1rem;
+    margin: 0.5rem 0;
+    border-radius: 6px;
+    font-size: 0.85rem;
+  }
+  .myth.wrong {
+    background: #fce8e6;
+    border-left: 3px solid #c25b4e;
+  }
+  .myth.right {
+    background: var(--accent-light);
+    border-left: 3px solid var(--accent);
+  }
+  .myth strong { display: block; margin-bottom: 0.2rem; }
+
+  .tip-box {
+    padding: 0.8rem 1rem;
+    background: var(--accent-light);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    margin-top: 1rem;
+  }
+  .tip-box strong { color: var(--accent); }
+  .warn-box {
+    padding: 0.8rem 1rem;
+    background: var(--dawn-light);
+    border-left: 3px solid var(--dawn);
+    border-radius: 0 6px 6px 0;
+    font-size: 0.85rem;
+    margin-top: 1rem;
+  }
+  footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  @media (max-width: 500px) { .grid-2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="breadcrumb"><a href="../index.html">Lifestyle Workspace</a> / 春困与睡眠</div>
+
+<header>
+  <h1>春困不是病，但可以治</h1>
+  <p>理解春困机制 · 优化睡眠质量 · 白天保持清醒</p>
+</header>
+
+<div class="intro">
+  每到春天就觉得怎么睡都不够，上午犯困，午后崩溃，晚上又睡不好。这不是懒，是你的身体在适应季节切换。好消息：<strong>理解了机制，就可以主动调整</strong>，而不是被动忍受一整个春天的昏沉。
+</div>
+
+<!-- 机制 -->
+<div class="section">
+  <h2>春困是怎么回事？</h2>
+
+  <div class="mechanism-box">
+    <strong>核心原因：血液重新分配。</strong>冬天寒冷时，身体收缩外周血管，把血液集中在内脏保暖。春天气温回升，外周血管舒张，血液流向体表和四肢，大脑供血相对减少 → 困。
+  </div>
+
+  <div class="mechanism-box">
+    <strong>光照变化。</strong>冬春之交日照时长快速变化（每天增加约 2-3 分钟），褪黑素分泌节律还没跟上，生物钟处于"重新校准"阶段。身体的时钟说"还是冬天"，太阳说"已经春天了"。
+  </div>
+
+  <div class="mechanism-box">
+    <strong>饮食因素。</strong>冬季偏重高热量饮食，消化负担大，容易餐后嗜睡。加上春季湿气重（尤其南方），中医称"湿困脾胃"，人会觉得身体沉重、头脑不清爽。
+  </div>
+</div>
+
+<!-- 作息调整 -->
+<div class="section">
+  <h2>理想春季作息时间线</h2>
+  <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 0.8rem;">不需要精确到分钟，重点是<strong>节奏感</strong>——让身体知道什么时候该醒、什么时候该睡。</p>
+
+  <div class="timeline">
+    <div class="time-block">
+      <span class="time-label">6:30 - 7:00 起床</span><br>
+      醒来后立刻拉开窗帘或开灯。光线是最强的清醒信号。不要赖在床上刷手机——躺着看屏幕反而让大脑更困惑（"到底是该醒还是该睡？"）。
+    </div>
+    <div class="time-block">
+      <span class="time-label">7:00 - 7:30 晨间激活</span><br>
+      洗冷水脸 → 喝一杯温水 → 5 分钟简单拉伸。这三件事加起来不到 10 分钟，但能把皮质醇水平拉到正确位置。
+    </div>
+    <div class="time-block">
+      <span class="time-label">10:00 上午低谷</span><br>
+      起床后 3 小时左右会有第一个小低谷。站起来走动 5 分钟，或看窗外远处。不要在这个时间喝第一杯咖啡（太晚了，详见咖啡因策略）。
+    </div>
+    <div class="time-block">
+      <span class="time-label">12:30 - 13:00 午餐</span><br>
+      七分饱。春季午餐尽量清淡——重油重碳水的午餐 = 下午必倒。
+    </div>
+    <div class="time-block">
+      <span class="time-label">13:00 - 13:20 午休</span><br>
+      控制在 20 分钟以内。设闹钟。超过 30 分钟会进入深睡眠，醒来后反而更困（睡眠惯性）。趴着睡不如靠椅子仰卧，减少手臂麻木。
+    </div>
+    <div class="time-block">
+      <span class="time-label">15:00 下午低谷</span><br>
+      午后最困的时段。最好的对策不是咖啡，是运动——哪怕爬两层楼梯或做 20 个深蹲。
+    </div>
+    <div class="time-block">
+      <span class="time-label">21:30 - 22:00 准备入睡</span><br>
+      关闭强光源，手机切夜间模式。可以看书、听播客、拉伸。避免刷短视频（多巴胺陷阱）。
+    </div>
+    <div class="time-block">
+      <span class="time-label">22:30 - 23:00 入睡</span><br>
+      目标睡 7-8 小时。春季宜比冬季早睡 30 分钟（冬天晚睡晚起 → 春天早睡早起的过渡）。
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>关键原则：</strong>固定起床时间比固定入睡时间更重要。即使前一晚睡得不好，也尽量同一时间起床。1-2 天后，入睡时间会自动提前。
+  </div>
+</div>
+
+<!-- 睡眠环境 -->
+<div class="section">
+  <h2>卧室环境优化</h2>
+
+  <div class="grid-2">
+    <div class="env-card dark">
+      <h4>光线控制</h4>
+      <ul>
+        <li>遮光窗帘（不是普通窗帘）是睡眠质量最大的杠杆之一</li>
+        <li>所有电器指示灯用黑色胶布遮住</li>
+        <li>如果需要夜灯，选暖黄色 < 5 流明</li>
+        <li>晨起自动开灯：智能灯泡定时 6:30 渐亮（模拟日出）</li>
+      </ul>
+    </div>
+    <div class="env-card dark">
+      <h4>温度</h4>
+      <ul>
+        <li>最佳睡眠温度：18-20°C</li>
+        <li>春天夜间温差大，薄被+毛毯比厚被灵活</li>
+        <li>脚冷睡不着→穿袜子比开空调有效</li>
+        <li>洗热水澡后体温下降过程会促进入睡</li>
+      </ul>
+    </div>
+    <div class="env-card light">
+      <h4>声音</h4>
+      <ul>
+        <li>白噪音（风扇、雨声）可以掩盖突发噪音</li>
+        <li>耳塞推荐：3M 1100（便宜好用）或 Loop Quiet</li>
+        <li>如果和人同住，沟通比买设备更有效</li>
+      </ul>
+    </div>
+    <div class="env-card light">
+      <h4>寝具</h4>
+      <ul>
+        <li>枕头高度：仰卧时下巴不压胸、侧卧时脊柱成直线</li>
+        <li>春季换薄被时，选透气性好的面料（纱布、天丝）</li>
+        <li>床垫寿命 8-10 年，如果中间塌陷该换了</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- 咖啡因策略 -->
+<div class="section">
+  <h2>咖啡因策略</h2>
+  <p style="margin-bottom: 0.8rem;">咖啡因不是敌人，但用错时机会同时毁掉白天精力和夜间睡眠。</p>
+
+  <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 0.5rem;">常见饮品咖啡因含量：</p>
+  <div class="caffeine-bar">
+    <span class="drink-name">浓缩咖啡</span>
+    <div class="bar-track"><div class="bar-fill" style="width:75%">150mg</div></div>
+  </div>
+  <div class="caffeine-bar">
+    <span class="drink-name">美式咖啡</span>
+    <div class="bar-track"><div class="bar-fill" style="width:60%">120mg</div></div>
+  </div>
+  <div class="caffeine-bar">
+    <span class="drink-name">红茶</span>
+    <div class="bar-track"><div class="bar-fill" style="width:25%">50mg</div></div>
+  </div>
+  <div class="caffeine-bar">
+    <span class="drink-name">绿茶</span>
+    <div class="bar-track"><div class="bar-fill" style="width:15%">30mg</div></div>
+  </div>
+  <div class="caffeine-bar">
+    <span class="drink-name">可乐</span>
+    <div class="bar-track"><div class="bar-fill" style="width:17%">35mg</div></div>
+  </div>
+
+  <div class="mechanism-box" style="margin-top: 1rem;">
+    <strong>黄金窗口：起床后 90-120 分钟。</strong>刚起床时皮质醇（自然兴奋剂）正在上升，此时喝咖啡效果被浪费。等皮质醇高峰过后（约 9:00-9:30），再来第一杯，效果最大化。
+  </div>
+
+  <div class="warn-box">
+    <strong>截止时间：14:00。</strong>咖啡因半衰期 5-6 小时，也就是说下午 2 点的咖啡到晚上 8 点还有一半在你体内。如果你 23 点入睡困难，把截止时间提前到 13:00 试试。
+  </div>
+</div>
+
+<!-- 误区 -->
+<div class="section">
+  <h2>常见误区</h2>
+
+  <div class="myth wrong">
+    <strong>"周末多睡几小时补回来"</strong>
+    社交时差（social jet lag）：周末晚睡晚起相当于飞了一个时区。周一起床困难不是因为假期太短，而是你的生物钟被搞乱了。周末比工作日最多晚起 1 小时。
+  </div>
+
+  <div class="myth wrong">
+    <strong>"睡前喝酒助眠"</strong>
+    酒精确实让你更快入睡，但会严重破坏后半夜的 REM 睡眠（快速眼动期，做梦和记忆巩固的阶段）。结果：睡了 8 小时但醒来像没睡。
+  </div>
+
+  <div class="myth wrong">
+    <strong>"困了就躺床上等睡着"</strong>
+    如果 20 分钟内睡不着，起来做点无聊的事（翻纸质书、叠衣服）。在床上辗转反侧会让大脑建立"床=焦虑"的关联。床只用来睡觉（和亲密活动）。
+  </div>
+
+  <div class="myth right">
+    <strong>"午睡有用，但要短"</strong>
+    10-20 分钟的午睡（power nap）可以恢复警觉性、改善心情、提高下午工作效率。NASA 研究显示 26 分钟的飞行员午睡可提升 34% 的反应速度。关键是别超时。
+  </div>
+
+  <div class="myth right">
+    <strong>"运动改善睡眠，但别太晚"</strong>
+    规律运动是改善睡眠最有效的非药物手段。但剧烈运动后核心体温升高，需要 2-3 小时才能降下来。睡前 3 小时内避免高强度运动。散步和轻度拉伸不受限。
+  </div>
+</div>
+
+<!-- 快速行动清单 -->
+<div class="section">
+  <h2>本周试试这 5 件事</h2>
+  <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 0.8rem;">不需要全做，选 1-2 个最容易执行的开始。</p>
+  <ol style="padding-left: 1.2rem;">
+    <li style="margin-bottom: 0.6rem;"><strong>固定起床时间</strong> — 连续 7 天同一时间起床（包括周末），观察第三天开始的变化</li>
+    <li style="margin-bottom: 0.6rem;"><strong>醒来后见光</strong> — 拉窗帘或出门走 5 分钟。阴天也有效，户外光照强度远超室内</li>
+    <li style="margin-bottom: 0.6rem;"><strong>午休设 20 分钟闹钟</strong> — 用手机倒计时，到点就起来，不管觉得多困</li>
+    <li style="margin-bottom: 0.6rem;"><strong>咖啡截止 14:00</strong> — 下午想喝热饮改成花草茶（菊花、薄荷、洋甘菊都不含咖啡因）</li>
+    <li style="margin-bottom: 0.6rem;"><strong>睡前 1 小时放下手机</strong> — 最难但最有效。实在做不到就把屏幕调最暗+夜间模式</li>
+  </ol>
+</div>
+
+<footer>
+  <p><a href="../index.html">&larr; 返回首页</a></p>
+  <p>更新：2026-02-28 08:00 GMT+8 · 自主推进生成</p>
+</footer>
+
+</body>
+</html>
