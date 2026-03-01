@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>科技与产业政策 — 中国宏观经济分析框架</title>
+<style>
+  :root {
+    --bg: #0a0a0f; --surface: #12121a; --surface2: #1a1a25; --border: #2a2a3a;
+    --text: #e0e0e8; --text2: #9090a0; --accent: #f0c040;
+    --red: #e05050; --green: #40c080; --blue: #5080e0; --orange: #e08040;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.7; -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  a { color: var(--accent); text-decoration: none; }
+  .header { padding: 60px 0 40px; text-align: center; border-bottom: 1px solid var(--border); }
+  .header .back { font-size: 0.85em; color: var(--text2); margin-bottom: 16px; display: block; }
+  .header h1 { font-size: 2em; font-weight: 700; letter-spacing: 0.04em; margin-bottom: 10px; }
+  .header .dim-label { display: inline-block; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 3px 12px; font-size: 0.8em; color: var(--accent); font-weight: 600; margin-bottom: 14px; }
+  .header .subtitle { font-size: 0.95em; color: var(--text2); max-width: 740px; margin: 0 auto; }
+  .key-nums { display: flex; justify-content: center; gap: 24px; padding: 28px 0; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .kn-item { text-align: center; min-width: 100px; }
+  .kn-value { font-size: 1.5em; font-weight: 700; color: var(--accent); }
+  .kn-value.danger { color: var(--red); }
+  .kn-label { font-size: 0.72em; color: var(--text2); margin-top: 2px; }
+  .section { padding: 44px 0; border-bottom: 1px solid var(--border); }
+  .section h2 { text-align: center; font-size: 1.25em; font-weight: 600; color: var(--text2); letter-spacing: 0.06em; margin-bottom: 24px; }
+  .section .sub { text-align: center; font-size: 0.88em; color: var(--text2); margin-top: -16px; margin-bottom: 24px; }
+  .bar-section { max-width: 700px; margin: 0 auto; }
+  .bar-group { margin-bottom: 12px; }
+  .bar-header { display: flex; justify-content: space-between; font-size: 0.82em; margin-bottom: 4px; }
+  .bar-header .lbl { color: var(--text2); }
+  .bar-header .val { font-weight: 600; }
+  .bar-track { height: 10px; background: var(--surface2); border-radius: 5px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 5px; }
+  .cmp-table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
+  .cmp-table th, .cmp-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+  .cmp-table th { color: var(--accent); font-weight: 600; font-size: 0.82em; background: var(--surface); }
+  .cmp-table tr:hover td { background: var(--surface); }
+  .cmp-table .hl { color: var(--accent); font-weight: 600; }
+  .cmp-table .warn { color: var(--red); font-weight: 600; }
+  .cmp-table .ok { color: var(--green); font-weight: 600; }
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
+  .card h3 { font-size: 0.88em; font-weight: 600; margin-bottom: 8px; }
+  .card p { font-size: 0.8em; color: var(--text2); line-height: 1.5; }
+  .card .big { font-size: 1.4em; font-weight: 700; margin-bottom: 6px; }
+  .wide-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 14px; }
+  .wide-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 22px; }
+  .wide-card h3 { font-size: 0.92em; font-weight: 600; color: var(--accent); margin-bottom: 8px; }
+  .wide-card p { font-size: 0.85em; color: var(--text2); line-height: 1.6; }
+  .ascii-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 24px; max-width: 700px; margin: 0 auto; font-family: "SF Mono", "Fira Code", monospace; font-size: 0.84em; line-height: 1.8; color: var(--text2); white-space: pre; overflow-x: auto; }
+  .ascii-box .hl { color: var(--accent); font-weight: 600; }
+  .ascii-box .r { color: var(--red); font-weight: 600; }
+  .ascii-box .g { color: var(--green); }
+  .ascii-box .b { color: var(--blue); }
+  .ascii-box .o { color: var(--orange); }
+  .callout { margin-top: 18px; padding: 16px 20px; background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--red); border-radius: 8px; font-size: 0.84em; max-width: 700px; margin-left: auto; margin-right: auto; }
+  .callout .cl-title { color: var(--accent); font-weight: 600; margin-bottom: 6px; }
+  .callout .cl-body { color: var(--text2); line-height: 1.5; }
+  .score-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .score-label { font-size: 0.82em; color: var(--text2); min-width: 90px; text-align: right; }
+  .score-track { flex: 1; height: 14px; background: var(--surface2); border-radius: 7px; overflow: hidden; position: relative; }
+  .score-fill { height: 100%; border-radius: 7px; }
+  .score-val { font-size: 0.82em; font-weight: 600; min-width: 35px; }
+  .footer { padding: 36px 0; text-align: center; color: var(--text2); font-size: 0.8em; }
+  @media (max-width: 600px) {
+    .key-nums { gap: 12px; } .kn-value { font-size: 1.2em; }
+    .card-grid, .wide-grid { grid-template-columns: 1fr; }
+    .ascii-box { font-size: 0.72em; padding: 14px; }
+    .cmp-table { font-size: 0.75em; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <section class="header">
+    <a class="back" href="../index.html">&larr; 返回总览</a>
+    <div class="dim-label">维度七</div>
+    <h1>科技与产业政策</h1>
+    <p class="subtitle">R&D总额全球第二，但基础研究仅6.8%；光伏/锂电全球称霸，但EUV光刻机落后15年。产业政策培育了冠军，也制造了产能过剩。"大而不强"是最精准的描述。</p>
+  </section>
+
+  <div class="key-nums">
+    <div class="kn-item"><div class="kn-value">5,000亿$</div><div class="kn-label">R&D 总额（全球第二）</div></div>
+    <div class="kn-item"><div class="kn-value danger">6.8%</div><div class="kn-label">基础研究占比（美国 17%）</div></div>
+    <div class="kn-item"><div class="kn-value">470万件</div><div class="kn-label">有效发明专利</div></div>
+    <div class="kn-item"><div class="kn-value danger">20-25%</div><div class="kn-label">半导体自给率</div></div>
+    <div class="kn-item"><div class="kn-value danger">~7,000亿</div><div class="kn-label">大基金三期合计</div></div>
+    <div class="kn-item"><div class="kn-value danger">~30%</div><div class="kn-label">科技成果转化率（美国 50-60%）</div></div>
+  </div>
+
+  <!-- R&D investment -->
+  <section class="section">
+    <h2>研 发 投 入 ：规 模 全 球 前 列</h2>
+    <p class="sub">从 0.9% 到 2.68% — 20年翻了近3倍，但"质"跟不上"量"</p>
+    <div class="bar-section">
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">以色列</span><span class="val" style="color:var(--accent)">~5.6%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--accent)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">韩国</span><span class="val" style="color:var(--blue)">~4.9%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:88%;background:var(--blue)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">美国</span><span class="val" style="color:var(--blue)">~3.5%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:63%;background:var(--blue)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">日本</span><span class="val" style="color:var(--text2)">~3.3%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:59%;background:var(--text2)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">中国</span><span class="val" style="color:var(--orange)">~2.68%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:48%;background:var(--orange)"></div></div>
+      </div>
+    </div>
+    <div class="ascii-box" style="margin-top:20px;"><span class="hl">基础研究占比 — 最大短板</span>
+
+法国      <span class="g">████████████</span>   ~24%
+美国      <span class="g">█████████</span>      ~17%
+韩国      <span class="b">████████</span>       ~15%
+日本      <span class="b">███████</span>        ~13%
+<span class="r">中国</span>      <span class="r">████</span>           <span class="r">~6.8%</span>
+
+基础研究绝对金额仅为美国的 <span class="r">1/5</span>
+SCI论文总量全球第一，但被引率低于美国
+发明专利量全球第一，但转化率仅 <span class="r">30%</span>（美国50-60%）
+
+<span class="hl">病因</span>
+1. 评价体系偏重短期、可量化成果
+2. 企业占R&D 77%，但几乎不做基础研究
+3. 稳定经费少，竞争性项目占比过高
+4. 基础研究者待遇和社会认可度不足</div>
+  </section>
+
+  <!-- Competitiveness scoreboard -->
+  <section class="section">
+    <h2>关 键 领 域 竞 争 力 记 分 牌</h2>
+    <p class="sub">"偏科"特征明显 — 能源转型领域全球领先，半导体航空严重受制</p>
+    <div class="bar-section">
+      <div class="score-bar">
+        <span class="score-label">光伏</span>
+        <div class="score-track"><div class="score-fill" style="width:90%;background:var(--green)"></div></div>
+        <span class="score-val" style="color:var(--green)">9/10</span>
+      </div>
+      <div class="score-bar">
+        <span class="score-label">锂电池</span>
+        <div class="score-track"><div class="score-fill" style="width:90%;background:var(--green)"></div></div>
+        <span class="score-val" style="color:var(--green)">9/10</span>
+      </div>
+      <div class="score-bar">
+        <span class="score-label">电动汽车</span>
+        <div class="score-track"><div class="score-fill" style="width:80%;background:var(--green)"></div></div>
+        <span class="score-val" style="color:var(--green)">8/10</span>
+      </div>
+      <div class="score-bar">
+        <span class="score-label">5G通信</span>
+        <div class="score-track"><div class="score-fill" style="width:80%;background:var(--green)"></div></div>
+        <span class="score-val" style="color:var(--green)">8/10</span>
+      </div>
+      <div class="score-bar">
+        <span class="score-label">风电</span>
+        <div class="score-track"><div class="score-fill" style="width:80%;background:var(--green)"></div></div>
+        <span class="score-val" style="color:var(--green)">8/10</span>
+      </div>
+      <div class="score-bar">
+        <span class="score-label">AI</span>
+        <div class="score-track"><div class="score-fill" style="width:70%;background:var(--blue)"></div></div>
+        <span class="score-val" style="color:var(--blue)">7/10</span>
+      </div>
+      <div class="score-bar">
+        <span class="score-label">航天</span>
+        <div class="score-track"><div class="score-fill" style="width:70%;background:var(--blue)"></div></div>
+        <span class="score-val" style="color:var(--blue)">7/10</span>
+      </div>
+      <div class="score-bar">
+        <span class="score-label">生物医药</span>
+        <div class="score-track"><div class="score-fill" style="width:50%;background:var(--orange)"></div></div>
+        <span class="score-val" style="color:var(--orange)">5/10</span>
+      </div>
+      <div class="score-bar">
+        <span class="score-label">半导体</span>
+        <div class="score-track"><div class="score-fill" style="width:40%;background:var(--red)"></div></div>
+        <span class="score-val" style="color:var(--red)">4/10</span>
+      </div>
+      <div class="score-bar">
+        <span class="score-label">民用航空</span>
+        <div class="score-track"><div class="score-fill" style="width:30%;background:var(--red)"></div></div>
+        <span class="score-val" style="color:var(--red)">3/10</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chokepoint technologies -->
+  <section class="section">
+    <h2>"卡 脖 子 " 技 术 清 单</h2>
+    <p class="sub">三个梯队 — 第一梯队短期无望突破</p>
+    <div style="overflow-x:auto;">
+      <table class="cmp-table">
+        <thead><tr><th>技术</th><th>差距</th><th>对华限制</th><th>突破进展</th></tr></thead>
+        <tbody>
+          <tr style="border-top:2px solid var(--red);"><td colspan="4" style="color:var(--red);font-weight:600;font-size:0.9em;">第一梯队：最紧迫、差距最大</td></tr>
+          <tr><td>EUV光刻机</td><td class="warn">落后15年+</td><td>ASML完全禁售</td><td class="warn">国产DUV约28nm</td></tr>
+          <tr><td>先进制程芯片</td><td class="warn">落后3-4代</td><td>美日荷联合限制</td><td>中芯7nm（DUV多曝光）</td></tr>
+          <tr><td>EDA工具</td><td class="warn">差距大</td><td>Cadence/Synopsys禁售</td><td>华大九天部分突破</td></tr>
+          <tr><td>高端AI芯片</td><td class="warn">落后2-3代</td><td>NVIDIA禁售</td><td>华为昇腾910B可部分替代</td></tr>
+          <tr><td>航空发动机</td><td class="warn">落后20-30年</td><td>不出售核心技术</td><td class="warn">CJ-1000A仍在研发</td></tr>
+          <tr style="border-top:2px solid var(--orange);"><td colspan="4" style="color:var(--orange);font-weight:600;font-size:0.9em;">第二梯队：差距较大但在追赶</td></tr>
+          <tr><td>操作系统</td><td>生态差距大</td><td>—</td><td>鸿蒙国内份额15-17%</td></tr>
+          <tr><td>高端医疗器械</td><td>CT/MRI落后</td><td>—</td><td>联影医疗有进展</td></tr>
+          <tr><td>工业软件</td><td>CAD/CAE差距大</td><td>—</td><td>中望软件追赶中</td></tr>
+          <tr><td>高端传感器</td><td>CMOS等落后</td><td>—</td><td>韦尔股份有突破</td></tr>
+          <tr style="border-top:2px solid var(--green);"><td colspan="4" style="color:var(--green);font-weight:600;font-size:0.9em;">第三梯队：有差距但可控</td></tr>
+          <tr><td>DRAM存储</td><td>可追赶</td><td>受制裁影响</td><td class="ok">长鑫存储有突破</td></tr>
+          <tr><td>NAND存储</td><td>可追赶</td><td>长江存储被列实体清单</td><td class="ok">232层有进展</td></tr>
+          <tr><td>碳纤维</td><td>T1000+有差距</td><td>—</td><td class="ok">T700/T800已国产化</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Key breakthroughs -->
+  <section class="section">
+    <h2>关 键 突 破</h2>
+    <div class="wide-grid">
+      <div class="wide-card">
+        <h3>华为麒麟 9000S（7nm）</h3>
+        <p>2023年Mate 60 Pro震动全球。证明没有EUV也能实现一定的先进制程（DUV多次曝光）。但良率和成本仍制约量产规模。"能做"不等于"能大规模高效做"。</p>
+      </div>
+      <div class="wide-card">
+        <h3>DeepSeek 大模型</h3>
+        <p>2024-2025年性能接近GPT-4，用相对较少算力实现高效训练。展示了中国AI团队的创新能力——不靠堆硬件，靠算法创新。但长期仍受高端芯片限制。</p>
+      </div>
+      <div class="wide-card">
+        <h3>鸿蒙生态</h3>
+        <p>手机端份额升至15-17%。OpenHarmony开源生态扩展到工业控制。PC端操作系统（统信UOS/麒麟OS）生态仍薄弱。打破了"生态不可能重建"的魔咒，但任重道远。</p>
+      </div>
+      <div class="wide-card">
+        <h3>技术路线迂回</h3>
+        <p>Chiplet（芯粒）技术绕开先进制程；RISC-V开源架构替代ARM；先进封装补偿制程差距。封锁倒逼了创新的迂回路径，但这些路径的天花板低于正面突破。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tech restriction timeline -->
+  <section class="section">
+    <h2>美 国 技 术 封 锁 升 级 路 线</h2>
+    <div class="ascii-box"><span class="hl">封锁演变</span>
+
+2018  中兴制裁 + 华为实体清单
+       → 打击单一企业供应链
+
+2020  升级华为禁令（切断台积电代工）
+       → 华为手机芯片断供
+
+2022  芯片出口管制（先进制程设备+AI芯片）
+       → <span class="r">系统性封锁中国半导体</span>
+
+2023  联合日荷限制半导体设备出口
+       → 收窄设备获取渠道
+
+2024  进一步收紧AI芯片+扩大实体清单
+       → <span class="r">全面围堵</span>
+
+<span class="hl">国家大基金应对</span>
+
+一期(2014)  <span class="b">1,387亿</span>
+二期(2019)  <span class="o">2,042亿</span>
+三期(2024)  <span class="r">3,440亿</span>  ← 力度空前
+合计近 <span class="hl">7,000亿元</span>
+
+<span class="r">但：多名大基金高管因腐败被查</span>
+投资效率问题突出</div>
+  </section>
+
+  <!-- Industrial policy -->
+  <section class="section">
+    <h2>产 业 政 策 ：功 与 过</h2>
+    <div class="wide-grid">
+      <div class="wide-card" style="border-color:var(--green);">
+        <h3 style="color:var(--green);">成功案例</h3>
+        <p>光伏：从进口依赖到全球80%产能。高铁：引进消化吸收到技术出口，4.5万公里全球第一。电动车：补贴+双积分+充电设施，培育全球最大市场。5G：大规模基站建设，华为/中兴全球领先。</p>
+      </div>
+      <div class="wide-card" style="border-color:var(--red);">
+        <h3 style="color:var(--red);">效率问题</h3>
+        <p>骗补：新能源车补贴曾查出约93亿元骗补。腐败：大基金多名高管落马。地方内卷：各地争相上马同类项目，补贴竞赛。市场扭曲：不具竞争力的企业靠补贴存活。政府引导基金2,100+支，目标12万亿，投资回报率普遍偏低。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Overcapacity -->
+  <section class="section">
+    <h2>产 能 过 剩 ：产 业 政 策 最 大 副 作 用</h2>
+    <p class="sub">光伏产能是需求的2.4倍，价格暴跌80%，全行业亏损</p>
+    <div style="overflow-x:auto;">
+      <table class="cmp-table">
+        <thead><tr><th>行业</th><th>产能利用率</th><th>过剩程度</th><th>表现</th></tr></thead>
+        <tbody>
+          <tr><td>光伏</td><td class="warn">50-60%</td><td class="warn">严重</td><td>组件价格跌80%+，全行业亏损</td></tr>
+          <tr><td>锂电池</td><td class="warn">50-60%</td><td class="warn">严重</td><td>电池价格大幅下跌</td></tr>
+          <tr><td>电动汽车</td><td class="warn">55-65%</td><td>中度</td><td>价格战激烈</td></tr>
+          <tr><td>水泥</td><td class="warn">55-60%</td><td class="warn">严重</td><td>房地产下行雪上加霜</td></tr>
+          <tr><td>钢铁</td><td>70-75%</td><td>中度</td><td>行业利润微薄</td></tr>
+          <tr><td>化工（部分）</td><td>65-70%</td><td>中度</td><td>产品价格低迷</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout" style="margin-top:20px;">
+      <div class="cl-title">光伏案例：产能1,200GW vs 需求500GW</div>
+      <div class="cl-body">组件价格从1.8元/W跌至0.7元/W。2024年光伏全产业链几乎全面亏损。地方政府为保就业阻止产能退出，形成"僵尸产能"。国际后果：欧盟电动车反补贴关税（最高45%），美国对光伏持续加税。"China Shock 2.0"叙事兴起。</div>
+    </div>
+  </section>
+
+  <!-- Core judgments -->
+  <section class="section">
+    <h2>核 心 判 断</h2>
+    <div class="wide-grid">
+      <div class="wide-card">
+        <h3>"大而不强"的精确含义</h3>
+        <p>R&D总额全球第二，专利申请量全球第一——"大"毫无疑问。但基础研究仅6.8%，成果转化仅30%，诺贝尔科学奖仅1人——"强"差得远。从"量"到"质"需要科研体制、评价机制和人才激励的深层改革，而这些恰恰是最难推动的。</p>
+      </div>
+      <div class="wide-card">
+        <h3>"偏科生"的策略与风险</h3>
+        <p>能源转型领域（光伏/电池/电动车）全球称霸，AI应用层接近美国。但半导体4/10、民用航空3/10——关键"卡点"短期几乎无望突破。策略是绕道迂回（Chiplet/RISC-V），但天花板低于正面突破。</p>
+      </div>
+      <div class="wide-card">
+        <h3>产业政策需要从1.0升级到2.0</h3>
+        <p>1.0版（直接补贴+政府选产业）培育了冠军也制造了产能过剩和腐败。2.0版应转向"政府建生态"——基础研究资助、制度环境优化、知识产权保护、竞争中性——而非继续挑选赢家和发放补贴。</p>
+      </div>
+      <div class="wide-card">
+        <h3>封锁是双刃剑：倒逼创新 vs 效率损失</h3>
+        <p>技术封锁增加了自主创新的紧迫性（华为/DeepSeek证明了这一点），但也可能导致重复建设、闭门造车、标准分裂。技术自主不等于技术闭关——保持一定的国际合作仍然至关重要。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="footer">
+    <p>数据基准：2024 年 &middot; 来源：科技部、WIPO、OECD、IFR、ASPI、IC Insights、各行业协会</p>
+    <p style="margin-top:8px;"><a href="../index.html">&larr; 返回中国宏观经济分析框架总览</a></p>
+  </section>
+
+</div>
+</body>
+</html>
