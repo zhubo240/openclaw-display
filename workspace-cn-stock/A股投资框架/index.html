@@ -691,9 +691,248 @@
 <span class="bull">2024.9</span>   <span class="hl">924政策组合拳</span>  反弹启动  <span class="bull">AI叙事</span></div>
   </section>
 
+  <!-- Mirror Analysis: A股生命周期镜像 -->
+  <section class="mirror">
+    <h2>A 股 生 命 周 期 镜 像 分 析</h2>
+    <p class="sub">用美股"个股生命周期与市场动态"框架审视A股 &middot; 找出结构性差异</p>
+
+    <div class="mirror-intro">
+      美股的 <strong>~10% 年化回报</strong>依赖于"创造性毁灭"的持续运转——旧公司退出、新公司进入、指数不断换血。<br>
+      A股的 <em>~4% 年化回报</em>反映了创造性毁灭被制度摩擦部分抵消的现实：退出机制不畅、融资大于回馈、GDP增长未能传导为股东回报。
+    </div>
+
+    <!-- 1. 三阶段生命周期对比 -->
+    <div class="m-section">
+      <h3>个股三阶段生命周期<span class="sub-h">PE从蓄水池到情绪池——A股的变形</span></h3>
+      <div class="m-grid">
+        <div class="m-card m-card-full">
+          <div class="m-lifecycle">
+            <div class="m-lc-col us">
+              <h5>S&P 500 &mdash; 理性释放</h5>
+              <div class="m-lc-stage">
+<span class="s-label">阶段一 成长</span>  PE 50 &rarr; E快速增长 &rarr; P涨，PE压缩
+<span class="s-label">阶段二 减速</span>  PE 50&rarr;20 &rarr; E增速放缓 &rarr; PE靠拢合理值
+<span class="s-label">阶段三 成熟</span>  PE 15 &rarr; E随经济增长 &rarr; ConEd模式
+                                稳定分红，CAGR ~1%，总回报靠股息
+              </div>
+            </div>
+            <div class="m-lc-col cn">
+              <h5>A 股 &mdash; 情绪化波动</h5>
+              <div class="m-lc-stage">
+<span class="s-label">阶段一 炒作</span>  PE 100+ &rarr; IPO爆炒 &rarr; PE远超基本面
+                               52%新股首年破发，PE不是蓄水池是泡沫
+<span class="s-label">阶段二 杀估值</span> PE 100&rarr;20 &rarr; 增速未兑现 &rarr; PE暴力压缩
+<span class="s-label">阶段三 僵尸态</span> PE N/A &rarr; 微利或亏损 &rarr; 靠重组续命
+              <span style="color:var(--green)">或 成熟</span>  PE 8-12 &rarr; 银行/公用事业模式
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. 换血机制 -->
+    <div class="m-section">
+      <h3>指数"换血"机制<span class="sub-h">S&P500高效替换 vs A股低效稀释</span></h3>
+      <div class="m-grid">
+        <div class="m-card">
+          <h4>退市率对比</h4>
+          <div class="m-chart"><canvas id="mChartDelist"></canvas></div>
+        </div>
+        <div class="m-card">
+          <h4>上市公司数量趋势</h4>
+          <div class="m-chart"><canvas id="mChartCompanies"></canvas></div>
+        </div>
+        <div class="m-card m-card-full">
+          <table class="m-table">
+            <thead><tr><th>维度</th><th>S&P 500</th><th>A股 (沪深300)</th><th>影响</th></tr></thead>
+            <tbody>
+              <tr><td>调仓方式</td><td>委员会随时决定</td><td>固定半年一次，不超10%</td><td class="m-dim">A股灵活性不足</td></tr>
+              <tr><td>年均退市</td><td class="m-pos">~400家 (~10%)</td><td class="m-neg">~50家 (~1%)</td><td class="m-neg">弱者长期留存</td></tr>
+              <tr><td>公司数趋势</td><td>8000&rarr;5400 (净减)</td><td>8&rarr;5400 (净增)</td><td class="m-warn">稀释而非替换</td></tr>
+              <tr><td>融资 vs 分红</td><td class="m-pos">净回购 (回馈)</td><td class="m-neg">融资 &gt; 分红 (抽血)</td><td class="m-neg">投资者的饼在缩小</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. "半热寂" -->
+    <div class="m-section">
+      <h3>"半热寂"状态<span class="sub-h">传统板块已热寂，新经济仍活跃——两部分割裂共存</span></h3>
+      <div class="m-grid">
+        <div class="m-card">
+          <h4>A股 vs 日本：热寂风险因子</h4>
+          <table class="m-table">
+            <thead><tr><th>维度</th><th>日本 (1990后)</th><th>A股 (当前)</th></tr></thead>
+            <tbody>
+              <tr><td>劳动人口</td><td class="m-neg">1990年达峰</td><td class="m-neg">2012年达峰</td></tr>
+              <tr><td>房地产</td><td class="m-neg">泡沫破裂</td><td class="m-neg">2021年后调整</td></tr>
+              <tr><td>通胀</td><td class="m-neg">长期通缩</td><td class="m-warn">CPI接近零</td></tr>
+              <tr><td>利率</td><td class="m-neg">趋近零</td><td class="m-warn">10Y国债1.7%</td></tr>
+              <tr><td>企业主导</td><td class="m-neg">财阀交叉持股</td><td class="m-warn">国企市值占50%+</td></tr>
+              <tr><td>退市率</td><td class="m-neg">低</td><td class="m-neg">~1%</td></tr>
+              <tr><td>GDP增速</td><td class="m-neg">&lt;1%</td><td class="m-pos">4-5%</td></tr>
+              <tr><td>创新板块</td><td class="m-neg">停滞</td><td class="m-pos">科创板/创业板活跃</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="m-card">
+          <h4>国企 vs 民企 市值结构</h4>
+          <div class="m-chart"><canvas id="mChartSOE"></canvas></div>
+          <div style="margin-top:14px;font-size:0.82em;color:var(--text2);line-height:1.7">
+            <strong style="color:var(--accent)">传统板块（已热寂）：</strong>银行PE 5-6x / 煤炭PE 8x / 钢铁PE 10x<br>
+            大量国企长期阶段三，靠分红维持，几乎不提供资本增值<br><br>
+            <strong style="color:var(--green)">新经济板块（仍活跃）：</strong>半导体PE 50x / AI PE 60x+ / 新能源PE 30x<br>
+            科创板/创业板持续引入阶段一、二公司
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. PE锚定 -->
+    <div class="m-section">
+      <h3>PE锚定机制<span class="sub-h">美股PE中枢上行 vs A股PE中枢下行——方向相反</span></h3>
+      <div class="m-grid">
+        <div class="m-card">
+          <h4>Gordon Growth Model 参数对比</h4>
+          <div class="m-chart"><canvas id="mChartGordon"></canvas></div>
+        </div>
+        <div class="m-card">
+          <h4>PE中枢走势方向</h4>
+          <table class="m-table">
+            <thead><tr><th></th><th>美股 S&P500</th><th>A股 沪深300</th></tr></thead>
+            <tbody>
+              <tr><td>PE中枢方向</td><td class="m-pos">&nearr; 长期上行</td><td class="m-neg">&searr; 长期下行</td></tr>
+              <tr><td>均衡PE</td><td>~15-17x</td><td>~12-14x</td></tr>
+              <tr><td>当前PE</td><td>~28x</td><td>~14x</td></tr>
+              <tr><td>历史极端范围</td><td>12-44x (3.7倍)</td><td>9-51x (5.8倍)</td></tr>
+              <tr><td>ERP (股权风险溢价)</td><td>4-5%</td><td class="m-warn">5.8-7.5%</td></tr>
+            </tbody>
+          </table>
+          <div style="margin-top:14px;font-size:0.82em;color:var(--text2);line-height:1.7">
+            <strong style="color:var(--accent2)">PE上行原因（美股）</strong>：无风险利率下行、市场效率提升、回购增加<br>
+            <strong style="color:var(--accent)">PE下行原因（A股）</strong>：IPO扩容稀释、散户投机溢价消退、市场逐步成熟<br>
+            <em style="color:var(--text)">两条线最终可能收敛到14-18倍，但路径完全相反</em>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. 回报集中度 -->
+    <div class="m-section">
+      <h3>回报的极度集中<span class="sub-h">A股右偏更极端——"牛短熊长"的数学本质</span></h3>
+      <div class="m-grid">
+        <div class="m-card">
+          <h4>"错过最好10天"的惩罚</h4>
+          <div class="m-chart"><canvas id="mChartMiss10"></canvas></div>
+        </div>
+        <div class="m-card">
+          <h4>长期年化回报对比</h4>
+          <div class="m-chart"><canvas id="mChartLongterm"></canvas></div>
+        </div>
+        <div class="m-card m-card-full">
+          <h4>右偏分布——A股版本</h4>
+          <table class="m-table">
+            <thead><tr><th>统计</th><th>美股 (Bessembinder 1926-2016)</th><th>A股 (间接证据)</th></tr></thead>
+            <tbody>
+              <tr><td>前4%公司</td><td class="m-pos">创造全部净财富</td><td class="m-warn">千亿市值仅139家 (2.6%)</td></tr>
+              <tr><td>多数个股</td><td>终身回报 &lt; 国债</td><td>"七亏二平一赚"</td></tr>
+              <tr><td>十强营收增速</td><td>—</td><td>年化42% (全A均值仅8.4%)</td></tr>
+              <tr><td>错过最好10天</td><td>年化 10.5%&rarr;6.2%</td><td class="m-neg">累计 +29%&rarr;-49%</td></tr>
+              <tr><td>GDP-股市相关性</td><td>46.3%</td><td class="m-neg">9.67%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. 风险溢价 -->
+    <div class="m-section">
+      <h3>风险溢价 = 系统性低估 &minus; 制度摩擦<span class="sub-h">A股ERP更高，但回报更低——溢价被"吃掉"了</span></h3>
+      <div class="m-grid">
+        <div class="m-card">
+          <h4>低估来源对比</h4>
+          <table class="m-table">
+            <thead><tr><th>低估来源</th><th>美股</th><th>A股</th></tr></thead>
+            <tbody>
+              <tr><td>风险厌恶</td><td class="m-pos">&#10003;</td><td class="m-pos">&#10003;</td></tr>
+              <tr><td>信息不对称</td><td class="m-dim">较低</td><td class="m-neg">较高</td></tr>
+              <tr><td>制度摩擦</td><td class="m-dim">较低</td><td class="m-neg">T+1/涨跌停/IPO管制</td></tr>
+              <tr><td>股东权利</td><td class="m-pos">较强</td><td class="m-neg">较弱</td></tr>
+              <tr><td>再融资稀释</td><td class="m-pos">净回购</td><td class="m-neg">净融资(抽血)</td></tr>
+            </tbody>
+          </table>
+          <div class="m-quote">A股风险溢价 = 低估幅度 &minus; 制度摩擦消耗<br>ERP更高(6%) 但回报更低(4%) = 差额被摩擦"吃掉"</div>
+        </div>
+        <div class="m-card">
+          <h4>A股的三个结构性拖累</h4>
+          <ul class="m-drag-list">
+            <li>
+              <span class="m-drag-dot" style="background:var(--red)"></span>
+              <div>
+                <div class="m-drag-title">退出机制不畅</div>
+                <div class="m-drag-desc">退市率1% vs 美股10%，低效公司长期占用市场资源，指数换血质量受限</div>
+              </div>
+            </li>
+            <li>
+              <span class="m-drag-dot" style="background:var(--red)"></span>
+              <div>
+                <div class="m-drag-title">融资 &gt; 回馈</div>
+                <div class="m-drag-desc">累计融资12.2万亿 vs 分红不到8万亿，净稀释约4万亿。美股是净回购模式</div>
+              </div>
+            </li>
+            <li>
+              <span class="m-drag-dot" style="background:var(--red)"></span>
+              <div>
+                <div class="m-drag-title">GDP-股市脱节</div>
+                <div class="m-drag-desc">经济增长的果实未能传导为股东回报——被稀释、再融资、低效配置消耗</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. 核心结论 -->
+    <div class="m-section">
+      <h3>核心结论与投资启示<span class="sub-h">A股投资的本质——赌制度的持续进化</span></h3>
+      <div class="m-insight-box">
+        <h4>对投资者的启示</h4>
+        <div class="m-insight-grid">
+          <div class="m-insight-item">
+            <div class="m-ins-label">分散化更重要</div>
+            <div class="m-ins-value" style="color:var(--accent)">ETF 优于个股</div>
+            <div style="font-size:0.8em;color:var(--text2);margin-top:4px">回报更集中、左尾更厚<br>个股风险比美股更大</div>
+          </div>
+          <div class="m-insight-item">
+            <div class="m-ins-label">简单持有不够</div>
+            <div class="m-ins-value" style="color:var(--accent2)">需要估值择时</div>
+            <div style="font-size:0.8em;color:var(--text2);margin-top:4px">制度摩擦消耗回报<br>PE中枢不稳定，波动5.8倍</div>
+          </div>
+          <div class="m-insight-item">
+            <div class="m-ins-label">股息是关键</div>
+            <div class="m-ins-value" style="color:var(--green)">红利策略更有效</div>
+            <div style="font-size:0.8em;color:var(--text2);margin-top:4px">资本增值被稀释<br>股息是更可靠的回报来源</div>
+          </div>
+          <div class="m-insight-item">
+            <div class="m-ins-label">最大的 Beta</div>
+            <div class="m-ins-value" style="color:var(--blue)">制度改善</div>
+            <div style="font-size:0.8em;color:var(--text2);margin-top:4px">退市加速、分红增加<br>每推进一步都缩小与美股差距</div>
+          </div>
+        </div>
+      </div>
+      <div class="m-quote" style="margin-top:20px">
+        A股投资的本质不是赌单一公司的成长，而是赌中国资本市场制度的持续进化。
+      </div>
+    </div>
+
+  </section>
+
   <!-- Footer -->
   <section class="footer">
-    <p>数据基准：2025 年 &middot; 本框架为分析参考，不构成投资建议</p>
+    <p>数据基准：2025-2026 年 &middot; 本框架为分析参考，不构成投资建议</p>
+    <p style="margin-top:6px">镜像分析数据来源：Bessembinder (2018)、JP Morgan、中证指数公司、复旦大学金融研究院等</p>
   </section>
 
 </div>
@@ -766,6 +1005,120 @@ const dims = [
   }
 ];
 
+// ========== Mirror Analysis Charts ==========
+Chart.defaults.color = '#9090a0';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
+Chart.defaults.font.family = '-apple-system, "PingFang SC", sans-serif';
+const gridOpt = { color: 'rgba(255,255,255,0.04)' };
+const noGrid = { display: false };
+
+// 1. Delist rate comparison
+new Chart(document.getElementById('mChartDelist'), {
+  type: 'bar',
+  data: {
+    labels: ['2019', '2020', '2021', '2022', '2023', '2024'],
+    datasets: [
+      { label: 'A股退市', data: [10, 16, 20, 46, 46, 52], backgroundColor: '#e05050', borderRadius: 4 },
+      { label: '美股退市', data: [350, 400, 450, 500, 520, 551], backgroundColor: '#5080e0', borderRadius: 4 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'top', labels: { boxWidth: 10, padding: 12 } },
+      tooltip: { callbacks: { label: c => c.dataset.label + ': ' + c.parsed.y + '家' } } },
+    scales: { y: { grid: gridOpt, ticks: { callback: v => v + '家' } }, x: { grid: noGrid } }
+  }
+});
+
+// 2. Listed companies trend
+new Chart(document.getElementById('mChartCompanies'), {
+  type: 'line',
+  data: {
+    labels: ['2000', '2005', '2010', '2015', '2020', '2024'],
+    datasets: [
+      { label: 'A股', data: [1059, 1381, 2040, 2827, 4181, 5392], borderColor: '#e05050', backgroundColor: 'rgba(224,80,80,0.1)', fill: true, tension: 0.3, pointRadius: 4 },
+      { label: '美股', data: [7500, 6000, 5500, 5200, 5400, 5437], borderColor: '#5080e0', backgroundColor: 'rgba(80,128,224,0.1)', fill: true, tension: 0.3, pointRadius: 4 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'top', labels: { boxWidth: 10, padding: 12 } },
+      tooltip: { callbacks: { label: c => c.dataset.label + ': ' + c.parsed.y + '家' } } },
+    scales: { y: { grid: gridOpt, ticks: { callback: v => v >= 1000 ? (v/1000) + 'k' : v } }, x: { grid: noGrid } }
+  }
+});
+
+// 3. SOE vs Private
+new Chart(document.getElementById('mChartSOE'), {
+  type: 'doughnut',
+  data: {
+    labels: ['央企 (市值34.7%)', '地方国企 (22%)', '民企 (42%)', '其他 (1.3%)'],
+    datasets: [{ data: [34.7, 22, 42, 1.3], backgroundColor: ['#e05050', '#e08040', '#40c080', '#5080e0'], borderWidth: 0 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false, cutout: '55%',
+    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, padding: 8, font: { size: 11 } } },
+      tooltip: { callbacks: { label: c => c.label + ' ' + c.parsed + '%' } } }
+  }
+});
+
+// 4. Gordon model
+new Chart(document.getElementById('mChartGordon'), {
+  type: 'bar',
+  data: {
+    labels: ['派息率', '要求回报率 r', '盈利增长 g', 'ERP', '均衡PE'],
+    datasets: [
+      { label: '美股', data: [60, 10, 6, 5, 15], backgroundColor: 'rgba(80,128,224,0.7)', borderRadius: 4 },
+      { label: 'A股', data: [38, 8, 5, 6, 12.7], backgroundColor: 'rgba(224,80,80,0.7)', borderRadius: 4 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'top', labels: { boxWidth: 10, padding: 12 } },
+      tooltip: { callbacks: { label: c => { const u = c.dataIndex === 4 ? 'x' : '%'; return c.dataset.label + ': ' + c.parsed.y + u; } } } },
+    scales: { y: { grid: gridOpt }, x: { grid: noGrid } }
+  }
+});
+
+// 5. Miss best 10 days
+new Chart(document.getElementById('mChartMiss10'), {
+  type: 'bar',
+  data: {
+    labels: ['全程持有', '错过最好10天'],
+    datasets: [
+      { label: '美股 S&P500 年化', data: [10.5, 6.2], backgroundColor: ['rgba(80,128,224,0.7)', 'rgba(80,128,224,0.3)'], borderRadius: 6 },
+      { label: 'A股 沪深300 累计', data: [28.65, -49.35], backgroundColor: ['rgba(224,80,80,0.7)', 'rgba(224,80,80,0.3)'], borderRadius: 6 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'top', labels: { boxWidth: 10, padding: 12 } },
+      tooltip: { callbacks: { label: c => c.dataset.label + ': ' + c.parsed.y + '%' } } },
+    scales: { y: { grid: gridOpt, ticks: { callback: v => v + '%' } }, x: { grid: noGrid } }
+  }
+});
+
+// 6. Long-term return
+new Chart(document.getElementById('mChartLongterm'), {
+  type: 'bar',
+  data: {
+    labels: ['S&P500\n14年年化', '沪深300\n14年年化', 'A股GDP\n相关性', '美股GDP\n相关性'],
+    datasets: [{
+      label: '数值',
+      data: [13.8, 3.9, 9.67, 46.3],
+      backgroundColor: ['#5080e0', '#e05050', '#e05050', '#5080e0'],
+      borderRadius: 6
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false },
+      tooltip: { callbacks: { label: c => c.parsed.y + '%' } } },
+    scales: { y: { grid: gridOpt, ticks: { callback: v => v + '%' } }, x: { grid: noGrid } }
+  }
+});
+
+// ========== Dimension Cards ==========
 const grid = document.getElementById('dimGrid');
 dims.forEach((d) => {
   const card = document.createElement('div');
