@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A股研究知识库</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --border: #252535;
+    --text: #e0e0e8;
+    --text2: #8888a0;
+    --accent: #e05050;
+    --gold: #f0c040;
+    --green: #40c080;
+    --blue: #5080e0;
+    --orange: #e08040;
+    --purple: #a070e0;
+    --cyan: #40b8d0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+  /* Hero */
+  .hero {
+    padding: 72px 0 48px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero h1 {
+    font-size: 2.6em;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+  }
+  .hero h1 .hl { color: var(--accent); }
+  .hero .subtitle {
+    font-size: 1.05em;
+    color: var(--text2);
+    margin-bottom: 28px;
+  }
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+  .hero-stat {
+    text-align: center;
+  }
+  .hero-stat .num {
+    font-size: 2em;
+    font-weight: 700;
+    color: var(--gold);
+  }
+  .hero-stat .label {
+    font-size: 0.85em;
+    color: var(--text2);
+    margin-top: 4px;
+  }
+
+  /* Section */
+  .section {
+    padding: 56px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .section:last-child { border-bottom: none; }
+  .section-title {
+    font-size: 1.3em;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.85em;
+  }
+  .section-desc {
+    color: var(--text2);
+    margin-bottom: 32px;
+    font-size: 0.95em;
+  }
+
+  /* Topic Cards Grid */
+  .topics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+  }
+  .topic-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+  .topic-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  }
+  .topic-card .card-icon {
+    font-size: 1.8em;
+    margin-bottom: 14px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: var(--surface2);
+  }
+  .topic-card h3 {
+    font-size: 1.2em;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .topic-card .card-desc {
+    font-size: 0.9em;
+    color: var(--text2);
+    line-height: 1.6;
+    flex: 1;
+  }
+  .topic-card .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 16px;
+  }
+  .topic-card .tag {
+    font-size: 0.75em;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: var(--surface2);
+    color: var(--text2);
+    border: 1px solid var(--border);
+  }
+  .topic-card .card-arrow {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    font-size: 1.2em;
+    color: var(--text2);
+    transition: all 0.25s ease;
+  }
+  .topic-card:hover .card-arrow {
+    color: var(--accent);
+    transform: translateX(4px);
+  }
+
+  /* Featured card (A股投资框架) */
+  .topic-card.featured {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, var(--surface) 0%, #1a1520 100%);
+    border-color: #352535;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: center;
+  }
+  .topic-card.featured:hover {
+    border-color: var(--accent);
+  }
+  .featured-left { }
+  .featured-right {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .featured-right .mini-stat {
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 14px;
+    text-align: center;
+  }
+  .featured-right .mini-stat .val {
+    font-size: 1.3em;
+    font-weight: 700;
+    color: var(--gold);
+  }
+  .featured-right .mini-stat .lbl {
+    font-size: 0.78em;
+    color: var(--text2);
+    margin-top: 4px;
+  }
+
+  /* Data Dashboard */
+  .dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+  .dash-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+  }
+  .dash-item .dash-val {
+    font-size: 1.5em;
+    font-weight: 700;
+  }
+  .dash-item .dash-label {
+    font-size: 0.82em;
+    color: var(--text2);
+    margin-top: 6px;
+  }
+  .dash-item .dash-trend {
+    font-size: 0.78em;
+    margin-top: 4px;
+  }
+  .up { color: var(--green); }
+  .down { color: var(--accent); }
+  .neutral { color: var(--text2); }
+
+  /* Footer */
+  .footer {
+    padding: 40px 0;
+    text-align: center;
+    color: var(--text2);
+    font-size: 0.85em;
+    border-top: 1px solid var(--border);
+  }
+  .footer a { color: var(--blue); text-decoration: none; }
+
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 1.8em; }
+    .hero-stats { gap: 24px; }
+    .topics-grid { grid-template-columns: 1fr; }
+    .topic-card.featured {
+      grid-template-columns: 1fr;
+    }
+    .dashboard { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <h1><span class="hl">A股</span>研究知识库</h1>
+    <p class="subtitle">系统化研究 &middot; 数据驱动 &middot; 从框架到实操</p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="num">6</div>
+        <div class="label">专题研究</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">24+</div>
+        <div class="label">研究文档</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">8</div>
+        <div class="label">分析维度</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">6</div>
+        <div class="label">可视化展示页</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Featured: A股投资框架 -->
+<section class="section">
+  <div class="container">
+    <div class="section-title">核心框架</div>
+    <div class="topics-grid">
+      <a href="A股投资框架/index.html" class="topic-card featured">
+        <div class="featured-left">
+          <div class="card-icon" style="background: #2a1520; color: var(--accent);">&#9733;</div>
+          <h3>A股投资分析框架</h3>
+          <p class="card-desc">24个关键问题，8个分析维度，系统覆盖市场结构、参与者与资金、行业板块、估值选股、宏观政策、周期历史、实操风控、工具信息。从零基础到策略实践的完整知识体系。</p>
+          <div class="card-tags">
+            <span class="tag">24个问题</span>
+            <span class="tag">8大维度</span>
+            <span class="tag">均值回归模拟</span>
+            <span class="tag">完整体系</span>
+          </div>
+        </div>
+        <div class="featured-right">
+          <div class="mini-stat">
+            <div class="val">5,400+</div>
+            <div class="lbl">上市公司</div>
+          </div>
+          <div class="mini-stat">
+            <div class="val">86万亿</div>
+            <div class="lbl">总市值</div>
+          </div>
+          <div class="mini-stat">
+            <div class="val">2.2亿</div>
+            <div class="lbl">投资者</div>
+          </div>
+          <div class="mini-stat">
+            <div class="val">6万亿</div>
+            <div class="lbl">ETF规模</div>
+          </div>
+        </div>
+        <span class="card-arrow">&rarr;</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Topic Research -->
+<section class="section">
+  <div class="container">
+    <div class="section-title">专题研究</div>
+    <p class="section-desc">深入单一主题的系统性研究，每个专题含完整分析文档与可视化展示页</p>
+    <div class="topics-grid">
+
+      <!-- 红利低波研究 -->
+      <a href="红利低波研究/index.html" class="topic-card">
+        <div class="card-icon" style="background: #1a2520; color: var(--green);">&#9650;</div>
+        <h3>红利低波策略研究</h3>
+        <p class="card-desc">高股息+低波动双因子叠加，A股近年最受关注的Smart Beta策略。中证红利低波PE约7倍，股息率约6%，2019-2024连续6年正收益。含指数基本面、历史回测与投资建议。</p>
+        <div class="card-tags">
+          <span class="tag">股息率~6%</span>
+          <span class="tag">PE~7倍</span>
+          <span class="tag">连续6年正收益</span>
+        </div>
+        <span class="card-arrow">&rarr;</span>
+      </a>
+
+      <!-- 中证A500指数研究 -->
+      <a href="中证A500指数研究/index.html" class="topic-card">
+        <div class="card-icon" style="background: #15202a; color: var(--blue);">&#9679;</div>
+        <h3>中证A500指数研究</h3>
+        <p class="card-desc">2024年新发布的宽基旗舰指数，对标标普500。覆盖各行业龙头，兼顾大盘代表性和行业均衡性。含编制规则解析、成分股分析与ETF产品对比。</p>
+        <div class="card-tags">
+          <span class="tag">新旗舰宽基</span>
+          <span class="tag">对标S&P 500</span>
+          <span class="tag">行业均衡</span>
+        </div>
+        <span class="card-arrow">&rarr;</span>
+      </a>
+
+      <!-- A股ETF组合配置指南 -->
+      <a href="A股ETF组合配置指南/index.html" class="topic-card">
+        <div class="card-icon" style="background: #1a1a28; color: var(--purple);">&#9638;</div>
+        <h3>A股ETF组合配置指南</h3>
+        <p class="card-desc">将红利低波与A500等研究成果整合为可执行的组合配置方案。含定投策略设计、组合回测分析、不同风险偏好下的实操指南与再平衡规则。</p>
+        <div class="card-tags">
+          <span class="tag">定投策略</span>
+          <span class="tag">组合回测</span>
+          <span class="tag">实操指南</span>
+        </div>
+        <span class="card-arrow">&rarr;</span>
+      </a>
+
+      <!-- 2026年A股市场展望 -->
+      <a href="2026年A股市场展望/index.html" class="topic-card">
+        <div class="card-icon" style="background: #2a1a15; color: var(--orange);">&#9670;</div>
+        <h3>2026年A股市场展望</h3>
+        <p class="card-desc">宏观环境与政策信号解读、年度行业主线与投资机会梳理、风险提示与操作策略建议。含宏观仪表盘、行业主线图表与操作日历。</p>
+        <div class="card-tags">
+          <span class="tag">宏观分析</span>
+          <span class="tag">行业主线</span>
+          <span class="tag">风险矩阵</span>
+        </div>
+        <span class="card-arrow">&rarr;</span>
+      </a>
+
+      <!-- 港股通与全球ETF配置 -->
+      <a href="港股通与全球ETF配置/index.html" class="topic-card">
+        <div class="card-icon" style="background: #15252a; color: var(--cyan);">&#9775;</div>
+        <h3>港股通与全球ETF配置</h3>
+        <p class="card-desc">港股通机制全面解读、跨境ETF产品对比（港股/美股/全球），全球资产配置策略设计。从A股出发构建跨市场投资组合。</p>
+        <div class="card-tags">
+          <span class="tag">港股通</span>
+          <span class="tag">跨境ETF</span>
+          <span class="tag">全球配置</span>
+        </div>
+        <span class="card-arrow">&rarr;</span>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- Key Data Dashboard -->
+<section class="section">
+  <div class="container">
+    <div class="section-title">关键数据速览</div>
+    <p class="section-desc">A股市场核心指标（2025-2026基准）</p>
+    <div class="dashboard">
+      <div class="dash-item">
+        <div class="dash-val" style="color: var(--gold);">86万亿</div>
+        <div class="dash-label">A股总市值</div>
+        <div class="dash-trend neutral">全球第二</div>
+      </div>
+      <div class="dash-item">
+        <div class="dash-val" style="color: var(--blue);">12-13x</div>
+        <div class="dash-label">沪深300 PE</div>
+        <div class="dash-trend neutral">历史中位偏低</div>
+      </div>
+      <div class="dash-item">
+        <div class="dash-val" style="color: var(--green);">~6%</div>
+        <div class="dash-label">中证红利股息率</div>
+        <div class="dash-trend up">历史高位</div>
+      </div>
+      <div class="dash-item">
+        <div class="dash-val" style="color: var(--orange);">6万亿+</div>
+        <div class="dash-label">ETF总规模</div>
+        <div class="dash-trend up">爆发增长</div>
+      </div>
+      <div class="dash-item">
+        <div class="dash-val" style="color: var(--purple);">30万亿+</div>
+        <div class="dash-label">公募基金规模</div>
+        <div class="dash-trend up">持续增长</div>
+      </div>
+      <div class="dash-item">
+        <div class="dash-val" style="color: var(--cyan);">1.8万亿</div>
+        <div class="dash-label">北向资金累计净流入</div>
+        <div class="dash-trend neutral">波动加大</div>
+      </div>
+      <div class="dash-item">
+        <div class="dash-val" style="color: var(--accent);">1-1.5万亿</div>
+        <div class="dash-label">日均成交额</div>
+        <div class="dash-trend neutral">市场活跃度</div>
+      </div>
+      <div class="dash-item">
+        <div class="dash-val" style="color: var(--gold);">~7倍</div>
+        <div class="dash-label">红利低波 PE</div>
+        <div class="dash-trend up">历史20%分位</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Research Notes -->
+<section class="section">
+  <div class="container">
+    <div class="section-title">研究资源</div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px;">
+      <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 24px;">
+        <h4 style="margin-bottom: 10px; color: var(--gold);">CSMAR数据采购需求</h4>
+        <p style="font-size: 0.88em; color: var(--text2); line-height: 1.6;">对标美股CRSP/Compustat的A股学术数据集采购方案。含个股月度交易、年度财务、代码映射、指数成分股4张核心表的完整需求规格。</p>
+      </div>
+      <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 24px;">
+        <h4 style="margin-bottom: 10px; color: var(--gold);">均值回归模拟</h4>
+        <p style="font-size: 0.88em; color: var(--text2); line-height: 1.6;">基于Bessembinder (2018)的股票生命周期研究，随机组合模拟与A股镜像分析。验证少数股票驱动市场整体回报的核心发现。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <p>A股研究知识库 &middot; 数据基于2025-2026年 &middot; 内容为研究参考，不构成投资建议</p>
+    <p style="margin-top: 8px;">最后更新：2026年3月</p>
+  </div>
+</footer>
+
+</body>
+</html>
