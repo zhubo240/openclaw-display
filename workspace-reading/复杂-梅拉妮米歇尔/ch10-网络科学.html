@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第十章：网络科学 — 复杂</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; background: #0a0a0f; color: #e0e0e0; min-height: 100vh; }
+    .container { max-width: 780px; margin: 0 auto; padding: 48px 24px; }
+    .nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 48px; font-size: 13px; }
+    .nav a { color: #63b3ed; text-decoration: none; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+    .nav a:hover { color: #90cdf4; }
+    .nav .chapter-nav { display: flex; gap: 20px; }
+    .chapter-header { margin-bottom: 48px; }
+    .chapter-label { font-size: 12px; letter-spacing: 3px; color: #63b3ed; text-transform: uppercase; margin-bottom: 12px; }
+    .chapter-title { font-size: 36px; font-weight: 700; color: #fff; margin-bottom: 12px; }
+    .chapter-subtitle { font-size: 15px; color: #718096; }
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(99, 179, 237, 0.2), transparent); margin: 40px 0; }
+    .section-title { font-size: 18px; font-weight: 600; color: #fff; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+    .section-title::before { content: ''; width: 3px; height: 18px; background: #63b3ed; border-radius: 2px; }
+    .summary-text { font-size: 15px; line-height: 1.9; color: #a0aec0; margin-bottom: 20px; }
+    .summary-text strong { color: #e2e8f0; }
+    .concepts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0 32px; }
+    .concept-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 22px 18px; transition: all 0.25s; }
+    .concept-card:hover { background: rgba(99, 179, 237, 0.05); border-color: rgba(99, 179, 237, 0.15); transform: translateY(-2px); }
+    .concept-card h4 { font-size: 15px; color: #e2e8f0; margin-bottom: 8px; }
+    .concept-card p { font-size: 13px; color: #718096; line-height: 1.7; }
+    .concept-card .icon { font-size: 24px; margin-bottom: 10px; }
+    .highlight-box { background: rgba(99, 179, 237, 0.06); border: 1px solid rgba(99, 179, 237, 0.15); border-radius: 12px; padding: 24px; margin: 28px 0; }
+    .highlight-box .label { font-size: 11px; letter-spacing: 2px; color: #63b3ed; text-transform: uppercase; margin-bottom: 10px; }
+    .highlight-box p { font-size: 15px; line-height: 1.8; color: #cbd5e0; }
+    .highlight-box p + p { margin-top: 12px; }
+    .quote-block { border-left: 3px solid rgba(99, 179, 237, 0.3); padding: 16px 20px; margin: 24px 0; background: rgba(255,255,255,0.02); border-radius: 0 8px 8px 0; }
+    .quote-block p { font-size: 14px; line-height: 1.8; color: #a0aec0; font-style: italic; }
+    .quote-block .source { font-size: 12px; color: #718096; margin-top: 8px; font-style: normal; }
+    .formula { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 20px 24px; margin: 20px 0; font-family: "SF Mono", Monaco, Consolas, monospace; font-size: 14px; color: #90cdf4; text-align: center; line-height: 1.8; }
+
+    .timeline { margin: 28px 0; padding-left: 24px; border-left: 2px solid rgba(99, 179, 237, 0.15); }
+    .timeline-item { position: relative; padding: 0 0 28px 24px; }
+    .timeline-item:last-child { padding-bottom: 0; }
+    .timeline-item::before { content: ''; position: absolute; left: -29px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: #63b3ed; border: 2px solid #0a0a0f; }
+    .timeline-item .year { font-size: 12px; color: #63b3ed; font-family: monospace; margin-bottom: 4px; }
+    .timeline-item h4 { font-size: 14px; color: #e2e8f0; margin-bottom: 4px; }
+    .timeline-item p { font-size: 13px; color: #718096; line-height: 1.7; }
+
+    .network-model { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 24px 0; }
+    .model-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 22px 24px; display: flex; gap: 18px; align-items: flex-start; }
+    .model-card .model-icon { font-size: 28px; flex-shrink: 0; margin-top: 2px; }
+    .model-card h4 { font-size: 15px; color: #e2e8f0; margin-bottom: 6px; }
+    .model-card p { font-size: 13px; color: #718096; line-height: 1.7; }
+    .model-card .props { font-size: 12px; color: #63b3ed; margin-top: 6px; font-style: italic; }
+
+    .cmp-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 13px; }
+    .cmp-table th { text-align: left; padding: 10px 14px; background: rgba(99, 179, 237, 0.08); color: #63b3ed; font-weight: 600; font-size: 12px; border-bottom: 1px solid rgba(99, 179, 237, 0.15); }
+    .cmp-table td { padding: 10px 14px; color: #a0aec0; border-bottom: 1px solid rgba(255,255,255,0.04); line-height: 1.6; }
+    .cmp-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .discussion-placeholder { padding: 32px; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.08); border-radius: 12px; text-align: center; font-size: 14px; color: #4a5568; }
+    .footer-nav { display: flex; justify-content: space-between; margin-top: 48px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.06); }
+    .footer-nav a { color: #63b3ed; text-decoration: none; font-size: 14px; transition: color 0.2s; }
+    .footer-nav a:hover { color: #90cdf4; }
+    .prev-chapter::before { content: '\2190\00a0'; }
+    .next-chapter::after { content: '\00a0\2192'; }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Navigation -->
+    <nav class="nav">
+      <a href="index.html">&larr; 返回目录</a>
+      <div class="chapter-nav">
+        <a href="ch09-生命系统中的信息处理.html">上一章</a>
+        <a href="ch11-真实世界中的网络.html">下一章</a>
+      </div>
+    </nav>
+
+    <!-- Chapter Header -->
+    <header class="chapter-header">
+      <div class="chapter-label">第三部分 &middot; 大写的计算</div>
+      <h1 class="chapter-title">网络科学</h1>
+      <p class="chapter-subtitle">The Science of Networks — 从图论到复杂网络的范式革命</p>
+    </header>
+
+    <div class="divider"></div>
+
+    <!-- Core Summary -->
+    <section>
+      <h2 class="section-title">本章核心</h2>
+      <p class="summary-text">
+        网络无处不在——大脑中的神经元网络、互联网的路由器、社交圈中的人际关系、生态系统中的食物链。然而，直到 20 世纪末，科学家才真正开始系统性地研究网络的结构与行为。本章讲述的正是这门新兴科学的诞生故事：<strong>网络科学如何从古老的图论中脱胎而出，又如何在大数据时代的催化下爆发出惊人的解释力。</strong>
+      </p>
+      <p class="summary-text">
+        米歇尔引导我们从欧拉在柯尼斯堡桥上的散步开始，经过随机图的数学抽象，到达小世界网络和无标度网络的两大发现——这些发现彻底改变了我们对互联网、流行病传播、社交网络乃至细胞代谢的理解。
+      </p>
+
+      <div class="highlight-box">
+        <div class="label">关键洞察</div>
+        <p>真实世界中的网络既不是完全规则的晶格，也不是完全随机的意大利面——它们处于两者之间的<strong>"甜蜜点"</strong>上。这个中间地带正是复杂性的栖息之所。</p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Origins: Graph Theory -->
+    <section>
+      <h2 class="section-title">从七桥问题到图论</h2>
+      <p class="summary-text">
+        1736 年，数学家<strong>莱昂哈德·欧拉</strong>面对柯尼斯堡的七座桥提出了一个看似简单的问题：能否不重复地走过每座桥？他的证明不仅解决了这个问题，更开创了一个全新的数学分支——<strong>图论</strong>（Graph Theory）。
+      </p>
+      <p class="summary-text">
+        图论把世界抽象为两种元素：<strong>节点</strong>（node）和<strong>边</strong>（edge）。节点代表个体（人、网页、蛋白质），边代表个体之间的关联（友谊、超链接、相互作用）。这种极简的抽象方式具有惊人的普适性——几乎任何关系结构都可以用图来描述。
+      </p>
+
+      <div class="quote-block">
+        <p>"网络是由边连接在一起的节点组成的集合，其中节点对应网络中的个体，边对应个体之间的关联。"</p>
+        <div class="source">—— 梅拉妮·米歇尔《复杂》</div>
+      </div>
+
+      <p class="summary-text">
+        然而，图论长期停留在纯数学的殿堂里。真正让它与现实世界碰撞的，是 20 世纪中叶兴起的随机图理论，以及世纪末两项改变一切的发现。
+      </p>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Historical Timeline -->
+    <section>
+      <h2 class="section-title">网络科学简史</h2>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="year">1736</div>
+          <h4>欧拉与柯尼斯堡七桥</h4>
+          <p>图论诞生。欧拉证明不可能不重复地走遍所有七座桥，开创了用"节点-边"关系分析结构的方法。</p>
+        </div>
+        <div class="timeline-item">
+          <div class="year">1959</div>
+          <h4>Erdős-Rényi 随机图模型</h4>
+          <p>保罗·埃尔德什和阿尔弗雷德·雷尼提出随机图理论：给定 N 个节点，每对节点之间以概率 p 连一条边。这是第一个严格的网络数学模型。</p>
+        </div>
+        <div class="timeline-item">
+          <div class="year">1967</div>
+          <h4>米尔格拉姆的"六度分隔"实验</h4>
+          <p>斯坦利·米尔格拉姆的信件传递实验表明，美国任意两个人之间的平均社交距离约为六步。"小世界"现象第一次获得了实证支持。</p>
+        </div>
+        <div class="timeline-item">
+          <div class="year">1998</div>
+          <h4>Watts-Strogatz 小世界模型</h4>
+          <p>邓肯·瓦茨和斯蒂文·斯特罗加茨在《自然》杂志发表论文，用一个优雅的"重连"模型解释了为什么真实网络既有高聚类又有短路径。</p>
+        </div>
+        <div class="timeline-item">
+          <div class="year">1999</div>
+          <h4>Barabási-Albert 无标度模型</h4>
+          <p>阿尔伯特-拉斯洛·巴拉巴西和雷卡·阿尔伯特在《科学》杂志揭示：真实网络的度分布遵循幂律，并提出"偏好依附"机制——富者愈富。</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Three Network Models -->
+    <section>
+      <h2 class="section-title">三大网络模型</h2>
+      <p class="summary-text">
+        理解网络科学的关键在于区分三种基本网络类型。它们代表了从完全随机到高度结构化的不同状态，而真实世界的网络往往兼具多种特性。
+      </p>
+
+      <div class="network-model">
+        <div class="model-card">
+          <div class="model-icon">&#127922;</div>
+          <div>
+            <h4>随机网络 (Random Network)</h4>
+            <p>Erdős-Rényi 模型：节点之间随机连线，每条边出现的概率相等。度分布呈泊松分布（钟形曲线），大多数节点的连接数接近平均值，极端值很少。如同在人群中随机交朋友——每个人的朋友数差不多。</p>
+            <div class="props">特性：低聚类 + 短路径 + 泊松度分布</div>
+          </div>
+        </div>
+        <div class="model-card">
+          <div class="model-icon">&#127760;</div>
+          <div>
+            <h4>小世界网络 (Small-World Network)</h4>
+            <p>Watts-Strogatz 模型：从规则网络（如环形晶格）出发，以小概率随机"重连"一些边。只需少量的随机长程连接，就能让网络的平均路径长度急剧下降，同时保持高聚类。这解释了"六度分隔"——即使每个人只认识身边的人，几条跨圈子的"捷径"就足以让全世界连成一片。</p>
+            <div class="props">特性：高聚类 + 短路径 + 少量长程"捷径"</div>
+          </div>
+        </div>
+        <div class="model-card">
+          <div class="model-icon">&#11088;</div>
+          <div>
+            <h4>无标度网络 (Scale-Free Network)</h4>
+            <p>Barabási-Albert 模型：网络通过"增长"和"偏好依附"形成——新节点加入时，倾向于连接到已经拥有很多连接的节点（"富者愈富"效应）。结果度分布呈幂律——少数"枢纽"（hub）拥有大量连接，大多数节点只有很少的连接。互联网、航空网络、蛋白质交互网络都呈现这种特征。</p>
+            <div class="props">特性：幂律度分布 + 枢纽节点 + 高度异质性</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Key Properties Comparison -->
+    <section>
+      <h2 class="section-title">网络的关键度量</h2>
+      <p class="summary-text">
+        要理解一个网络的"性格"，需要测量几个核心指标。它们就像网络的DNA，决定了信息传播的速度、系统的鲁棒性、甚至传染病的爆发模式。
+      </p>
+
+      <table class="cmp-table">
+        <tr>
+          <th>度量指标</th>
+          <th>含义</th>
+          <th>直觉类比</th>
+        </tr>
+        <tr>
+          <td><strong>度 (Degree)</strong></td>
+          <td>一个节点有多少条边，即"连接数"</td>
+          <td>一个人认识多少人</td>
+        </tr>
+        <tr>
+          <td><strong>度分布 (Degree Distribution)</strong></td>
+          <td>整个网络中节点度的统计分布</td>
+          <td>社交网络中"人缘好"和"人缘差"的人各占多少</td>
+        </tr>
+        <tr>
+          <td><strong>平均路径长度 (Avg Path Length)</strong></td>
+          <td>任意两节点之间的平均最短距离</td>
+          <td>消息从你到任何陌生人需要转几手</td>
+        </tr>
+        <tr>
+          <td><strong>聚类系数 (Clustering Coefficient)</strong></td>
+          <td>你的朋友之间也互相认识的概率</td>
+          <td>"朋友的朋友也是我的朋友"的程度</td>
+        </tr>
+        <tr>
+          <td><strong>介数中心性 (Betweenness)</strong></td>
+          <td>一个节点在多少条最短路径上充当"中转站"</td>
+          <td>交通枢纽或信息中介的重要性</td>
+        </tr>
+      </table>
+
+      <div class="highlight-box">
+        <div class="label">核心公式</div>
+        <p><strong>幂律分布：</strong>P(k) ~ k<sup>-&gamma;</sup>，其中 k 是节点的度，&gamma; 是幂律指数（通常在 2-3 之间）。</p>
+        <p>与正态分布不同，幂律分布没有"典型值"——这就是"无标度"的含义：无论你在哪个尺度上观察，分布的形状看起来都一样。</p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Three Models Comparison Table -->
+    <section>
+      <h2 class="section-title">三种网络的对比</h2>
+      <table class="cmp-table">
+        <tr>
+          <th>特性</th>
+          <th>随机网络</th>
+          <th>小世界网络</th>
+          <th>无标度网络</th>
+        </tr>
+        <tr>
+          <td><strong>度分布</strong></td>
+          <td>泊松分布（钟形曲线）</td>
+          <td>类似泊松</td>
+          <td>幂律分布（长尾）</td>
+        </tr>
+        <tr>
+          <td><strong>聚类系数</strong></td>
+          <td>低</td>
+          <td>高</td>
+          <td>中等偏高</td>
+        </tr>
+        <tr>
+          <td><strong>平均路径长度</strong></td>
+          <td>短</td>
+          <td>短</td>
+          <td>极短（超小世界）</td>
+        </tr>
+        <tr>
+          <td><strong>是否有枢纽</strong></td>
+          <td>无</td>
+          <td>无</td>
+          <td>有（少数超级连接者）</td>
+        </tr>
+        <tr>
+          <td><strong>随机故障鲁棒性</strong></td>
+          <td>中等</td>
+          <td>中等</td>
+          <td>高（大部分节点不关键）</td>
+        </tr>
+        <tr>
+          <td><strong>蓄意攻击脆弱性</strong></td>
+          <td>低</td>
+          <td>低</td>
+          <td>高（枢纽被摧毁则崩溃）</td>
+        </tr>
+        <tr>
+          <td><strong>典型例子</strong></td>
+          <td>数学抽象模型</td>
+          <td>电力网、神经网络</td>
+          <td>互联网、航空网、蛋白质网</td>
+        </tr>
+      </table>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Deep Dive: Small World -->
+    <section>
+      <h2 class="section-title">深度：六度分隔的数学</h2>
+      <p class="summary-text">
+        1967 年，社会心理学家<strong>斯坦利·米尔格拉姆</strong>做了一个著名的实验：他让内布拉斯加州的随机居民通过"朋友链"把一封信传给波士顿的一个目标人物。结果发现，信件平均只需经过约六个人就到达——这就是<strong>"六度分隔"</strong>。
+      </p>
+      <p class="summary-text">
+        这个结果令人震惊：在一个超过两亿人的国家里，任何两个人之间的距离竟然如此之短。Watts 和 Strogatz 的小世界模型给出了数学解释：<strong>只需将规则网络中极少数的边随机重连（约 1%），平均路径长度就会从 O(N) 骤降到 O(log N)</strong>——从与网络规模成正比变成与其对数成正比。
+      </p>
+
+      <div class="formula">
+        规则网络：L ~ N / 2k<br>
+        随机重连 p 比例后：L ~ ln(N) / ln(k)<br>
+        <span style="font-size: 12px; color: #718096;">L = 平均路径长度，N = 节点数，k = 平均度</span>
+      </div>
+
+      <p class="summary-text">
+        关键洞见：<strong>局部结构（高聚类）与全局效率（短路径）并不矛盾。</strong>你不需要推翻社区结构来获得全球连通性——只需要几条"远程捷径"。这正是现实世界社交网络的特点：你的大部分朋友都在同一个圈子里，但总有几个朋友连接到完全不同的世界。
+      </p>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Deep Dive: Scale Free -->
+    <section>
+      <h2 class="section-title">深度：偏好依附与富者愈富</h2>
+      <p class="summary-text">
+        1999 年，物理学家<strong>巴拉巴西</strong>和<strong>阿尔伯特</strong>研究万维网的链接结构时发现了一个惊人的事实：网页的入链数量分布完全不符合随机网络的预测。少数网页（Google、Yahoo）拥有数百万个入链，而绝大多数网页只有零星几个。度分布呈现<strong>幂律</strong>（power law）——一条在对数坐标上的直线。
+      </p>
+      <p class="summary-text">
+        他们提出了两个简单的机制来解释这种"无标度"现象：
+      </p>
+
+      <div class="concepts">
+        <div class="concept-card">
+          <div class="icon">&#128200;</div>
+          <h4>增长 (Growth)</h4>
+          <p>网络不是一成不变的，而是不断有新节点加入。万维网每天都有新网页被创建，社交网络每天都有新用户注册。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">&#129309;</div>
+          <h4>偏好依附 (Preferential Attachment)</h4>
+          <p>新节点更倾向于连接到已经拥有很多连接的节点。新网页更可能链接到 Google 而非某个无人知晓的个人主页。"越受欢迎越容易受欢迎"。</p>
+        </div>
+      </div>
+
+      <p class="summary-text">
+        这两个机制结合在一起，就产生了<strong>"富者愈富"</strong>（rich-get-richer）效应，也称为<strong>马太效应</strong>。它不需要中央规划，不需要"设计"——只需增长和偏好依附这两条简单规则，就能自发产生高度不均匀的网络结构。
+      </p>
+
+      <div class="highlight-box">
+        <div class="label">为什么叫"无标度"</div>
+        <p>随机网络有一个"典型"的节点度（均值附近），你可以说"一般人有约 100 个社交联系"。但在幂律分布中，不存在这样的典型值——有人有 10 个联系，有人有 10,000 个，有人有 10,000,000 个。分布跨越多个数量级，没有特征尺度（scale），因此称为"无标度"。</p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Robustness & Vulnerability -->
+    <section>
+      <h2 class="section-title">鲁棒且脆弱：无标度网络的阿喀琉斯之踵</h2>
+      <p class="summary-text">
+        无标度网络有一个迷人的双重性格：它们对<strong>随机故障极其鲁棒</strong>，却对<strong>蓄意攻击极其脆弱</strong>。
+      </p>
+      <p class="summary-text">
+        随机删除节点时，由于绝大多数节点都是低度节点（"普通人"），网络几乎不受影响——就像互联网上随机一台路由器坏了，你根本注意不到。但如果刻意攻击那些高度枢纽（"超级连接者"），网络会迅速分崩离析。
+      </p>
+
+      <div class="concepts">
+        <div class="concept-card">
+          <div class="icon">&#128170;</div>
+          <h4>随机故障鲁棒性</h4>
+          <p>随机移除 80% 的节点，网络仍保持连通。因为移除的大概率都是低度节点——对全局连通性影响极小。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">&#128163;</div>
+          <h4>定向攻击脆弱性</h4>
+          <p>移除少数几个核心枢纽（如前 5% 的高度节点），网络就可能瓦解成不相连的碎片。这是"去中心化"系统的隐性风险。</p>
+        </div>
+      </div>
+
+      <div class="quote-block">
+        <p>"无标度网络既是最鲁棒的，也是最脆弱的——取决于你如何攻击它。"</p>
+        <div class="source">—— Albert, Jeong, Barabási (2000)</div>
+      </div>
+
+      <p class="summary-text">
+        这一发现对流行病传播有深远影响：在无标度社交网络中，传统的"随机免疫"策略（给随机人群打疫苗）效果很差，但<strong>"定向免疫"</strong>（优先给社交枢纽打疫苗）效果惊人。理解网络结构不是学术游戏——它关乎公共卫生和国家安全。
+      </p>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Connection to Previous Chapters -->
+    <section>
+      <h2 class="section-title">与前面章节的联系</h2>
+      <p class="summary-text">
+        <strong>第一章（什么是复杂性）</strong>：复杂系统的六大特征中，"去中心化"和"涌现"在网络中得到完美体现。没有人设计互联网的拓扑结构，它是通过简单的增长规则自发涌现的。
+      </p>
+      <p class="summary-text">
+        <strong>第三章（信息）</strong>：网络是信息流的骨架。香农关心的是信道容量，网络科学关心的是：在这个拓扑结构上，信息能传多快、传多远、传多准？
+      </p>
+      <p class="summary-text">
+        <strong>第五章（进化）</strong>：网络结构本身也在进化。偏好依附就是一种"自然选择"——连接多的节点获得更多资源，进一步增长。网络的生长过程就是一种达尔文动力学。
+      </p>
+      <p class="summary-text">
+        <strong>第九章（生命系统中的信息处理）</strong>：蚁群用信息素网络协调行为，免疫系统用分子信号网络识别入侵者，基因调控网络控制细胞命运——这些全都是网络科学的研究对象。本章提供的是分析这些系统的数学语言。
+      </p>
+
+      <div class="highlight-box">
+        <div class="label">一句话总结</div>
+        <p>网络科学给了我们一副新的眼镜：戴上它，你看到的不再是孤立的个体，而是<strong>关系的拓扑结构</strong>。现实世界中的网络既非规则也非随机，它们是"小世界"的、常常是"无标度"的——这种独特结构正是复杂系统展现涌现行为的基础设施。</p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section>
+      <h2 class="section-title">读书讨论</h2>
+      <div class="discussion-placeholder">
+        尚无讨论 &middot; 读完这一章后来聊聊？
+      </div>
+    </section>
+
+    <div class="footer-nav">
+      <a class="prev-chapter" href="ch09-生命系统中的信息处理.html">第九章：生命系统中的信息处理</a>
+      <a class="next-chapter" href="ch11-真实世界中的网络.html">第十一章：真实世界中的网络</a>
+    </div>
+
+  </div>
+</body>
+</html>

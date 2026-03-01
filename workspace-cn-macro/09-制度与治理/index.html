@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>制度与治理 — 中国宏观经济分析框架</title>
+<style>
+  :root {
+    --bg: #0a0a0f; --surface: #12121a; --surface2: #1a1a25; --border: #2a2a3a;
+    --text: #e0e0e8; --text2: #9090a0; --accent: #f0c040;
+    --red: #e05050; --green: #40c080; --blue: #5080e0; --orange: #e08040;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.7; -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  a { color: var(--accent); text-decoration: none; }
+
+  .header {
+    padding: 60px 0 40px; text-align: center; border-bottom: 1px solid var(--border);
+  }
+  .header .back { font-size: 0.85em; color: var(--text2); margin-bottom: 16px; display: block; }
+  .header h1 { font-size: 2em; font-weight: 700; letter-spacing: 0.04em; margin-bottom: 10px; }
+  .header .dim-label {
+    display: inline-block; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 6px; padding: 3px 12px; font-size: 0.8em; color: var(--accent);
+    font-weight: 600; margin-bottom: 14px;
+  }
+  .header .subtitle { font-size: 0.95em; color: var(--text2); max-width: 740px; margin: 0 auto; }
+
+  .key-nums {
+    display: flex; justify-content: center; gap: 24px; padding: 28px 0;
+    border-bottom: 1px solid var(--border); flex-wrap: wrap;
+  }
+  .kn-item { text-align: center; min-width: 100px; }
+  .kn-value { font-size: 1.5em; font-weight: 700; color: var(--accent); }
+  .kn-value.danger { color: var(--red); }
+  .kn-value.good { color: var(--green); }
+  .kn-label { font-size: 0.72em; color: var(--text2); margin-top: 2px; }
+
+  .section { padding: 44px 0; border-bottom: 1px solid var(--border); }
+  .section h2 {
+    text-align: center; font-size: 1.25em; font-weight: 600;
+    color: var(--text2); letter-spacing: 0.06em; margin-bottom: 24px;
+  }
+  .section .sub {
+    text-align: center; font-size: 0.88em; color: var(--text2);
+    margin-top: -16px; margin-bottom: 24px;
+  }
+
+  .bar-section { max-width: 700px; margin: 0 auto; }
+  .bar-group { margin-bottom: 12px; }
+  .bar-header { display: flex; justify-content: space-between; font-size: 0.82em; margin-bottom: 4px; }
+  .bar-header .lbl { color: var(--text2); }
+  .bar-header .val { font-weight: 600; }
+  .bar-track { height: 10px; background: var(--surface2); border-radius: 5px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 5px; }
+
+  .cmp-table {
+    width: 100%; border-collapse: collapse; font-size: 0.85em;
+  }
+  .cmp-table th, .cmp-table td {
+    padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border);
+  }
+  .cmp-table th { color: var(--accent); font-weight: 600; font-size: 0.82em; background: var(--surface); }
+  .cmp-table tr:hover td { background: var(--surface); }
+  .cmp-table .hl { color: var(--accent); font-weight: 600; }
+  .cmp-table .warn { color: var(--red); font-weight: 600; }
+  .cmp-table .good { color: var(--green); font-weight: 600; }
+
+  .card-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px;
+  }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 20px;
+  }
+  .card h3 { font-size: 0.88em; font-weight: 600; margin-bottom: 8px; }
+  .card p { font-size: 0.8em; color: var(--text2); line-height: 1.5; }
+  .card .big { font-size: 1.4em; font-weight: 700; margin-bottom: 6px; }
+
+  .wide-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 14px;
+  }
+  .wide-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px 22px;
+  }
+  .wide-card h3 { font-size: 0.92em; font-weight: 600; color: var(--accent); margin-bottom: 8px; }
+  .wide-card p { font-size: 0.85em; color: var(--text2); line-height: 1.6; }
+
+  .ascii-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 24px; max-width: 700px; margin: 0 auto;
+    font-family: "SF Mono", "Fira Code", monospace; font-size: 0.84em;
+    line-height: 1.8; color: var(--text2); white-space: pre; overflow-x: auto;
+  }
+  .ascii-box .hl { color: var(--accent); font-weight: 600; }
+  .ascii-box .r { color: var(--red); font-weight: 600; }
+  .ascii-box .g { color: var(--green); }
+  .ascii-box .b { color: var(--blue); }
+  .ascii-box .o { color: var(--orange); }
+
+  .callout {
+    margin-top: 18px; padding: 16px 20px; background: var(--surface);
+    border: 1px solid var(--border); border-left: 3px solid var(--accent);
+    border-radius: 8px; font-size: 0.84em; max-width: 700px; margin-left: auto; margin-right: auto;
+  }
+  .callout.warn { border-left-color: var(--red); }
+  .callout.info { border-left-color: var(--blue); }
+  .callout .cl-title { color: var(--accent); font-weight: 600; margin-bottom: 6px; }
+  .callout.warn .cl-title { color: var(--red); }
+  .callout.info .cl-title { color: var(--blue); }
+  .callout .cl-body { color: var(--text2); line-height: 1.5; }
+
+  .dual-box { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: 700px; margin: 20px auto 0; }
+  .dual-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 20px;
+  }
+  .dual-card h4 { font-size: 0.85em; font-weight: 600; margin-bottom: 8px; }
+  .dual-card p { font-size: 0.8em; color: var(--text2); line-height: 1.5; }
+  .dual-card.pos h4 { color: var(--green); }
+  .dual-card.neg h4 { color: var(--red); }
+
+  .timeline {
+    max-width: 700px; margin: 0 auto; position: relative;
+    padding-left: 28px; border-left: 2px solid var(--border);
+  }
+  .tl-item { margin-bottom: 20px; position: relative; }
+  .tl-item::before {
+    content: ''; position: absolute; left: -33px; top: 6px;
+    width: 10px; height: 10px; border-radius: 50%; background: var(--red);
+    border: 2px solid var(--bg);
+  }
+  .tl-item.ok::before { background: var(--green); }
+  .tl-item.mid::before { background: var(--orange); }
+  .tl-date { font-size: 0.78em; color: var(--accent); font-weight: 600; margin-bottom: 2px; }
+  .tl-text { font-size: 0.85em; color: var(--text); }
+  .tl-detail { font-size: 0.78em; color: var(--text2); margin-top: 2px; }
+
+  .verdict {
+    padding: 44px 0;
+  }
+  .verdict h2 {
+    text-align: center; font-size: 1.25em; font-weight: 600;
+    color: var(--text2); letter-spacing: 0.06em; margin-bottom: 24px;
+  }
+  .verdict-list { max-width: 700px; margin: 0 auto; }
+  .verdict-item {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 22px; margin-bottom: 12px;
+  }
+  .verdict-item .vi-num { color: var(--accent); font-weight: 700; font-size: 0.8em; margin-bottom: 4px; }
+  .verdict-item .vi-text { font-size: 0.88em; line-height: 1.6; }
+  .verdict-item .vi-detail { font-size: 0.8em; color: var(--text2); margin-top: 6px; line-height: 1.5; }
+
+  .footer { padding: 36px 0; text-align: center; color: var(--text2); font-size: 0.8em; }
+
+  @media (max-width: 600px) {
+    .key-nums { gap: 12px; }
+    .kn-value { font-size: 1.2em; }
+    .card-grid, .wide-grid { grid-template-columns: 1fr; }
+    .dual-box { grid-template-columns: 1fr; }
+    .ascii-box { font-size: 0.72em; padding: 14px; }
+    .cmp-table { font-size: 0.75em; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <section class="header">
+    <a class="back" href="../index.html">&larr; 返回总览</a>
+    <div class="dim-label">维度九</div>
+    <h1>制度与治理</h1>
+    <p class="subtitle">法律文本上"私有财产不受侵犯"——但远洋捕捞、运动式执法、政策突变让企业家用脚投票。外资FDI腰斩、民间投资转负、13,800名富人外流。国企340万亿资产ROA仅2%，混改"混而不改"。制度环境不是"软问题"，而是所有经济问题的硬基础。</p>
+  </section>
+
+  <div class="key-nums">
+    <div class="kn-item"><div class="kn-value danger">-0.5%</div><div class="kn-label">民间投资增速（2024）</div></div>
+    <div class="kn-item"><div class="kn-value danger">~-30%</div><div class="kn-label">FDI同比（2024估）</div></div>
+    <div class="kn-item"><div class="kn-value danger">13,800</div><div class="kn-label">高净值人群年净流出</div></div>
+    <div class="kn-item"><div class="kn-value">340万亿</div><div class="kn-label">国企总资产</div></div>
+    <div class="kn-item"><div class="kn-value danger">~2%</div><div class="kn-label">国企ROA</div></div>
+    <div class="kn-item"><div class="kn-value danger">2万亿$</div><div class="kn-label">互联网巨头市值蒸发</div></div>
+  </div>
+
+  <!-- Property Rights & Confidence -->
+  <section class="section">
+    <h2>产 权 保 护 与 民 企 信 心</h2>
+    <p class="sub">法律完善 vs 执行落差 — 信心一旦丧失，恢复需要很长时间</p>
+
+    <div class="ascii-box"><span class="hl">法律框架（文本层面相当完善）</span>
+
+  2004  宪法修正案："公民合法的私有财产不受侵犯"
+  2007 《物权法》：平等保护各类所有制
+  2020 《民法典》：进一步强化产权保护
+
+  <span class="r">但现实差距巨大 ↓↓↓</span>
+
+<span class="hl">四大信心杀手</span>
+
+  <span class="r">① 政策突变</span>    教培"双减"一夜归零 | 蚂蚁IPO叫停
+                  "合规经营也可能被打倒"
+  <span class="r">② 司法干预</span>    "远洋捕捞"异地抓企业家冻资产
+                  知识产权侵权成本低、维权成本高
+  <span class="r">③ 运动式执法</span>  环保一刀切 | 税务倒查多年
+                  "昨天合法的事今天可能违法"
+  <span class="r">④ 个人不安</span>    企业家移民、转移资产、减少投资
+                  "润"成为互联网热词</div>
+
+    <!-- Investment confidence data -->
+    <div style="margin-top:24px">
+      <table class="cmp-table">
+        <tr><th>年份</th><th>民间投资增速</th><th>全国固投增速</th><th>差值</th></tr>
+        <tr><td>2019</td><td>4.7%</td><td>5.4%</td><td>-0.7</td></tr>
+        <tr><td>2021</td><td class="good">7.0%</td><td>4.9%</td><td class="good">+2.1</td></tr>
+        <tr><td>2022</td><td class="warn">0.9%</td><td>5.1%</td><td class="warn">-4.2</td></tr>
+        <tr><td>2023</td><td class="warn">-0.4%</td><td>3.0%</td><td class="warn">-3.4</td></tr>
+        <tr><td>2024</td><td class="warn">~-0.5%</td><td>~3.2%</td><td class="warn">-3.7</td></tr>
+      </table>
+    </div>
+
+    <div class="callout warn" style="margin-top:18px">
+      <div class="cl-title">民间投资与全国投资的"剪刀差"</div>
+      <div class="cl-body">2022年起民间投资增速急剧落后于全国固投增速（差值扩大至-3.7个百分点）。全国投资靠国企和专项债撑着，民间资本在撤退。这不是经济周期问题，而是制度性信心崩塌的信号。</div>
+    </div>
+
+    <div class="card-grid" style="margin-top:20px">
+      <div class="card">
+        <div class="big" style="color:var(--red)">13,800</div>
+        <h3>高净值人群年净流出</h3>
+        <p>2023年中国百万美元以上净值人群净流出全球最多。目的地：新加坡、加拿大、澳大利亚、美国。</p>
+      </div>
+      <div class="card">
+        <div class="big" style="color:var(--red)">&darr;</div>
+        <h3>企业注册/注销</h3>
+        <p>2024年新注册企业数量下降，注销企业数量增加。个体工商户注册量虽有政策刺激但质量堪忧。</p>
+      </div>
+      <div class="card">
+        <div class="big" style="color:var(--orange)">~90</div>
+        <h3>法治指数全球排名</h3>
+        <p>世界正义工程法治指数约第90位，民事司法评分偏低。传统基金会经济自由度约第150位。</p>
+      </div>
+      <div class="card">
+        <div class="big" style="color:var(--orange)">50-60</div>
+        <h3>产权保护指数排名</h3>
+        <p>世界经济论坛产权保护指数中等偏下。世界银行营商环境曾第31位但已停更。</p>
+      </div>
+    </div>
+
+    <div class="dual-box" style="margin-top:20px">
+      <div class="dual-card pos">
+        <h4>政策修复努力</h4>
+        <p>2023年"民营经济31条"：破除准入壁垒、强化产权保护、规范涉企执法。2024年多地出台企业家人身财产安全保护措施，治理乱收费乱罚款。</p>
+      </div>
+      <div class="dual-card neg">
+        <h4>效果评估</h4>
+        <p>"看行动，不看文件"——企业家普遍态度。政策文件密集但信心修复需时间和一致行动。核心在于：政策承诺能否约束政府行为，能否形成制度保障。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Business Environment & FDI -->
+  <section class="section">
+    <h2>营 商 环 境 与 外 资</h2>
+    <p class="sub">FDI从1,891亿美元峰值跌至~1,100亿 — 外资用行动投票</p>
+
+    <div class="bar-section">
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">2020 实际使用外资</span><span class="val" style="color:var(--blue)">1,444亿$</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:76%;background:var(--blue)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">2021 峰值前年</span><span class="val" style="color:var(--green)">1,735亿$ (+20.2%)</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:92%;background:var(--green)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">2022 历史峰值</span><span class="val" style="color:var(--green)">1,891亿$ (+8%)</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--green)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">2023 拐点</span><span class="val" style="color:var(--orange)">1,633亿$ (-8%)</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:86%;background:var(--orange)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">2024 估计</span><span class="val" style="color:var(--red)">~1,100亿$ (~-30%)</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:58%;background:var(--red)"></div></div>
+      </div>
+    </div>
+
+    <div class="callout warn" style="margin-top:18px">
+      <div class="cl-title">BOP口径更触目惊心</div>
+      <div class="cl-body">按国际收支口径，2023年Q3甚至出现FDI净流出——外资不仅减少流入，部分已在撤离。2024年FDI降幅可能达30%，为近年最大。传统欧美投资减少，来自新加坡（部分为中国资本回流）和中东的投资增加。</div>
+    </div>
+
+    <!-- Survey data -->
+    <div class="wide-grid" style="margin-top:24px">
+      <div class="wide-card">
+        <h3>欧盟商会调查（2024）</h3>
+        <p>仅约15%欧企将中国列为首选投资地（2020年约25%）。约20%考虑转移投资。主要关切：政策不可预测性、数据安全法规、地缘政治风险、市场准入限制。</p>
+      </div>
+      <div class="wide-card">
+        <h3>美国商会调查（2024）</h3>
+        <p>约45%美企对中国营商环境"不乐观"（2019年约25%）。约20%已将或正在将供应链从中国转移。约50%仍视中国为全球前三投资地，但比例在下降。</p>
+      </div>
+    </div>
+
+    <div class="dual-box">
+      <div class="dual-card pos">
+        <h4>营商环境优势</h4>
+        <p>全球领先的基建和物流、完整产业集群、14亿人口市场、高素质劳动力、部分领域政府效率高。制造业外资准入限制已全面取消，金融业外资可100%控股。</p>
+      </div>
+      <div class="dual-card neg">
+        <h4>营商环境短板</h4>
+        <p>政策可预测性差、隐性市场准入壁垒、知识产权执行力不足、数据合规复杂（数安法/个保法）、国企隐性优势破坏公平竞争、司法独立性不足。</p>
+      </div>
+    </div>
+
+    <div class="callout info" style="margin-top:18px">
+      <div class="cl-title">"China+1"成为标配</div>
+      <div class="cl-body">跨国企业普遍采用"China+1"策略——保留中国产能的同时，在越南、印度、印尼增设生产基地。苹果推动供应链向印度和越南转移，三星关闭中国手机工厂。外资态度从"不可或缺的机遇"转向"需要审慎权衡的风险收益"。</div>
+    </div>
+  </section>
+
+  <!-- SOE Reform -->
+  <section class="section">
+    <h2>国 企 改 革</h2>
+    <p class="sub">340万亿资产、ROA仅2% — 效率与控制之间的根本性张力</p>
+
+    <div class="ascii-box"><span class="hl">国企 vs 民企效率对比</span>
+
+  总资产报酬率 ROA
+  国企  <span class="r">██</span>                            <span class="r">~2%</span>
+  民企  <span class="g">██████</span>                        <span class="g">~5-6%</span>
+
+  净资产收益率 ROE
+  国企  <span class="r">█████</span>                         <span class="r">~5%</span>
+  民企  <span class="g">██████████████</span>                <span class="g">~10-12%</span>
+
+  杠杆率
+  国企  <span class="r">████████████████████████████████</span>  <span class="r">~64%</span>
+  民企  <span class="o">████████████████████████████</span>      <span class="o">~55%</span>
+
+  <span class="r">→ 同样的资产规模，民企创造2-3倍回报</span>
+  <span class="r">→ 国企占用了更多资源（资产340万亿），但效率更低</span></div>
+
+    <!-- Reform timeline -->
+    <div style="margin-top:28px">
+      <div class="timeline">
+        <div class="tl-item mid">
+          <div class="tl-date">1990年代 · 第一轮</div>
+          <div class="tl-text">"抓大放小"：大型国企改制，中小国企出售或破产</div>
+          <div class="tl-detail">约4,000万国企职工下岗。最痛但最有效的一轮改革。</div>
+        </div>
+        <div class="tl-item mid">
+          <div class="tl-date">2003-2013 · 第二轮</div>
+          <div class="tl-text">成立国资委，推动国企做大做强</div>
+          <div class="tl-detail">央企从196家整合至约100家。侧重规模而非效率。</div>
+        </div>
+        <div class="tl-item mid">
+          <div class="tl-date">2015-2022 · 第三轮</div>
+          <div class="tl-text">顶层设计+混合所有制+三年行动</div>
+          <div class="tl-detail">形式上完成大量混改，但实质治理改善有限。</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-date">2023至今 · 新一轮</div>
+          <div class="tl-text">"做强做优做大"+ 世界一流企业</div>
+          <div class="tl-detail">方向更偏向强化国企地位，而非放权让利。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mixed ownership -->
+    <div style="margin-top:28px">
+      <table class="cmp-table">
+        <tr><th>混改案例</th><th>方式</th><th>效果</th></tr>
+        <tr><td>中国联通</td><td>引入BAT等战略投资者</td><td class="warn">业绩改善有限</td></tr>
+        <tr><td>东航物流</td><td>民资+员工持股+上市</td><td class="good">被视为成功案例</td></tr>
+        <tr><td>天津国企</td><td>多家企业混改</td><td class="warn">效果参差</td></tr>
+        <tr><td>格力电器</td><td>国资出让控股权给高瓴</td><td class="warn">引发争议</td></tr>
+      </table>
+    </div>
+
+    <div class="ascii-box" style="margin-top:20px"><span class="hl">混改的核心困境</span>
+
+  "混而不改"  ── 引入少量民资参股，但治理结构
+                  和决策机制<span class="r">未实质改变</span>
+  民资无话语权 ── 董事会和管理层中民资代表
+                  <span class="r">影响力有限</span>
+  国资流失恐惧 ── 定价敏感，决策者怕被追责
+                  <span class="r">"贱卖国资"</span> → 不敢真改
+  逆向混改增多 ── 国资入股民企（如蚂蚁集团）
+                  <span class="r">被视为"国进民退"</span></div>
+
+    <div class="callout warn" style="margin-top:18px">
+      <div class="cl-title">效率 vs 控制：不可调和的张力</div>
+      <div class="cl-body">提高效率需要放权和市场化，维持控制需要集权和行政干预——两个目标之间存在根本性矛盾。国企做大挤压民企空间、"竞争中性"难以落实。同时国企承担稳就业、稳增长等社会功能，深度改革可能短期影响稳定。国企效率偏低是TFP增长放缓的重要原因。</div>
+    </div>
+  </section>
+
+  <!-- Anti-monopoly & Platform -->
+  <section class="section">
+    <h2>反 垄 断 与 平 台 经 济</h2>
+    <p class="sub">2020-2022监管风暴 → 2万亿美元市值蒸发 → 2023起"常态化"转向</p>
+
+    <!-- Timeline -->
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-date">2020年11月</div>
+        <div class="tl-text">蚂蚁集团IPO被叫停</div>
+        <div class="tl-detail">2.5万亿估值蒸发，金融科技监管拉开序幕</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">2021年4月</div>
+        <div class="tl-text">阿里巴巴被罚182亿元（垄断）</div>
+        <div class="tl-detail">互联网平台反垄断的标志性事件</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">2021年7月</div>
+        <div class="tl-text">"双减"政策：教培行业归零</div>
+        <div class="tl-detail">新东方、好未来市值暴跌90%+，万亿行业一夜消失</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">2021年7月</div>
+        <div class="tl-text">滴滴被网络安全审查、下架</div>
+        <div class="tl-detail">赴美上市企业受重创，中概股信任危机</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">2021年底</div>
+        <div class="tl-text">美团被罚34亿元</div>
+        <div class="tl-detail">反垄断持续施压，平台企业全面收缩</div>
+      </div>
+      <div class="tl-item mid">
+        <div class="tl-date">2023年起</div>
+        <div class="tl-text">基调转向"常态化监管"</div>
+        <div class="tl-detail">蚂蚁获牌照、游戏版号恢复、罚款减少</div>
+      </div>
+    </div>
+
+    <!-- Market cap impact -->
+    <div class="bar-section" style="margin-top:28px">
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">阿里巴巴 峰值</span><span class="val" style="color:var(--green)">8,600亿$</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:91%;background:var(--green)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">阿里巴巴 最低</span><span class="val" style="color:var(--red)">1,700亿$（-80%）</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:18%;background:var(--red)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">腾讯 峰值</span><span class="val" style="color:var(--green)">9,500亿$</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--green)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">腾讯 最低</span><span class="val" style="color:var(--red)">2,800亿$（-71%）</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:29%;background:var(--red)"></div></div>
+      </div>
+    </div>
+
+    <!-- Impact assessment -->
+    <div class="dual-box" style="margin-top:24px">
+      <div class="dual-card neg">
+        <h4>负面影响</h4>
+        <p>创新投入转向合规、互联网行业裁员超30万人、中概股估值体系重塑、VC/PE对互联网大幅收缩、平台企业海外扩张放缓。</p>
+      </div>
+      <div class="dual-card pos">
+        <h4>正面影响</h4>
+        <p>大数据杀熟和强制二选一收敛、骑手/快递员社保改善、用户数据保护提升、蚂蚁等监管套利被压缩、中小平台获一定发展空间。</p>
+      </div>
+    </div>
+
+    <!-- International comparison -->
+    <div style="margin-top:24px">
+      <table class="cmp-table">
+        <tr><th>维度</th><th>中国</th><th>美国</th><th>欧盟</th></tr>
+        <tr><td>监管速度</td><td class="warn">快速、猛烈</td><td>缓慢、程序化</td><td>立法为主</td></tr>
+        <tr><td>执法手段</td><td>行政手段+罚款</td><td>司法诉讼</td><td>立法+罚款</td></tr>
+        <tr><td>可预测性</td><td class="warn">较低</td><td class="good">较高（法治框架）</td><td class="good">较高</td></tr>
+        <tr><td>对行业影响</td><td class="warn">深远（规则重塑）</td><td>有限（企业仍增长）</td><td>中等</td></tr>
+      </table>
+    </div>
+
+    <div class="callout" style="margin-top:18px">
+      <div class="cl-title">平台经济的未来</div>
+      <div class="cl-body">数字经济占GDP约40%，不可能被放弃。政策已转向"常态化监管"，支持TikTok/Temu/SHEIN出海，AI大模型成新赛道。但信心修复缓慢——平台企业投资扩张策略趋于保守，海外上市计划大幅减少，企业家公开表态更加谨慎。</div>
+    </div>
+  </section>
+
+  <!-- Institutional root cause diagram -->
+  <section class="section">
+    <h2>制 度 问 题 传 导 链</h2>
+    <p class="sub">制度缺陷如何一步步拖累经济增长</p>
+
+    <div class="ascii-box"><span class="hl">制度环境恶化的传导路径</span>
+
+  <span class="r">政策突变 + 运动式执法 + 司法干预</span>
+          │
+          ▼
+  <span class="r">企业家信心崩塌</span>
+    ├── 民间投资转负（-0.5%）
+    ├── 高净值人群外流（13,800人/年）
+    └── 企业注册↓ 注销↑
+          │
+          ▼
+  <span class="o">外资"用脚投票"</span>
+    ├── FDI腰斩（-30%）
+    ├── "China+1"成标配
+    └── 欧/美商会信心下滑
+          │
+          ▼
+  <span class="o">经济活力衰减</span>
+    ├── 民营经济（60%GDP、80%就业）萎缩
+    ├── 创新投入减少
+    └── 就业压力加大
+          │
+          ▼
+  <span class="r">增长放缓 → 财政压力 → 更多"远洋捕捞" → 信心更差</span>
+  <span class="r">                    ↑____________恶性循环____________↗</span></div>
+  </section>
+
+  <!-- Core Verdicts -->
+  <section class="verdict">
+    <h2>核 心 判 断</h2>
+    <div class="verdict-list">
+      <div class="verdict-item">
+        <div class="vi-num">判断 01</div>
+        <div class="vi-text">制度环境是当前经济困境的"根因"而非"症状"</div>
+        <div class="vi-detail">产权保护不足→民企信心崩塌→投资萎缩→经济放缓→财政压力→更多掠夺性执法→信心更差。这个恶性循环的起点不是"经济下行"而是"制度失信"。所有的财政刺激和货币宽松都不能替代制度修复。</div>
+      </div>
+      <div class="verdict-item">
+        <div class="vi-num">判断 02</div>
+        <div class="vi-text">FDI和民间投资的同步萎缩发出了最强烈的制度警报</div>
+        <div class="vi-detail">内资和外资同时"用脚投票"：FDI腰斩、民间投资转负、高净值人群年净流出全球第一。这不是经济周期造成的——全球经济在复苏，资本在流向印度、越南等国。问题出在中国自身的制度环境。</div>
+      </div>
+      <div class="verdict-item">
+        <div class="vi-num">判断 03</div>
+        <div class="vi-text">国企改革陷入"效率vs控制"的死胡同</div>
+        <div class="vi-detail">340万亿国企资产ROA仅2%，是民企的1/3。混合所有制"混而不改"，治理结构无实质变化。当前改革方向偏向"做大做强"而非"放权让利"，竞争中性原则难以落实。国企低效是TFP增长放缓和资源错配的重要原因。</div>
+      </div>
+      <div class="verdict-item">
+        <div class="vi-num">判断 04</div>
+        <div class="vi-text">监管的问题不是"该不该管"而是"怎么管"</div>
+        <div class="vi-detail">反垄断、数据保护、金融风险防范本身有合理性（全球都在做），但中国的执行方式过于猛烈、不可预期、行政主导而非法治框架。2万亿美元市值蒸发证明：监管方式的问题和监管本身一样重要。建立稳定、透明、可预期的制度框架，才是真正的"改革"。</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">
+    维度九 · 制度与治理 · 数据基于Q32-Q35研究笔记 · 中国宏观经济分析框架
+  </div>
+
+</div>
+</body>
+</html>
