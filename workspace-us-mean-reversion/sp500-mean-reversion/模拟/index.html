@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>蒙特卡洛模拟与微观验证 — 从个股到系统的股权溢价</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#0a0e1a; color:#e2e8f0; font-family:'Segoe UI',system-ui,sans-serif; line-height:1.7; }
+
+  .sidebar { position:fixed; top:0; left:0; width:220px; height:100vh; background:#0f1629;
+    border-right:1px solid #1e293b; padding:24px 16px; overflow-y:auto; z-index:100; }
+  .sidebar h2 { font-size:13px; color:#a78bfa; text-transform:uppercase; letter-spacing:1px; margin-bottom:16px; }
+  .sidebar a { display:block; color:#94a3b8; text-decoration:none; font-size:13px; padding:6px 10px;
+    border-radius:6px; margin-bottom:2px; transition:all .2s; }
+  .sidebar a:hover, .sidebar a.active { color:#fff; background:#1e293b; }
+
+  .main { margin-left:220px; max-width:960px; padding:48px 40px 80px; }
+  h1 { font-size:28px; color:#f8fafc; margin-bottom:8px; }
+  .subtitle { color:#94a3b8; font-size:14px; margin-bottom:40px; }
+  h2 { font-size:20px; color:#a78bfa; margin:48px 0 16px; padding-top:16px; }
+  h3 { font-size:16px; color:#e2e8f0; margin:24px 0 10px; }
+  p { color:#cbd5e1; font-size:15px; margin-bottom:16px; }
+  .chart-wrap { background:#111827; border-radius:12px; padding:20px; margin:20px 0 32px; }
+  canvas { max-height:420px; }
+  .insight { background:#1e293b; border-left:3px solid #a78bfa; padding:14px 18px; border-radius:0 8px 8px 0;
+    margin:16px 0 24px; font-size:14px; color:#e2e8f0; }
+  .insight strong { color:#a78bfa; }
+  .stat-row { display:flex; gap:16px; flex-wrap:wrap; margin:16px 0 24px; }
+  .stat-card { flex:1; min-width:140px; background:#111827; border-radius:10px; padding:16px; text-align:center; }
+  .stat-card .num { font-size:28px; font-weight:700; }
+  .stat-card .label { font-size:12px; color:#94a3b8; margin-top:4px; }
+  table { width:100%; border-collapse:collapse; margin:16px 0; font-size:14px; }
+  th, td { padding:8px 12px; border-bottom:1px solid #1e293b; text-align:center; }
+  th { color:#a78bfa; font-weight:600; }
+  td:first-child { text-align:left; color:#e2e8f0; }
+  .phase-flow { display:flex; align-items:center; justify-content:center; gap:0; margin:20px 0; flex-wrap:wrap; }
+  .phase-box { padding:12px 16px; border-radius:10px; text-align:center; min-width:120px; }
+  .phase-box .name { font-size:13px; font-weight:700; }
+  .phase-box .detail { font-size:11px; margin-top:4px; opacity:0.8; }
+  .phase-arrow { color:#4a5568; font-size:20px; margin:0 4px; }
+
+  @media (max-width:800px) {
+    .sidebar { display:none; }
+    .main { margin-left:0; padding:24px 16px 60px; }
+    .stat-row { flex-direction:column; }
+    .phase-flow { flex-direction:column; gap:8px; }
+    .phase-arrow { transform:rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <h2>模拟与验证</h2>
+  <a href="#lifecycle">三阶段生命周期</a>
+  <a href="#simulations">三种策略对比</a>
+  <a href="#decomposition">效应分解</a>
+  <a href="#pe-reversion">PE 均值回归</a>
+  <a href="#right-skew">回报右偏</a>
+  <a href="#time-concentration">时间集中</a>
+  <a href="#conclusion">从个股到系统</a>
+  <a href="../index.html" style="margin-top:24px;color:#fbbf24;">← 主报告</a>
+  <a href="../../index.html" style="color:#fbbf24;">← 研究门户</a>
+</nav>
+
+<div class="main">
+  <h1>蒙特卡洛模拟与微观验证</h1>
+  <p class="subtitle">从个股到系统的股权溢价 · 4 组模拟实验 · CRSP 数据 1957–2024</p>
+
+  <!-- Section 1: Lifecycle -->
+  <section id="lifecycle">
+    <h2>一、个股三阶段生命周期模型</h2>
+    <p>每只股票都经历<strong style="color:#34d399">成长</strong> → <strong style="color:#60a5fa">减速</strong> → <strong style="color:#fbbf24">成熟</strong>的生命周期。PE 是蓄水池：高 PE = 市场对未来增长的预支，增长兑现 = PE 释放。</p>
+
+    <div class="phase-flow">
+      <div class="phase-box" style="background:rgba(52,211,153,0.15);border:1px solid #34d399;">
+        <div class="name" style="color:#34d399">阶段一：成长</div>
+        <div class="detail" style="color:#34d399">PE 50x · EPS 快速增长<br>PE 开始压缩</div>
+      </div>
+      <div class="phase-arrow">→</div>
+      <div class="phase-box" style="background:rgba(96,165,250,0.15);border:1px solid #60a5fa;">
+        <div class="name" style="color:#60a5fa">阶段二：减速</div>
+        <div class="detail" style="color:#60a5fa">PE 50→20 · EPS 增速放缓<br>PE 向合理水平靠拢</div>
+      </div>
+      <div class="phase-arrow">→</div>
+      <div class="phase-box" style="background:rgba(251,191,36,0.15);border:1px solid #fbbf24;">
+        <div class="name" style="color:#fbbf24">阶段三：成熟</div>
+        <div class="detail" style="color:#fbbf24">PE 15x · EPS 随经济增长<br>回报靠股息</div>
+      </div>
+      <div class="phase-arrow">→</div>
+      <div class="phase-box" style="background:rgba(248,113,113,0.15);border:1px solid #f87171;">
+        <div class="name" style="color:#f87171">退出/死亡</div>
+        <div class="detail" style="color:#f87171">~52–56% 的公司<br>最终以退市收场</div>
+      </div>
+    </div>
+
+    <h3>1957 年队列微观验证（3 组×50 只随机组合）</h3>
+    <div class="chart-wrap"><canvas id="lifecycleChart"></canvas></div>
+
+    <table>
+      <tr><th>阶段</th><th>占比</th><th>平均 PE</th><th>EPS CAGR</th><th>说明</th></tr>
+      <tr><td style="color:#34d399">成长 Growth</td><td>~10%</td><td>21–23x</td><td>+18~21%</td><td>EPS CAGR >10%（10 年窗口）</td></tr>
+      <tr><td style="color:#60a5fa">减速 Decel</td><td>~22%</td><td>~16x</td><td>+5.7~6.0%</td><td>EPS CAGR 3–10%</td></tr>
+      <tr><td style="color:#fbbf24">成熟 Mature</td><td>~50%</td><td>14–15x</td><td>-3.8~-4.8%</td><td>EPS CAGR <3%</td></tr>
+      <tr><td style="color:#f87171">死亡 Death</td><td>~18%</td><td>—</td><td>—</td><td>退市</td></tr>
+    </table>
+
+    <div class="insight">
+      <strong>关键洞察：</strong>公司在 S&P 500 中的大部分时间是"消耗期"（成熟阶段 EPS 负增长 -4%），仅 ~10% 的时间处于成长期。指数通过不断用阶段一公司替换阶段三公司，维持整体增长动能 — 这就是"创造性毁灭"在指数层面的体现。
+    </div>
+  </section>
+
+  <!-- Section 2: Three Simulations -->
+  <section id="simulations">
+    <h2>二、三种投资策略的蒙特卡洛模拟</h2>
+    <p>从 1957 年 S&P 500 成分股中随机选 N 只，用三种策略持有至 2024 年，各跑 1000 次模拟。结果揭示了回报的三大来源。</p>
+
+    <div class="stat-row">
+      <div class="stat-card"><div class="num" style="color:#f87171">7.49%</div><div class="label">纯买入持有（N=10）</div></div>
+      <div class="stat-card"><div class="num" style="color:#fbbf24">8.92%</div><div class="label">退市补新股（N=10）</div></div>
+      <div class="stat-card"><div class="num" style="color:#34d399">11.82%</div><div class="label">月度等权再平衡（N=10）</div></div>
+    </div>
+
+    <div class="chart-wrap"><canvas id="simChart"></canvas></div>
+
+    <div class="insight">
+      <strong>关键洞察：</strong>同样 N=10 只随机股票，策略差异带来 4.33pp 的 CAGR 差距。纯买入持有（7.49%）仅略高于国债（4.5%），而月度再平衡（11.82%）接近市场回报。说明"市场回报 ~10%"不是天然的，它隐含了<strong>成分股更替 + 等权再平衡</strong>两层机制。
+    </div>
+  </section>
+
+  <!-- Section 3: Decomposition -->
+  <section id="decomposition">
+    <h2>三、股权溢价效应分解（N=10）</h2>
+    <p>将三种策略的回报差逐层拆解，量化每种机制的贡献。</p>
+
+    <div class="chart-wrap"><canvas id="decompChart"></canvas></div>
+
+    <table>
+      <tr><th>效应</th><th>贡献</th><th>说明</th></tr>
+      <tr><td>纯持股溢价</td><td style="color:#60a5fa">~3.0pp</td><td>买了不动 vs 国债 4.5% — 风险补偿</td></tr>
+      <tr><td>成分股替换</td><td style="color:#fbbf24">~1.4pp</td><td>退市补新股 — 淘汰输家、引入赢家</td></tr>
+      <tr><td>等权再平衡</td><td style="color:#34d399">~2.9pp</td><td>月度高抛低吸 — 系统性卖高买低</td></tr>
+      <tr><td><strong>合计</strong></td><td><strong>~7.3pp</strong></td><td>完整的股权溢价</td></tr>
+    </table>
+
+    <div class="insight">
+      <strong>关键洞察：</strong>传统"股权溢价之谜"把 ~5-6% 视为一个整体。我们的模拟将其拆成三层：风险补偿（3.0pp）+ 指数换血（1.4pp）+ 再平衡（2.9pp）。其中"再平衡红利"通常被忽略但贡献最大，它来自等权配置对右偏回报的系统性捕获。
+    </div>
+  </section>
+
+  <!-- Section 4: PE Mean Reversion -->
+  <section id="pe-reversion">
+    <h2>四、PE 分位数 → 5 年前瞻回报</h2>
+    <p>将每只公司每年的 PE 分为五个分位组，追踪之后 5 年的累计回报。三组随机种子结果高度一致。</p>
+
+    <div class="chart-wrap"><canvas id="peChart"></canvas></div>
+
+    <div class="insight">
+      <strong>关键洞察：</strong>低 PE 组（Q1, ~6.8x）5 年回报 36–48%，高 PE 组（Q5, ~37x）仅 10–16%。差距高达 <strong>20–37 个百分点</strong>。Q1 到 Q3 单调递减，确认 PE 均值回归在个股层面同样成立。这是"价值效应"（value effect）的微观基础。
+    </div>
+  </section>
+
+  <!-- Section 5: Right Skew -->
+  <section id="right-skew">
+    <h2>五、回报的极度右偏 — 少数赢家创造几乎全部价值</h2>
+    <p>1957 年队列中，Top 10 公司创造了 <strong style="color:#f472b6">78–95%</strong> 的总财富。Bessembinder (2018) 的结论在微观验证中得到完美复现。</p>
+
+    <div class="stat-row">
+      <div class="stat-card"><div class="num" style="color:#f472b6">4%</div><div class="label">的公司贡献全部净财富<br>(Bessembinder 2018)</div></div>
+      <div class="stat-card"><div class="num" style="color:#f87171">20–28%</div><div class="label">的 S&P 成分股<br>67 年跑输国债</div></div>
+      <div class="stat-card"><div class="num" style="color:#fbbf24">68,535x</div><div class="label">Philip Morris 终身倍数<br>(seed=123 极端案例)</div></div>
+    </div>
+
+    <div class="chart-wrap"><canvas id="skewChart"></canvas></div>
+
+    <div class="insight">
+      <strong>关键洞察：</strong>seed=123 中 Philip Morris 一家公司占总财富的 68%，CAGR 17.8%，终身倍数 68,535 倍。这不是异常值 — 它正是右偏分布的数学本质。中位数个股表现平庸，但极少数超级赢家拉动了整体均值。<strong>你不能缺席：不持有那 4%，长期跑输国债。</strong>
+    </div>
+  </section>
+
+  <!-- Section 6: Time Concentration -->
+  <section id="time-concentration">
+    <h2>六、时间集中度 — 6% 的月份贡献 7pp 的 CAGR</h2>
+    <p>去掉最好的 N 个月后 CAGR 的变化。三组随机种子（不同的 50 只股票）结果几乎完全一样 — 时间集中度是市场的系统性质。</p>
+
+    <div class="chart-wrap"><canvas id="timeChart"></canvas></div>
+
+    <table>
+      <tr><th>去掉最好 N 月</th><th>seed=42</th><th>seed=123</th><th>seed=7</th><th>说明</th></tr>
+      <tr><td>0（基准）</td><td>11.10%</td><td>11.27%</td><td>11.73%</td><td>完整 CAGR</td></tr>
+      <tr><td>去 10 月</td><td>-1.85pp</td><td>-1.93pp</td><td>-1.87pp</td><td>1.2% 的时间</td></tr>
+      <tr><td>去 20 月</td><td>-3.33pp</td><td>-3.39pp</td><td>-3.33pp</td><td>2.4% 的时间</td></tr>
+      <tr><td>去 50 月</td><td>-6.82pp</td><td>-6.93pp</td><td>-6.73pp</td><td>6.1% 的时间</td></tr>
+    </table>
+
+    <div class="insight">
+      <strong>关键洞察：</strong>去掉最好 50 个月（816 个月的 6%），CAGR 从 ~11% 降至 ~4% — 接近国债。三组最佳月都是 1974-10，最差月都是 1987-10。<strong>选哪 50 只股票不影响这个规律</strong>，因为最好/最差月是市场整体现象（系统风险），与个股选择无关。
+    </div>
+  </section>
+
+  <!-- Section 7: Conclusion -->
+  <section id="conclusion">
+    <h2>七、从个股到系统：股权溢价的三个必要条件</h2>
+
+    <div style="background:#111827;border-radius:12px;padding:24px;margin:20px 0;">
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span style="background:#60a5fa;color:#0a0e1a;font-weight:700;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;">1</span>
+          <div>
+            <strong style="color:#60a5fa;font-size:15px;">系统性低估（风险厌恶提供）</strong>
+            <div style="color:#94a3b8;font-size:13px;margin-top:2px;">投资者要求风险补偿 → 股价被压低 → 事后回报"太高"。纯持股溢价 ~3.0pp。</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span style="background:#fbbf24;color:#0a0e1a;font-weight:700;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;">2</span>
+          <div>
+            <strong style="color:#fbbf24;font-size:15px;">少数公司兑现巨大增长（创新/创造性毁灭提供）</strong>
+            <div style="color:#94a3b8;font-size:13px;margin-top:2px;">4% 的公司创造全部净财富。低估被兑现为超额回报只发生在极少数赢家身上。</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span style="background:#34d399;color:#0a0e1a;font-weight:700;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;">3</span>
+          <div>
+            <strong style="color:#34d399;font-size:15px;">分散化持有（指数机制提供）</strong>
+            <div style="color:#94a3b8;font-size:13px;margin-top:2px;">买一张覆盖面足够大的"彩票"，确保不错过极度集中的回报时刻和回报来源。</div>
+          </div>
+        </div>
+      </div>
+      <p style="color:#f472b6;font-size:14px;margin-top:20px;text-align:center;font-weight:600;">缺任何一个都不行。如果创新停滞（日本 1990 后），股权溢价塌缩。</p>
+    </div>
+
+    <h3>"热寂"思想实验 vs 现实</h3>
+    <p>如果所有公司都收敛到第三阶段：市场整体 PE 降到 10–15x，EPS 增长 ≈ GDP ≈ 2–3%，回报只剩股息率 4–5% + 微小增长 ≈ 6–8%。整个市场看起来就像 ConEd。</p>
+    <p>为什么现实中没有走到这一步？因为<strong style="color:#a78bfa">新市场不断叠加</strong>：1957 年的电力、石油、钢铁今天依然存在，但之上叠加了个人电脑（1980s）、互联网（2000s）、AI（2020s）。每一层新市场带来新的阶段一公司。旧公司不一定死，但占总市值比例缩小（ConEd：1957 年 ~1% → 2024 年 ~0.06%）。</p>
+
+    <div class="insight">
+      <strong>最终结论：</strong>~10% 的年化回报和股权溢价，本质上依赖于"创造性毁灭"的持续运转。当 PE 28.2 远高于均值，均值回归的速度取决于创新是否持续 — 如果 AI 浪潮兑现为真实盈利增长，回归会更温和；如果创新停滞，日本的 34 年就是前车之鉴。
+    </div>
+
+    <p style="color:#94a3b8;font-size:13px;margin-top:32px;">
+      数据来源：CRSP 月度回报 (1957–2024)、Compustat 年度 (1963–2024)、S&P 500 成分股 (1957-03 起)。<br>
+      研究文档：stock_lifecycle_and_market_dynamics_log.md、random_portfolio_simulation_log.md、coned_dcf_analysis_log.md、cohort_1957_analysis_log.md<br>
+      参考文献：Bessembinder (2018) "Do Stocks Outperform Treasury Bills?", JP Morgan "Guide to the Markets" (2024)
+    </p>
+  </section>
+</div>
+
+<script>
+const C = {
+  blue:'#60a5fa', purple:'#a78bfa', pink:'#f472b6', gold:'#fbbf24',
+  red:'#f87171', green:'#34d399', orange:'#f97316', muted:'#4a5568'
+};
+
+const baseOpts = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { labels: { color:'#94a3b8', font:{size:12} } },
+    tooltip: { backgroundColor:'#1e293b', titleColor:'#f8fafc', bodyColor:'#cbd5e1', borderColor:'#334155', borderWidth:1 }
+  },
+  scales: {
+    x: { ticks:{color:'#94a3b8',font:{size:11}}, grid:{color:'#1e293b'} },
+    y: { ticks:{color:'#94a3b8',font:{size:11}}, grid:{color:'#1e293b'} }
+  }
+};
+
+// === Chart 1: Lifecycle Distribution (doughnut) ===
+new Chart(document.getElementById('lifecycleChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['成长 Growth (~10%)', '减速 Decel (~22%)', '成熟 Mature (~50%)', '死亡 Death (~18%)'],
+    datasets: [{
+      data: [10, 22, 50, 18],
+      backgroundColor: [C.green+'cc', C.blue+'cc', C.gold+'cc', C.red+'cc'],
+      borderColor: [C.green, C.blue, C.gold, C.red],
+      borderWidth: 2
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '50%',
+    plugins: {
+      legend: { position:'right', labels:{color:'#94a3b8',font:{size:12},padding:16} },
+      title: { display:true, text:'公司-十年窗口生命周期分布（3 组平均）', color:'#f8fafc', font:{size:14} },
+      tooltip: {
+        backgroundColor:'#1e293b', titleColor:'#f8fafc', bodyColor:'#cbd5e1',
+        callbacks: {
+          label: function(ctx) {
+            const labels = {
+              0: 'PE 21-23x · EPS CAGR +18~21%',
+              1: 'PE ~16x · EPS CAGR +5.7~6.0%',
+              2: 'PE 14-15x · EPS CAGR -3.8~-4.8%',
+              3: '退市收场'
+            };
+            return ctx.label + ': ' + ctx.raw + '% — ' + labels[ctx.dataIndex];
+          }
+        }
+      }
+    }
+  }
+});
+
+// === Chart 2: Three Simulation Strategies ===
+new Chart(document.getElementById('simChart'), {
+  type: 'bar',
+  data: {
+    labels: ['N=1', 'N=5', 'N=10', 'N=20', 'N=50', 'N=100', 'N=500'],
+    datasets: [
+      {
+        label: '买入持有（不补新）',
+        data: [4.07, 7.07, 7.49, 7.63, 7.71, null, null],
+        backgroundColor: C.red + '99', borderColor: C.red, borderWidth: 1
+      },
+      {
+        label: '退市补新股',
+        data: [6.54, 8.38, 8.92, 9.10, 9.33, 9.45, 10.13],
+        backgroundColor: C.gold + '99', borderColor: C.gold, borderWidth: 1
+      },
+      {
+        label: '月度等权再平衡',
+        data: [8.02, 11.40, 11.82, 12.09, 12.18, 12.21, 12.25],
+        backgroundColor: C.green + '99', borderColor: C.green, borderWidth: 1
+      }
+    ]
+  },
+  options: {
+    ...baseOpts,
+    plugins: {
+      ...baseOpts.plugins,
+      title: { display:true, text:'三种策略的中位 CAGR vs 组合规模 N（1957–2024, 1000 次模拟）', color:'#f8fafc', font:{size:14} },
+      tooltip: {
+        ...baseOpts.plugins.tooltip,
+        callbacks: { label: ctx => ctx.dataset.label + ': ' + (ctx.raw !== null ? ctx.raw.toFixed(2) + '%' : 'N/A') }
+      }
+    },
+    scales: {
+      ...baseOpts.scales,
+      y: { ...baseOpts.scales.y, title:{display:true,text:'中位 CAGR %',color:'#94a3b8'}, min:0 }
+    }
+  }
+});
+
+// === Chart 3: Effect Decomposition Waterfall ===
+(function() {
+  const labels = ['国债', '+ 纯持股溢价', '+ 成分股替换', '+ 等权再平衡', '合计'];
+  const vals = [4.50, 3.0, 1.4, 2.9, 11.82];
+  const cumulative = [4.50, 7.49, 8.92, 11.82, 11.82];
+  const bottoms = [0, 4.50, 7.49, 8.92, 0];
+
+  new Chart(document.getElementById('decompChart'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label:'底部（隐藏）', data:bottoms, backgroundColor:'transparent', borderWidth:0 },
+        { label:'贡献',
+          data: vals,
+          backgroundColor: [C.muted+'99', C.blue+'bb', C.gold+'bb', C.green+'bb', C.purple+'bb'],
+          borderColor: [C.muted, C.blue, C.gold, C.green, C.purple],
+          borderWidth: 1
+        }
+      ]
+    },
+    options: {
+      ...baseOpts,
+      plugins: {
+        ...baseOpts.plugins,
+        title: { display:true, text:'股权溢价效应分解瀑布图（N=10 中位 CAGR）', color:'#f8fafc', font:{size:14} },
+        legend: { display:false },
+        tooltip: {
+          ...baseOpts.plugins.tooltip,
+          filter: item => item.datasetIndex === 1,
+          callbacks: {
+            label: ctx => {
+              const desc = ['无风险利率', '风险补偿 (买了不动 vs 国债)', '淘汰输家、引入赢家', '月度高抛低吸', '完整回报'];
+              return ctx.raw.toFixed(1) + 'pp — ' + desc[ctx.dataIndex];
+            }
+          }
+        }
+      },
+      scales: {
+        ...baseOpts.scales,
+        x: { ...baseOpts.scales.x, stacked:true },
+        y: { ...baseOpts.scales.y, stacked:true, title:{display:true,text:'CAGR %',color:'#94a3b8'}, max:14 }
+      }
+    }
+  });
+})();
+
+// === Chart 4: PE Quintile → Forward Return ===
+new Chart(document.getElementById('peChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Q1 低PE\n(~6.8x)', 'Q2\n(~11x)', 'Q3\n(~14.5x)', 'Q4\n(~18.7x)', 'Q5 高PE\n(~37x)'],
+    datasets: [
+      { label:'seed=42', data:[47.6, 22.2, 14.4, 15.1, 11.4], backgroundColor:C.blue+'99', borderColor:C.blue, borderWidth:1 },
+      { label:'seed=123', data:[41.1, 14.2, 11.8, 17.9, 16.1], backgroundColor:C.purple+'99', borderColor:C.purple, borderWidth:1 },
+      { label:'seed=7', data:[36.2, 16.6, 10.0, 14.7, 10.6], backgroundColor:C.pink+'99', borderColor:C.pink, borderWidth:1 }
+    ]
+  },
+  options: {
+    ...baseOpts,
+    plugins: {
+      ...baseOpts.plugins,
+      title: { display:true, text:'PE 分位数 → 5 年累计回报（3 组随机种子）', color:'#f8fafc', font:{size:14} },
+      tooltip: {
+        ...baseOpts.plugins.tooltip,
+        callbacks: { label: ctx => ctx.dataset.label + ': +' + ctx.raw.toFixed(1) + '%' }
+      }
+    },
+    scales: {
+      ...baseOpts.scales,
+      y: { ...baseOpts.scales.y, title:{display:true,text:'5 年累计回报 %',color:'#94a3b8'} }
+    }
+  }
+});
+
+// === Chart 5: Wealth Concentration (Right Skew) ===
+new Chart(document.getElementById('skewChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Top 1 公司', 'Top 5 公司', 'Top 10 公司'],
+    datasets: [
+      { label:'seed=42', data:[19.1, 52.5, 77.8], backgroundColor:C.blue+'99', borderColor:C.blue, borderWidth:1 },
+      { label:'seed=123', data:[68.1, 88.7, 95.2], backgroundColor:C.purple+'99', borderColor:C.purple, borderWidth:1 },
+      { label:'seed=7', data:[26.8, 67.0, 82.8], backgroundColor:C.pink+'99', borderColor:C.pink, borderWidth:1 }
+    ]
+  },
+  options: {
+    ...baseOpts,
+    plugins: {
+      ...baseOpts.plugins,
+      title: { display:true, text:'财富集中度 — Top N 公司占总财富的比例（%）', color:'#f8fafc', font:{size:14} },
+      tooltip: {
+        ...baseOpts.plugins.tooltip,
+        callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.raw.toFixed(1) + '%' }
+      }
+    },
+    scales: {
+      ...baseOpts.scales,
+      y: { ...baseOpts.scales.y, title:{display:true,text:'占总财富 %',color:'#94a3b8'}, max:100 }
+    }
+  }
+});
+
+// === Chart 6: Time Concentration ===
+(function() {
+  const removed = [0, 1, 5, 10, 20, 50];
+  const s42 = [11.10, 11.10-0.26, 11.10-1.01, 11.10-1.85, 11.10-3.33, 11.10-6.82];
+  const s123 = [11.27, 11.27-0.36, 11.27-1.11, 11.27-1.93, 11.27-3.39, 11.27-6.93];
+  const s7 = [11.73, 11.73-0.24, 11.73-1.04, 11.73-1.87, 11.73-3.33, 11.73-6.73];
+
+  new Chart(document.getElementById('timeChart'), {
+    type: 'line',
+    data: {
+      labels: removed.map(n => n === 0 ? '全部' : '去'+n+'月'),
+      datasets: [
+        { label:'seed=42', data:s42, borderColor:C.blue, backgroundColor:C.blue+'22', fill:true, borderWidth:2, pointRadius:4, tension:0.3 },
+        { label:'seed=123', data:s123, borderColor:C.purple, backgroundColor:C.purple+'22', fill:true, borderWidth:2, pointRadius:4, tension:0.3 },
+        { label:'seed=7', data:s7, borderColor:C.pink, backgroundColor:C.pink+'22', fill:true, borderWidth:2, pointRadius:4, tension:0.3 },
+        { label:'国债 4.5%', data: removed.map(() => 4.5), borderColor:C.muted, borderDash:[5,5], borderWidth:1, pointRadius:0 }
+      ]
+    },
+    options: {
+      ...baseOpts,
+      plugins: {
+        ...baseOpts.plugins,
+        title: { display:true, text:'去掉最好 N 个月后 CAGR 的变化（816 月中）', color:'#f8fafc', font:{size:14} },
+        tooltip: {
+          ...baseOpts.plugins.tooltip,
+          callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.raw.toFixed(2) + '%' }
+        }
+      },
+      scales: {
+        x: { ...baseOpts.scales.x, title:{display:true,text:'去掉最好的 N 个月',color:'#94a3b8'} },
+        y: { ...baseOpts.scales.y, title:{display:true,text:'CAGR %',color:'#94a3b8'}, min:0 }
+      },
+      interaction: { mode:'index', intersect:false }
+    }
+  });
+})();
+
+// === Sidebar active tracking ===
+document.addEventListener('DOMContentLoaded', function() {
+  const links = document.querySelectorAll('.sidebar a[href^="#"]');
+  const sections = [];
+  links.forEach(a => {
+    const id = a.getAttribute('href').slice(1);
+    const el = document.getElementById(id);
+    if (el) sections.push({ el, a });
+  });
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(a => a.classList.remove('active'));
+        const match = sections.find(s => s.el === entry.target);
+        if (match) match.a.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -60% 0px' });
+
+  sections.forEach(s => observer.observe(s.el));
+});
+</script>
+</body>
+</html>
