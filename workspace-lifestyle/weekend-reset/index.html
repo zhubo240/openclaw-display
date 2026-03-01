@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>周末重启 · Lifestyle Workspace</title>
+<style>
+  :root {
+    --bg: #faf9f6;
+    --text: #2d2d2d;
+    --accent: #5a7d64;
+    --accent-light: #e8f0eb;
+    --border: #e0ddd8;
+    --muted: #8a8580;
+    --warm: #b08952;
+    --warm-light: #f9f3ea;
+    --calm: #6b7f8a;
+    --calm-light: #edf1f3;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Noto Sans SC", "Helvetica Neue", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.8;
+    padding: 3rem 1.5rem;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .breadcrumb { font-size: 0.85rem; color: var(--muted); margin-bottom: 2rem; }
+  header { margin-bottom: 2.5rem; }
+  header h1 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.3rem; }
+  header p { color: var(--muted); font-size: 0.9rem; }
+  .intro {
+    padding: 1.2rem 1.4rem;
+    background: linear-gradient(135deg, var(--warm-light) 0%, var(--calm-light) 100%);
+    border-left: 3px solid var(--warm);
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 2.5rem;
+    font-size: 0.9rem;
+  }
+  .section {
+    margin-bottom: 2.5rem;
+    padding: 1.5rem;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .section h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--warm);
+  }
+  .section p, .section li { font-size: 0.9rem; }
+
+  /* Ritual timeline */
+  .ritual-block {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .ritual-block:last-child { border-bottom: none; }
+  .ritual-time {
+    flex-shrink: 0;
+    width: 60px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--warm);
+    padding-top: 0.1rem;
+  }
+  .ritual-content { flex: 1; }
+  .ritual-content h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.3rem; }
+  .ritual-content p { font-size: 0.85rem; color: var(--muted); }
+  .ritual-content .link-ref {
+    display: inline-block;
+    margin-top: 0.3rem;
+    font-size: 0.78rem;
+    padding: 0.1rem 0.5rem;
+    background: var(--accent-light);
+    border-radius: 3px;
+    color: var(--accent);
+  }
+
+  /* Sense cards */
+  .sense-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 0.6rem;
+    margin: 0.8rem 0;
+  }
+  .sense-card {
+    padding: 0.8rem;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 0.82rem;
+  }
+  .sense-card .icon { font-size: 1.5rem; margin-bottom: 0.3rem; }
+  .sense-card h4 { font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; }
+  .sense-1 { background: #fdf3e8; } .sense-1 h4 { color: #c47d3c; }
+  .sense-2 { background: #e6f0f5; } .sense-2 h4 { color: #4a7d9b; }
+  .sense-3 { background: #f0edf5; } .sense-3 h4 { color: #7b6b8a; }
+  .sense-4 { background: #e8f0eb; } .sense-4 h4 { color: #5a7d64; }
+  .sense-5 { background: #fce8e6; } .sense-5 h4 { color: #c25b4e; }
+
+  /* Slow list */
+  .slow-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    margin: 0.8rem 0;
+  }
+  .slow-card {
+    padding: 1rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+  }
+  .slow-card h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.4rem; }
+  .slow-card ul { padding-left: 1rem; font-size: 0.82rem; }
+  .slow-card li { margin-bottom: 0.2rem; }
+  .slow-do { background: var(--accent-light); }
+  .slow-do h4 { color: var(--accent); }
+  .slow-dont { background: var(--calm-light); }
+  .slow-dont h4 { color: var(--calm); }
+
+  /* Reflection prompts */
+  .prompt-list { list-style: none; counter-reset: prompts; }
+  .prompt-list li {
+    counter-increment: prompts;
+    padding: 0.8rem 0 0.8rem 2.5rem;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  .prompt-list li:last-child { border-bottom: none; }
+  .prompt-list li::before {
+    content: counter(prompts);
+    position: absolute;
+    left: 0; top: 0.7rem;
+    width: 1.8rem; height: 1.8rem;
+    background: var(--warm);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem; font-weight: 600;
+  }
+  .prompt-list li strong { display: block; font-size: 0.92rem; margin-bottom: 0.15rem; }
+  .prompt-list li span { font-size: 0.82rem; color: var(--muted); }
+
+  .tip-box {
+    padding: 0.8rem 1rem;
+    background: var(--accent-light);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    margin-top: 1rem;
+  }
+  .tip-box strong { color: var(--accent); }
+  .quote-box {
+    padding: 1rem 1.2rem;
+    background: var(--warm-light);
+    border-radius: 6px;
+    font-size: 0.88rem;
+    font-style: italic;
+    color: var(--warm);
+    margin: 1rem 0;
+    text-align: center;
+  }
+  footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  @media (max-width: 500px) {
+    .slow-grid { grid-template-columns: 1fr; }
+    .sense-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="breadcrumb"><a href="../index.html">Lifestyle Workspace</a> / 周末重启</div>
+
+<header>
+  <h1>周末重启仪式</h1>
+  <p>慢下来 · 清理 · 为下周充电</p>
+</header>
+
+<div class="intro">
+  周末不是用来"补偿"工作日的。不是报复性熬夜、报复性刷手机、报复性躺平。真正的休息是<strong>有意识地切换模式</strong>——让身体恢复、让心理清零、让下周有一个干净的起点。这个仪式只需要周日的半天。
+</div>
+
+<!-- 周日重启流程 -->
+<div class="section">
+  <h2>周日重启流程</h2>
+  <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 0.8rem;">不需要全做。选你觉得有吸引力的 3-4 项，形成你自己的版本。</p>
+
+  <div class="ritual-block">
+    <div class="ritual-time">8:00</div>
+    <div class="ritual-content">
+      <h4>自然醒 + 不碰手机</h4>
+      <p>比工作日最多晚起 1 小时。醒来后的前 15 分钟给自己——拉伸、喝水、看窗外。手机至少等到洗漱完再碰。</p>
+      <a href="../spring-sleep/index.html" class="link-ref">相关 → 春困与睡眠</a>
+    </div>
+  </div>
+
+  <div class="ritual-block">
+    <div class="ritual-time">8:30</div>
+    <div class="ritual-content">
+      <h4>慢早餐</h4>
+      <p>工作日的早餐是"燃料"，周日的早餐是"仪式"。花 20 分钟做一顿比平时讲究一点的早餐——煎蛋、吐司、水果、一杯手冲。坐下来吃，不是站着扒。</p>
+      <a href="../spring-food/index.html" class="link-ref">相关 → 初春时令食谱</a>
+    </div>
+  </div>
+
+  <div class="ritual-block">
+    <div class="ritual-time">9:30</div>
+    <div class="ritual-content">
+      <h4>30 分钟清理</h4>
+      <p>不是大扫除。只做三件事：桌面归零（所有东西归位）、收拾本周积累的杂物、倒垃圾换垃圾袋。30 分钟够了，设闹钟。</p>
+      <a href="../spring-declutter/index.html" class="link-ref">相关 → 春季衣橱整理</a>
+    </div>
+  </div>
+
+  <div class="ritual-block">
+    <div class="ritual-time">10:00</div>
+    <div class="ritual-content">
+      <h4>出门</h4>
+      <p>去任何地方，但必须出门。散步 30 分钟、去公园坐坐、逛个菜市场、骑车到一个没去过的咖啡馆。要点：离开家的四面墙。</p>
+      <a href="../spring-exercise/index.html" class="link-ref">相关 → 春季运动指南</a>
+    </div>
+  </div>
+
+  <div class="ritual-block">
+    <div class="ritual-time">12:00</div>
+    <div class="ritual-content">
+      <h4>做一顿饭</h4>
+      <p>周日是练手的好时候。从时令食谱里挑一道试试。做饭的过程本身就是正念练习——切菜、调味、等待，全是当下的体验。</p>
+      <a href="../spring-food/index.html" class="link-ref">相关 → 初春时令食谱</a>
+    </div>
+  </div>
+
+  <div class="ritual-block">
+    <div class="ritual-time">14:00</div>
+    <div class="ritual-content">
+      <h4>周回顾 + 下周计划</h4>
+      <p>花 15 分钟回答本页下方的"5 个反思问题"。然后打开日历，确认下周的重要事项，在三月目标的周计划表里填写下周任务。</p>
+      <a href="../march-plan/index.html" class="link-ref">相关 → 三月规划</a>
+    </div>
+  </div>
+
+  <div class="ritual-block">
+    <div class="ritual-time">15:00</div>
+    <div class="ritual-content">
+      <h4>数字清理</h4>
+      <p>清理手机相册（删糊片和截图）、清理微信未读、处理积压的消息和邮件。把"数字债务"在周日解决，周一从零开始。</p>
+      <a href="../digital-wellness/index.html" class="link-ref">相关 → 数字健康</a>
+    </div>
+  </div>
+
+  <div class="ritual-block">
+    <div class="ritual-time">晚间</div>
+    <div class="ritual-content">
+      <h4>早睡</h4>
+      <p>周日晚是全周最重要的一晚。比平时早 30 分钟上床。为周一的精力状态打好基础。</p>
+      <a href="../spring-sleep/index.html" class="link-ref">相关 → 春困与睡眠</a>
+    </div>
+  </div>
+</div>
+
+<!-- 五感重启 -->
+<div class="section">
+  <h2>五感重启法</h2>
+  <p style="font-size: 0.88rem; margin-bottom: 0.8rem;">当你觉得"周末过完了但没休息到"，问题往往是你一直在<strong>思考</strong>（工作的事、焦虑的事），但身体的感官全程关闭。试试用感官把自己拉回当下：</p>
+
+  <div class="sense-grid">
+    <div class="sense-card sense-1">
+      <div class="icon">&#x1f👁</div>
+      <h4>看</h4>
+      看窗外 5 分钟<br>不看屏幕，看远处<br>注意光影和颜色
+    </div>
+    <div class="sense-card sense-2">
+      <div class="icon">&#x1f442</div>
+      <h4>听</h4>
+      摘掉耳机<br>听环境的声音<br>鸟鸣、风声、雨声
+    </div>
+    <div class="sense-card sense-3">
+      <div class="icon">&#x1f443</div>
+      <h4>闻</h4>
+      泡一杯花草茶<br>或点一支香<br>深呼吸 3 次
+    </div>
+    <div class="sense-card sense-4">
+      <div class="icon">&#x270b</div>
+      <h4>触</h4>
+      赤脚踩地板<br>双手捧热杯子<br>拉伸时感受肌肉
+    </div>
+    <div class="sense-card sense-5">
+      <div class="icon">&#x1f445</div>
+      <h4>尝</h4>
+      吃东西时放慢<br>不看手机<br>感受每一口的味道
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>这就是正念。</strong>不需要打坐、不需要 App、不需要课程。正念就是"注意到你正在做的事"。洗碗时注意水温和泡沫，散步时注意脚底的触感——这已经够了。
+  </div>
+</div>
+
+<!-- 慢活清单 -->
+<div class="section">
+  <h2>周末慢活清单</h2>
+
+  <div class="slow-grid">
+    <div class="slow-card slow-do">
+      <h4>可以做</h4>
+      <ul>
+        <li>不设闹钟自然醒</li>
+        <li>去没去过的街区散步</li>
+        <li>在咖啡馆看一小时书</li>
+        <li>下厨做一道新菜</li>
+        <li>给许久没联系的朋友发消息</li>
+        <li>逛菜市场或花市</li>
+        <li>洗衣服、晒太阳、发呆</li>
+        <li>写日记（纸笔，不是手机）</li>
+      </ul>
+    </div>
+    <div class="slow-card slow-dont">
+      <h4>尽量避免</h4>
+      <ul>
+        <li>报复性刷手机到凌晨</li>
+        <li>周末比工作日更晚起</li>
+        <li>一整天不出门</li>
+        <li>用"效率"衡量周末</li>
+        <li>把周末排满社交</li>
+        <li>带着工作的内疚感休息</li>
+        <li>周日晚上才开始焦虑周一</li>
+        <li>说"周末又浪费了"</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="quote-box">
+    "休息不是什么都不做，而是做那些让你恢复能量的事。"
+  </div>
+</div>
+
+<!-- 周反思 -->
+<div class="section">
+  <h2>5 个周日反思问题</h2>
+  <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 0.8rem;">每周日花 10 分钟，用纸笔或备忘录写下答案。不需要长篇大论，每题 1-2 句话。</p>
+
+  <ol class="prompt-list">
+    <li>
+      <strong>这周最有价值的一件事是什么？</strong>
+      <span>不一定是工作成果。可能是一次好的对话、一个新发现、一顿好吃的饭。</span>
+    </li>
+    <li>
+      <strong>这周有什么让我消耗的？</strong>
+      <span>一个拖延的任务？一段让人烦躁的关系？一个不断查看的 App？识别消耗源是解决它的第一步。</span>
+    </li>
+    <li>
+      <strong>下周我最想完成的一件事？</strong>
+      <span>只选一件。如果只能做一件事就算好的一周，那件事是什么？</span>
+    </li>
+    <li>
+      <strong>我的身体状态怎么样？</strong>
+      <span>睡得好吗？动得够吗？有没有忽视的不舒服？身体是最诚实的反馈。</span>
+    </li>
+    <li>
+      <strong>此刻我的心情用一个词形容？</strong>
+      <span>不评判，只是记录。看到自己每周的心情变化本身就是一种自我认知。</span>
+    </li>
+  </ol>
+
+  <div class="tip-box">
+    <strong>坚持 4 周后回看：</strong>你会开始看到模式——哪种周让你状态好、哪种周消耗你。这些模式比任何生产力工具都有价值。结合 <a href="../march-plan/index.html">三月规划</a> 的习惯追踪表一起使用效果更佳。
+  </div>
+</div>
+
+<footer>
+  <p><a href="../index.html">&larr; 返回首页</a></p>
+  <p>更新：2026-03-01 13:00 GMT+8 · 自主推进生成</p>
+</footer>
+
+</body>
+</html>
