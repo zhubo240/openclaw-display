@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>量化因子研究 | A股研究知识库</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --border: #252535;
+    --text: #e0e0e8;
+    --text2: #8888a0;
+    --accent: #e05050;
+    --gold: #f0c040;
+    --green: #40c080;
+    --blue: #5080e0;
+    --orange: #e08040;
+    --purple: #a070e0;
+    --cyan: #40b8d0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+  .breadcrumb {
+    padding: 16px 0;
+    font-size: 0.85em;
+    color: var(--text2);
+  }
+  .breadcrumb a { color: var(--blue); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+
+  .hero {
+    padding: 56px 0 48px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero h1 {
+    font-size: 2.4em;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+  }
+  .hero h1 .hl { color: var(--purple); }
+  .hero .subtitle {
+    font-size: 1.05em;
+    color: var(--text2);
+    margin-bottom: 28px;
+  }
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+  .hero-stat { text-align: center; }
+  .hero-stat .num { font-size: 2em; font-weight: 700; color: var(--gold); }
+  .hero-stat .label { font-size: 0.85em; color: var(--text2); margin-top: 4px; }
+
+  .section {
+    padding: 48px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .section:last-child { border-bottom: none; }
+  .section-title {
+    font-weight: 600;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.85em;
+    margin-bottom: 8px;
+  }
+  .section-desc {
+    color: var(--text2);
+    margin-bottom: 28px;
+    font-size: 0.95em;
+  }
+
+  /* Factor Cards */
+  .factor-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .factor-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px;
+    transition: all 0.2s ease;
+  }
+  .factor-card:hover {
+    border-color: var(--purple);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  }
+  .factor-card .fc-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .factor-card .fc-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1em;
+    flex-shrink: 0;
+  }
+  .factor-card .fc-name { font-weight: 600; font-size: 1.05em; }
+  .factor-card .fc-desc {
+    font-size: 0.85em;
+    color: var(--text2);
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+  .factor-card .fc-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .fc-tag {
+    font-size: 0.72em;
+    padding: 2px 8px;
+    border-radius: 12px;
+    background: var(--surface2);
+    color: var(--text2);
+    border: 1px solid var(--border);
+  }
+  .fc-tag.strong { border-color: var(--green); color: var(--green); }
+  .fc-tag.weak { border-color: var(--orange); color: var(--orange); }
+  .fc-tag.unique { border-color: var(--purple); color: var(--purple); }
+
+  /* Model Comparison Table */
+  .model-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
+  }
+  .model-table th, .model-table td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .model-table th {
+    background: var(--surface);
+    color: var(--text2);
+    font-weight: 600;
+    font-size: 0.85em;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .model-table tr:hover td { background: var(--surface); }
+  .model-table .check { color: var(--green); }
+  .model-table .cross { color: var(--accent); }
+
+  /* Chart containers */
+  .chart-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .chart-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+  }
+  .chart-box h4 {
+    font-size: 0.95em;
+    margin-bottom: 16px;
+    color: var(--text2);
+  }
+  .chart-box canvas { max-height: 280px; }
+
+  /* Strategy bridge */
+  .bridge-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    flex-wrap: wrap;
+    padding: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  .bridge-node {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 20px;
+    text-align: center;
+    min-width: 130px;
+  }
+  .bridge-node .bn-name { font-weight: 600; font-size: 0.92em; margin-bottom: 4px; }
+  .bridge-node .bn-sub { font-size: 0.75em; color: var(--text2); }
+  .bridge-arrow { font-size: 1.4em; color: var(--text2); padding: 0 12px; }
+
+  /* Period table */
+  .period-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+  .period-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .period-card .pc-period { font-size: 0.82em; color: var(--text2); margin-bottom: 6px; }
+  .period-card .pc-winners { font-weight: 600; font-size: 0.9em; margin-bottom: 4px; }
+  .period-card .pc-losers { font-size: 0.82em; color: var(--accent); }
+
+  .footer {
+    padding: 40px 0;
+    text-align: center;
+    color: var(--text2);
+    font-size: 0.85em;
+    border-top: 1px solid var(--border);
+  }
+  .footer a { color: var(--blue); text-decoration: none; }
+
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 1.8em; }
+    .factor-grid { grid-template-columns: 1fr; }
+    .chart-row { grid-template-columns: 1fr; }
+    .bridge-flow { flex-direction: column; }
+    .bridge-arrow { transform: rotate(90deg); padding: 8px 0; }
+    .period-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <nav class="breadcrumb">
+    <a href="../index.html">A股研究知识库</a> &rsaquo; 量化因子研究
+  </nav>
+</div>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <h1><span class="hl">量化因子</span>研究</h1>
+    <p class="subtitle">从学术因子模型到可交易策略 &middot; A股本土化实证</p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="num">6</div>
+        <div class="label">核心因子</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">3</div>
+        <div class="label">经典模型</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">4</div>
+        <div class="label">A股特有因子</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">30+年</div>
+        <div class="label">A股数据跨度</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Six Core Factors -->
+<section class="section">
+  <div class="container">
+    <div class="section-title">A股六大核心因子</div>
+    <p class="section-desc">经学术验证和实务检验，在A股市场具有系统性超额收益的因子</p>
+    <div class="factor-grid">
+
+      <div class="factor-card">
+        <div class="fc-header">
+          <div class="fc-icon" style="background: #1a2520; color: var(--green);">V</div>
+          <div class="fc-name">价值因子</div>
+        </div>
+        <div class="fc-desc">买低估卖高估。EP/BP/DP等指标。A股长期有效，2021-2025年强势回归。需行业中性化处理。</div>
+        <div class="fc-meta">
+          <span class="fc-tag strong">年化溢价 4-6%</span>
+          <span class="fc-tag">EP/BP/DP</span>
+        </div>
+      </div>
+
+      <div class="factor-card">
+        <div class="fc-header">
+          <div class="fc-icon" style="background: #2a1520; color: var(--accent);">M</div>
+          <div class="fc-name">动量/反转</div>
+        </div>
+        <div class="fc-desc">A股独特：中长期动量弱或为负，短期反转极为显著。散户追涨杀跌导致超涨超跌后均值回归。</div>
+        <div class="fc-meta">
+          <span class="fc-tag unique">A股独特</span>
+          <span class="fc-tag strong">反转溢价 12-18%</span>
+        </div>
+      </div>
+
+      <div class="factor-card">
+        <div class="fc-header">
+          <div class="fc-icon" style="background: #1a1a28; color: var(--purple);">Q</div>
+          <div class="fc-name">质量因子</div>
+        </div>
+        <div class="fc-desc">买入基本面优质公司。ROE/毛利率/盈利稳定性。稳定性最好的因子，与价值因子互补。</div>
+        <div class="fc-meta">
+          <span class="fc-tag strong">最稳定</span>
+          <span class="fc-tag">ROE/毛利率</span>
+        </div>
+      </div>
+
+      <div class="factor-card">
+        <div class="fc-header">
+          <div class="fc-icon" style="background: #2a2515; color: var(--gold);">S</div>
+          <div class="fc-name">规模因子</div>
+        </div>
+        <div class="fc-desc">小市值股票长期跑赢大市值。A股小盘效应极为显著，但壳价值衰退和注册制正在改变格局。</div>
+        <div class="fc-meta">
+          <span class="fc-tag strong">年化溢价 10-15%</span>
+          <span class="fc-tag weak">周期性强</span>
+        </div>
+      </div>
+
+      <div class="factor-card">
+        <div class="fc-header">
+          <div class="fc-icon" style="background: #15252a; color: var(--cyan);">L</div>
+          <div class="fc-name">低波动因子</div>
+        </div>
+        <div class="fc-desc">低波动率股票跑赢高波动率（波动率异象）。与红利因子高度重叠，红利低波是成功的产品化案例。</div>
+        <div class="fc-meta">
+          <span class="fc-tag strong">长期有效</span>
+          <span class="fc-tag">与红利协同</span>
+        </div>
+      </div>
+
+      <div class="factor-card">
+        <div class="fc-header">
+          <div class="fc-icon" style="background: #1a2025; color: var(--blue);">I</div>
+          <div class="fc-name">流动性因子</div>
+        </div>
+        <div class="fc-desc">低流动性承担溢价。A股整体流动性充裕，因子效果弱于美股，但恐慌期溢价急剧放大。</div>
+        <div class="fc-meta">
+          <span class="fc-tag weak">效果不稳定</span>
+          <span class="fc-tag">Amihud指标</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Factor Performance Charts -->
+<section class="section">
+  <div class="container">
+    <div class="section-title">因子效果对比</div>
+    <p class="section-desc">A股六大因子的长期月均溢价与稳定性</p>
+    <div class="chart-row">
+      <div class="chart-box">
+        <h4>月均因子溢价（%）</h4>
+        <canvas id="factorPremiumChart"></canvas>
+      </div>
+      <div class="chart-box">
+        <h4>推荐因子权重配置</h4>
+        <canvas id="factorWeightChart"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Factor Models Comparison -->
+<section class="section">
+  <div class="container">
+    <div class="section-title">经典因子模型对比</div>
+    <p class="section-desc">从CAPM到Fama-French五因子，学术模型在A股的适用性</p>
+    <table class="model-table">
+      <thead>
+        <tr>
+          <th>模型</th>
+          <th>因子数</th>
+          <th>A股 R&sup2;</th>
+          <th>市场</th>
+          <th>规模</th>
+          <th>价值</th>
+          <th>质量</th>
+          <th>投资</th>
+          <th>A股适用性</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>CAPM</strong></td>
+          <td>1</td>
+          <td>&lt;30%</td>
+          <td class="check">&#10003;</td>
+          <td class="cross">&mdash;</td>
+          <td class="cross">&mdash;</td>
+          <td class="cross">&mdash;</td>
+          <td class="cross">&mdash;</td>
+          <td style="color: var(--accent);">基本无效</td>
+        </tr>
+        <tr>
+          <td><strong>FF 三因子</strong></td>
+          <td>3</td>
+          <td>60-70%</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+          <td class="cross">&mdash;</td>
+          <td class="cross">&mdash;</td>
+          <td style="color: var(--gold);">部分有效</td>
+        </tr>
+        <tr>
+          <td><strong>FF 五因子</strong></td>
+          <td>5</td>
+          <td>75-80%</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+          <td style="color: var(--orange);">&#9679;</td>
+          <td style="color: var(--green);">推荐使用</td>
+        </tr>
+        <tr>
+          <td><strong>A股增强版</strong></td>
+          <td>5+</td>
+          <td>80%+</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+          <td class="check">&#10003;</td>
+          <td class="check">+反转/换手率</td>
+          <td style="color: var(--green);">最佳适配</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- Factor Regime / Cycle -->
+<section class="section">
+  <div class="container">
+    <div class="section-title">因子周期轮动</div>
+    <p class="section-desc">不同市场环境下的占优因子与失效因子</p>
+    <div class="period-grid">
+      <div class="period-card">
+        <div class="pc-period">2005-2007 大牛市</div>
+        <div class="pc-winners" style="color: var(--green);">&#9650; Beta、小盘</div>
+        <div class="pc-losers">&#9660; 低波、价值</div>
+      </div>
+      <div class="period-card">
+        <div class="pc-period">2008 大熊市</div>
+        <div class="pc-winners" style="color: var(--green);">&#9650; 低波、质量</div>
+        <div class="pc-losers">&#9660; Beta、小盘</div>
+      </div>
+      <div class="period-card">
+        <div class="pc-period">2013-2015 创业板牛市</div>
+        <div class="pc-winners" style="color: var(--green);">&#9650; 小盘、动量</div>
+        <div class="pc-losers">&#9660; 价值、红利</div>
+      </div>
+      <div class="period-card">
+        <div class="pc-period">2017-2020 核心资产</div>
+        <div class="pc-winners" style="color: var(--green);">&#9650; 质量、大盘</div>
+        <div class="pc-losers">&#9660; 小盘、反转</div>
+      </div>
+      <div class="period-card">
+        <div class="pc-period">2021-2024 红利时代</div>
+        <div class="pc-winners" style="color: var(--green);">&#9650; 价值、低波、红利</div>
+        <div class="pc-losers">&#9660; 小盘、成长</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Strategy Bridge -->
+<section class="section">
+  <div class="container">
+    <div class="section-title">从因子到策略</div>
+    <p class="section-desc">因子研究与模拟交易系统的衔接路径</p>
+    <div class="bridge-flow">
+      <div class="bridge-node">
+        <div class="bn-name" style="color: var(--blue);">CSMAR数据</div>
+        <div class="bn-sub">全市场历史数据</div>
+      </div>
+      <div class="bridge-arrow">&rarr;</div>
+      <div class="bridge-node">
+        <div class="bn-name" style="color: var(--purple);">因子计算</div>
+        <div class="bn-sub">预处理+中性化</div>
+      </div>
+      <div class="bridge-arrow">&rarr;</div>
+      <div class="bridge-node">
+        <div class="bn-name" style="color: var(--gold);">因子合成</div>
+        <div class="bn-sub">多因子评分</div>
+      </div>
+      <div class="bridge-arrow">&rarr;</div>
+      <div class="bridge-node">
+        <div class="bn-name" style="color: var(--green);">组合构建</div>
+        <div class="bn-sub">分层/优化</div>
+      </div>
+      <div class="bridge-arrow">&rarr;</div>
+      <div class="bridge-node">
+        <div class="bn-name" style="color: var(--accent);">模拟交易</div>
+        <div class="bn-sub">实盘验证</div>
+      </div>
+    </div>
+
+    <div style="margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+      <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px;">
+        <h4 style="color: var(--gold); margin-bottom: 10px;">当前策略 v1 的因子解读</h4>
+        <div style="font-size: 0.88em; color: var(--text2); line-height: 1.7;">
+          <p><strong style="color: var(--text);">"近20日跌>5%买入"</strong> = 短期反转因子</p>
+          <p><strong style="color: var(--text);">观察池10只蓝筹</strong> = 隐含大盘+质量因子</p>
+          <p><strong style="color: var(--text);">止盈15%/止损8%</strong> = 收益截断/风险控制</p>
+          <p style="margin-top: 8px; color: var(--orange);">2025H1回测：+1.58%，夏普0.33</p>
+        </div>
+      </div>
+      <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px;">
+        <h4 style="color: var(--green); margin-bottom: 10px;">升级建议 v2 四因子模型</h4>
+        <div style="font-size: 0.88em; color: var(--text2); line-height: 1.7;">
+          <p><strong style="color: var(--text);">反转 30%</strong> + 价值 25% + 质量 25% + 低波 20%</p>
+          <p>扩大至沪深300成分股</p>
+          <p>增加PE/PB分位数门槛 + ROE>10%筛选</p>
+          <p>止损线放宽至12%（减少假性止损）</p>
+          <p style="margin-top: 8px; color: var(--green);">目标：夏普 > 0.5，最大回撤 < 20%</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Key Pitfalls -->
+<section class="section">
+  <div class="container">
+    <div class="section-title">A股因子研究特殊考量</div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px;">
+      <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 18px;">
+        <div style="color: var(--accent); font-weight: 600; margin-bottom: 6px;">生存偏差</div>
+        <div style="font-size: 0.84em; color: var(--text2);">必须包含退市公司数据，否则高估收益。CSMAR数据需求已覆盖此项。</div>
+      </div>
+      <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 18px;">
+        <div style="color: var(--orange); font-weight: 600; margin-bottom: 6px;">前视偏差</div>
+        <div style="font-size: 0.84em; color: var(--text2);">年报4月底披露完毕，6月底才可用。严格按公告日期对齐数据。</div>
+      </div>
+      <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 18px;">
+        <div style="color: var(--gold); font-weight: 600; margin-bottom: 6px;">因子拥挤</div>
+        <div style="font-size: 0.84em; color: var(--text2);">量化交易占比20%+，红利/低波因子溢价可能被压缩。</div>
+      </div>
+      <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 18px;">
+        <div style="color: var(--purple); font-weight: 600; margin-bottom: 6px;">壳价值干扰</div>
+        <div style="font-size: 0.84em; color: var(--text2);">小市值垃圾股虚高BP干扰价值因子。注册制+退市常态化正在改善。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <p>量化因子研究 &middot; 数据基于A股1990-2025年实证 &middot; 内容为研究参考，不构成投资建议</p>
+    <p style="margin-top: 8px;"><a href="../index.html">&larr; 返回知识库首页</a></p>
+  </div>
+</footer>
+
+<script>
+// Factor Premium Bar Chart
+const ctxPremium = document.getElementById('factorPremiumChart').getContext('2d');
+new Chart(ctxPremium, {
+  type: 'bar',
+  data: {
+    labels: ['反转', '规模', '价值', '质量', '低波动', '流动性'],
+    datasets: [{
+      label: '月均溢价 (%)',
+      data: [1.2, 1.0, 0.45, 0.5, 0.4, 0.25],
+      backgroundColor: [
+        'rgba(224, 80, 80, 0.7)',
+        'rgba(240, 192, 64, 0.7)',
+        'rgba(64, 192, 128, 0.7)',
+        'rgba(160, 112, 224, 0.7)',
+        'rgba(64, 184, 208, 0.7)',
+        'rgba(80, 128, 224, 0.7)'
+      ],
+      borderColor: [
+        '#e05050', '#f0c040', '#40c080', '#a070e0', '#40b8d0', '#5080e0'
+      ],
+      borderWidth: 1,
+      borderRadius: 4
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => `月均溢价: ${ctx.raw}%（年化约${(ctx.raw * 12).toFixed(0)}%）`
+        }
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: { color: '#8888a0', callback: v => v + '%' },
+        grid: { color: '#252535' }
+      },
+      x: {
+        ticks: { color: '#e0e0e8' },
+        grid: { display: false }
+      }
+    }
+  }
+});
+
+// Recommended Weight Doughnut
+const ctxWeight = document.getElementById('factorWeightChart').getContext('2d');
+new Chart(ctxWeight, {
+  type: 'doughnut',
+  data: {
+    labels: ['价值 (EP/BP)', '质量 (ROE)', '低波动', '反转', '规模'],
+    datasets: [{
+      data: [25, 25, 20, 15, 15],
+      backgroundColor: [
+        'rgba(64, 192, 128, 0.8)',
+        'rgba(160, 112, 224, 0.8)',
+        'rgba(64, 184, 208, 0.8)',
+        'rgba(224, 80, 80, 0.8)',
+        'rgba(240, 192, 64, 0.8)'
+      ],
+      borderColor: '#0a0a0f',
+      borderWidth: 2
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'right',
+        labels: {
+          color: '#e0e0e8',
+          font: { size: 12 },
+          padding: 12
+        }
+      },
+      tooltip: {
+        callbacks: {
+          label: ctx => `${ctx.label}: ${ctx.raw}%`
+        }
+      }
+    }
+  }
+});
+</script>
+
+</body>
+</html>
