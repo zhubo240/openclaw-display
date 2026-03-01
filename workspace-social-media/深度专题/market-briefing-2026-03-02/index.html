@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3/2 周一开盘前瞻 — 社媒情绪速报</title>
+<style>
+  :root {
+    --bg: #0d1117; --card: #161b22; --border: #30363d;
+    --text: #e6edf3; --text2: #8b949e; --accent: #58a6ff;
+    --green: #3fb950; --red: #f85149; --orange: #d29922; --purple: #bc8cff;
+    --yellow: #e3b341;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--text);
+    font: 15px/1.8 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    padding: 32px 20px; min-height: 100vh;
+  }
+  .container { max-width: 820px; margin: 0 auto; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .back { font-size: 13px; color: var(--text2); margin-bottom: 24px; display: inline-block; }
+
+  /* Hero banner */
+  .hero {
+    background: linear-gradient(135deg, rgba(210,153,34,0.1), rgba(248,81,73,0.06));
+    border: 1px solid rgba(210,153,34,0.3);
+    border-radius: 16px; padding: 36px; margin-bottom: 32px;
+    position: relative;
+  }
+  .hero .badge {
+    display: inline-block; padding: 4px 12px; border-radius: 12px;
+    font-size: 11px; font-weight: 700; letter-spacing: 1px;
+    background: rgba(210,153,34,0.15); color: var(--orange); margin-bottom: 14px;
+  }
+  .hero h1 { font-size: 26px; line-height: 1.3; margin-bottom: 10px; }
+  .hero .sub { font-size: 14px; color: var(--text2); line-height: 1.7; margin-bottom: 16px; }
+  .hero .meta { font-size: 12px; color: var(--text2); display: flex; gap: 16px; flex-wrap: wrap; }
+
+  /* Signal grid */
+  .signals {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+    margin-bottom: 32px;
+  }
+  .signal {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px; text-align: center;
+  }
+  .signal .dir { font-size: 22px; font-weight: 800; line-height: 1; }
+  .signal .dir-up { color: var(--red); }
+  .signal .dir-down { color: var(--green); }
+  .signal .dir-neutral { color: var(--orange); }
+  .signal .asset { font-size: 12px; color: var(--text); margin-top: 4px; font-weight: 600; }
+  .signal .note { font-size: 11px; color: var(--text2); margin-top: 2px; }
+
+  /* Section */
+  .section { margin-bottom: 32px; }
+  .section-title {
+    font-size: 13px; color: var(--text2); text-transform: uppercase;
+    letter-spacing: 1px; margin-bottom: 14px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Analysis cards */
+  .a-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .a-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px;
+  }
+  .a-card.full { grid-column: 1 / -1; }
+  .a-card h3 { font-size: 14px; margin-bottom: 6px; }
+  .a-card p { font-size: 13px; color: var(--text2); line-height: 1.7; }
+  .a-card .tag {
+    display: inline-block; padding: 2px 8px; border-radius: 8px;
+    font-size: 10px; font-weight: 600; margin-bottom: 6px;
+  }
+
+  /* Sentiment bars */
+  .sentiment-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 0; border-bottom: 1px solid rgba(48,54,61,0.5);
+    font-size: 13px;
+  }
+  .sentiment-row:last-child { border-bottom: none; }
+  .s-platform { width: 80px; font-weight: 600; font-size: 12px; flex-shrink: 0; }
+  .s-bar-wrap { flex: 1; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .s-bar { height: 100%; border-radius: 4px; }
+  .s-label { width: 48px; text-align: right; font-size: 11px; color: var(--text2); flex-shrink: 0; }
+  .s-tone { width: 60px; font-size: 11px; flex-shrink: 0; }
+
+  /* Key variables */
+  .vars {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  }
+  .var-item {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 14px;
+  }
+  .var-item .v-label { font-size: 11px; color: var(--text2); margin-bottom: 4px; }
+  .var-item .v-value { font-size: 14px; font-weight: 600; }
+  .var-item .v-detail { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+  /* Checklist */
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    font-size: 13px; padding: 8px 0;
+    border-bottom: 1px solid rgba(48,54,61,0.5);
+    display: flex; gap: 8px; align-items: baseline;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .check-icon { color: var(--orange); font-size: 14px; flex-shrink: 0; }
+
+  .sources { font-size: 12px; color: var(--text2); line-height: 2; }
+  .sources a { color: var(--text2); }
+  .sources a:hover { color: var(--accent); }
+
+  .footer {
+    text-align: center; padding: 24px; color: var(--text2); font-size: 12px;
+    border-top: 1px solid var(--border); margin-top: 20px;
+  }
+
+  @media (max-width: 700px) {
+    .signals { grid-template-columns: repeat(2, 1fr); }
+    .a-grid { grid-template-columns: 1fr; }
+    .vars { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<a class="back" href="../../index.html">&larr; 返回监测站</a>
+
+<div class="hero">
+  <span class="badge">速报 &middot; 开盘前瞻</span>
+  <h1>3/2 周一开盘前瞻：中东危机下的市场冲击</h1>
+  <div class="sub">
+    美以打击伊朗发生在周五/周末，社交媒体已讨论 48 小时，但金融市场尚未充分定价。今日（3/2 周一）是<strong>信息差兑现日</strong> — 散户社媒预判 vs 机构集中反应。本页基于五平台周末讨论情绪 + 最新公开数据编制。
+  </div>
+  <div class="meta">
+    <span>编制时间：2026-03-02 03:30</span>
+    <span>5 平台情绪数据</span>
+    <span>距 A 股开盘 ~6h</span>
+  </div>
+</div>
+
+<!-- Signal Overview -->
+<div class="section">
+  <div class="section-title">资产方向信号</div>
+  <div class="signals">
+    <div class="signal">
+      <div class="dir dir-up">&uarr; +9%+</div>
+      <div class="asset">原油 (WTI/布伦特)</div>
+      <div class="note">IG 周末指标 +9%<br>Polymarket 93% 看涨</div>
+    </div>
+    <div class="signal">
+      <div class="dir dir-up">&uarr; 看涨</div>
+      <div class="asset">黄金</div>
+      <div class="note">避险+通胀双驱<br>关键 48h 窗口</div>
+    </div>
+    <div class="signal">
+      <div class="dir dir-down">&darr; 低开</div>
+      <div class="asset">A 股大盘</div>
+      <div class="note">情绪冲击为主<br>兴业：中期牛市不变</div>
+    </div>
+    <div class="signal">
+      <div class="dir dir-up">&uarr; 受益</div>
+      <div class="asset">油气 / 军工 / 黄金股</div>
+      <div class="note">跷跷板行情<br>防御板块逆势</div>
+    </div>
+    <div class="signal">
+      <div class="dir dir-down">&darr; 承压</div>
+      <div class="asset">美股科技股</div>
+      <div class="note">AI 叙事暂退<br>避险情绪压制</div>
+    </div>
+    <div class="signal">
+      <div class="dir dir-neutral">&harr; 待定</div>
+      <div class="asset">美元指数</div>
+      <div class="note">避险走强 vs<br>经济冲击走弱</div>
+    </div>
+  </div>
+</div>
+
+<!-- Platform Sentiment -->
+<div class="section">
+  <div class="section-title">五平台周末情绪温度</div>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;">
+    <div class="sentiment-row">
+      <span class="s-platform" style="color:#07c160">微信/资讯</span>
+      <div class="s-bar-wrap"><div class="s-bar" style="width:85%;background:linear-gradient(90deg,var(--orange),var(--red))"></div></div>
+      <span class="s-label">85%</span>
+      <span class="s-tone" style="color:var(--red)">高度恐慌</span>
+    </div>
+    <div class="sentiment-row">
+      <span class="s-platform" style="color:#fe2c55">小红书</span>
+      <div class="s-bar-wrap"><div class="s-bar" style="width:78%;background:linear-gradient(90deg,var(--orange),var(--red))"></div></div>
+      <span class="s-label">78%</span>
+      <span class="s-tone" style="color:var(--orange)">恐慌+行动</span>
+    </div>
+    <div class="sentiment-row">
+      <span class="s-platform" style="color:#00a1d6">B站</span>
+      <div class="s-bar-wrap"><div class="s-bar" style="width:60%;background:linear-gradient(90deg,var(--accent),var(--orange))"></div></div>
+      <span class="s-label">60%</span>
+      <span class="s-tone" style="color:var(--accent)">关注/吃瓜</span>
+    </div>
+    <div class="sentiment-row">
+      <span class="s-platform" style="color:#ff0000">YouTube</span>
+      <div class="s-bar-wrap"><div class="s-bar" style="width:82%;background:linear-gradient(90deg,var(--orange),var(--red))"></div></div>
+      <span class="s-label">82%</span>
+      <span class="s-tone" style="color:var(--orange)">分析/避险</span>
+    </div>
+    <div class="sentiment-row">
+      <span class="s-platform" style="color:#9b59b6">Superlinear</span>
+      <div class="s-bar-wrap"><div class="s-bar" style="width:72%;background:linear-gradient(90deg,var(--accent),var(--orange))"></div></div>
+      <span class="s-label">72%</span>
+      <span class="s-tone" style="color:var(--orange)">理性调仓</span>
+    </div>
+    <div style="font-size:11px;color:var(--text2);margin-top:12px;padding-top:8px;border-top:1px solid var(--border)">
+      情绪指标基于各平台中东局势相关帖文的讨论热度与情感倾向综合估算（非精确量化），仅供参考。
+    </div>
+  </div>
+</div>
+
+<!-- Key Variables -->
+<div class="section">
+  <div class="section-title">开盘关键变量</div>
+  <div class="vars">
+    <div class="var-item">
+      <div class="v-label">霍尔木兹海峡状态</div>
+      <div class="v-value" style="color:var(--red)">事实停航中</div>
+      <div class="v-detail">IRGC VHF 广播禁止通行，Maersk 暂停运输，150+ 油轮滞留</div>
+    </div>
+    <div class="var-item">
+      <div class="v-label">维也纳技术谈判</div>
+      <div class="v-value" style="color:var(--orange)">3/2 进行中</div>
+      <div class="v-detail">若推动外交降温 → 市场反弹；若破裂 → 二次冲击</div>
+    </div>
+    <div class="var-item">
+      <div class="v-label">伊朗反击烈度</div>
+      <div class="v-value" style="color:var(--orange)">已发射导弹+无人机</div>
+      <div class="v-detail">目标含以色列 + 多个美军基地，下一步是否升级是关键</div>
+    </div>
+    <div class="var-item">
+      <div class="v-label">IG 周末原油指标</div>
+      <div class="v-value" style="color:var(--red)">&uarr; +9%</div>
+      <div class="v-detail">Polymarket 93% 概率看涨，预示周一开盘大幅跳涨</div>
+    </div>
+  </div>
+</div>
+
+<!-- Sector Playbook -->
+<div class="section">
+  <div class="section-title">A 股板块前瞻（社媒共识）</div>
+  <div class="a-grid">
+    <div class="a-card">
+      <span class="tag" style="background:rgba(63,185,80,0.12);color:var(--green)">看涨</span>
+      <h3>油气开采 / 油服设备</h3>
+      <p>油价飙升直接受益。社媒讨论度最高。中石油/中石化/中海油提及频繁。</p>
+    </div>
+    <div class="a-card">
+      <span class="tag" style="background:rgba(63,185,80,0.12);color:var(--green)">看涨</span>
+      <h3>黄金 / 贵金属</h3>
+      <p>避险资产首选。小红书"加仓黄金"讨论热烈。山东黄金/紫金矿业被高频提及。</p>
+    </div>
+    <div class="a-card">
+      <span class="tag" style="background:rgba(63,185,80,0.12);color:var(--green)">看涨</span>
+      <h3>国防军工</h3>
+      <p>地缘冲突催化。B 站军事区热度侧面印证关注度。</p>
+    </div>
+    <div class="a-card">
+      <span class="tag" style="background:rgba(248,81,73,0.12);color:var(--red)">承压</span>
+      <h3>高弹性成长股</h3>
+      <p>AI/科技题材短期退居二线。风险偏好下降压制估值。但兴业判断中期牛市基础不变。</p>
+    </div>
+  </div>
+</div>
+
+<!-- Watch List -->
+<div class="section">
+  <div class="section-title">今日观察清单</div>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;">
+    <ul class="checklist">
+      <li>
+        <span class="check-icon">&#9673;</span>
+        <div><strong>A 股 9:30 开盘</strong> — 低开幅度决定恐慌程度。油气/黄金/军工板块是否如社媒预期逆势上涨？</div>
+      </li>
+      <li>
+        <span class="check-icon">&#9673;</span>
+        <div><strong>维也纳谈判进展</strong> — 任何外交信号都将即时影响市场。"降温"→反弹；"破裂"→二次下探。</div>
+      </li>
+      <li>
+        <span class="check-icon">&#9673;</span>
+        <div><strong>霍尔木兹海峡通行状态</strong> — 是否有船只恢复通行？Maersk 是否解除暂停？</div>
+      </li>
+      <li>
+        <span class="check-icon">&#9673;</span>
+        <div><strong>原油现货开盘价</strong> — 布伦特能否站稳 $80/桶？突破 $85 则进入"持续对峙"定价。</div>
+      </li>
+      <li>
+        <span class="check-icon">&#9673;</span>
+        <div><strong>伊朗进一步反击</strong> — 是否有新一轮导弹/无人机攻击？目标范围是否扩大？</div>
+      </li>
+      <li>
+        <span class="check-icon">&#9673;</span>
+        <div><strong>社交媒体情绪转向</strong> — 开盘后散户情绪从"预判"转向"实操"，关注小红书/Superlinear 实时讨论。</div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- Sources -->
+<div class="section">
+  <div class="section-title">信源</div>
+  <div class="sources">
+    <a href="https://finance.sina.com.cn/wm/2026-03-01/doc-inhpnmvm5465029.shtml">新浪财经 · 中东巨变！下周A股、黄金、原油怎么走</a><br>
+    <a href="https://finance.sina.com.cn/jjxw/2026-03-01/doc-inhpnwmi2081773.shtml">新浪财经 · 中东烽烟再起，A股周一如何演绎</a><br>
+    <a href="https://finance.sina.com.cn/jjxw/2026-03-01/doc-inhpnfps9167653.shtml">兴业证券 · 短期冲击，中期牛市基础不变</a><br>
+    <a href="https://finance.sina.com.cn/tech/roll/2026-02-28/doc-inhpktnf6100052.shtml">新浪科技 · A股将受何影响？周一开盘怎么走</a><br>
+    <a href="https://www.cnbc.com/2026/03/01/experts-weigh-potential-scenarios-for-oil-if-strait-of-hormuz-closes.html">CNBC · Expert scenarios for oil if Hormuz closes</a><br>
+    <a href="https://www.foxbusiness.com/politics/oil-markets-edge-iran-moves-restrict-vital-strait-hormuz-shipping-lane-report">Fox Business · Oil markets on edge as Iran restricts Hormuz</a><br>
+    <a href="https://www.newsweek.com/iran-disrupts-vital-oil-route-price-spike-looms-11600318">Newsweek · Oil price spike looms</a><br>
+    五平台情绪数据来源：微信（Folo RSS / 36氪 / 中新网）· 小红书热榜 · B站热榜 · YouTube · Superlinear Academy<br>
+    <a href="../../深度专题/mideast-crisis-2026-03/index.html">关联专题 → 中东危机深度分析</a>
+  </div>
+</div>
+
+<div class="footer">
+  开盘前瞻 · 社交媒体监测站<br>
+  编制时间：2026-03-02 03:30 · 本页内容基于公开信息和社媒讨论，不构成投资建议<br>
+  <a href="../../index.html">返回监测站首页</a>
+</div>
+
+</div>
+</body>
+</html>
