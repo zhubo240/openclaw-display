@@ -1185,6 +1185,44 @@
     </div>
   </div>
 
+  <!-- EDA 与 IP 核心产业 -->
+  <div class="grid-2" style="margin-bottom:40px">
+    <div class="card">
+      <h3>EDA 市场份额 & ARM 收入结构</h3>
+      <div style="display:flex;gap:16px">
+        <div style="flex:1">
+          <div class="chart-container" style="height:200px">
+            <canvas id="chartEDAShare"></canvas>
+          </div>
+          <div style="text-align:center;font-size:0.75rem;color:var(--muted);margin-top:4px">EDA 市场份额</div>
+        </div>
+        <div style="flex:1">
+          <div class="chart-container" style="height:200px">
+            <canvas id="chartARMRoyalty"></canvas>
+          </div>
+          <div style="text-align:center;font-size:0.75rem;color:var(--muted);margin-top:4px">ARM 版税收入结构</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>EDA/IP 核心标的估值</h3>
+      <table>
+        <thead><tr><th>公司</th><th>核心壁垒</th><th>Fwd P/E</th><th>毛利率</th><th>收入增速</th><th>评级</th></tr></thead>
+        <tbody>
+          <tr><td><b>Synopsys</b></td><td>EDA #1 + Ansys 仿真</td><td style="color:var(--green);font-weight:700">~28x</td><td>~80%</td><td style="color:var(--green)">+36%</td><td><span class="tag tag-green">买入</span></td></tr>
+          <tr><td><b>Cadence</b></td><td>模拟 EDA 垄断</td><td>~38x</td><td style="color:var(--green);font-weight:700">~90%</td><td>+14%</td><td><span class="tag tag-amber">持有</span></td></tr>
+          <tr><td><b>ARM</b></td><td>芯片架构 99% 移动</td><td style="color:var(--red)">~75x</td><td style="color:var(--green);font-weight:700">~96%</td><td style="color:var(--green)">+34%</td><td><span class="tag tag-amber">持有</span></td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:12px;padding:12px;background:rgba(6,182,212,0.06);border-radius:8px;font-size:0.82rem;color:var(--muted)">
+        <b style="color:var(--cyan)">设计层投资逻辑</b>：EDA/IP 是"卖水人中的卖水人"——毛利率 80-96%、经常性收入 >90%、周期性极低。SNPS Forward P/E 28x 在 EDA 中属折价（含 Ansys 整合增速 36%）。ARM 架构垄断确定但估值要求完美执行。
+      </div>
+      <div style="margin-top:8px;font-size:0.82rem;color:var(--muted)">
+        <b>AI EDA 变革</b>：Synopsys.ai / Cadence Cerebrus 将芯片设计周期缩短 10-30%，AI 辅助验证引擎提升周转效率 30%。40+ 年设计数据壁垒使后来者难以追赶。
+      </div>
+    </div>
+  </div>
+
   <!-- 全球代工竞争格局 -->
   <div class="grid-2" style="margin-bottom:40px">
     <div class="card">
@@ -1725,6 +1763,46 @@ new Chart(document.getElementById('chartEquipShare'), {
     scales: {
       x: { max: 100, stacked: true, grid: { color: '#1e293b33' }, ticks: { callback: v => `${v}%` } },
       y: { stacked: true, grid: { display: false } }
+    }
+  }
+});
+
+// EDA 市场份额
+new Chart(document.getElementById('chartEDAShare'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Synopsys (34%)', 'Cadence (33%)', 'Siemens (13%)', '其他 (20%)'],
+    datasets: [{
+      data: [34, 33, 13, 20],
+      backgroundColor: [COLORS.blue, COLORS.purple, COLORS.amber, '#334155'],
+      borderWidth: 0
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { padding: 8, usePointStyle: true, pointStyle: 'circle', font: { size: 9 } } },
+      tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.raw}%` } }
+    }
+  }
+});
+
+// ARM 版税收入结构
+new Chart(document.getElementById('chartARMRoyalty'), {
+  type: 'doughnut',
+  data: {
+    labels: ['移动 (45%)', 'IoT/嵌入 (18%)', '云/网络 (10%)', '汽车 (7%)', '其他 (20%)'],
+    datasets: [{
+      data: [45, 18, 10, 7, 20],
+      backgroundColor: [COLORS.green, COLORS.cyan, COLORS.blue, COLORS.amber, '#334155'],
+      borderWidth: 0
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { padding: 8, usePointStyle: true, pointStyle: 'circle', font: { size: 9 } } },
+      tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.raw}%` } }
     }
   }
 });
