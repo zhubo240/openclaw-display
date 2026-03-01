@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第十一章：真实世界中的网络 — 复杂</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; background: #0a0a0f; color: #e0e0e0; min-height: 100vh; }
+    .container { max-width: 780px; margin: 0 auto; padding: 48px 24px; }
+    .nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 48px; font-size: 13px; }
+    .nav a { color: #63b3ed; text-decoration: none; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+    .nav a:hover { color: #90cdf4; }
+    .nav .chapter-nav { display: flex; gap: 20px; }
+    .chapter-header { margin-bottom: 48px; }
+    .chapter-label { font-size: 12px; letter-spacing: 3px; color: #63b3ed; text-transform: uppercase; margin-bottom: 12px; }
+    .chapter-title { font-size: 36px; font-weight: 700; color: #fff; margin-bottom: 12px; }
+    .chapter-subtitle { font-size: 15px; color: #718096; }
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(99, 179, 237, 0.2), transparent); margin: 40px 0; }
+    .section-title { font-size: 18px; font-weight: 600; color: #fff; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+    .section-title::before { content: ''; width: 3px; height: 18px; background: #63b3ed; border-radius: 2px; }
+    .summary-text { font-size: 15px; line-height: 1.9; color: #a0aec0; margin-bottom: 20px; }
+    .summary-text strong { color: #e2e8f0; }
+    .concepts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0 32px; }
+    .concept-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 22px 18px; transition: all 0.25s; }
+    .concept-card:hover { background: rgba(99, 179, 237, 0.05); border-color: rgba(99, 179, 237, 0.15); transform: translateY(-2px); }
+    .concept-card h4 { font-size: 15px; color: #e2e8f0; margin-bottom: 8px; }
+    .concept-card p { font-size: 13px; color: #718096; line-height: 1.7; }
+    .concept-card .icon { font-size: 24px; margin-bottom: 10px; }
+    .highlight-box { background: rgba(99, 179, 237, 0.06); border: 1px solid rgba(99, 179, 237, 0.15); border-radius: 12px; padding: 24px; margin: 28px 0; }
+    .highlight-box .label { font-size: 11px; letter-spacing: 2px; color: #63b3ed; text-transform: uppercase; margin-bottom: 10px; }
+    .highlight-box p { font-size: 15px; line-height: 1.8; color: #cbd5e0; }
+    .highlight-box p + p { margin-top: 12px; }
+    .quote-block { border-left: 3px solid rgba(99, 179, 237, 0.3); padding: 16px 20px; margin: 24px 0; background: rgba(255,255,255,0.02); border-radius: 0 8px 8px 0; }
+    .quote-block p { font-size: 14px; line-height: 1.8; color: #a0aec0; font-style: italic; }
+    .quote-block .source { font-size: 12px; color: #718096; margin-top: 8px; font-style: normal; }
+
+    .domain-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 24px; margin-bottom: 16px; display: flex; gap: 18px; align-items: flex-start; transition: all 0.25s; }
+    .domain-card:hover { background: rgba(99, 179, 237, 0.04); border-color: rgba(99, 179, 237, 0.12); }
+    .domain-card .domain-icon { font-size: 32px; flex-shrink: 0; margin-top: 2px; }
+    .domain-card h4 { font-size: 16px; color: #e2e8f0; margin-bottom: 8px; }
+    .domain-card p { font-size: 13px; color: #718096; line-height: 1.7; }
+    .domain-card .examples { font-size: 12px; color: #63b3ed; margin-top: 8px; }
+    .domain-card .network-props { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+    .domain-card .prop-tag { font-size: 11px; padding: 3px 10px; background: rgba(99, 179, 237, 0.1); border: 1px solid rgba(99, 179, 237, 0.2); border-radius: 12px; color: #90cdf4; }
+
+    .spread-model { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin: 24px 0; }
+    .spread-item { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 18px 14px; text-align: center; transition: all 0.25s; }
+    .spread-item:hover { background: rgba(99, 179, 237, 0.05); border-color: rgba(99, 179, 237, 0.15); }
+    .spread-item .s-icon { font-size: 28px; margin-bottom: 8px; }
+    .spread-item h5 { font-size: 13px; color: #e2e8f0; margin-bottom: 6px; }
+    .spread-item p { font-size: 12px; color: #718096; line-height: 1.6; }
+
+    .cmp-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 13px; }
+    .cmp-table th { text-align: left; padding: 10px 14px; background: rgba(99, 179, 237, 0.08); color: #63b3ed; font-weight: 600; font-size: 12px; border-bottom: 1px solid rgba(99, 179, 237, 0.15); }
+    .cmp-table td { padding: 10px 14px; color: #a0aec0; border-bottom: 1px solid rgba(255,255,255,0.04); line-height: 1.6; }
+    .cmp-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .formula { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 20px 24px; margin: 20px 0; font-family: "SF Mono", Monaco, Consolas, monospace; font-size: 14px; color: #90cdf4; text-align: center; line-height: 1.8; }
+
+    .discussion-placeholder { padding: 32px; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.08); border-radius: 12px; text-align: center; font-size: 14px; color: #4a5568; }
+    .footer-nav { display: flex; justify-content: space-between; margin-top: 48px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.06); }
+    .footer-nav a { color: #63b3ed; text-decoration: none; font-size: 14px; transition: color 0.2s; }
+    .footer-nav a:hover { color: #90cdf4; }
+    .prev-chapter::before { content: '\2190\00a0'; }
+    .next-chapter::after { content: '\00a0\2192'; }
+
+    @media (max-width: 640px) {
+      .concepts { grid-template-columns: 1fr; }
+      .spread-model { grid-template-columns: 1fr; }
+      .domain-card { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Navigation -->
+    <nav class="nav">
+      <a href="index.html">&larr; 返回目录</a>
+      <div class="chapter-nav">
+        <a href="ch10-网络科学.html">上一章</a>
+        <a href="ch12-网络的度量与模型.html">下一章</a>
+      </div>
+    </nav>
+
+    <!-- Chapter Header -->
+    <header class="chapter-header">
+      <div class="chapter-label">第四部分 &middot; 网络</div>
+      <h1 class="chapter-title">真实世界中的网络</h1>
+      <p class="chapter-subtitle">Applying Network Science — 当理论照进现实</p>
+    </header>
+
+    <div class="divider"></div>
+
+    <!-- Core Summary -->
+    <section>
+      <h2 class="section-title">本章核心</h2>
+      <p class="summary-text">
+        上一章我们学习了网络科学的数学语言：随机图、小世界、无标度。但模型终究是模型——它们与真实世界的距离有多远？本章走出数学的象牙塔，将网络科学的透镜对准四大领域：<strong>社交网络、生物网络、技术网络和信息网络</strong>。
+      </p>
+      <p class="summary-text">
+        米歇尔展示了一个令人惊叹的事实：<strong>从万维网到蛋白质交互网络，从科学家合作网络到食物链，真实世界的网络呈现出惊人的结构共性</strong>——几乎所有真实网络都是小世界的，大部分都展现出某种程度的无标度特征。这种"普世性"暗示着，不同领域的网络可能受到相同深层机制的支配。
+      </p>
+
+      <div class="highlight-box">
+        <div class="label">关键洞察</div>
+        <p>真实世界的网络不只是节点和边的静态图——它们是<strong>活的</strong>。信息在上面流动，疾病在上面传播，观念在上面扩散。网络的拓扑结构深刻地塑造了这些动态过程的结果。</p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Four Domains -->
+    <section>
+      <h2 class="section-title">四大网络领域</h2>
+
+      <div class="domain-card">
+        <div class="domain-icon">&#128101;</div>
+        <div>
+          <h4>社交网络 (Social Networks)</h4>
+          <p>
+            社交网络是网络科学最直觉的应用场景。从米尔格拉姆的"六度分隔"实验到 Facebook 的全球社交图谱，社交网络展现了经典的<strong>小世界特征</strong>：高聚类系数（你的朋友往往也互相认识）加上出人意料的短路径长度。
+          </p>
+          <p style="margin-top: 8px;">
+            科学家合作网络是一个被深入研究的例子。纽曼（Newman）分析了物理学论文的共同作者网络，发现平均六步就能从任何一位物理学家到达另一位——科学界自己也是一个"小世界"。更有趣的是，<strong>马克·格兰诺维特</strong>发现"弱联系"（不太熟的朋友）在传播信息方面往往比"强联系"（亲密朋友）更有用，因为弱联系恰好是跨越社区的"桥梁"。
+          </p>
+          <div class="examples">实例：Facebook 社交图谱、科学合作网络、演员合作网络、邮件通信网络</div>
+          <div class="network-props">
+            <span class="prop-tag">小世界</span>
+            <span class="prop-tag">高聚类</span>
+            <span class="prop-tag">社区结构</span>
+            <span class="prop-tag">弱联系桥梁</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="domain-card">
+        <div class="domain-icon">&#129516;</div>
+        <div>
+          <h4>生物网络 (Biological Networks)</h4>
+          <p>
+            生命本身就是网络的杰作。<strong>代谢网络</strong>描绘了细胞内化学反应的关系图，呈现出明显的无标度特征——少数"枢纽代谢物"（如 ATP、水、辅酶 A）参与大量反应，而大多数代谢物只参与少数反应。<strong>蛋白质交互网络</strong>（PPI）中，枢纽蛋白质（高度连接的蛋白质）往往是生存必需的——删除它们对细胞是致命的。
+          </p>
+          <p style="margin-top: 8px;">
+            <strong>基因调控网络</strong>则展示了另一层复杂性：基因之间不只是"连接"或"不连接"，而是存在激活和抑制两种关系。斯图尔特·考夫曼的随机布尔网络模型表明，当连接密度适中时，网络会自发地进入"混沌边缘"——既不完全有序也不完全混乱——而这恰好是生命蓬勃发展的区域。
+          </p>
+          <div class="examples">实例：代谢网络、蛋白质交互网络、基因调控网络、神经网络、食物网</div>
+          <div class="network-props">
+            <span class="prop-tag">无标度</span>
+            <span class="prop-tag">枢纽即致命</span>
+            <span class="prop-tag">模块化</span>
+            <span class="prop-tag">混沌边缘</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="domain-card">
+        <div class="domain-icon">&#128421;</div>
+        <div>
+          <h4>技术网络 (Technological Networks)</h4>
+          <p>
+            <strong>互联网</strong>（路由器层面）和<strong>万维网</strong>（网页层面）是两个截然不同的网络。互联网是物理连接的基础设施，万维网是逻辑连接的信息空间。两者都呈现无标度特征，但成因不同。
+          </p>
+          <p style="margin-top: 8px;">
+            互联网的度分布遵循幂律，意味着少数路由器是超级枢纽——它们的故障可能导致大规模断网。<strong>电力网络</strong>也是小世界网络，2003 年美国东北部大停电就是一个教训：局部故障通过网络的小世界特性迅速级联传播，最终影响了 5500 万人。航空网络同样是无标度的——亚特兰大、芝加哥等枢纽机场连接着大量航线，而大多数小机场只有少数几条航线。
+          </p>
+          <div class="examples">实例：互联网路由器网络、万维网、电力网、航空网络、电话网络</div>
+          <div class="network-props">
+            <span class="prop-tag">无标度</span>
+            <span class="prop-tag">级联故障</span>
+            <span class="prop-tag">关键基础设施</span>
+            <span class="prop-tag">枢纽脆弱性</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="domain-card">
+        <div class="domain-icon">&#128214;</div>
+        <div>
+          <h4>信息网络 (Information Networks)</h4>
+          <p>
+            <strong>引文网络</strong>是最古老的信息网络之一：论文 A 引用论文 B，形成一条有向边。引文网络是<strong>有向无环图</strong>（DAG），因为论文只能引用之前发表的论文。它也是无标度的——少数开创性论文被引用数千次，而大多数论文鲜有人问津。
+          </p>
+          <p style="margin-top: 8px;">
+            <strong>万维网</strong>作为信息网络尤其有趣，因为它是有向网络——链接有方向。巴拉巴西等人发现，万维网呈现出"蝴蝶结"结构：一个巨大的强连通核心，加上只能进入核心的"入"页面、只能从核心到达的"出"页面，以及完全孤立的"触须"和"管道"。
+          </p>
+          <div class="examples">实例：论文引文网络、万维网超链接、维基百科、专利引用网络</div>
+          <div class="network-props">
+            <span class="prop-tag">有向网络</span>
+            <span class="prop-tag">蝴蝶结结构</span>
+            <span class="prop-tag">无标度</span>
+            <span class="prop-tag">信息流向</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Universality -->
+    <section>
+      <h2 class="section-title">惊人的普世性</h2>
+      <p class="summary-text">
+        当科学家把这些看似完全不同的网络放在一起比较时，发现了一个令人震惊的事实：
+      </p>
+
+      <table class="cmp-table">
+        <tr>
+          <th>网络</th>
+          <th>节点数</th>
+          <th>平均路径长度</th>
+          <th>聚类系数</th>
+          <th>无标度?</th>
+        </tr>
+        <tr>
+          <td><strong>万维网</strong></td>
+          <td>~10<sup>9</sup></td>
+          <td>~11</td>
+          <td>高</td>
+          <td>是 (&gamma; &approx; 2.1)</td>
+        </tr>
+        <tr>
+          <td><strong>互联网</strong></td>
+          <td>~10<sup>4</sup> (AS 级)</td>
+          <td>~3.7</td>
+          <td>高</td>
+          <td>是 (&gamma; &approx; 2.2)</td>
+        </tr>
+        <tr>
+          <td><strong>电影演员合作</strong></td>
+          <td>~450,000</td>
+          <td>~3.6</td>
+          <td>高</td>
+          <td>是</td>
+        </tr>
+        <tr>
+          <td><strong>科学合作</strong></td>
+          <td>~50,000</td>
+          <td>~5.9</td>
+          <td>高</td>
+          <td>是</td>
+        </tr>
+        <tr>
+          <td><strong>酵母蛋白质交互</strong></td>
+          <td>~2,000</td>
+          <td>~4.8</td>
+          <td>中</td>
+          <td>是 (&gamma; &approx; 2.4)</td>
+        </tr>
+        <tr>
+          <td><strong>代谢网络</strong></td>
+          <td>~800</td>
+          <td>~2.9</td>
+          <td>高</td>
+          <td>是 (&gamma; &approx; 2.2)</td>
+        </tr>
+        <tr>
+          <td><strong>电力网</strong></td>
+          <td>~5,000</td>
+          <td>~18.7</td>
+          <td>中</td>
+          <td>否（指数分布）</td>
+        </tr>
+      </table>
+
+      <div class="highlight-box">
+        <div class="label">为什么不同领域的网络如此相似？</div>
+        <p>不同领域的网络共享相似的拓扑特征，可能源于相同的<strong>生长机制</strong>。偏好依附（"富者愈富"）是一个跨领域普适的动力学过程：受欢迎的网页获得更多链接，被引用多的论文获得更多引用，蛋白质的交互伙伴越多就越可能参与新的交互。这种正反馈循环不依赖于具体领域——它是复杂系统的通用语法。</p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Network Dynamics -->
+    <section>
+      <h2 class="section-title">网络上的动态过程</h2>
+      <p class="summary-text">
+        网络不仅是静态结构——它是<strong>动态过程的舞台</strong>。信息、疾病、行为和创新都在网络上传播，而网络的拓扑结构深刻影响着传播的速度、范围和模式。
+      </p>
+
+      <div class="spread-model">
+        <div class="spread-item">
+          <div class="s-icon">&#129440;</div>
+          <h5>流行病传播</h5>
+          <p>在无标度网络上，传染病几乎没有"流行阈值"——即使传染率极低，疾病也能通过枢纽节点持续传播。定向免疫枢纽远比随机免疫有效。</p>
+        </div>
+        <div class="spread-item">
+          <div class="s-icon">&#128172;</div>
+          <h5>信息扩散</h5>
+          <p>谣言、新闻、模因（meme）在社交网络上的传播遵循类似的规律。"意见领袖"就是社交网络中的枢纽——他们的转发能引爆信息级联。</p>
+        </div>
+        <div class="spread-item">
+          <div class="s-icon">&#9889;</div>
+          <h5>级联故障</h5>
+          <p>电力网中一个节点过载，将负载转移给邻居，邻居再过载……一连串的多米诺骨牌效应。2003 年美国大停电就是典型的级联故障。</p>
+        </div>
+      </div>
+
+      <div class="quote-block">
+        <p>"在无标度网络中，传统的流行病学模型失效了。经典理论预测的'流行阈值'在这些网络上趋近于零——这意味着即使传染性很弱的疾病也能在人群中持续存在。"</p>
+        <div class="source">—— Pastor-Satorras &amp; Vespignani (2001)</div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Community Structure -->
+    <section>
+      <h2 class="section-title">社区结构与模块化</h2>
+      <p class="summary-text">
+        真实网络的另一个重要特征是<strong>社区结构</strong>（community structure）：节点自然地聚集成若干群组，群组内部连接密集，群组之间连接稀疏。这在社交网络中对应着"圈子"——你的大学同学是一个群组，你的同事是另一个群组，偶尔有几个人同时属于两个圈子。
+      </p>
+
+      <div class="concepts">
+        <div class="concept-card">
+          <div class="icon">&#127981;</div>
+          <h4>模块化 (Modularity)</h4>
+          <p>衡量网络分成社区的程度。高模块化意味着网络有清晰的社区边界。生物网络的模块化尤其重要——功能相关的蛋白质倾向于聚成模块。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">&#128279;</div>
+          <h4>桥梁节点 (Bridge Nodes)</h4>
+          <p>连接不同社区的关键节点。格兰诺维特的"弱联系"理论在此得到了网络结构上的解释：弱联系往往是跨社区的桥梁，负责在群组间传递新信息。</p>
+        </div>
+      </div>
+
+      <p class="summary-text">
+        社区检测算法是网络科学的热门研究方向。纽曼和吉尔文提出的基于<strong>介数中心性</strong>的方法特别优雅：反复移除"桥梁"边（介数最高的边），网络就会自然地裂解成一个个社区。
+      </p>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Strength of Weak Ties -->
+    <section>
+      <h2 class="section-title">深度：弱联系的力量</h2>
+      <p class="summary-text">
+        1973 年，社会学家<strong>马克·格兰诺维特</strong>发表了一篇改变网络科学面貌的论文。他研究了波士顿地区的求职者，发现了一个反直觉的事实：<strong>帮助人们找到工作的，往往不是亲密朋友（强联系），而是泛泛之交（弱联系）。</strong>
+      </p>
+      <p class="summary-text">
+        原因在于网络结构。你的亲密朋友和你在同一个社交圈里，你们共享几乎相同的信息。但那些"不太熟的朋友"连接着你不属于的其他社交圈——他们能带来你完全不知道的招聘信息。<strong>弱联系是社区之间的桥梁，是新信息进入你世界的通道。</strong>
+      </p>
+
+      <div class="formula">
+        强联系 → 信任、支持、冗余信息<br>
+        弱联系 → 新信息、跨界视角、创新机会<br>
+        <span style="font-size: 12px; color: #718096;">格兰诺维特 (1973)："弱联系的力量"</span>
+      </div>
+
+      <p class="summary-text">
+        这个发现的影响远超社会学。在创新研究中，跨学科的"弱联系"被认为是突破性发现的关键。在组织管理中，鼓励跨部门交流就是在建设"弱联系桥梁"。在流行病学中，弱联系是疾病从一个社区传播到另一个社区的"高速公路"。
+      </p>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Kauffman Boolean Networks -->
+    <section>
+      <h2 class="section-title">深度：考夫曼的布尔网络与生命的秩序</h2>
+      <p class="summary-text">
+        <strong>斯图尔特·考夫曼</strong>（Stuart Kauffman）将网络思维推向了生命起源的深处。他构建了一种极简的模型：<strong>随机布尔网络</strong>（Random Boolean Network, RBN）。每个节点代表一个"基因"，状态只有开（1）或关（0），节点的下一状态由其输入节点的当前状态通过一个随机布尔函数决定。
+      </p>
+      <p class="summary-text">
+        考夫曼发现了一个深刻的结果：网络的行为取决于<strong>平均连接度 K</strong>：
+      </p>
+
+      <div class="concepts">
+        <div class="concept-card">
+          <div class="icon">&#10052;</div>
+          <h4>K = 1：有序相</h4>
+          <p>系统迅速冻结，大部分基因被锁定在固定状态。生命无法在完全有序中演化。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">&#127754;</div>
+          <h4>K >> 2：混沌相</h4>
+          <p>系统状态剧烈波动，一个基因的微小变化导致全网崩溃。生命无法在纯粹混沌中维持。</p>
+        </div>
+      </div>
+
+      <div class="highlight-box">
+        <div class="label">K = 2：混沌边缘</div>
+        <p>当每个基因恰好接受约 2 个输入时，网络处于有序与混沌的<strong>临界点</strong>——"混沌边缘"（edge of chaos）。系统既有足够的稳定性来维持结构，又有足够的灵活性来适应变化。考夫曼提出，<strong>真实的基因调控网络恰好运行在这个临界区域</strong>——这不是巧合，而是自然选择的结果。</p>
+        <p>更引人注目的是，RBN 的"吸引子"（系统最终稳定下来的状态循环）数量大约等于 &radic;N（N 为基因数）。人类有约 25,000 个基因，&radic;25000 &approx; 158——与人体约 200 种细胞类型的数量惊人地接近。</p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Connections -->
+    <section>
+      <h2 class="section-title">与前面章节的联系</h2>
+      <p class="summary-text">
+        <strong>第二章（动力学与混沌）</strong>：级联故障本质上就是网络上的混沌行为——初始条件的微小差异（一条线路过载）导致完全不同的全局结果。蝴蝶效应在网络拓扑上有了新的诠释。
+      </p>
+      <p class="summary-text">
+        <strong>第五章（进化）</strong>：考夫曼的布尔网络补充了达尔文的故事——自然选择不是生命秩序的唯一来源。网络结构本身就具有"自组织到混沌边缘"的内禀倾向，进化只需在这个基础上微调。
+      </p>
+      <p class="summary-text">
+        <strong>第八章（粒子计算）</strong>：元胞自动机中的粒子是一维网络上的信号；真实世界的网络上，类似的"信号传递→全局计算"过程以更复杂的拓扑形式展开。
+      </p>
+      <p class="summary-text">
+        <strong>第十章（网络科学）</strong>：上一章建立了网络的数学框架（小世界、无标度、幂律），本章展示了这些抽象概念在真实世界中的具体化身——从社交圈到蛋白质网络，理论与现实之间的映射关系清晰可见。
+      </p>
+
+      <div class="highlight-box">
+        <div class="label">一句话总结</div>
+        <p>真实世界的网络是复杂性科学的天然实验室。社交网络、生物网络、技术网络和信息网络虽然领域各异，却共享惊人相似的拓扑特征——小世界、无标度、社区结构。网络不只是事物的连接方式，它<strong>决定了</strong>事物的运作方式：信息如何传播、疾病如何爆发、创新如何涌现、系统如何崩溃。</p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section>
+      <h2 class="section-title">读书讨论</h2>
+      <div class="discussion-placeholder">
+        尚无讨论 &middot; 读完这一章后来聊聊？
+      </div>
+    </section>
+
+    <div class="footer-nav">
+      <a class="prev-chapter" href="ch10-网络科学.html">第十章：网络科学</a>
+      <a class="next-chapter" href="ch12-网络的度量与模型.html">第十二章：网络的度量与模型</a>
+    </div>
+
+  </div>
+</body>
+</html>
