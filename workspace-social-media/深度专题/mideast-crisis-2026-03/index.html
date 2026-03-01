@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>中东危机：美以袭击伊朗与全球市场冲击 — 深度专题</title>
+<style>
+  :root {
+    --bg: #0d1117; --card: #161b22; --border: #30363d;
+    --text: #e6edf3; --text2: #8b949e; --accent: #58a6ff;
+    --green: #3fb950; --red: #f85149; --orange: #d29922; --purple: #bc8cff;
+    --yellow: #e3b341;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--text);
+    font: 15px/1.8 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    padding: 32px 20px; min-height: 100vh;
+  }
+  .container { max-width: 820px; margin: 0 auto; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .back { font-size: 13px; color: var(--text2); margin-bottom: 24px; display: inline-block; }
+  .back:hover { color: var(--accent); }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, rgba(248,81,73,0.08), rgba(210,153,34,0.06));
+    border: 1px solid rgba(248,81,73,0.25);
+    border-radius: 16px; padding: 40px 36px; margin-bottom: 36px;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; top: -60px; right: -40px;
+    width: 200px; height: 200px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(248,81,73,0.08), transparent 70%);
+  }
+  .hero .tag {
+    display: inline-block; padding: 4px 12px; border-radius: 12px;
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    background: rgba(248,81,73,0.15); color: var(--red); margin-bottom: 16px;
+    letter-spacing: 1px;
+  }
+  .hero h1 { font-size: 28px; line-height: 1.3; margin-bottom: 12px; }
+  .hero .subtitle { font-size: 15px; color: var(--text2); line-height: 1.7; margin-bottom: 20px; }
+  .hero .meta { font-size: 12px; color: var(--text2); display: flex; gap: 16px; flex-wrap: wrap; }
+
+  /* Key metrics */
+  .metrics {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    margin-bottom: 36px;
+  }
+  .metric {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px; text-align: center;
+  }
+  .metric .val { font-size: 24px; font-weight: 800; line-height: 1.1; }
+  .metric .lbl { font-size: 11px; color: var(--text2); margin-top: 4px; }
+
+  /* Timeline */
+  .timeline { margin-bottom: 40px; }
+  .tl-item {
+    display: grid; grid-template-columns: 100px 1fr; gap: 16px;
+    padding: 16px 0; border-bottom: 1px solid var(--border);
+  }
+  .tl-item:last-child { border-bottom: none; }
+  .tl-time {
+    font-size: 13px; font-weight: 600; color: var(--orange);
+    padding-top: 2px; text-align: right;
+  }
+  .tl-content { font-size: 14px; line-height: 1.7; }
+  .tl-content strong { color: var(--text); }
+
+  /* Section */
+  .section { margin-bottom: 36px; }
+  .section-title {
+    font-size: 13px; color: var(--text2); text-transform: uppercase;
+    letter-spacing: 1px; margin-bottom: 16px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Analysis cards */
+  .analysis-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .a-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px;
+  }
+  .a-card h3 { font-size: 15px; margin-bottom: 8px; }
+  .a-card p { font-size: 13px; color: var(--text2); line-height: 1.7; }
+  .a-card .a-tag {
+    display: inline-block; padding: 2px 8px; border-radius: 8px;
+    font-size: 10px; font-weight: 600; margin-bottom: 8px;
+  }
+
+  /* Scenario table */
+  .scenario-table {
+    width: 100%; border-collapse: collapse; margin-bottom: 24px;
+    font-size: 13px;
+  }
+  .scenario-table th, .scenario-table td {
+    padding: 12px 14px; text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .scenario-table th {
+    background: var(--card); color: var(--text2); font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .scenario-table td { color: var(--text); }
+  .scenario-table tr:hover td { background: rgba(88,166,255,0.03); }
+
+  /* Platform voices */
+  .voice {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 20px; margin-bottom: 12px;
+  }
+  .voice .v-platform {
+    font-size: 11px; font-weight: 600; margin-bottom: 6px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .voice .v-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .voice .v-content { font-size: 14px; line-height: 1.7; }
+  .voice .v-source { font-size: 12px; color: var(--text2); margin-top: 6px; }
+
+  /* Sources */
+  .sources { font-size: 12px; color: var(--text2); line-height: 2; }
+  .sources a { color: var(--text2); }
+  .sources a:hover { color: var(--accent); }
+
+  .footer {
+    text-align: center; padding: 24px; color: var(--text2); font-size: 12px;
+    border-top: 1px solid var(--border); margin-top: 20px;
+  }
+
+  @media (max-width: 700px) {
+    .metrics { grid-template-columns: repeat(2, 1fr); }
+    .analysis-grid { grid-template-columns: 1fr; }
+    .tl-item { grid-template-columns: 80px 1fr; gap: 12px; }
+    .hero { padding: 28px 20px; }
+    .hero h1 { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<a class="back" href="../../index.html">&larr; 返回监测站</a>
+
+<div class="hero">
+  <span class="tag">突发 &middot; 深度专题</span>
+  <h1>中东危机：美以袭击伊朗与全球市场冲击</h1>
+  <div class="subtitle">
+    2026年2月28日，美国和以色列对伊朗发动军事打击，伊朗革命卫队宣布禁止任何船只通过霍尔木兹海峡。150+油轮滞留波斯湾，全球能源"咽喉"被扼，布伦特原油飙升13%。这场自1979年以来最严重的美伊冲突如何冲击全球市场？五大平台的声音汇聚于此。
+  </div>
+  <div class="meta">
+    <span>2026-03-01 分析</span>
+    <span>5 平台数据</span>
+    <span>10+ 公开信源</span>
+    <span>关键词：伊朗 · 霍尔木兹 · 油价 · 避险</span>
+  </div>
+</div>
+
+<!-- Key Metrics -->
+<div class="metrics">
+  <div class="metric">
+    <div class="val" style="color:var(--red)">+13%</div>
+    <div class="lbl">布伦特原油涨幅<br>→ $80/桶</div>
+  </div>
+  <div class="metric">
+    <div class="val" style="color:var(--orange)">150+</div>
+    <div class="lbl">油轮滞留<br>霍尔木兹海峡外</div>
+  </div>
+  <div class="metric">
+    <div class="val" style="color:var(--yellow)">20%</div>
+    <div class="lbl">全球石油运输<br>经霍尔木兹海峡</div>
+  </div>
+  <div class="metric">
+    <div class="val" style="color:var(--purple)">5/5</div>
+    <div class="lbl">平台全覆盖<br>跨平台头条</div>
+  </div>
+</div>
+
+<!-- Timeline -->
+<div class="section">
+  <div class="section-title">事件时间线</div>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-time">2/28 上午</div>
+      <div class="tl-content">
+        <strong>美以联合对伊朗发动军事打击</strong>。特朗普宣布美国与以色列对伊朗多个目标实施打击行动，为1979年伊斯兰革命以来美国首次直接对伊朗本土动武。
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-time">2/28 当晚</div>
+      <div class="tl-content">
+        <strong>伊朗革命卫队宣布封锁霍尔木兹海峡</strong>。IRGC通过VHF频道向过往船只广播"禁止任何船只通过"，海峡事实上停航。
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-time">2/28 ~ 3/1</div>
+      <div class="tl-content">
+        <strong>伊朗发射无人机和弹道导弹反击</strong>。目标包括以色列、驻约旦/科威特/巴林/卡塔尔/伊拉克/沙特/阿联酋的美军基地，波斯湾局势全面升级。
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-time">3/1</div>
+      <div class="tl-content">
+        <strong>150+油轮滞留波斯湾</strong>。路透数据：包括原油和LNG运输船在内的150+艘油轮在海峡外抛锚等待。大型交易商暂停海峡运输，"我们的船将原地停留数天"。
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-time">3/1</div>
+      <div class="tl-content">
+        <strong>油价飙升，市场恐慌</strong>。布伦特原油跃升13%至~$80/桶。分析师警告：若海峡长期封锁，油价可能冲破$100/桶。市场等待3/2（周一）开盘。
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-time">3/2 待观察</div>
+      <div class="tl-content">
+        <strong>维也纳技术谈判</strong>是否推进外交降温。全球股市周一开盘预计遭受重大冲击。黄金、原油进入关键48小时观察窗口。
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Oil Price Scenarios -->
+<div class="section">
+  <div class="section-title">油价情景分析</div>
+  <table class="scenario-table">
+    <tr>
+      <th style="width:25%">情景</th>
+      <th style="width:25%">油价预期</th>
+      <th>描述</th>
+    </tr>
+    <tr>
+      <td><span style="color:var(--green)">&#9679;</span> 有限打击 + 外交降温</td>
+      <td><strong>$70–75/桶</strong></td>
+      <td>冲突限于有限交火，维也纳谈判推动停火，海峡数日内恢复通航</td>
+    </tr>
+    <tr>
+      <td><span style="color:var(--orange)">&#9679;</span> 持续对峙 · 海峡受威胁</td>
+      <td><strong>$75–85/桶</strong></td>
+      <td>海峡虽未正式封锁但运输显著减少，保险成本飙升（+50%），运力受限</td>
+    </tr>
+    <tr>
+      <td><span style="color:var(--red)">&#9679;</span> 全面冲突 · 海峡封锁</td>
+      <td><strong>$85–100+/桶</strong></td>
+      <td>伊朗实质封锁海峡，20%全球石油运输中断，触发全球通胀风暴</td>
+    </tr>
+  </table>
+  <div style="font-size:12px;color:var(--text2);margin-top:-12px;margin-bottom:20px;">
+    当前状态：海峡事实停航，处于"持续对峙"与"全面冲突"之间。布伦特已至$80/桶。
+    船运保费从25万→37.5万美元/航次（+50%）。
+  </div>
+</div>
+
+<!-- Market Impact -->
+<div class="section">
+  <div class="section-title">市场冲击全景</div>
+  <div class="analysis-grid">
+    <div class="a-card">
+      <span class="a-tag" style="background:rgba(248,81,73,0.12);color:var(--red)">原油</span>
+      <h3>布伦特 +13% → $80/桶</h3>
+      <p>全球20%石油经霍尔木兹运输。150+油轮滞留海峡外，大型交易商暂停运输。瑞银估计油价可能短期冲至$100。LNG价格同步承压。</p>
+    </div>
+    <div class="a-card">
+      <span class="a-tag" style="background:rgba(227,179,65,0.12);color:var(--yellow)">黄金</span>
+      <h3>避险资产 · 关键48h窗口</h3>
+      <p>有限精准报复 → 高位震荡；战火蔓延至黎巴嫩/红海 → 避险+通胀双重驱动上涨；全面交战 → "终极避风港"。全球央行持续购金支撑长期逻辑。</p>
+    </div>
+    <div class="a-card">
+      <span class="a-tag" style="background:rgba(88,166,255,0.12);color:var(--accent)">A股</span>
+      <h3>短冲击 · 四板块受益</h3>
+      <p>短期避险情绪冲击，但A股估值不高，处于牛市第二阶段。受益板块：油气开采与油服设备、黄金与贵金属、国防军工、煤炭与煤化工。</p>
+    </div>
+    <div class="a-card">
+      <span class="a-tag" style="background:rgba(188,140,255,0.12);color:var(--purple)">全球</span>
+      <h3>周一"血洗式"开盘预期</h3>
+      <p>打击发生在周末前，市场尚未充分定价。亚洲/欧洲已出现剧烈波动。科技股暂时退居二线。美元因避险走强。</p>
+    </div>
+  </div>
+</div>
+
+<!-- Cross-platform voices -->
+<div class="section">
+  <div class="section-title">五平台声音聚合</div>
+
+  <div class="voice">
+    <div class="v-platform"><span class="v-dot" style="background:#07c160"></span> 微信 / 中文资讯</div>
+    <div class="v-content">
+      36氪热榜首条即<strong>"中东局势骤然升级，如何影响A股、黄金和原油"</strong>。Folo RSS 多个信源同步推送美以打击消息，霍尔木兹停航、油价飙升分析刷屏。中新网连发多篇解读，聚焦"黄金暗盘为何反跌"的反直觉现象。
+    </div>
+    <div class="v-source">来源：36氪、中新网、新浪财经、凤凰财经</div>
+  </div>
+
+  <div class="voice">
+    <div class="v-platform"><span class="v-dot" style="background:#fe2c55"></span> 小红书</div>
+    <div class="v-content">
+      财经博主热议<strong>"美军打伊朗了，油价要飙了吗？"</strong>。理财圈第一时间讨论投资策略调整。原本周末的AI/OpenClaw话题瞬间被地缘政治碾压，评论区大量"加仓黄金""囤油"讨论。
+    </div>
+    <div class="v-source">来源：小红书财经热榜</div>
+  </div>
+
+  <div class="voice">
+    <div class="v-platform"><span class="v-dot" style="background:#00a1d6"></span> B站</div>
+    <div class="v-content">
+      军事区热门：<strong>"2026年3月1日，美国航母被伊朗高超音速导弹击中"</strong>（13.3万播放）。中东局势成为军事区头号话题，UP主密集更新战况分析。同时治愈系雪景短片仍以600万+播放稳居总榜。
+    </div>
+    <div class="v-source">来源：B站热榜、军事区</div>
+  </div>
+
+  <div class="voice">
+    <div class="v-platform"><span class="v-dot" style="background:#ff0000"></span> YouTube</div>
+    <div class="v-content">
+      财经频道从AI话题<strong>全面转向避险资产配置讨论</strong>。"伊朗局势如何影响美股、黄金和原油"登上热门。科技话题（OpenAI $110B融资余波）暂时退居二线。
+    </div>
+    <div class="v-source">来源：YouTube财经频道、凤凰财经</div>
+  </div>
+
+  <div class="voice">
+    <div class="v-platform"><span class="v-dot" style="background:#9b59b6"></span> Superlinear</div>
+    <div class="v-content">
+      社区成员发起<strong>"中东局势对投资组合的影响 — 周末紧急讨论"</strong>帖。原本GEO搜索优化的热度被地缘风险讨论覆盖。多位成员分享避险资产配置思路。
+    </div>
+    <div class="v-source">来源：Superlinear Academy</div>
+  </div>
+</div>
+
+<!-- Key observations -->
+<div class="section">
+  <div class="section-title">跨平台洞察</div>
+  <div class="analysis-grid">
+    <div class="a-card" style="grid-column:1/-1;border-color:rgba(248,81,73,0.3)">
+      <h3 style="color:var(--red)">叙事转向：从"AI改变一切"到"地缘风险压倒一切"</h3>
+      <p>
+        过去一周，五大平台的话题中心围绕 AI（OpenAI融资、Block裁员、模型发布）。2/28美以打击伊朗后，<strong>所有平台在12小时内完成话题切换</strong>：微信/小红书/YouTube的财经内容从AI转向避险；B站军事区流量激增；Superlinear的创业者讨论也紧急转向投资组合调整。<br><br>
+        这种"全平台同步叙事转向"在本周监测数据中前所未有，反映出地缘冲突对社交媒体话题的碾压级影响力。AI话题并未消失，但已退居第二梯队。
+      </p>
+    </div>
+    <div class="a-card">
+      <h3>信息时差 vs 市场时差</h3>
+      <p>打击发生在周五/周末，社交媒体即时传播但金融市场需等周一开盘才能充分定价。这意味着<strong>3/2周一将是信息差兑现日</strong>——散户已在社交平台讨论两天，机构将在开盘集中反应。</p>
+    </div>
+    <div class="a-card">
+      <h3>各平台"温度差"</h3>
+      <p><strong>B站</strong>偏军事解读（导弹、航母），<strong>小红书</strong>偏个人理财（加仓黄金），<strong>微信/YouTube</strong>偏专业分析（油价情景），<strong>Superlinear</strong>偏投资组合。同一事件在不同平台的"加工角度"折射用户群体差异。</p>
+    </div>
+  </div>
+</div>
+
+<!-- Sources -->
+<div class="section">
+  <div class="section-title">信源</div>
+  <div class="sources">
+    <a href="https://www.chinanews.com.cn/gj/2026/03-01/10578594.shtml">中新网 · 霍尔木兹海峡已事实上停航</a><br>
+    <a href="https://finance.sina.com.cn/roll/2026-03-01/doc-inhpmzfr5627022.shtml">新浪财经 · 美以袭击伊朗扰动能源市场，霍尔木兹海峡或成油价"生死线"</a><br>
+    <a href="https://finance.sina.com.cn/wm/2026-03-01/doc-inhpnfpu6242286.shtml">新浪财经 · 中东局势如何影响A股、黄金和原油</a><br>
+    <a href="https://www.chinanews.com.cn/cj/2026/02-28/10578474.shtml">中新网 · 美以袭击伊朗如何影响股市、金价、油价</a><br>
+    <a href="https://www.chinanews.com.cn/cj/2026/03-01/10578768.shtml">中新网 · 美以袭击伊朗后为何黄金暗盘反跌</a><br>
+    <a href="https://www.aljazeera.com/news/2026/3/1/how-us-israel-attacks-on-iran-threaten-the-strait-of-hormuz-oil-markets">Al Jazeera · How US-Israel attacks threaten Hormuz and oil markets</a><br>
+    <a href="https://www.cnbc.com/2026/02/28/iran-us-attack-oil-market-economy.html">CNBC · Impact on global oil market and economy</a><br>
+    <a href="https://www.npr.org/2026/02/28/nx-s1-5678603/iran-strikes-oil-energy-markets">NPR · How US strikes in Iran affect global oil supply</a><br>
+    <a href="https://responsiblestatecraft.org/strait-of-hormuz-closed/">Responsible Statecraft · Iran says 'no ship is allowed to pass'</a><br>
+    <a href="https://en.wikipedia.org/wiki/2026_Israeli%E2%80%93United_States_strikes_on_Iran">Wikipedia · 2026 Israeli–United States strikes on Iran</a><br>
+    五平台数据来源：微信（Folo RSS / 36氪 / 中新网）· 小红书热榜 · B站热榜 · YouTube · Superlinear Academy
+  </div>
+</div>
+
+<div class="footer">
+  深度专题 · 社交媒体监测站<br>
+  生成时间：2026-03-01 23:30 · 数据截至 2026-03-01<br>
+  <a href="../../index.html">返回监测站首页</a>
+</div>
+
+</div>
+</body>
+</html>

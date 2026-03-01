@@ -288,6 +288,14 @@
     flex-shrink: 0;
   }
 
+  .dim-link-btn {
+    display: inline-block; margin-top: 12px; padding: 6px 16px;
+    background: var(--surface2); border: 1px solid var(--accent);
+    border-radius: 6px; color: var(--accent); font-size: 0.82em;
+    font-weight: 600; text-decoration: none; transition: background 0.2s;
+  }
+  .dim-link-btn:hover { background: var(--accent); color: var(--bg); }
+
   /* Circulation diagram */
   .circulation {
     padding: 48px 0;
@@ -772,42 +780,42 @@
 <script>
 const dims = [
   {
-    num: "一", title: "总量与结构",
+    num: "一", title: "总量与结构", link: "01-总量与结构/index.html",
     desc: "GDP 全球第二，人均接近高收入门槛。核心矛盾：消费占比偏低（55%），投资偏高（42%）。民企贡献 60%+ GDP 但信心低位。",
     qs: ["Q01 GDP总量与人均水平","Q02 三驾马车结构","Q03 三次产业结构","Q04 国有经济与民营经济"]
   },
   {
-    num: "二", title: "增长动力与转型",
+    num: "二", title: "增长动力与转型", link: "02-增长动力与转型/index.html",
     desc: "从要素驱动到创新驱动的转型"半途中"。TFP 增速从 4% 降至约 1%，是增长放缓的核心原因。",
     qs: ["Q05 经济增长驱动力","Q06 全要素生产率","Q07 新质生产力","Q08 人口红利替代"]
   },
   {
-    num: "三", title: "财政与货币",
+    num: "三", title: "财政与货币", link: "03-财政与货币/index.html",
     desc: "土地财政不可持续，地方债务 100 万亿+。货币政策面临"推绳子"困境——流动性充裕但信贷需求不足。",
     qs: ["Q09 财政收入与土地财政","Q10 地方政府债务","Q10b 总体债务与杠杆率","Q11 货币政策传导","Q12 利率市场化与LPR"]
   },
   {
-    num: "四", title: "房地产与金融",
+    num: "四", title: "房地产与金融", link: "04-房地产与金融/index.html",
     desc: "房地产占 GDP 约 25-30%，是最大拖累。250-280 万亿住房"投资溢价"是居民最大的财富风险敞口。",
     qs: ["Q13 房地产占GDP比重","Q14 房地产市场现状","Q15 银行不良贷款","Q16 影子银行"]
   },
   {
-    num: "五", title: "人口与就业",
+    num: "五", title: "人口与就业", link: "05-人口与就业/index.html",
     desc: "2022年人口负增长，生育率约 1.0。青年失业率 18-19%（毕业季），学历错配严重。移民不是可行选项。",
     qs: ["Q17 人口趋势","Q18 劳动年龄人口","Q19 青年失业率","Q20 城镇化空间","Q20b 移民政策可行性"]
   },
   {
-    num: "六", title: "贸易与国际收支",
+    num: "六", title: "贸易与国际收支", link: "06-贸易与国际收支/index.html",
     desc: "全球第一大货物贸易国，出口从"老三样"到"新三样"。贸易顺差近 1 万亿美元引发国际摩擦。",
     qs: ["Q21 贸易伙伴与出口结构","Q22 全球产业链定位","Q23 国际收支与外储","Q24 人民币国际化"]
   },
   {
-    num: "七", title: "科技与产业政策",
+    num: "七", title: "科技与产业政策", link: "07-科技与产业政策/index.html",
     desc: "R&D/GDP 约 2.68%，但基础研究仅 6.8%。新能源全球领先，半导体是最大卡脖子。产能过剩是副作用。",
     qs: ["Q25 研发投入","Q26 关键领域竞争力","Q27 卡脖子技术","Q28 产业政策效率"]
   },
   {
-    num: "八", title: "区域差异",
+    num: "八", title: "区域差异", link: "08-区域差异/index.html",
     desc: "南北差距替代东西差距成为主要矛盾。四大城市群贡献约 50% GDP。东北困境是极端案例。经济特区到自贸区，40年区域政策工具效果参差。",
     qs: ["Q29 东中西部与南北差距","Q30 城市群特征","Q31 县域经济与乡村振兴","Q31b 区域政策效果评估"]
   },
@@ -817,12 +825,12 @@ const dims = [
     qs: ["Q32 产权保护与民企信心","Q33 营商环境与外资","Q34 国企改革","Q35 反垄断与平台经济"]
   },
   {
-    num: "十", title: "风险与前景",
+    num: "十", title: "风险与前景", link: "10-风险与前景/index.html",
     desc: "最大短期风险：需求不足+通缩循环。中美博弈年化拖累约 0.5-1 个百分点。潜在增长率 3.5-4.5%。",
     qs: ["Q36 短期风险","Q37 中等收入陷阱","Q38 中美博弈","Q39 双碳目标","Q40 潜在增长率"]
   },
   {
-    num: "十一", title: "需求与消费",
+    num: "十一", title: "需求与消费", link: "11-需求与消费/index.html",
     desc: "居民可支配收入仅占 GDP 的 43%，消费率 38% 全球最低。151 万亿存款中超一半属最富 5%。高储蓄与高债务是同一枚硬币的两面。",
     qs: ["Q41 居民收入分配","Q42 消费不足的根源","Q42b 高储蓄之谜","Q43 资产负债表衰退","Q44 社会保障缺口","Q45 收入分配与共同富裕"]
   },
@@ -837,6 +845,7 @@ const grid = document.getElementById('dimGrid');
 dims.forEach((d, i) => {
   const card = document.createElement('div');
   card.className = 'dim-card';
+  const linkBtn = d.link ? `<a class="dim-link-btn" href="${d.link}">查看专题 &rarr;</a>` : '';
   card.innerHTML = `
     <div class="dim-header" onclick="this.parentElement.classList.toggle('open')">
       <div class="dim-title"><span class="dim-num">${d.num}</span>${d.title}</div>
@@ -847,6 +856,7 @@ dims.forEach((d, i) => {
       <div class="dim-q-list">
         ${d.qs.map(q => `<div class="dim-q-item">${q}</div>`).join('')}
       </div>
+      ${linkBtn}
     </div>
   `;
   grid.appendChild(card);

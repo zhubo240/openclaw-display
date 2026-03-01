@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>模拟交易系统</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --border: #252535;
+    --text: #e0e0e8;
+    --text2: #8888a0;
+    --accent: #e05050;
+    --gold: #f0c040;
+    --green: #40c080;
+    --blue: #5080e0;
+    --orange: #e08040;
+    --purple: #a070e0;
+    --cyan: #40b8d0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+  /* Breadcrumb */
+  .breadcrumb {
+    padding: 16px 0;
+    font-size: 0.85em;
+    color: var(--text2);
+  }
+  .breadcrumb a { color: var(--blue); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+
+  /* Hero */
+  .hero {
+    padding: 48px 0 44px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero h1 {
+    font-size: 2.6em;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+  }
+  .hero h1 .hl { color: var(--accent); }
+  .hero .subtitle {
+    font-size: 1.05em;
+    color: var(--text2);
+    margin-bottom: 28px;
+  }
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+  .hero-stat { text-align: center; }
+  .hero-stat .num {
+    font-size: 2em;
+    font-weight: 700;
+    color: var(--gold);
+  }
+  .hero-stat .label {
+    font-size: 0.85em;
+    color: var(--text2);
+    margin-top: 4px;
+  }
+
+  /* Section */
+  .section {
+    padding: 56px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .section:last-child { border-bottom: none; }
+  .section-title {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.85em;
+  }
+  .section-desc {
+    color: var(--text2);
+    margin-bottom: 32px;
+    font-size: 0.95em;
+  }
+
+  /* Featured Card */
+  .featured-card {
+    background: linear-gradient(135deg, var(--surface) 0%, #1a1520 100%);
+    border: 1px solid #352535;
+    border-radius: 12px;
+    padding: 28px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.25s ease;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .featured-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  }
+  .featured-left .card-icon {
+    font-size: 1.8em;
+    margin-bottom: 14px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: #2a1520;
+    color: var(--accent);
+  }
+  .featured-left h3 {
+    font-size: 1.2em;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .featured-left .card-desc {
+    font-size: 0.9em;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+  .featured-left .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 16px;
+  }
+  .featured-left .tag {
+    font-size: 0.75em;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: var(--surface2);
+    color: var(--text2);
+    border: 1px solid var(--border);
+  }
+  .featured-right {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .mini-stat {
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 14px;
+    text-align: center;
+  }
+  .mini-stat .val {
+    font-size: 1.3em;
+    font-weight: 700;
+  }
+  .mini-stat .lbl {
+    font-size: 0.78em;
+    color: var(--text2);
+    margin-top: 4px;
+  }
+  .card-arrow {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    font-size: 1.2em;
+    color: var(--text2);
+    transition: all 0.25s ease;
+  }
+  .featured-card:hover .card-arrow {
+    color: var(--accent);
+    transform: translateX(4px);
+  }
+
+  /* Feature Cards Grid */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+  }
+  .feature-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    transition: all 0.25s ease;
+  }
+  .feature-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  }
+  .feature-card .card-icon {
+    font-size: 1.8em;
+    margin-bottom: 14px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+  }
+  .feature-card h3 {
+    font-size: 1.1em;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .feature-card .card-desc {
+    font-size: 0.88em;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+
+  /* Command Reference */
+  .cmd-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+  .cmd-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .cmd-item .cmd-label {
+    font-size: 0.82em;
+    color: var(--text2);
+    margin-bottom: 8px;
+  }
+  .cmd-item code {
+    display: block;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+    font-size: 0.88em;
+    color: var(--green);
+    word-break: break-all;
+  }
+
+  /* Architecture Flow */
+  .arch-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    flex-wrap: wrap;
+    padding: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  .arch-node {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 22px;
+    text-align: center;
+    min-width: 140px;
+  }
+  .arch-node .node-name {
+    font-weight: 600;
+    font-size: 0.95em;
+    margin-bottom: 4px;
+  }
+  .arch-node .node-file {
+    font-size: 0.78em;
+    color: var(--text2);
+    font-family: "SF Mono", "Fira Code", monospace;
+  }
+  .arch-arrow {
+    font-size: 1.4em;
+    color: var(--text2);
+    padding: 0 12px;
+  }
+
+  /* Footer */
+  .footer {
+    padding: 40px 0;
+    text-align: center;
+    color: var(--text2);
+    font-size: 0.85em;
+    border-top: 1px solid var(--border);
+  }
+  .footer a { color: var(--blue); text-decoration: none; }
+
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 1.8em; }
+    .hero-stats { gap: 24px; }
+    .featured-card { grid-template-columns: 1fr; }
+    .features-grid { grid-template-columns: 1fr; }
+    .cmd-grid { grid-template-columns: 1fr; }
+    .arch-flow { flex-direction: column; }
+    .arch-arrow { transform: rotate(90deg); padding: 8px 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Breadcrumb -->
+<div class="container">
+  <nav class="breadcrumb">
+    <a href="../index.html">A股研究知识库</a> &rsaquo; 模拟交易系统
+  </nav>
+</div>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <h1><span class="hl">模拟交易</span>系统</h1>
+    <p class="subtitle">Claude 自主交易员 &middot; 百万模拟盘</p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="num">&yen;100万</div>
+        <div class="label">初始资金</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">10只</div>
+        <div class="label">观察池</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">2次</div>
+        <div class="label">已完成回测</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">v1</div>
+        <div class="label">策略版本</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Featured: 交易看板 -->
+<section class="section">
+  <div class="container">
+    <div class="section-title">核心看板</div>
+    <a href="dashboard.html" class="featured-card">
+      <div class="featured-left">
+        <div class="card-icon">&#9733;</div>
+        <h3>交易看板 Dashboard</h3>
+        <p class="card-desc">系统核心控制台：实时持仓监控、净值曲线追踪、完整交易记录。一页总览模拟盘全部运行状态与历史表现。</p>
+        <div class="card-tags">
+          <span class="tag">实时持仓</span>
+          <span class="tag">净值曲线</span>
+          <span class="tag">交易记录</span>
+        </div>
+      </div>
+      <div class="featured-right">
+        <div class="mini-stat">
+          <div class="val" style="color: var(--green);">+1.58%</div>
+          <div class="lbl">2025H1 收益</div>
+        </div>
+        <div class="mini-stat">
+          <div class="val" style="color: var(--accent);">2.29%</div>
+          <div class="lbl">最大回撤</div>
+        </div>
+        <div class="mini-stat">
+          <div class="val" style="color: var(--gold);">0.33</div>
+          <div class="lbl">夏普比率</div>
+        </div>
+        <div class="mini-stat">
+          <div class="val" style="color: var(--blue);">23笔</div>
+          <div class="lbl">交易次数</div>
+        </div>
+      </div>
+      <span class="card-arrow">&rarr;</span>
+    </a>
+  </div>
+</section>
+
+<!-- Feature Cards -->
+<section class="section">
+  <div class="container">
+    <div class="section-title">功能模块</div>
+    <p class="section-desc">模拟交易系统的三大核心引擎</p>
+    <div class="features-grid">
+
+      <div class="feature-card">
+        <div class="card-icon" style="background: #1a2520; color: var(--green);">&#9650;</div>
+        <h3>数据引擎</h3>
+        <p class="card-desc">基于 AkShare 的实时+历史行情数据获取，Sina/雪球双数据源自动回退机制，按日本地缓存避免重复请求，支持股票列表、K线、实时报价全品类数据。</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="card-icon" style="background: #1a1a28; color: var(--purple);">&#9830;</div>
+        <h3>策略系统</h3>
+        <p class="card-desc">Claude 实盘自主决策与规则化回测双模式。价值+动量复合策略，综合基本面筛选与技术信号，自动生成买卖建议与仓位分配方案。</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="card-icon" style="background: #2a1a15; color: var(--orange);">&#9632;</div>
+        <h3>A股规则引擎</h3>
+        <p class="card-desc">完整模拟 A 股交易规则：T+1 交割制度、100股整手限制、涨跌停板约束、印花税与券商佣金计算、单票仓位上限控制。</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Command Reference -->
+<section class="section">
+  <div class="container">
+    <div class="section-title">命令参考</div>
+    <p class="section-desc">常用操作命令速查</p>
+    <div class="cmd-grid">
+      <div class="cmd-item">
+        <div class="cmd-label">查看实时行情与持仓</div>
+        <code>python engine.py</code>
+      </div>
+      <div class="cmd-item">
+        <div class="cmd-label">运行策略回测</div>
+        <code>python backtest.py</code>
+      </div>
+      <div class="cmd-item">
+        <div class="cmd-label">生成交易看板</div>
+        <code>python dashboard.py</code>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- System Architecture -->
+<section class="section">
+  <div class="container">
+    <div class="section-title">系统架构</div>
+    <p class="section-desc">数据从获取到展示的完整流转路径</p>
+    <div class="arch-flow">
+      <div class="arch-node">
+        <div class="node-name" style="color: var(--green);">数据引擎</div>
+        <div class="node-file">engine.py</div>
+      </div>
+      <div class="arch-arrow">&rarr;</div>
+      <div class="arch-node">
+        <div class="node-name" style="color: var(--purple);">策略系统</div>
+        <div class="node-file">strategy.py</div>
+      </div>
+      <div class="arch-arrow">&rarr;</div>
+      <div class="arch-node">
+        <div class="node-name" style="color: var(--orange);">组合管理</div>
+        <div class="node-file">portfolio.py</div>
+      </div>
+      <div class="arch-arrow">&rarr;</div>
+      <div class="arch-node">
+        <div class="node-name" style="color: var(--accent);">交易看板</div>
+        <div class="node-file">dashboard.html</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <p>模拟交易系统 &middot; Claude 自主交易员 &middot; 内容为模拟研究，不构成投资建议</p>
+    <p style="margin-top: 8px;"><a href="../index.html">&larr; 返回知识库首页</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
