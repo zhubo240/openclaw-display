@@ -173,6 +173,57 @@
 <script>
 /* ===== DATA ===== */
 const DATA = {
+  "2026-03-01": {
+    wechat: {
+      sections: [
+        {
+          title: "突发：美以袭击伊朗",
+          items: [
+            { title: "美以对伊朗发动军事打击，霍尔木兹海峡已事实上停航", summary: "2月28日美以对伊朗发动军事打击。该海峡运输原油占全球约20%，外国专家警告或引发石油和粮食危机。油价面临飙升风险：有限打击$70+/桶，冲突升级$75-80/桶，极端情景$100+/桶", summaryUrl: "https://www.chinanews.com.cn/gj/2026/03-01/10578594.shtml" }
+          ]
+        },
+        {
+          title: "36氪热榜",
+          items: [
+            { title: "中东局势骤然升级，如何影响A股、黄金和原油", summary: "避险情绪引燃黄金和原油走势，A股周一开盘面临地缘风险冲击", summaryUrl: "https://finance.sina.com.cn/wm/2026-03-01/doc-inhpnfpu6242286.shtml" },
+            { title: "大模型受追捧或加速AI应用端商业化", summary: "OpenAI $110B融资后续影响发酵，资本关注确定性：真实订单、持续收入、规模化交付能力", summaryUrl: "https://finance.sina.com.cn/wm/2026-03-01/doc-inhpmzfr5627022.shtml" },
+            { title: "OpenClaw生态持续膨胀：GitHub star超23万", summary: "超70%赚钱项目靠帮人部署，收一次性部署费+托管费。智谱冲刺港股大模型第一股，募资43亿港元" }
+          ]
+        }
+      ]
+    },
+    xhs: {
+      items: [
+        { title: "我用OpenClaw自动发小红书笔记，公司运营慌得一批", author: "AI工具博主", likes: "热门", url: "https://blog.csdn.net/weixin_49598732/article/details/158286134", text: "OpenClaw接入小红书全自动运营，一句自然语言指令实现热点追踪→文案创作→封面设计→自动发布的全链路闭环，一个人=一支团队" },
+        { title: "第一批拿OpenClaw赚钱的人：有的月入30万", author: "创业观察", likes: "热门", url: "https://www.163.com/dy/article/KMPJCODS055674H6.html", text: "超70%赚钱项目靠帮人部署OpenClaw，收一次性部署费和托管费。从工具到赚钱机器的叙事升级" },
+        { title: "美军打伊朗了，油价要飙了吗？", author: "理财圈热议", likes: "热门", url: "", text: "美以袭击伊朗消息传来，理财圈第一时间讨论油价走势和投资策略调整" }
+      ],
+      trends: "<strong>地缘政治</strong>: 美以打击伊朗刷屏，油价/黄金走势成热门讨论<br><strong>OpenClaw</strong>: 生态持续爆发，从'工具'到'赚钱机器'叙事升级<br><strong>AI编程</strong>: Claude Code、Cursor等AI编程工具周末实战分享"
+    },
+    bili: {
+      items: [
+        { title: "2026年3月1日 美国航母被伊朗高超音速导弹击中", up: "军事频道", views: "13.3万", url: "https://www.bilibili.com/video/BV1tWAqzVESN/", summary: "伊朗以高超音速导弹回击美国航母，震撼画面引发热议" },
+        { title: "起初人们以为只是一场普通的雪～", up: "咕咕啊啊咕", views: "600万+", url: "https://www.bilibili.com/video/BV1LRfxBmEUs", summary: "治愈系雪景短片持续霸榜第二周，播放量突破600万" },
+        { title: "决战！我要夺冠！！！《下一个是谁6》06", up: "啊吗粽", views: "290万+", url: "https://www.bilibili.com/video/BV11bAUzBEqG", summary: "选秀综艺决赛内容持续增长" },
+        { title: "各年龄段年轻人现状", up: "进击的金厂长", views: "150万+", url: "https://www.bilibili.com/video/BV1C7fiBXE3R", summary: "搞笑演绎不同年龄段年轻人生活现状" }
+      ],
+      trends: "中东局势成军事区热门话题；治愈向内容（雪景）霸榜第二周；实用知识类保持百万+流量"
+    },
+    yt: {
+      items: [
+        { title: "伊朗局势会如何影响美股、黄金和原油？", channel: "财经频道", views: "热门", url: "https://finance.ifeng.com/c/8r7ACm4yapY", summary: "中东局势升级引发避险情绪，分析对美股科技股、黄金、原油三大资产的不同影响路径" },
+        { title: "中东开战，全球能源咽喉被扼，国际油价或现恐怖溢价", channel: "新闻/财经", views: "热门", url: "https://news.sina.com.cn/w/2026-03-01/doc-inhpnmvq9059518.shtml", summary: "霍尔木兹海峡事实停航，讨论全球通胀风暴的可能性" }
+      ],
+      trends: "<strong>地缘政治</strong>突然主导：美以打击伊朗颠覆周末所有话题<br><strong>财经投资类</strong>：从AI转向避险资产配置<br><strong>科技话题</strong>暂退二线，OpenAI $110B融资仍在余波"
+    },
+    superlinear: {
+      items: [
+        { title: "中东局势对投资组合的影响 — 周末紧急讨论", author: "社区", likes: "讨论中", url: "https://www.superlinear.academy/", text: "社区成员讨论美以打击伊朗后的投资组合调整策略" },
+        { title: "AI 搜索流量暴增 527% 后续讨论", author: "jeremydai", likes: "持续", url: "https://www.superlinear.academy/c/share-your-insights/ai-527-ai", text: "GEO概念持续发酵，更多成员分享AI搜索优化实践" }
+      ],
+      trends: "<strong>地缘风险</strong>: 中东局势成社区紧急讨论话题<br><strong>GEO</strong>: AI搜索优化持续讨论"
+    }
+  },
   "2026-02-28": {
     wechat: {
       sections: [
