@@ -60,6 +60,7 @@
   <a href="#pe-reversion">PE 均值回归</a>
   <a href="#right-skew">回报右偏</a>
   <a href="#time-concentration">时间集中</a>
+  <a href="#coned-survivors">ConEd 与 1957 存活者</a>
   <a href="#conclusion">从个股到系统</a>
   <a href="../index.html" style="margin-top:24px;color:#fbbf24;">← 主报告</a>
   <a href="../../index.html" style="color:#fbbf24;">← 研究门户</a>
@@ -200,9 +201,35 @@
     </div>
   </section>
 
-  <!-- Section 7: Conclusion -->
+  <!-- Section 7: ConEd & 1957 Survivors -->
+  <section id="coned-survivors">
+    <h2>七、微观实证：ConEd DCF 与 1957 年存活者</h2>
+    <p>1957 年 S&P 500 的 ~500 家成分股中，仅 <strong style="color:#f87171">19 家</strong>存活到 2024 年（3.8%）。其中 11 家是公用事业。ConEd 是阶段三公司的完美标本：股价 CAGR 仅 1.05%，但总回报 10.7% — 几乎全靠股息。</p>
+
+    <h3>ConEd 折现价值演变（1957–2024）</h3>
+    <p>以 4.5% 无风险利率折现到 1957 年现值。67 年间，累计股息现值（$4,322M）远超终端市值现值（$1,652M）。总回报倍数 <strong style="color:#fbbf24">9.82x</strong>。</p>
+
+    <div class="chart-wrap"><canvas id="conedChart"></canvas></div>
+
+    <table>
+      <tr><th>项目</th><th>金额</th><th>说明</th></tr>
+      <tr><td>1957 年市值（付出）</td><td style="color:#f87171">$609M</td><td>投资成本</td></tr>
+      <tr><td>67 年累计股息现值</td><td style="color:#34d399">$4,322M</td><td>回报的 72%</td></tr>
+      <tr><td>2024 年市值折现</td><td style="color:#60a5fa">$1,652M</td><td>回报的 28%</td></tr>
+      <tr><td><strong>总现值</strong></td><td style="color:#fbbf24"><strong>$5,974M</strong></td><td><strong>9.82 倍</strong></td></tr>
+    </table>
+
+    <h3>1957 年 19 家存活公司总回报 CAGR</h3>
+    <div class="chart-wrap"><canvas id="survivorsChart"></canvas></div>
+
+    <div class="insight">
+      <strong>关键洞察：</strong>96% 的 1957 年成分股在 67 年间退市。存活者中 11/19 是公用事业（有监管保护的"永续经营"模式）。ConEd 的市值增长 = EPS +0.28% + PE -0.18% + 股数 +5.11% — 市值几乎全靠增发扩张，PE 长期归零。这完美验证了三阶段模型：<strong>阶段三公司的回报只剩股息，资本增值趋近于零。</strong>
+    </div>
+  </section>
+
+  <!-- Section 8: Conclusion -->
   <section id="conclusion">
-    <h2>七、从个股到系统：股权溢价的三个必要条件</h2>
+    <h2>八、从个股到系统：股权溢价的三个必要条件</h2>
 
     <div style="background:#111827;border-radius:12px;padding:24px;margin:20px 0;">
       <div style="display:flex;flex-direction:column;gap:16px;">
@@ -479,6 +506,101 @@ new Chart(document.getElementById('skewChart'), {
         y: { ...baseOpts.scales.y, title:{display:true,text:'CAGR %',color:'#94a3b8'}, min:0 }
       },
       interaction: { mode:'index', intersect:false }
+    }
+  });
+})();
+
+// === Chart 7: ConEd DCF Timeline ===
+(function() {
+  const years = [1957,1962,1967,1972,1977,1982,1987,1992,1997,2002,2007,2012,2017,2022,2024];
+  const mktcapPV = [608.6,1081.6,752.7,711.0,650.1,876.7,1218.1,1635.1,1656.8,1262.0,1468.4,1445.1,1877.8,1934.8,1652.2];
+  const cumDivPV = [32.9,230.1,454.1,679.9,886.8,1197.6,1622.4,2099.1,2547.3,2903.0,3245.0,3575.7,3878.2,4200.3,4321.9];
+
+  new Chart(document.getElementById('conedChart'), {
+    type: 'bar',
+    data: {
+      labels: years,
+      datasets: [
+        { label:'累计股息现值', data:cumDivPV, backgroundColor:C.green+'99', borderColor:C.green, borderWidth:1, stack:'s' },
+        { label:'市值现值', data:mktcapPV, backgroundColor:C.blue+'99', borderColor:C.blue, borderWidth:1, stack:'s' }
+      ]
+    },
+    options: {
+      ...baseOpts,
+      plugins: {
+        ...baseOpts.plugins,
+        title: { display:true, text:'ConEd 折现价值演变（1957 美元，无风险利率 4.5%）', color:'#f8fafc', font:{size:14} },
+        tooltip: {
+          ...baseOpts.plugins.tooltip,
+          callbacks: { label: ctx => ctx.dataset.label + ': $' + ctx.raw.toLocaleString() + 'M' }
+        }
+      },
+      scales: {
+        x: { ...baseOpts.scales.x, stacked:true },
+        y: { ...baseOpts.scales.y, stacked:true, title:{display:true,text:'现值 $M (1957)',color:'#94a3b8'} }
+      }
+    }
+  });
+})();
+
+// === Chart 8: 1957 Survivors CAGR ===
+(function() {
+  const survivors = [
+    {ticker:'XOM',  name:'Exxon Mobil',   cagr:11.46, sector:'能源'},
+    {ticker:'SO',   name:'Southern Co',    cagr:11.25, sector:'公用'},
+    {ticker:'CVX',  name:'Chevron',        cagr:11.17, sector:'能源'},
+    {ticker:'PEG',  name:'PSEG',           cagr:11.00, sector:'公用'},
+    {ticker:'ED',   name:'ConEd',          cagr:10.70, sector:'公用'},
+    {ticker:'XEL',  name:'Xcel Energy',    cagr:10.21, sector:'公用'},
+    {ticker:'EIX',  name:'Edison Intl',    cagr:10.06, sector:'公用'},
+    {ticker:'DTE',  name:'DTE Energy',     cagr: 9.93, sector:'公用'},
+    {ticker:'HON',  name:'Honeywell',      cagr: 9.43, sector:'工业'},
+    {ticker:'EXC',  name:'Exelon',         cagr: 9.41, sector:'公用'},
+    {ticker:'AEP',  name:'Am Electric',    cagr: 8.96, sector:'公用'},
+    {ticker:'IP',   name:'Intl Paper',     cagr: 7.11, sector:'材料'},
+    {ticker:'PCG',  name:'PG&E',           cagr: 6.68, sector:'公用'},
+    {ticker:'FL',   name:'Foot Locker',    cagr: 6.63, sector:'消费'},
+    {ticker:'CMS',  name:'CMS Energy',     cagr: 6.50, sector:'公用'},
+    {ticker:'GT',   name:'Goodyear',       cagr: 3.25, sector:'消费'},
+    {ticker:'UIS',  name:'Unisys',         cagr:-0.66, sector:'科技'},
+    {ticker:'AAL',  name:'Am Airlines',    cagr:-1.87, sector:'工业'}
+  ];
+
+  const colorMap = {'公用':C.gold,'能源':C.orange,'工业':C.blue,'材料':C.muted,'消费':C.pink,'科技':C.purple};
+
+  new Chart(document.getElementById('survivorsChart'), {
+    type: 'bar',
+    data: {
+      labels: survivors.map(s => s.ticker + ' ' + s.name),
+      datasets: [{
+        label: '总回报 CAGR',
+        data: survivors.map(s => s.cagr),
+        backgroundColor: survivors.map(s => (colorMap[s.sector]||C.muted) + 'bb'),
+        borderColor: survivors.map(s => colorMap[s.sector]||C.muted),
+        borderWidth: 1
+      }]
+    },
+    options: {
+      ...baseOpts,
+      indexAxis: 'y',
+      plugins: {
+        ...baseOpts.plugins,
+        title: { display:true, text:'1957 年 S&P 500 存活至 2024 的 19 家公司（含股息总回报 CAGR）', color:'#f8fafc', font:{size:14} },
+        legend: { display:false },
+        tooltip: {
+          ...baseOpts.plugins.tooltip,
+          callbacks: {
+            label: ctx => {
+              const s = survivors[ctx.dataIndex];
+              return s.name + ' (' + s.sector + '): ' + s.cagr.toFixed(2) + '% CAGR';
+            }
+          }
+        }
+      },
+      scales: {
+        x: { ...baseOpts.scales.x, title:{display:true,text:'总回报 CAGR %（含股息再投资）',color:'#94a3b8'} },
+        y: { ...baseOpts.scales.y, ticks:{color:'#94a3b8',font:{size:10}} }
+      }
     }
   });
 })();
