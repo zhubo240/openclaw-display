@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>港股通与全球ETF配置 | 2026年3月</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0f1117; --card: #1a1d2e; --card-alt: #212538; --border: #2a2e42;
+    --text: #e4e4e7; --text-dim: #9ca3af;
+    --accent: #06b6d4; --accent2: #3b82f6; --amber: #f59e0b;
+    --green: #22c55e; --red: #ef4444; --purple: #a78bfa;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+
+  .hero { position: relative; padding: 80px 40px 60px; text-align: center; background: linear-gradient(135deg, #1a1d2e 0%, #0f1117 50%, #0f1720 100%); overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(ellipse at 30% 50%, rgba(6,182,212,0.06) 0%, transparent 50%), radial-gradient(ellipse at 70% 50%, rgba(59,130,246,0.05) 0%, transparent 50%); animation: pulse 8s ease-in-out infinite alternate; }
+  @keyframes pulse { from { opacity: 0.6; transform: scale(1); } to { opacity: 1; transform: scale(1.05); } }
+  .hero-content { position: relative; z-index: 1; max-width: 850px; margin: 0 auto; }
+  .hero h1 { font-size: 3rem; font-weight: 800; background: linear-gradient(135deg, var(--accent), #22d3ee, var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px; letter-spacing: 2px; }
+  .hero .subtitle { font-size: 1.1rem; color: var(--text-dim); margin-bottom: 32px; }
+
+  .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; max-width: 900px; margin: 0 auto; }
+  .kpi { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 16px; padding: 18px 14px; text-align: center; transition: transform 0.2s, border-color 0.2s; }
+  .kpi:hover { transform: translateY(-4px); border-color: var(--accent); }
+  .kpi .value { font-size: 1.6rem; font-weight: 800; line-height: 1.2; }
+  .kpi .label { font-size: 0.78rem; color: var(--text-dim); margin-top: 4px; }
+  .kpi .tag { display: inline-block; margin-top: 6px; padding: 2px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; }
+  .tag-cyan { background: rgba(6,182,212,0.15); color: var(--accent); }
+  .tag-green { background: rgba(34,197,94,0.15); color: var(--green); }
+  .tag-amber { background: rgba(245,158,11,0.15); color: var(--amber); }
+  .tag-blue { background: rgba(59,130,246,0.15); color: var(--accent2); }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
+  .section { margin-bottom: 56px; }
+  .section-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+  .section-title .icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+  .section-desc { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 24px; }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; transition: border-color 0.2s; }
+  .card:hover { border-color: rgba(6,182,212,0.3); }
+  .card-full { grid-column: 1 / -1; }
+  .card h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 16px; }
+  .chart-wrap { position: relative; width: 100%; max-height: 340px; }
+
+  .data-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  .data-table th { text-align: left; padding: 10px 12px; color: var(--text-dim); font-weight: 500; border-bottom: 1px solid var(--border); font-size: 0.8rem; }
+  .data-table td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .data-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .pos { color: var(--green); font-weight: 600; }
+  .neg { color: var(--red); font-weight: 600; }
+
+  .feature-list { list-style: none; }
+  .feature-list li { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .feature-list li:last-child { border-bottom: none; }
+  .feat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 7px; }
+  .feat-title { font-weight: 600; font-size: 0.9rem; }
+  .feat-desc { font-size: 0.82rem; color: var(--text-dim); margin-top: 2px; }
+
+  .etf-card { background: var(--card-alt); border-radius: 12px; padding: 20px; display: flex; align-items: center; gap: 16px; margin-bottom: 12px; border: 1px solid var(--border); transition: border-color 0.2s; }
+  .etf-card:hover { border-color: var(--accent); }
+  .etf-badge { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.65rem; flex-shrink: 0; line-height: 1.1; text-align: center; }
+  .etf-info { flex: 1; }
+  .etf-name { font-weight: 600; font-size: 0.95rem; }
+  .etf-code { font-size: 0.8rem; color: var(--text-dim); }
+  .etf-meta { display: flex; gap: 16px; margin-top: 6px; flex-wrap: wrap; }
+  .etf-meta span { font-size: 0.78rem; color: var(--text-dim); }
+  .etf-meta strong { color: var(--text); }
+  .etf-tag { padding: 4px 12px; border-radius: 20px; font-size: 0.72rem; font-weight: 600; white-space: nowrap; }
+
+  .combo-box { background: linear-gradient(135deg, rgba(6,182,212,0.08), rgba(59,130,246,0.06)); border: 1px solid rgba(6,182,212,0.2); border-radius: 16px; padding: 32px; }
+  .combo-box h3 { font-size: 1.2rem; color: var(--accent); margin-bottom: 20px; }
+  .combo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+  .combo-item .combo-label { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 4px; }
+  .combo-item .combo-value { font-size: 1.15rem; font-weight: 700; }
+
+  .warn-box { padding: 16px 20px; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); border-radius: 12px; margin-top: 16px; }
+  .warn-box h4 { color: var(--red); font-size: 0.9rem; margin-bottom: 6px; }
+  .warn-box p { font-size: 0.82rem; color: var(--text-dim); }
+
+  .footer { text-align: center; padding: 40px 24px; color: var(--text-dim); font-size: 0.78rem; border-top: 1px solid var(--border); }
+
+  .fade-in { opacity: 0; transform: translateY(20px); animation: fadeIn 0.6s ease forwards; }
+  @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+  .delay-1 { animation-delay: 0.1s; } .delay-2 { animation-delay: 0.2s; }
+  .delay-3 { animation-delay: 0.3s; } .delay-4 { animation-delay: 0.4s; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 2rem; } .hero { padding: 48px 20px 40px; }
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .cards { grid-template-columns: 1fr; }
+    .combo-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-content">
+    <h1>港股通与全球ETF配置</h1>
+    <p class="subtitle">足不出户投资全球 &middot; 跨境ETF全景 &middot; 全球分散策略 &middot; 2026年3月</p>
+    <div class="kpi-row">
+      <div class="kpi fade-in delay-1">
+        <div class="value" style="color:var(--accent)">141只</div>
+        <div class="label">跨境ETF数量</div>
+        <span class="tag tag-cyan">A股可买</span>
+      </div>
+      <div class="kpi fade-in delay-2">
+        <div class="value" style="color:var(--accent2)">~5000亿</div>
+        <div class="label">跨境ETF总规模</div>
+        <span class="tag tag-blue">快速增长</span>
+      </div>
+      <div class="kpi fade-in delay-3">
+        <div class="value" style="color:var(--amber)">~1090亿</div>
+        <div class="label">纳指ETF合计规模</div>
+        <span class="tag tag-amber">最大单类</span>
+      </div>
+      <div class="kpi fade-in delay-4">
+        <div class="value" style="color:var(--green)">0门槛</div>
+        <div class="label">ETF投资港股/美股</div>
+        <span class="tag tag-green">无需50万</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- 港股通 vs ETF -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(6,182,212,0.15)">&#9878;</span>
+      港股通 vs 跨境ETF
+    </div>
+    <p class="section-desc">直接买港股需50万门槛，通过ETF间接投资无门槛、更简便</p>
+    <div class="cards">
+      <div class="card">
+        <h3>港股通（直接买港股）</h3>
+        <table class="data-table">
+          <tr><td>资金门槛</td><td class="num neg">50万人民币</td></tr>
+          <tr><td>T+0</td><td class="num pos">支持</td></tr>
+          <tr><td>涨跌停</td><td class="num neg">无（风险大）</td></tr>
+          <tr><td>红利税</td><td class="num neg">20-28%</td></tr>
+          <tr><td>标的范围</td><td class="num">~600只</td></tr>
+          <tr><td>适合</td><td class="num">资金量大+深度研究</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--accent)">跨境ETF（推荐）</h3>
+        <table class="data-table">
+          <tr><td>资金门槛</td><td class="num pos">无（几百元起）</td></tr>
+          <tr><td>操作</td><td class="num pos">与A股ETF相同</td></tr>
+          <tr><td>分散化</td><td class="num pos">自动分散到指数成分</td></tr>
+          <tr><td>费率</td><td class="num">0.50-0.80%/年</td></tr>
+          <tr><td>覆盖市场</td><td class="num pos">港股/美股/欧洲/日本</td></tr>
+          <tr><td>适合</td><td class="num pos">所有投资者</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ETF产品 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(59,130,246,0.15)">&#9733;</span>
+      核心跨境ETF产品
+    </div>
+    <p class="section-desc">首选规模>50亿、流动性好的产品，溢价>3%时避免买入</p>
+
+    <h3 style="color:var(--accent2);margin-bottom:12px">美股类</h3>
+    <div class="etf-card">
+      <div class="etf-badge" style="background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff">纳指<br>100</div>
+      <div class="etf-info">
+        <div class="etf-name">广发纳指100ETF</div>
+        <div class="etf-code">513100</div>
+        <div class="etf-meta">
+          <span>规模 <strong>~400亿</strong></span>
+          <span>费率 <strong>0.60%</strong></span>
+          <span>10年年化 <strong class="pos">~18%</strong></span>
+        </div>
+      </div>
+      <span class="etf-tag" style="background:rgba(59,130,246,0.15);color:var(--accent2)">首选</span>
+    </div>
+    <div class="etf-card">
+      <div class="etf-badge" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#000">标普<br>500</div>
+      <div class="etf-info">
+        <div class="etf-name">博时标普500ETF</div>
+        <div class="etf-code">513500</div>
+        <div class="etf-meta">
+          <span>规模 <strong>~150亿</strong></span>
+          <span>费率 <strong>0.60%</strong></span>
+          <span>10年年化 <strong class="pos">~13%</strong></span>
+        </div>
+      </div>
+      <span class="etf-tag" style="background:rgba(245,158,11,0.15);color:var(--amber)">美股宽基</span>
+    </div>
+
+    <h3 style="color:var(--accent);margin:24px 0 12px">港股类</h3>
+    <div class="etf-card">
+      <div class="etf-badge" style="background:linear-gradient(135deg,#06b6d4,#0891b2);color:#fff">恒生<br>科技</div>
+      <div class="etf-info">
+        <div class="etf-name">华夏恒生科技ETF</div>
+        <div class="etf-code">513180</div>
+        <div class="etf-meta">
+          <span>规模 <strong>~300亿</strong></span>
+          <span>费率 <strong>0.50%</strong></span>
+          <span>2025 <strong class="pos">+32.6%</strong></span>
+        </div>
+      </div>
+      <span class="etf-tag" style="background:rgba(6,182,212,0.15);color:var(--accent)">港股首选</span>
+    </div>
+    <div class="etf-card">
+      <div class="etf-badge" style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#000">港股<br>红利</div>
+      <div class="etf-info">
+        <div class="etf-name">华泰柏瑞港股通红利ETF</div>
+        <div class="etf-code">513530</div>
+        <div class="etf-meta">
+          <span>规模 <strong>~50亿</strong></span>
+          <span>费率 <strong>0.50%</strong></span>
+          <span>股息率 <strong class="pos">~7%</strong></span>
+        </div>
+      </div>
+      <span class="etf-tag" style="background:rgba(34,197,94,0.15);color:var(--green)">港股防守</span>
+    </div>
+
+    <div class="warn-box">
+      <h4>溢价风险提示</h4>
+      <p>跨境ETF因时差和QDII额度限制，交易价格可能高于实际净值。正常溢价-1%~3%，<strong>超过3%溢价时不要买入</strong>。可在券商APP查看实时溢价率。</p>
+    </div>
+  </div>
+
+  <!-- 费率对比 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(245,158,11,0.15)">&#9673;</span>
+      费率对比
+    </div>
+    <div class="cards">
+      <div class="card">
+        <div class="chart-wrap"><canvas id="chartFee"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>各市场年度表现轮动</h3>
+        <div class="chart-wrap"><canvas id="chartReturns"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 配置方案 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(34,197,94,0.15)">&#10070;</span>
+      三套全球配置方案
+    </div>
+    <p class="section-desc">从A股为主到均衡全球化，根据风险偏好选择</p>
+
+    <div class="combo-box" style="margin-bottom:24px">
+      <h3>方案A：A股为主 + 全球点缀（推荐）</h3>
+      <div class="combo-grid">
+        <div class="combo-item">
+          <div class="combo-label">A500 ETF (159338)</div>
+          <div class="combo-value" style="color:var(--accent2)">40% · 核心底仓</div>
+        </div>
+        <div class="combo-item">
+          <div class="combo-label">红利低波 ETF (512890)</div>
+          <div class="combo-value" style="color:var(--amber)">25% · 防守分红</div>
+        </div>
+        <div class="combo-item">
+          <div class="combo-label">纳指 ETF (513100)</div>
+          <div class="combo-value" style="color:var(--accent)">15% · 全球科技</div>
+        </div>
+        <div class="combo-item">
+          <div class="combo-label">恒生科技 ETF (513180)</div>
+          <div class="combo-value" style="color:var(--green)">10% · 港股弹性</div>
+        </div>
+        <div class="combo-item">
+          <div class="combo-label">中证1000 ETF (512100)</div>
+          <div class="combo-value" style="color:var(--purple)">10% · 小盘弹性</div>
+        </div>
+      </div>
+      <div style="margin-top:16px;display:flex;gap:20px;flex-wrap:wrap;font-size:0.85rem">
+        <span>A股 <strong>75%</strong> 海外 <strong>25%</strong></span>
+        <span>预期年化 <strong style="color:var(--green)">9-13%</strong></span>
+        <span>最大回撤 <strong style="color:var(--red)">20-25%</strong></span>
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <h3>方案B：均衡全球化</h3>
+        <table class="data-table">
+          <tr><td>A500 (159338)</td><td class="num">30%</td></tr>
+          <tr><td>纳指 (513100)</td><td class="num">20%</td></tr>
+          <tr><td>恒生科技 (513180)</td><td class="num">15%</td></tr>
+          <tr><td>红利低波 (512890)</td><td class="num">20%</td></tr>
+          <tr><td>标普500 (513500)</td><td class="num">15%</td></tr>
+        </table>
+        <div style="margin-top:12px;font-size:0.82rem;color:var(--text-dim)">A股50%+海外50% · 年化10-14% · 适合看好全球科技</div>
+      </div>
+      <div class="card">
+        <h3>方案C：极简两基金</h3>
+        <div class="chart-wrap"><canvas id="chartSimple"></canvas></div>
+        <div style="margin-top:12px;font-size:0.82rem;color:var(--text-dim)">仅2只ETF · A500 60% + 纳指 40% · 覆盖中美龙头 · 懒人首选</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 分散效果 -->
+  <div class="section fade-in">
+    <div class="section-title">
+      <span class="icon" style="background:rgba(167,139,250,0.15)">&#9876;</span>
+      为什么全球分散有效
+    </div>
+    <div class="cards">
+      <div class="card">
+        <h3>市场相关性</h3>
+        <table class="data-table">
+          <tr><td>A股 vs 美股</td><td class="num pos">~0.3（低相关）</td></tr>
+          <tr><td>A股 vs 港股</td><td class="num">~0.6（中等）</td></tr>
+          <tr><td>美股 vs 港股</td><td class="num">~0.5（中等）</td></tr>
+        </table>
+        <div style="margin-top:16px;padding:12px;background:rgba(6,182,212,0.08);border-radius:8px;font-size:0.82rem;color:var(--accent)">
+          A股与美股相关性最低（~0.3），"A股+美股"组合的分散效果最佳。
+        </div>
+      </div>
+      <div class="card">
+        <h3>核心认知</h3>
+        <ul class="feature-list">
+          <li><span class="feat-dot" style="background:var(--accent)"></span><div><div class="feat-title">全球配置的价值是降低风险，不是提高收益</div><div class="feat-desc">在A股低迷年份（如2023年-11%），全球配置能显著缓冲</div></div></li>
+          <li><span class="feat-dot" style="background:var(--amber)"></span><div><div class="feat-title">不要做汇率择时</div><div class="feat-desc">没人能预测汇率走向，长期持有自然对冲汇率波动</div></div></li>
+          <li><span class="feat-dot" style="background:var(--green)"></span><div><div class="feat-title">10-20%海外配置就够了</div><div class="feat-desc">在A股核心组合基础上加入少量跨境ETF，就已实现有意义的分散</div></div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <p>免责声明：以上内容仅为公开信息整理和研究参考，不构成任何投资建议。投资有风险，入市需谨慎。</p>
+  <p style="margin-top:8px">数据来源：上交所、东方财富、中证指数官网、21世纪经济报道等公开渠道 &middot; 研究日期 2026-03-01</p>
+</div>
+
+<script>
+Chart.defaults.color = '#9ca3af';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.font.family = '-apple-system, "PingFang SC", sans-serif';
+
+// Fee comparison
+new Chart(document.getElementById('chartFee'), {
+  type: 'bar',
+  data: {
+    labels: ['A股宽基\n(A500)', '港股ETF\n(恒生科技)', '美股ETF\n(纳指100)', '欧洲/日本ETF'],
+    datasets: [{
+      label: '综合费率（年）',
+      data: [0.20, 0.60, 0.65, 0.60],
+      backgroundColor: ['#22c55e', '#06b6d4', '#3b82f6', '#a78bfa'],
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.parsed.y + '%' } } },
+    scales: { y: { ticks: { callback: v => v + '%' }, grid: { color: 'rgba(255,255,255,0.04)' }, max: 1.0 }, x: { grid: { display: false } } }
+  }
+});
+
+// Market returns
+new Chart(document.getElementById('chartReturns'), {
+  type: 'bar',
+  data: {
+    labels: ['2022', '2023', '2024', '2025'],
+    datasets: [
+      { label: 'A股(沪深300)', data: [-21.6, -11.4, 14.7, 19.1], backgroundColor: '#ef4444', borderRadius: 3 },
+      { label: '美股(标普500)', data: [-19.4, 24.2, 23.3, 12.5], backgroundColor: '#3b82f6', borderRadius: 3 },
+      { label: '港股(恒生科技)', data: [-27.2, -8.8, 19.8, 32.6], backgroundColor: '#06b6d4', borderRadius: 3 },
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'top', labels: { boxWidth: 10, padding: 12 } }, tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y + '%' } } },
+    scales: { y: { ticks: { callback: v => v + '%' }, grid: { color: 'rgba(255,255,255,0.04)' } }, x: { grid: { display: false } } }
+  }
+});
+
+// Simple 2-fund
+new Chart(document.getElementById('chartSimple'), {
+  type: 'doughnut',
+  data: {
+    labels: ['A500 ETF 60%', '纳指 ETF 40%'],
+    datasets: [{ data: [60, 40], backgroundColor: ['#3b82f6', '#06b6d4'], borderWidth: 0 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false, cutout: '60%',
+    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, padding: 12, font: { size: 12 } } } }
+  }
+});
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('fade-in'); observer.unobserve(entry.target); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.section').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
