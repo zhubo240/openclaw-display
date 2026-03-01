@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>总量与结构 — 中国宏观经济分析框架</title>
+<style>
+  :root {
+    --bg: #0a0a0f; --surface: #12121a; --surface2: #1a1a25; --border: #2a2a3a;
+    --text: #e0e0e8; --text2: #9090a0; --accent: #f0c040;
+    --red: #e05050; --green: #40c080; --blue: #5080e0; --orange: #e08040;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.7; -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  a { color: var(--accent); text-decoration: none; }
+
+  .header {
+    padding: 60px 0 40px; text-align: center; border-bottom: 1px solid var(--border);
+  }
+  .header .back { font-size: 0.85em; color: var(--text2); margin-bottom: 16px; display: block; }
+  .header h1 { font-size: 2em; font-weight: 700; letter-spacing: 0.04em; margin-bottom: 10px; }
+  .header .dim-label {
+    display: inline-block; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 6px; padding: 3px 12px; font-size: 0.8em; color: var(--accent);
+    font-weight: 600; margin-bottom: 14px;
+  }
+  .header .subtitle { font-size: 0.95em; color: var(--text2); max-width: 740px; margin: 0 auto; }
+
+  .key-nums {
+    display: flex; justify-content: center; gap: 24px; padding: 28px 0;
+    border-bottom: 1px solid var(--border); flex-wrap: wrap;
+  }
+  .kn-item { text-align: center; min-width: 100px; }
+  .kn-value { font-size: 1.5em; font-weight: 700; color: var(--accent); }
+  .kn-value.danger { color: var(--red); }
+  .kn-value.good { color: var(--green); }
+  .kn-label { font-size: 0.72em; color: var(--text2); margin-top: 2px; }
+
+  .section { padding: 44px 0; border-bottom: 1px solid var(--border); }
+  .section h2 {
+    text-align: center; font-size: 1.25em; font-weight: 600;
+    color: var(--text2); letter-spacing: 0.06em; margin-bottom: 24px;
+  }
+  .section .sub {
+    text-align: center; font-size: 0.88em; color: var(--text2);
+    margin-top: -16px; margin-bottom: 24px;
+  }
+
+  .bar-section { max-width: 700px; margin: 0 auto; }
+  .bar-group { margin-bottom: 12px; }
+  .bar-header { display: flex; justify-content: space-between; font-size: 0.82em; margin-bottom: 4px; }
+  .bar-header .lbl { color: var(--text2); }
+  .bar-header .val { font-weight: 600; }
+  .bar-track { height: 10px; background: var(--surface2); border-radius: 5px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 5px; }
+
+  .cmp-table {
+    width: 100%; border-collapse: collapse; font-size: 0.85em;
+  }
+  .cmp-table th, .cmp-table td {
+    padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border);
+  }
+  .cmp-table th { color: var(--accent); font-weight: 600; font-size: 0.82em; background: var(--surface); }
+  .cmp-table tr:hover td { background: var(--surface); }
+  .cmp-table .hl { color: var(--accent); font-weight: 600; }
+  .cmp-table .warn { color: var(--red); font-weight: 600; }
+  .cmp-table .good { color: var(--green); font-weight: 600; }
+
+  .card-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px;
+  }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 20px;
+  }
+  .card h3 { font-size: 0.88em; font-weight: 600; margin-bottom: 8px; }
+  .card p { font-size: 0.8em; color: var(--text2); line-height: 1.5; }
+  .card .big { font-size: 1.4em; font-weight: 700; margin-bottom: 6px; }
+
+  .wide-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 14px;
+  }
+  .wide-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px 22px;
+  }
+  .wide-card h3 { font-size: 0.92em; font-weight: 600; color: var(--accent); margin-bottom: 8px; }
+  .wide-card p { font-size: 0.85em; color: var(--text2); line-height: 1.6; }
+
+  .ascii-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 24px; max-width: 700px; margin: 0 auto;
+    font-family: "SF Mono", "Fira Code", monospace; font-size: 0.84em;
+    line-height: 1.8; color: var(--text2); white-space: pre; overflow-x: auto;
+  }
+  .ascii-box .hl { color: var(--accent); font-weight: 600; }
+  .ascii-box .r { color: var(--red); font-weight: 600; }
+  .ascii-box .g { color: var(--green); }
+  .ascii-box .b { color: var(--blue); }
+  .ascii-box .o { color: var(--orange); }
+
+  .callout {
+    margin-top: 18px; padding: 16px 20px; background: var(--surface);
+    border: 1px solid var(--border); border-left: 3px solid var(--accent);
+    border-radius: 8px; font-size: 0.84em; max-width: 700px; margin-left: auto; margin-right: auto;
+  }
+  .callout.warn { border-left-color: var(--red); }
+  .callout .cl-title { color: var(--accent); font-weight: 600; margin-bottom: 6px; }
+  .callout.warn .cl-title { color: var(--red); }
+  .callout .cl-body { color: var(--text2); line-height: 1.5; }
+
+  .dual-box { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: 700px; margin: 20px auto 0; }
+  .dual-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 20px;
+  }
+  .dual-card h4 { font-size: 0.85em; font-weight: 600; margin-bottom: 8px; }
+  .dual-card p { font-size: 0.8em; color: var(--text2); line-height: 1.5; }
+  .dual-card.left h4 { color: var(--green); }
+  .dual-card.right h4 { color: var(--red); }
+
+  .verdict {
+    padding: 44px 0;
+  }
+  .verdict h2 {
+    text-align: center; font-size: 1.25em; font-weight: 600;
+    color: var(--text2); letter-spacing: 0.06em; margin-bottom: 24px;
+  }
+  .verdict-list { max-width: 700px; margin: 0 auto; }
+  .verdict-item {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 22px; margin-bottom: 12px;
+  }
+  .verdict-item .vi-num { color: var(--accent); font-weight: 700; font-size: 0.8em; margin-bottom: 4px; }
+  .verdict-item .vi-text { font-size: 0.88em; line-height: 1.6; }
+  .verdict-item .vi-detail { font-size: 0.8em; color: var(--text2); margin-top: 6px; line-height: 1.5; }
+
+  .footer { padding: 36px 0; text-align: center; color: var(--text2); font-size: 0.8em; }
+
+  @media (max-width: 600px) {
+    .key-nums { gap: 12px; }
+    .kn-value { font-size: 1.2em; }
+    .card-grid, .wide-grid { grid-template-columns: 1fr; }
+    .dual-box { grid-template-columns: 1fr; }
+    .ascii-box { font-size: 0.72em; padding: 14px; }
+    .cmp-table { font-size: 0.75em; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <section class="header">
+    <a class="back" href="../index.html">&larr; 返回总览</a>
+    <div class="dim-label">维度一</div>
+    <h1>总量与结构</h1>
+    <p class="subtitle">134.9万亿元GDP、全球第二——但人均仅1.33万美元，排名60-70位。经济总量的庞大掩盖了结构的失衡：消费占比偏低、投资率全球最高、农业"低产出高就业"、国进民退争议不断。这是理解所有后续矛盾的起点。</p>
+  </section>
+
+  <div class="key-nums">
+    <div class="kn-item"><div class="kn-value">134.9万亿</div><div class="kn-label">GDP（人民币，2024）</div></div>
+    <div class="kn-item"><div class="kn-value">18.7万亿</div><div class="kn-label">GDP（美元）全球第二</div></div>
+    <div class="kn-item"><div class="kn-value danger">1.33万</div><div class="kn-label">人均GDP（美元）</div></div>
+    <div class="kn-item"><div class="kn-value">~65%</div><div class="kn-label">相当于美国GDP</div></div>
+    <div class="kn-item"><div class="kn-value danger">~42%</div><div class="kn-label">投资率（全球最高水平）</div></div>
+    <div class="kn-item"><div class="kn-value">60%+</div><div class="kn-label">民营经济GDP贡献</div></div>
+  </div>
+
+  <!-- GDP Global Ranking -->
+  <section class="section">
+    <h2>GDP 全 球 版 图</h2>
+    <p class="sub">全球第二，但人均仅排60-70位 — 总量巨人，人均中等生</p>
+    <div class="bar-section">
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">美国</span><span class="val" style="color:var(--blue)">~29万亿美元</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--blue)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">中国</span><span class="val" style="color:var(--accent)">~18.7万亿美元</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:64%;background:var(--accent)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">日本</span><span class="val" style="color:var(--text2)">~4.4万亿美元</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:15%;background:var(--text2)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">德国</span><span class="val" style="color:var(--text2)">~4.5万亿美元</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:15.5%;background:var(--text2)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">印度</span><span class="val" style="color:var(--text2)">~3.9万亿美元</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:13.4%;background:var(--text2)"></div></div>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top:24px">
+      <div class="cl-title">PPP视角</div>
+      <div class="cl-body">按购买力平价计算，中国GDP早在2016年前后已超过美国，位居全球第一。PPP人均GDP约2万美元，反映国内较低物价对实际购买力的放大。但名义GDP才是国际影响力的"硬通货"。</div>
+    </div>
+
+    <!-- Per capita comparison -->
+    <div style="margin-top:24px">
+      <table class="cmp-table">
+        <tr><th>国家/地区</th><th>人均GDP（美元）</th><th>水平</th></tr>
+        <tr><td>美国</td><td>~86,000</td><td class="good">高收入</td></tr>
+        <tr><td>日本</td><td>~34,000</td><td class="good">高收入</td></tr>
+        <tr><td>韩国</td><td>~33,000</td><td class="good">高收入</td></tr>
+        <tr><td>马来西亚</td><td>~14,000</td><td>高收入门槛</td></tr>
+        <tr><td class="hl">中国</td><td class="hl">~13,300</td><td class="warn">中高收入上段</td></tr>
+        <tr><td>墨西哥</td><td>~13,000</td><td>中高收入</td></tr>
+        <tr><td>巴西</td><td>~10,000</td><td>中高收入</td></tr>
+        <tr><td style="color:var(--text2)">高收入门槛</td><td style="color:var(--green)">~14,000</td><td class="good">世界银行标准</td></tr>
+      </table>
+    </div>
+
+    <div class="callout warn" style="margin-top:18px">
+      <div class="cl-title">中等收入陷阱窗口</div>
+      <div class="cl-body">人均GDP距高收入门槛（~14,000美元）仅差约700美元。未来3-5年能否跨越是核心节点。但名义GDP增速已从10%+放缓至4-5%，汇率波动可能推迟这一时刻。</div>
+    </div>
+  </section>
+
+  <!-- Three Horses -->
+  <section class="section">
+    <h2>三 驾 马 车 结 构</h2>
+    <p class="sub">消费55% · 投资42% · 净出口3% — 全球最失衡的支出结构之一</p>
+
+    <div class="ascii-box"><span class="hl">  GDP支出结构（2024年）</span>
+
+  最终消费  <span class="o">████████████████████████████</span>  <span class="o">55%</span>
+    居民消费   ██████████████████         38-39%
+    政府消费   ████████                   16-17%
+
+  资本形成  <span class="r">█████████████████████████</span>    <span class="r">42%</span>
+    制造业投资   增速9-10% <span class="g">↑</span>
+    基建投资     专项债驱动，边际效益<span class="r">↓</span>
+    房地产投资   <span class="r">持续负增长 ↓↓</span>
+
+  净出口    <span class="b">██</span>                            <span class="b">~3%</span>
+    "新三样"出口亮眼 | 进口疲软反映内需不足</div>
+
+    <!-- China vs peers -->
+    <div style="margin-top:24px">
+      <table class="cmp-table">
+        <tr><th>经济体</th><th>居民消费/GDP</th><th>投资/GDP</th><th>失衡度</th></tr>
+        <tr><td>美国</td><td class="good">~68%</td><td>~21%</td><td class="good">消费主导</td></tr>
+        <tr><td>日本</td><td>~54%</td><td>~25%</td><td>基本平衡</td></tr>
+        <tr><td>韩国</td><td>~49%</td><td>~32%</td><td>偏投资</td></tr>
+        <tr><td class="hl">中国</td><td class="warn">~38-39%</td><td class="warn">~42%</td><td class="warn">严重失衡</td></tr>
+        <tr><td>印度</td><td>~60%</td><td>~32%</td><td>较平衡</td></tr>
+      </table>
+    </div>
+
+    <div class="callout warn" style="margin-top:18px">
+      <div class="cl-title">核心矛盾</div>
+      <div class="cl-body">中国居民消费占GDP仅38-39%，为主要经济体最低。根本原因：居民收入在国民收入中的占比偏低、社保不完善导致预防性储蓄高（30%+）、房地产对消费的挤出效应。经济再平衡——从投资驱动转向消费驱动——是所有结构性改革的终极方向。</div>
+    </div>
+
+    <div class="wide-grid" style="margin-top:20px">
+      <div class="wide-card">
+        <h3>消费：升级与降级并存</h3>
+        <p>高端消费（新能源车、智能设备）增长快，同时低端必需品和折扣零售也在增长。疫情后消费恢复偏慢，储蓄率居高不下，反映信心不足而非消费能力消失。</p>
+      </div>
+      <div class="wide-card">
+        <h3>投资：三板块分化加剧</h3>
+        <p>制造业投资受产业升级政策驱动保持高增速（9-10%）；基建靠专项债续命但边际效益递减；房地产投资持续负增长成为最大拖累。投资效率（ICOR）从3-4恶化到7-8。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Three Industries -->
+  <section class="section">
+    <h2>三 次 产 业 结 构</h2>
+    <p class="sub">服务业55% · 工业38% · 农业7% — 但就业结构严重错配</p>
+
+    <div class="ascii-box"><span class="hl">        GDP占比         就业占比        生产率隐含</span>
+
+  农业     <span class="o">███</span> 7%         <span class="r">███████████</span> 23%   <span class="r">严重低效</span>
+  工业     <span class="b">███████████████</span> 38%  <span class="b">██████████████</span> 29%   基本匹配
+  服务业   <span class="g">██████████████████████</span> 55%  <span class="g">███████████████████</span> 48%   <span class="g">生产率待提升</span>
+
+  <span class="r">▲ 农业：7%的GDP吸纳23%的就业 = 劳动生产率仅为工业的1/4</span>
+  <span class="o">  城乡收入差距 2.4:1 的根源</span></div>
+
+    <div class="card-grid" style="margin-top:24px">
+      <div class="card">
+        <div class="big" style="color:var(--orange)">7%</div>
+        <h3>农业GDP占比</h3>
+        <p>吸纳23%就业，劳动生产率远低于工业和服务业。农业现代化、规模化经营受制于土地制度和小农传统。</p>
+      </div>
+      <div class="card">
+        <div class="big" style="color:var(--blue)">38%</div>
+        <h3>工业GDP占比</h3>
+        <p>全球唯一拥有UN全部工业门类的国家。制造业增加值占全球30%，世界第一。选择"再工业化"而非"去工业化"。</p>
+      </div>
+      <div class="card">
+        <div class="big" style="color:var(--green)">55%</div>
+        <h3>服务业GDP占比</h3>
+        <p>与发达国家70-80%仍有差距。内部偏传统服务（批零、餐饮、房地产），现代生产性服务占比需提升。</p>
+      </div>
+      <div class="card">
+        <div class="big" style="color:var(--accent)">30%</div>
+        <h3>制造业/全球</h3>
+        <p>中国制造业增加值约占全球30%，是美国+日本+德国之和。工业内部正从传统（钢铁、水泥）向高技术升级。</p>
+      </div>
+    </div>
+
+    <!-- International comparison -->
+    <div style="margin-top:24px">
+      <table class="cmp-table">
+        <tr><th>经济体</th><th>第一产业</th><th>第二产业</th><th>第三产业</th><th>发展阶段参照</th></tr>
+        <tr><td>美国</td><td>1%</td><td>18%</td><td class="good">81%</td><td>后工业化</td></tr>
+        <tr><td>日本（当前）</td><td>1%</td><td>27%</td><td class="good">72%</td><td>后工业化</td></tr>
+        <tr><td>韩国</td><td>2%</td><td>32%</td><td>66%</td><td>工业化后期</td></tr>
+        <tr><td class="hl">中国</td><td>7%</td><td class="hl">38%</td><td>55%</td><td class="warn">≈日本1980s/韩国2000s</td></tr>
+        <tr><td>印度</td><td>17%</td><td>25%</td><td>58%</td><td>工业化初期</td></tr>
+      </table>
+    </div>
+
+    <div class="callout" style="margin-top:18px">
+      <div class="cl-title">中国特色：不"去工业化"</div>
+      <div class="cl-body">与西方经济体服务业占比70%+、工业萎缩不同，中国第二产业占比在38%左右保持稳定。这是有意识的政策选择——保留"世界工厂"地位，同时通过产业升级提高工业附加值。未来服务业占比将继续上升，但工业不会大幅收缩。</div>
+    </div>
+  </section>
+
+  <!-- State vs Private -->
+  <section class="section">
+    <h2>国 有 经 济 与 民 营 经 济</h2>
+    <p class="sub">"56789"格局：民营经济贡献60%GDP、80%就业 — 但信心处于历史低位</p>
+
+    <div class="ascii-box"><span class="hl">民营经济"56789"全景</span>
+
+  税  收  <span class="g">██████████████████████████</span>     <span class="g">50%+</span>
+  GDP    <span class="g">████████████████████████████████</span> <span class="g">60%+</span>
+  创  新  <span class="g">██████████████████████████████████████</span> <span class="g">70%+</span>
+  就  业  <span class="g">████████████████████████████████████████████</span> <span class="g">80%+</span>
+  企业数  <span class="g">██████████████████████████████████████████████████</span> <span class="g">90%+</span>
+
+  <span class="o">vs 国有经济</span>
+
+  税  收  <span class="b">████████████████████</span>           <span class="b">~40%</span>
+  GDP    <span class="b">██████████████████</span>             <span class="b">35-40%</span>
+  就  业  <span class="b">████████</span>                       <span class="b">12-15%</span>（城镇）
+  资  产  <span class="r">██████████████████████████████████████████████████</span> <span class="r">300万亿+</span>
+           <span class="r">▲ 巨额资产，低效运营：ROA普遍低于民企</span></div>
+
+    <div class="wide-grid" style="margin-top:24px">
+      <div class="wide-card">
+        <h3>国企：命脉行业+社会职能</h3>
+        <p>集中于上游命脉行业：石油石化、电力电网、电信、铁路、航空、银行、保险。国有资产总额超300万亿元，但ROA普遍低于民企。承担稳就业、稳价格、基建投资等社会职能，不能纯粹以利润衡量。利润总额约4-5万亿元/年。</p>
+      </div>
+      <div class="wide-card">
+        <h3>民企：创新+就业+出口主力</h3>
+        <p>集中于制造业、服务业、科技创新领域。占出口额约60%。面临融资难融资贵、市场准入限制、政策不确定性、法治保障不足等困难。2021-2023年遭受互联网平台监管风暴、教培整顿等冲击。</p>
+      </div>
+    </div>
+
+    <!-- Confidence indicators -->
+    <div class="ascii-box" style="margin-top:20px"><span class="hl">民企信心指标（近年走势）</span>
+
+  民间固定资产投资增速：
+  2020  <span class="g">████████████████</span>  恢复期
+  2021  <span class="g">██████████████████</span>  尚可
+  2022  <span class="o">███████</span>             <span class="o">显著放缓</span>
+  2023  <span class="r">██</span>                  <span class="r">一度转负</span>
+  2024  <span class="o">████</span>                <span class="o">低位徘徊</span>
+
+  企业家信心指数：<span class="r">处于历史低位</span>
+  原因链：<span class="r">监管风暴 → 预期转弱 → 减少投资 → 经济放缓 → 信心更差</span></div>
+
+    <div class="dual-box">
+      <div class="dual-card left">
+        <h4>"两个毫不动摇"</h4>
+        <p>官方否认"国进民退"，2023年出台《关于促进民营经济发展壮大的意见》，试图恢复民企信心。强调公有制与民营经济并重发展。</p>
+      </div>
+      <div class="dual-card right">
+        <h4>"国进民退"信号</h4>
+        <p>国企在竞争性领域扩张（地产、物流）、国资入股民企增多、平台经济监管趋严。政策说辞与市场感受之间存在显著落差。</p>
+      </div>
+    </div>
+
+    <div class="callout warn" style="margin-top:18px">
+      <div class="cl-title">恢复民企信心 = 当前经济政策的核心挑战</div>
+      <div class="cl-body">民营经济贡献了80%+城镇就业和60%+GDP。民企信心的崩塌直接导致投资萎缩、就业压力加大、经济活力下降。但信心不是喊口号能恢复的——需要产权保护、法治环境、市场准入等制度性保障。这也是维度九"制度与治理"探讨的核心议题。</p>
+    </div>
+  </section>
+
+  <!-- GDP Growth Slowdown -->
+  <section class="section">
+    <h2>增 速 放 缓 轨 迹</h2>
+    <p class="sub">从两位数到4-5%：放缓是规律，但结构失衡使减速更痛</p>
+
+    <div class="bar-section">
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">2000s 年均</span><span class="val" style="color:var(--green)">~10%+</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--green)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">2010-2015</span><span class="val" style="color:var(--green)">~7-8%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:75%;background:var(--green)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">2016-2019</span><span class="val" style="color:var(--orange)">~6-6.5%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:63%;background:var(--orange)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">2020（疫情年）</span><span class="val" style="color:var(--red)">2.2%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:22%;background:var(--red)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">2021（反弹）</span><span class="val" style="color:var(--green)">8.4%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:84%;background:var(--green)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">2023-2024</span><span class="val" style="color:var(--orange)">~5%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:50%;background:var(--orange)"></div></div>
+      </div>
+      <div class="bar-group">
+        <div class="bar-header"><span class="lbl">潜在增长率预期</span><span class="val" style="color:var(--red)">3.5-4.5%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:40%;background:var(--red)"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Core Verdicts -->
+  <section class="verdict">
+    <h2>核 心 判 断</h2>
+    <div class="verdict-list">
+      <div class="verdict-item">
+        <div class="vi-num">判断 01</div>
+        <div class="vi-text">中国经济的"总量叙事"掩盖了"人均现实"与"结构困境"</div>
+        <div class="vi-detail">GDP全球第二的光环下，人均仅1.33万美元，距高收入门槛一步之遥。名义总量≠人民感受。14亿人的分母效应意味着"大"不等于"强"也不等于"富"。</div>
+      </div>
+      <div class="verdict-item">
+        <div class="vi-num">判断 02</div>
+        <div class="vi-text">消费-投资失衡是所有结构性矛盾的总根源</div>
+        <div class="vi-detail">居民消费占GDP仅38-39%为全球主要经济体最低，投资率42%为全球最高水平。这不是阶段性问题而是制度性结果——收入分配偏向政府和企业、社保不足导致被迫储蓄、房地产挤出消费。三驾马车的再平衡决定了中国经济的未来走向。</div>
+      </div>
+      <div class="verdict-item">
+        <div class="vi-num">判断 03</div>
+        <div class="vi-text">产业结构"不去工业化"是正确选择，但服务业质量是短板</div>
+        <div class="vi-detail">保持38%的工业占比、拥有全球30%的制造业增加值，让中国避免了欧美的"产业空心化"。但服务业虽占55%，内部以传统服务为主，现代生产性服务（金融、IT、研发）占比不足，生产率增长慢于工业。</div>
+      </div>
+      <div class="verdict-item">
+        <div class="vi-num">判断 04</div>
+        <div class="vi-text">民营经济信心的恢复是经济复苏的必要条件</div>
+        <div class="vi-detail">民营经济贡献80%+就业和60%+GDP，但信心指数处于历史低位。"两个毫不动摇"的口号与"国进民退"的市场感受之间存在鸿沟。没有制度性的产权保护和法治保障，仅靠政策喊话无法逆转预期。</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">
+    维度一 · 总量与结构 · 数据基于Q01-Q04研究笔记 · 中国宏观经济分析框架
+  </div>
+
+</div>
+</body>
+</html>

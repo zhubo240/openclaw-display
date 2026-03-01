@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A股模拟交易看板</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+       background: #f0f2f5; color: #333; padding: 20px; }
+.header { text-align: center; margin-bottom: 24px; }
+.header h1 { font-size: 24px; color: #1a1a1a; }
+.header p { color: #666; margin-top: 4px; }
+
+.session-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+.session-tab { padding: 8px 16px; border: 1px solid #d9d9d9; border-radius: 6px;
+               background: white; cursor: pointer; font-size: 14px; transition: all 0.2s; }
+.session-tab:hover { border-color: #1890ff; color: #1890ff; }
+.session-tab.active { background: #1890ff; color: white; border-color: #1890ff; }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 16px; margin-bottom: 24px; }
+.card { background: white; border-radius: 8px; padding: 20px;
+         box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+.card .label { font-size: 13px; color: #8c8c8c; margin-bottom: 8px; }
+.card .value { font-size: 24px; font-weight: 600; }
+.card .value.positive { color: #cf1322; }
+.card .value.negative { color: #389e0d; }
+
+.section { background: white; border-radius: 8px; padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px; }
+.section h2 { font-size: 16px; margin-bottom: 16px; color: #1a1a1a; }
+
+.chart-container { position: relative; height: 300px; }
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { background: #fafafa; padding: 10px 12px; text-align: left;
+     border-bottom: 1px solid #f0f0f0; color: #8c8c8c; font-weight: 500; }
+td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; }
+tr:hover { background: #fafafa; }
+.pnl-pos { color: #cf1322; }
+.pnl-neg { color: #389e0d; }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; }
+.tag-buy { background: #fff1f0; color: #cf1322; }
+.tag-sell { background: #f6ffed; color: #389e0d; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>A股模拟交易看板</h1>
+  <p id="updateTime"></p>
+</div>
+
+<div class="session-tabs" id="sessionTabs"></div>
+<div class="cards" id="summaryCards"></div>
+
+<div class="section">
+  <h2>净值曲线</h2>
+  <div class="chart-container">
+    <canvas id="nvChart"></canvas>
+  </div>
+</div>
+
+<div class="section">
+  <h2>持仓明细</h2>
+  <table id="positionsTable">
+    <thead><tr>
+      <th>代码</th><th>名称</th><th>股数</th><th>成本</th><th>现价</th><th>盈亏</th>
+    </tr></thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<div class="section">
+  <h2>近期交易</h2>
+  <table id="txTable">
+    <thead><tr>
+      <th>日期</th><th>操作</th><th>股票</th><th>股数</th><th>价格</th><th>理由</th>
+    </tr></thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<script>
+const sessions = [{"name": "backtest_2025-06-01_2025-06-30", "portfolio": {"initial_cash": 1000000, "cash": 953278.3225, "positions": {"600276": {"shares": 900, "avg_cost": 51.9, "buy_date": "2025-06-30", "name": "恒瑞医药"}}}, "transactions": [{"date": "2025-06-30", "action": "buy", "code": "600276", "name": "恒瑞医药", "shares": 900, "price": 51.9, "amount": 46710.0, "commission": 11.6775, "reason": "近20日跌-5.4%，逢低买入"}], "net_value": [["2025-06-03", 1000000], ["2025-06-04", 1000000], ["2025-06-05", 1000000], ["2025-06-06", 1000000], ["2025-06-09", 1000000], ["2025-06-10", 1000000], ["2025-06-11", 1000000], ["2025-06-12", 1000000], ["2025-06-13", 1000000], ["2025-06-16", 1000000], ["2025-06-17", 1000000], ["2025-06-18", 1000000], ["2025-06-19", 1000000], ["2025-06-20", 1000000], ["2025-06-23", 1000000], ["2025-06-24", 1000000], ["2025-06-25", 1000000], ["2025-06-26", 1000000], ["2025-06-27", 1000000], ["2025-06-30", 999988.3225]], "report": "# 回测报告\n\n- **区间**: 2025-06-01 ~ 2025-06-30\n- **策略**: rule\n- **初始资金**: ¥1,000,000\n\n## 绩效指标\n\n| 指标 | 值 |\n|------|------|\n| 总收益率 | -0.00% |\n| 最终资产 | ¥999,988 |\n| 最大回撤 | 0.00% |\n| 夏普比率 | -496.72 |\n| 胜率 | 0.0% |\n| 交易次数 | 1 (买1 / 卖0) |\n\n## 当前持仓\n\n总资产: ¥999,988.32  现金: ¥953,278.32  收益率: -0.00%\n持仓 1 只：\n  600276 恒瑞医药  900股  成本51.90  现价51.90  盈亏+0.00%\n\n## 交易记录\n\n| 日期 | 操作 | 股票 | 股数 | 价格 | 理由 |\n|------|------|------|------|------|------|\n| 2025-06-30 | buy | 600276 恒瑞医药 | 900 | 51.90 | 近20日跌-5.4%，逢低买入 |"}, {"name": "backtest_2025H1", "portfolio": {"initial_cash": 1000000, "cash": 671896.90275, "positions": {"000858": {"shares": 400, "avg_cost": 119.94, "buy_date": "2025-02-06", "name": "五粮液", "current_price": 113.27}, "600900": {"shares": 1800, "avg_cost": 26.45, "buy_date": "2025-02-25", "name": "长江电力", "current_price": 29.17}, "002415": {"shares": 1800, "avg_cost": 27.09, "buy_date": "2025-04-08", "name": "海康威视", "current_price": 27.41}, "601012": {"shares": 3300, "avg_cost": 14.71, "buy_date": "2025-04-09", "name": "隆基绿能", "current_price": 15.02}, "000333": {"shares": 700, "avg_cost": 67.3, "buy_date": "2025-04-16", "name": "美的集团", "current_price": 71.75}, "300750": {"shares": 200, "avg_cost": 242.26, "buy_date": "2025-06-10", "name": "宁德时代", "current_price": 251.31}, "600276": {"shares": 900, "avg_cost": 51.81, "buy_date": "2025-06-18", "name": "恒瑞医药", "current_price": 51.9}}}, "transactions": [{"date": "2025-02-06", "action": "buy", "code": "000858", "name": "五粮液", "shares": 400, "price": 119.94, "amount": 47976.0, "commission": 11.994, "reason": "近20日跌-6.2%，逢低买入"}, {"date": "2025-02-12", "action": "buy", "code": "000333", "name": "美的集团", "shares": 700, "price": 69.47, "amount": 48629.0, "commission": 12.15725, "reason": "近20日跌-5.5%，逢低买入"}, {"date": "2025-02-25", "action": "buy", "code": "600900", "name": "长江电力", "shares": 1800, "price": 26.45, "amount": 47610.0, "commission": 11.9025, "reason": "近20日跌-5.6%，逢低买入"}, {"date": "2025-03-13", "action": "buy", "code": "300750", "name": "宁德时代", "shares": 200, "price": 247.36, "amount": 49472.0, "commission": 12.368, "reason": "近20日跌-6.1%，逢低买入"}, {"date": "2025-03-21", "action": "buy", "code": "600276", "name": "恒瑞医药", "shares": 1100, "price": 44.69, "amount": 49159.0, "commission": 12.28975, "reason": "近20日跌-6.7%，逢低买入"}, {"date": "2025-03-31", "action": "buy", "code": "601012", "name": "隆基绿能", "shares": 3100, "price": 15.85, "amount": 49135.0, "commission": 12.28375, "reason": "近20日跌-9.1%，逢低买入"}, {"date": "2025-04-01", "action": "sell", "code": "600276", "name": "恒瑞医药", "shares": 1100, "price": 51.61, "amount": 56771.0, "commission": 14.19275, "stamp_tax": 28.3855, "reason": "止盈 15.5%"}, {"date": "2025-04-02", "action": "buy", "code": "002415", "name": "海康威视", "shares": 1700, "price": 29.25, "amount": 49725.0, "commission": 12.43125, "reason": "近20日跌-9.7%，逢低买入"}, {"date": "2025-04-07", "action": "sell", "code": "000333", "name": "美的集团", "shares": 700, "price": 63.68, "amount": 44576.0, "commission": 11.144, "stamp_tax": 22.288, "reason": "止损 -8.3%"}, {"date": "2025-04-07", "action": "sell", "code": "300750", "name": "宁德时代", "shares": 200, "price": 210.24, "amount": 42048.0, "commission": 10.512, "stamp_tax": 21.024, "reason": "止损 -15.0%"}, {"date": "2025-04-07", "action": "sell", "code": "601012", "name": "隆基绿能", "shares": 3100, "price": 14.18, "amount": 43958.0, "commission": 10.9895, "stamp_tax": 21.979, "reason": "止损 -10.5%"}, {"date": "2025-04-07", "action": "sell", "code": "002415", "name": "海康威视", "shares": 1700, "price": 26.9, "amount": 45730.0, "commission": 11.432500000000001, "stamp_tax": 22.865000000000002, "reason": "止损 -8.0%"}, {"date": "2025-04-08", "action": "buy", "code": "600036", "name": "招商银行", "shares": 1200, "price": 38.45, "amount": 46140.0, "commission": 11.535, "reason": "近20日跌-5.4%，逢低买入"}, {"date": "2025-04-08", "action": "buy", "code": "002415", "name": "海康威视", "shares": 1800, "price": 27.09, "amount": 48762.0, "commission": 12.1905, "reason": "近20日跌-15.2%，逢低买入"}, {"date": "2025-04-09", "action": "buy", "code": "601012", "name": "隆基绿能", "shares": 3300, "price": 14.71, "amount": 48543.0, "commission": 12.13575, "reason": "近20日跌-13.6%，逢低买入"}, {"date": "2025-04-09", "action": "buy", "code": "300750", "name": "宁德时代", "shares": 200, "price": 206.5, "amount": 41300.0, "commission": 10.325000000000001, "reason": "近20日跌-16.9%，逢低买入"}, {"date": "2025-04-11", "action": "buy", "code": "601318", "name": "中国平安", "shares": 1000, "price": 47.18, "amount": 47180.0, "commission": 11.795, "reason": "近20日跌-7.7%，逢低买入"}, {"date": "2025-04-16", "action": "buy", "code": "000333", "name": "美的集团", "shares": 700, "price": 67.3, "amount": 47110.0, "commission": 11.7775, "reason": "近20日跌-7.2%，逢低买入"}, {"date": "2025-05-07", "action": "sell", "code": "300750", "name": "宁德时代", "shares": 200, "price": 237.75, "amount": 47550.0, "commission": 11.887500000000001, "stamp_tax": 23.775000000000002, "reason": "止盈 15.1%"}, {"date": "2025-06-10", "action": "buy", "code": "300750", "name": "宁德时代", "shares": 200, "price": 242.26, "amount": 48452.0, "commission": 12.113, "reason": "近20日跌-6.0%，逢低买入"}, {"date": "2025-06-18", "action": "buy", "code": "600276", "name": "恒瑞医药", "shares": 900, "price": 51.81, "amount": 46629.0, "commission": 11.65725, "reason": "近20日跌-7.1%，逢低买入"}, {"date": "2025-06-24", "action": "sell", "code": "601318", "name": "中国平安", "shares": 1000, "price": 54.3, "amount": 54300.0, "commission": 13.575000000000001, "stamp_tax": 27.150000000000002, "reason": "止盈 15.1%"}, {"date": "2025-06-25", "action": "sell", "code": "600036", "name": "招商银行", "shares": 1200, "price": 44.38, "amount": 53256.0, "commission": 13.314, "stamp_tax": 26.628, "reason": "止盈 15.4%"}], "net_value": [["2025-01-02", 1000000], ["2025-01-03", 1000000], ["2025-01-06", 1000000], ["2025-01-07", 1000000], ["2025-01-08", 1000000], ["2025-01-09", 1000000], ["2025-01-10", 1000000], ["2025-01-13", 1000000], ["2025-01-14", 1000000], ["2025-01-15", 1000000], ["2025-01-16", 1000000], ["2025-01-17", 1000000], ["2025-01-20", 1000000], ["2025-01-21", 1000000], ["2025-01-22", 1000000], ["2025-01-23", 1000000], ["2025-01-24", 1000000], ["2025-01-27", 1000000], ["2025-02-05", 1000000], ["2025-02-06", 999988.006], ["2025-02-07", 1000648.006], ["2025-02-10", 1000608.006], ["2025-02-11", 1000124.006], ["2025-02-12", 1000659.84875], ["2025-02-13", 1001355.84875], ["2025-02-14", 1001482.84875], ["2025-02-17", 1001301.84875], ["2025-02-18", 1000698.84875], ["2025-02-19", 1000741.84875], ["2025-02-20", 1000362.84875], ["2025-02-21", 1000178.84875], ["2025-02-24", 1000670.84875], ["2025-02-25", 998226.94625], ["2025-02-26", 999869.94625], ["2025-02-27", 1002381.94625], ["2025-02-28", 1002063.94625], ["2025-03-03", 999914.94625], ["2025-03-04", 1000250.94625], ["2025-03-05", 1000250.94625], ["2025-03-06", 1000566.94625], ["2025-03-07", 1001595.94625], ["2025-03-10", 1000685.94625], ["2025-03-11", 1001712.94625], ["2025-03-12", 1000181.94625], ["2025-03-13", 1000127.57825], ["2025-03-14", 1006621.57825], ["2025-03-17", 1004948.57825], ["2025-03-18", 1006800.57825], ["2025-03-19", 1009953.57825], ["2025-03-20", 1007332.57825], ["2025-03-21", 1005248.2885], ["2025-03-24", 1006048.2885], ["2025-03-25", 1007538.2885], ["2025-03-26", 1008214.2885], ["2025-03-27", 1010885.2885], ["2025-03-28", 1010854.2885], ["2025-03-31", 1011016.0047500001], ["2025-04-01", 1011925.4265000001], ["2025-04-02", 1011686.99525], ["2025-04-03", 1008770.99525], ["2025-04-07", 988784.7612500001], ["2025-04-08", 991537.03575], ["2025-04-09", 992346.5750000001], ["2025-04-10", 996204.5750000001], ["2025-04-11", 995933.78], ["2025-04-14", 996445.78], ["2025-04-15", 997818.78], ["2025-04-16", 998434.0025000001], ["2025-04-17", 998175.0025000001], ["2025-04-18", 999270.0025000001], ["2025-04-21", 999988.0025000001], ["2025-04-22", 999991.0025000001], ["2025-04-23", 1000759.0025000001], ["2025-04-24", 1002154.0025000001], ["2025-04-25", 1002361.0025000001], ["2025-04-28", 1003539.0025000001], ["2025-04-29", 1001930.0025000001], ["2025-04-30", 999055.0025000001], ["2025-05-06", 1002093.0025000001], ["2025-05-07", 1005473.3400000001], ["2025-05-08", 1008847.3400000001], ["2025-05-09", 1008635.3400000001], ["2025-05-12", 1012888.3400000001], ["2025-05-13", 1014911.3400000001], ["2025-05-14", 1018789.3400000001], ["2025-05-15", 1016109.3400000001], ["2025-05-16", 1013416.3400000001], ["2025-05-19", 1013199.3400000001], ["2025-05-20", 1014937.3400000001], ["2025-05-21", 1016043.3400000001], ["2025-05-22", 1016736.3400000001], ["2025-05-23", 1013470.3400000001], ["2025-05-26", 1012369.3400000001], ["2025-05-27", 1010164.3400000001], ["2025-05-28", 1010814.3400000001], ["2025-05-29", 1011400.3400000001], ["2025-05-30", 1009915.3400000001], ["2025-06-03", 1007953.3400000001], ["2025-06-04", 1008045.3400000001], ["2025-06-05", 1008923.3400000001], ["2025-06-06", 1009157.3400000001], ["2025-06-09", 1009178.3400000001], ["2025-06-10", 1007446.2270000001], ["2025-06-11", 1012636.2270000001], ["2025-06-12", 1011887.2270000001], ["2025-06-13", 1008707.2270000001], ["2025-06-16", 1008577.2270000001], ["2025-06-17", 1009217.2270000001], ["2025-06-18", 1008946.56975], ["2025-06-19", 1005078.56975], ["2025-06-20", 1007156.56975], ["2025-06-23", 1007591.56975], ["2025-06-24", 1013592.84475], ["2025-06-25", 1018625.90275], ["2025-06-26", 1016651.90275], ["2025-06-27", 1014271.90275], ["2025-06-30", 1015811.90275]], "report": "# 回测报告\n\n- **区间**: 2025-01-01 ~ 2025-06-30\n- **策略**: rule\n- **初始资金**: ¥1,000,000\n\n## 绩效指标\n\n| 指标 | 值 |\n|------|------|\n| 总收益率 | 1.58% |\n| 最终资产 | ¥1,015,812 |\n| 最大回撤 | 2.29% |\n| 夏普比率 | 0.33 |\n| 胜率 | 50.0% |\n| 交易次数 | 23 (买15 / 卖8) |\n\n## 当前持仓\n\n总资产: ¥1,015,811.90  现金: ¥671,896.90  收益率: 1.58%\n持仓 7 只：\n  000858 五粮液  400股  成本119.94  现价113.27  盈亏-5.56%\n  600900 长江电力  1800股  成本26.45  现价29.17  盈亏+10.28%\n  002415 海康威视  1800股  成本27.09  现价27.41  盈亏+1.18%\n  601012 隆基绿能  3300股  成本14.71  现价15.02  盈亏+2.11%\n  000333 美的集团  700股  成本67.30  现价71.75  盈亏+6.61%\n  300750 宁德时代  200股  成本242.26  现价251.31  盈亏+3.74%\n  600276 恒瑞医药  900股  成本51.81  现价51.90  盈亏+0.17%\n\n## 交易记录\n\n| 日期 | 操作 | 股票 | 股数 | 价格 | 理由 |\n|------|------|------|------|------|------|\n| 2025-02-06 | buy | 000858 五粮液 | 400 | 119.94 | 近20日跌-6.2%，逢低买入 |\n| 2025-02-12 | buy | 000333 美的集团 | 700 | 69.47 | 近20日跌-5.5%，逢低买入 |\n| 2025-02-25 | buy | 600900 长江电力 | 1800 | 26.45 | 近20日跌-5.6%，逢低买入 |\n| 2025-03-13 | buy | 300750 宁德时代 | 200 | 247.36 | 近20日跌-6.1%，逢低买入 |\n| 2025-03-21 | buy | 600276 恒瑞医药 | 1100 | 44.69 | 近20日跌-6.7%，逢低买入 |\n| 2025-03-31 | buy | 601012 隆基绿能 | 3100 | 15.85 | 近20日跌-9.1%，逢低买入 |\n| 2025-04-01 | sell | 600276 恒瑞医药 | 1100 | 51.61 | 止盈 15.5% |\n| 2025-04-02 | buy | 002415 海康威视 | 1700 | 29.25 | 近20日跌-9.7%，逢低买入 |\n| 2025-04-07 | sell | 000333 美的集团 | 700 | 63.68 | 止损 -8.3% |\n| 2025-04-07 | sell | 300750 宁德时代 | 200 | 210.24 | 止损 -15.0% |\n| 2025-04-07 | sell | 601012 隆基绿能 | 3100 | 14.18 | 止损 -10.5% |\n| 2025-04-07 | sell | 002415 海康威视 | 1700 | 26.90 | 止损 -8.0% |\n| 2025-04-08 | buy | 600036 招商银行 | 1200 | 38.45 | 近20日跌-5.4%，逢低买入 |\n| 2025-04-08 | buy | 002415 海康威视 | 1800 | 27.09 | 近20日跌-15.2%，逢低买入 |\n| 2025-04-09 | buy | 601012 隆基绿能 | 3300 | 14.71 | 近20日跌-13.6%，逢低买入 |\n| 2025-04-09 | buy | 300750 宁德时代 | 200 | 206.50 | 近20日跌-16.9%，逢低买入 |\n| 2025-04-11 | buy | 601318 中国平安 | 1000 | 47.18 | 近20日跌-7.7%，逢低买入 |\n| 2025-04-16 | buy | 000333 美的集团 | 700 | 67.30 | 近20日跌-7.2%，逢低买入 |\n| 2025-05-07 | sell | 300750 宁德时代 | 200 | 237.75 | 止盈 15.1% |\n| 2025-06-10 | buy | 300750 宁德时代 | 200 | 242.26 | 近20日跌-6.0%，逢低买入 |\n| 2025-06-18 | buy | 600276 恒瑞医药 | 900 | 51.81 | 近20日跌-7.1%，逢低买入 |\n| 2025-06-24 | sell | 601318 中国平安 | 1000 | 54.30 | 止盈 15.1% |\n| 2025-06-25 | sell | 600036 招商银行 | 1200 | 44.38 | 止盈 15.4% |"}, {"name": "live", "portfolio": {"initial_cash": 1000000, "cash": 1000000, "positions": {}}, "transactions": [], "net_value": [["2026-03-01", 1000000]], "report": ""}];
+let currentIdx = 0;
+let chart = null;
+
+function init() {
+  document.getElementById('updateTime').textContent =
+    '更新时间: ' + new Date().toLocaleString('zh-CN');
+
+  const tabs = document.getElementById('sessionTabs');
+  sessions.forEach((s, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'session-tab' + (i === 0 ? ' active' : '');
+    btn.textContent = s.name;
+    btn.onclick = () => switchSession(i);
+    tabs.appendChild(btn);
+  });
+
+  if (sessions.length > 0) render(0);
+}
+
+function switchSession(idx) {
+  currentIdx = idx;
+  document.querySelectorAll('.session-tab').forEach((t, i) => {
+    t.className = 'session-tab' + (i === idx ? ' active' : '');
+  });
+  render(idx);
+}
+
+function render(idx) {
+  const s = sessions[idx];
+  const p = s.portfolio;
+  const positions = p.positions || {};
+  const cash = p.cash || 0;
+  const initialCash = p.initial_cash || 1000000;
+
+  let stockValue = 0;
+  for (const [code, pos] of Object.entries(positions)) {
+    const price = pos.current_price || pos.avg_cost || 0;
+    stockValue += pos.shares * price;
+  }
+  const totalValue = cash + stockValue;
+  const returnPct = ((totalValue / initialCash) - 1) * 100;
+
+  // Summary cards
+  const cards = document.getElementById('summaryCards');
+  cards.innerHTML = `
+    <div class="card">
+      <div class="label">总资产</div>
+      <div class="value">¥${totalValue.toLocaleString('zh-CN', {minimumFractionDigits: 0})}</div>
+    </div>
+    <div class="card">
+      <div class="label">现金</div>
+      <div class="value">¥${cash.toLocaleString('zh-CN', {minimumFractionDigits: 0})}</div>
+    </div>
+    <div class="card">
+      <div class="label">持仓市值</div>
+      <div class="value">¥${stockValue.toLocaleString('zh-CN', {minimumFractionDigits: 0})}</div>
+    </div>
+    <div class="card">
+      <div class="label">收益率</div>
+      <div class="value ${returnPct >= 0 ? 'positive' : 'negative'}">
+        ${returnPct >= 0 ? '+' : ''}${returnPct.toFixed(2)}%
+      </div>
+    </div>
+    <div class="card">
+      <div class="label">持仓数</div>
+      <div class="value">${Object.keys(positions).length}</div>
+    </div>
+    <div class="card">
+      <div class="label">交易次数</div>
+      <div class="value">${s.transactions.length}</div>
+    </div>
+  `;
+
+  // Net value chart
+  if (chart) chart.destroy();
+  const nv = s.net_value || [];
+  if (nv.length > 0) {
+    const ctx = document.getElementById('nvChart').getContext('2d');
+    chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: nv.map(x => x[0]),
+        datasets: [{
+          label: '净值',
+          data: nv.map(x => x[1]),
+          borderColor: '#1890ff',
+          backgroundColor: 'rgba(24,144,255,0.1)',
+          fill: true,
+          tension: 0.3,
+          pointRadius: 0,
+          borderWidth: 2,
+        }, {
+          label: '初始资金',
+          data: nv.map(() => initialCash),
+          borderColor: '#d9d9d9',
+          borderDash: [5, 5],
+          pointRadius: 0,
+          borderWidth: 1,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: true } },
+        scales: {
+          x: { display: true, ticks: { maxTicksLimit: 10 } },
+          y: { display: true, ticks: { callback: v => '¥' + (v/10000).toFixed(0) + '万' } }
+        }
+      }
+    });
+  }
+
+  // Positions table
+  const posBody = document.querySelector('#positionsTable tbody');
+  posBody.innerHTML = '';
+  for (const [code, pos] of Object.entries(positions)) {
+    const cur = pos.current_price || pos.avg_cost;
+    const pnl = pos.avg_cost > 0 ? ((cur / pos.avg_cost - 1) * 100) : 0;
+    const pnlClass = pnl >= 0 ? 'pnl-pos' : 'pnl-neg';
+    posBody.innerHTML += `<tr>
+      <td>${code}</td>
+      <td>${pos.name || ''}</td>
+      <td>${pos.shares}</td>
+      <td>${pos.avg_cost.toFixed(2)}</td>
+      <td>${cur.toFixed(2)}</td>
+      <td class="${pnlClass}">${pnl >= 0 ? '+' : ''}${pnl.toFixed(2)}%</td>
+    </tr>`;
+  }
+  if (Object.keys(positions).length === 0) {
+    posBody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999">无持仓</td></tr>';
+  }
+
+  // Transactions table (last 20)
+  const txBody = document.querySelector('#txTable tbody');
+  txBody.innerHTML = '';
+  const recentTx = s.transactions.slice(-20).reverse();
+  for (const t of recentTx) {
+    const tagClass = t.action === 'buy' ? 'tag-buy' : 'tag-sell';
+    const label = t.action === 'buy' ? '买入' : '卖出';
+    txBody.innerHTML += `<tr>
+      <td>${t.date}</td>
+      <td><span class="tag ${tagClass}">${label}</span></td>
+      <td>${t.code} ${t.name || ''}</td>
+      <td>${t.shares}</td>
+      <td>${t.price.toFixed(2)}</td>
+      <td>${t.reason || ''}</td>
+    </tr>`;
+  }
+  if (recentTx.length === 0) {
+    txBody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999">无交易记录</td></tr>';
+  }
+}
+
+init();
+</script>
+</body>
+</html>
