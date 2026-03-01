@@ -3,13 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>周趋势分析 · 2026 W09 (2/25–2/27)</title>
+<title>周趋势分析 · 2026 W09 (2/25–3/1)</title>
 <style>
   :root {
     --bg: #0d1117; --card: #161b22; --border: #30363d;
     --text: #e6edf3; --text2: #8b949e; --accent: #58a6ff;
     --green: #3fb950; --red: #f85149; --orange: #d29922; --purple: #bc8cff;
     --wechat: #07c160; --xhs: #fe2c55; --bili: #00a1d6; --yt: #ff0000;
+    --sl: #9b59b6;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
@@ -28,6 +29,8 @@
   }
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
+  .back { font-size: 13px; color: var(--text2); margin-bottom: 24px; display: inline-block; }
+  .back:hover { color: var(--accent); }
 
   /* Key metric cards */
   .metrics {
@@ -40,6 +43,26 @@
   }
   .metric-card .num { font-size: 28px; font-weight: 700; }
   .metric-card .label { font-size: 11px; color: var(--text2); margin-top: 4px; }
+
+  /* Week narrative arc */
+  .arc {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px; margin-bottom: 32px;
+  }
+  .arc h3 { font-size: 15px; margin-bottom: 12px; color: var(--accent); }
+  .arc-timeline {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
+    margin-bottom: 16px;
+  }
+  .arc-day {
+    text-align: center; padding: 10px 4px;
+    background: rgba(88,166,255,0.04); border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .arc-day .day-label { font-size: 11px; color: var(--text2); font-weight: 600; }
+  .arc-day .day-theme { font-size: 11px; color: var(--text); margin-top: 4px; line-height: 1.4; }
+  .arc-day.highlight { border-color: rgba(248,81,73,0.4); background: rgba(248,81,73,0.06); }
+  .arc-summary { font-size: 13px; color: var(--text2); line-height: 1.7; }
 
   /* Topic section */
   .topic {
@@ -75,6 +98,9 @@
     background: rgba(88,166,255,0.04); border-left: 3px solid var(--accent);
     border-radius: 0 8px 8px 0;
   }
+  .insight.insight-red {
+    background: rgba(248,81,73,0.04); border-left-color: var(--red);
+  }
 
   /* Platform presence tags */
   .platforms { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
@@ -85,6 +111,7 @@
   .ptag-xhs { background: rgba(254,44,85,0.12); color: var(--xhs); }
   .ptag-bili { background: rgba(0,161,214,0.12); color: var(--bili); }
   .ptag-yt { background: rgba(255,0,0,0.12); color: var(--yt); }
+  .ptag-sl { background: rgba(155,89,182,0.12); color: var(--sl); }
 
   /* Evidence list */
   .evidence { margin: 0; padding: 0; list-style: none; }
@@ -106,8 +133,8 @@
   .src-xhs { background: rgba(254,44,85,0.1); color: var(--xhs); }
   .src-bili { background: rgba(0,161,214,0.1); color: var(--bili); }
   .src-yt { background: rgba(255,0,0,0.1); color: var(--yt); }
+  .src-sl { background: rgba(155,89,182,0.1); color: var(--sl); }
 
-  /* Footer */
   .footer {
     text-align: center; padding: 24px; color: var(--text2); font-size: 12px;
     border-top: 1px solid var(--border); margin-top: 32px;
@@ -115,48 +142,134 @@
 
   @media (max-width: 600px) {
     .metrics { grid-template-columns: repeat(2, 1fr); }
+    .arc-timeline { grid-template-columns: repeat(3, 1fr); }
   }
 </style>
 </head>
 <body>
 <div class="container">
 
+<a class="back" href="../../index.html">&larr; 返回监测站</a>
+
 <header>
   <h1>跨平台周趋势分析</h1>
-  <div class="sub">基于微信 · 小红书 · B站 · YouTube 四平台数据</div>
-  <div class="period">2026 第 9 周 · 2月25日 – 2月27日</div>
+  <div class="sub">基于微信 · 小红书 · B站 · YouTube · Superlinear 五平台数据</div>
+  <div class="period">2026 第 9 周 · 2月25日 – 3月1日（完整版）</div>
 </header>
 
 <div class="metrics">
   <div class="metric-card">
-    <div class="num" style="color:var(--accent)">4</div>
+    <div class="num" style="color:var(--accent)">6</div>
     <div class="label">跨平台热点主题</div>
   </div>
   <div class="metric-card">
-    <div class="num" style="color:var(--red)">3</div>
+    <div class="num" style="color:var(--red)">5</div>
     <div class="label">覆盖天数</div>
   </div>
   <div class="metric-card">
-    <div class="num" style="color:var(--green)">4</div>
+    <div class="num" style="color:var(--green)">5</div>
     <div class="label">监测平台</div>
   </div>
   <div class="metric-card">
-    <div class="num" style="color:var(--orange)">~80</div>
+    <div class="num" style="color:var(--orange)">~120</div>
     <div class="label">追踪条目</div>
   </div>
 </div>
 
-<!-- Topic 1 -->
+<!-- Week Narrative Arc -->
+<div class="arc">
+  <h3>本周叙事弧线：从 AI 主导到地缘碾压</h3>
+  <div class="arc-timeline">
+    <div class="arc-day">
+      <div class="day-label">2/25 周二</div>
+      <div class="day-theme">Qwen 3.5<br>35岁程序员</div>
+    </div>
+    <div class="arc-day">
+      <div class="day-label">2/26 周三</div>
+      <div class="day-theme">NVDA财报<br>美国物价热议</div>
+    </div>
+    <div class="arc-day">
+      <div class="day-label">2/27 周四</div>
+      <div class="day-theme">Block裁员40%<br>AI模型密集发布</div>
+    </div>
+    <div class="arc-day">
+      <div class="day-label">2/28 周五</div>
+      <div class="day-theme">OpenAI $110B<br>OpenClaw生态爆发</div>
+    </div>
+    <div class="arc-day highlight">
+      <div class="day-label">3/1 周六</div>
+      <div class="day-theme" style="color:var(--red)">美以袭击伊朗<br>全平台叙事转向</div>
+    </div>
+  </div>
+  <div class="arc-summary">
+    本周呈现清晰的"两幕剧"结构。<strong>前四天</strong>（2/25-2/28）由 AI 话题主导 — 从模型发布、裁员冲击到 OpenAI 创纪录融资，叙事逐步升级。<strong>第五天</strong>（3/1）美以对伊朗发动军事打击，12 小时内五大平台完成话题切换，地缘政治碾压式取代 AI 成为头号议题。这是本周监测数据中最显著的"叙事断裂"现象。
+  </div>
+</div>
+
+<!-- Topic 1: Middle East Crisis (NEW, biggest story) -->
 <div class="topic" id="t1">
   <div class="topic-header" onclick="this.closest('.topic').classList.toggle('collapsed')">
-    <span class="arrow">▾</span>
-    <span class="icon">🔥</span>
+    <span class="arrow">&#9662;</span>
+    <span class="icon">&#9888;&#65039;</span>
+    <h2>中东危机：美以袭击伊朗，全平台叙事断裂</h2>
+    <span class="heat heat-hot">周末爆发</span>
+  </div>
+  <div class="topic-body">
+    <div class="insight insight-red">
+      <strong>核心洞察：</strong>2/28 美以联合打击伊朗，伊朗革命卫队宣布封锁霍尔木兹海峡，150+ 油轮滞留，布伦特原油飙升 13% 至 $80/桶。这是本周唯一实现 <strong>5/5 全平台头条</strong> 的事件。从财经博主讨论油价到 B 站军事区战况分析，从小红书理财圈"加仓黄金"到 Superlinear 社区紧急调仓讨论 — 不同平台的"加工角度"折射用户群体差异，但紧迫感一致。周一全球股市开盘预计遭受重大冲击。
+      <br><br>
+      <a href="../../深度专题/mideast-crisis-2026-03/index.html">&#8594; 查看完整深度专题分析</a>
+    </div>
+    <div class="platforms">
+      <span class="ptag ptag-wechat">微信</span>
+      <span class="ptag ptag-xhs">小红书</span>
+      <span class="ptag ptag-bili">B站</span>
+      <span class="ptag ptag-yt">YouTube</span>
+      <span class="ptag ptag-sl">Superlinear</span>
+    </div>
+    <ul class="evidence">
+      <li>
+        <span class="day">3/1</span>
+        <span class="src src-wechat">微信</span>
+        36氪首条：中东局势骤然升级，如何影响A股、黄金和原油
+      </li>
+      <li>
+        <span class="day">3/1</span>
+        <span class="src src-xhs">小红书</span>
+        "美军打伊朗了，油价要飙了吗？" — 财经热议刷屏
+      </li>
+      <li>
+        <span class="day">3/1</span>
+        <span class="src src-bili">B站</span>
+        "美国航母被伊朗高超音速导弹击中" · 13.3万播放 · 军事区热门
+      </li>
+      <li>
+        <span class="day">3/1</span>
+        <span class="src src-yt">YouTube</span>
+        财经频道全面转向避险资产配置讨论
+      </li>
+      <li>
+        <span class="day">3/1</span>
+        <span class="src src-sl">Superlinear</span>
+        "中东局势对投资组合的影响 — 周末紧急讨论"
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- Topic 2: AI Employment Impact -->
+<div class="topic" id="t2">
+  <div class="topic-header" onclick="this.closest('.topic').classList.toggle('collapsed')">
+    <span class="arrow">&#9662;</span>
+    <span class="icon">&#128293;</span>
     <h2>AI 对就业的冲击：从焦虑到现实</h2>
-    <span class="heat heat-hot">爆热</span>
+    <span class="heat heat-hot">全周持续</span>
   </div>
   <div class="topic-body">
     <div class="insight">
-      <strong>核心洞察：</strong>Block 裁员 40% 是本周最大引爆点 — 这不再是"AI 会不会替代人"的假设性讨论，而是 CEO 亲口说"AI 时代不需要这么多人了"。三天内，从微信科技媒体到小红书热帖、YouTube 财经频道同步放大，形成了完整的恐慌-反思-理性化叙事链。值得关注的是，35 岁程序员失业、AI 写代码工程师生存等话题已从"个体故事"升级为"结构性议题"。
+      <strong>核心洞察：</strong>Block 裁员 40% 是本周最大的 AI 相关引爆点 — CEO 亲口说"AI 时代不需要这么多人了"，股价飙涨 25%。从微信科技媒体到小红书热帖、YouTube 财经频道同步放大，形成完整的恐慌-反思-理性化叙事链。到 2/28，Block 6 年老员工"生命已枯萎"的个人叙述（1252 赞）将议题从宏观拉回个体。值得注意的是，AI 裁员话题在周末被中东危机覆盖，但底层焦虑并未消散。
+      <br><br>
+      <a href="../../深度专题/ai-layoffs-2026-02/index.html">&#8594; 查看完整深度专题分析</a>
     </div>
     <div class="platforms">
       <span class="ptag ptag-wechat">微信</span>
@@ -165,14 +278,24 @@
     </div>
     <ul class="evidence">
       <li>
+        <span class="day">2/28</span>
+        <span class="src src-xhs">小红书</span>
+        "Block 6年被裁，生命早已枯萎" · 1252赞 — 个体叙事引发共鸣
+      </li>
+      <li>
+        <span class="day">2/28</span>
+        <span class="src src-wechat">微信</span>
+        36氪：万人大厂宣布裁员40%，利润在涨，人却多余了
+      </li>
+      <li>
         <span class="day">2/27</span>
         <span class="src src-wechat">微信</span>
-        36氪：一夜暴裁4000人，股价飙涨25%，联创发文：AI时代不需要那么多人了
+        36氪：一夜暴裁4000人，股价飙涨25%
       </li>
       <li>
         <span class="day">2/27</span>
         <span class="src src-xhs">小红书</span>
-        "见证历史了：Block裁员40%，AI的第一刀" · 403赞 + "搞了ai裁员一半" · 645赞
+        "见证历史了：Block裁员40%" · 403赞 + "搞了ai裁员一半" · 645赞
       </li>
       <li>
         <span class="day">2/27</span>
@@ -182,227 +305,222 @@
       <li>
         <span class="day">2/26</span>
         <span class="src src-yt">YouTube</span>
-        Terry Chen：AI 寫 Code 這麼強，工程師要怎麼生存？· 15万次观看
+        Terry Chen：AI 寫 Code 這麼強，工程師要怎麼生存？· 15万观看
       </li>
       <li>
         <span class="day">2/26</span>
         <span class="src src-wechat">微信</span>
         V2EX：34岁大龄失业程序员的迷茫
       </li>
-      <li>
-        <span class="day">2/25</span>
-        <span class="src src-yt">YouTube</span>
-        网易纪录片：学历再高也逃不过35岁被刀 · 26万次观看
-      </li>
     </ul>
   </div>
 </div>
 
-<!-- Topic 2 -->
-<div class="topic" id="t2">
-  <div class="topic-header" onclick="this.closest('.topic').classList.toggle('collapsed')">
-    <span class="arrow">▾</span>
-    <span class="icon">⚔️</span>
-    <h2>AI 模型军备竞赛：春节档后的密集发布</h2>
-    <span class="heat heat-hot">爆热</span>
-  </div>
-  <div class="topic-body">
-    <div class="insight">
-      <strong>核心洞察：</strong>春节前后成为中国 AI 大模型的集中发布窗口。智谱 GLM-5、阿里 Qwen 3.5、月之暗面 Kimi K2.5 前脚刚落，Google Nano Banana 2、xAI Grok 4.20、Google Gemini 3.1 后脚跟上。最引人注目的是 AI 视频赛道 — Seedance 2.0 和 SkyReels-V4 接连登顶，国产 AI 视频模型已从"追赶"转为"竞争"姿态。同时，Agent 全链路成功率 0% 的 ICLR'26 论文揭示：模型能力与实际可用之间仍有巨大鸿沟。
-    </div>
-    <div class="platforms">
-      <span class="ptag ptag-wechat">微信</span>
-      <span class="ptag ptag-xhs">小红书</span>
-      <span class="ptag ptag-bili">B站</span>
-      <span class="ptag ptag-yt">YouTube</span>
-    </div>
-    <ul class="evidence">
-      <li>
-        <span class="day">2/27</span>
-        <span class="src src-wechat">微信</span>
-        AI洞察日报：Grok 4.20发布、Gemini 3.1图像模型、Seedance 2.0上春晚
-      </li>
-      <li>
-        <span class="day">2/27</span>
-        <span class="src src-wechat">微信</span>
-        新智元：Seedance2.0炸场后，又一中国黑马登顶AA榜单（SkyReels-V4）
-      </li>
-      <li>
-        <span class="day">2/27</span>
-        <span class="src src-wechat">微信</span>
-        36氪：谷歌生图新王Nano Banana 2深夜突袭，性能屠榜速度飞升
-      </li>
-      <li>
-        <span class="day">2/27</span>
-        <span class="src src-wechat">微信</span>
-        新智元：Agent全链路成功率0%（ICLR'26 DevOps-Gym基准）
-      </li>
-      <li>
-        <span class="day">2/27</span>
-        <span class="src src-bili">B站</span>
-        全面解析《说谎的马卡龙》到底是不是AI编曲？· 38.1万播放
-      </li>
-      <li>
-        <span class="day">2/27</span>
-        <span class="src src-xhs">小红书</span>
-        Claude Code创始人上了AI创业最残酷的一课 · 663赞
-      </li>
-      <li>
-        <span class="day">2/25</span>
-        <span class="src src-wechat">微信</span>
-        阿里发布Qwen 3.5中量级全系模型；Claude Code支持手机远程操控
-      </li>
-    </ul>
-  </div>
-</div>
-
-<!-- Topic 3 -->
+<!-- Topic 3: OpenAI Funding + OpenClaw Ecosystem -->
 <div class="topic" id="t3">
   <div class="topic-header" onclick="this.closest('.topic').classList.toggle('collapsed')">
-    <span class="arrow">▾</span>
-    <span class="icon">📉</span>
-    <h2>美股震荡与 AI 泡沫叙事</h2>
-    <span class="heat heat-warm">持续热</span>
+    <span class="arrow">&#9662;</span>
+    <span class="icon">&#128640;</span>
+    <h2>OpenAI $110B 融资与 OpenClaw 生态爆发</h2>
+    <span class="heat heat-hot">周四周五爆发</span>
   </div>
   <div class="topic-body">
     <div class="insight">
-      <strong>核心洞察：</strong>NVDA Q4 营收 681 亿美元（+73%）超预期，但股价不涨反跌 — 市场叙事已从"业绩驱动"转向"恐慌定价"。"2028全球智能危机"报告预测S&P先涨至8000再跌38%，引爆卖盘。有趣的对比：YouTube 财经频道（美投侃新闻、视野环球）倾向理性分析，小红书则更情绪化（"美股疯了"、"2026对新投资者非常不友好"），体现平台调性差异。高盛喊话抄底信号成为多平台传播的关键情绪转折点。
+      <strong>核心洞察：</strong>OpenAI 宣布获得 1100 亿美元新融资（亚马逊 500 亿 + 英伟达 300 亿 + 软银 300 亿），为全球 AI 领域最大单笔融资。与此同时，OpenClaw 生态从"工具"叙事升级为"赚钱机器" — 杭州上门安装 500 元/次（2189 赞）、超 70% 赚钱项目靠帮人部署、月入 30 万案例涌现。到 3/1，OpenClaw 自动发小红书运营实现全链路闭环。Superlinear 社区也在讨论 AI 搜索流量暴增 527% 的 GEO 概念。
+    </div>
+    <div class="platforms">
+      <span class="ptag ptag-wechat">微信</span>
+      <span class="ptag ptag-xhs">小红书</span>
+      <span class="ptag ptag-sl">Superlinear</span>
+    </div>
+    <ul class="evidence">
+      <li>
+        <span class="day">3/1</span>
+        <span class="src src-wechat">微信</span>
+        OpenClaw 生态持续膨胀：GitHub star 超 23 万，超 70% 赚钱项目靠帮人部署
+      </li>
+      <li>
+        <span class="day">3/1</span>
+        <span class="src src-xhs">小红书</span>
+        "第一批拿 OpenClaw 赚钱的人：有的月入30万" + 自动发小红书运营全链路闭环
+      </li>
+      <li>
+        <span class="day">2/28</span>
+        <span class="src src-wechat">微信</span>
+        OpenAI 获 1100 亿美元融资（亚马逊 500 亿 + 英伟达 300 亿 + 软银 300 亿）
+      </li>
+      <li>
+        <span class="day">2/28</span>
+        <span class="src src-xhs">小红书</span>
+        "OpenClaw 杭州上门安装，500一次" · 2189 赞（服务化转型标志）
+      </li>
+      <li>
+        <span class="day">2/28</span>
+        <span class="src src-sl">Superlinear</span>
+        "AI 搜索流量暴增 527%" — GEO 概念持续发酵
+      </li>
+      <li>
+        <span class="day">2/28</span>
+        <span class="src src-xhs">小红书</span>
+        "太炸了！OpenClaw 2.26 史诗级更新" + 傅盛分享引关注
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- Topic 4: AI Model Arms Race -->
+<div class="topic" id="t4">
+  <div class="topic-header" onclick="this.closest('.topic').classList.toggle('collapsed')">
+    <span class="arrow">&#9662;</span>
+    <span class="icon">&#9876;&#65039;</span>
+    <h2>AI 模型军备竞赛：密集发布 + 冷水</h2>
+    <span class="heat heat-warm">前半周集中</span>
+  </div>
+  <div class="topic-body">
+    <div class="insight">
+      <strong>核心洞察：</strong>春节后成为中国 AI 大模型集中发布窗口。阿里 Qwen 3.5、Seedance 2.0 + SkyReels-V4 双登顶 AI 视频赛道，Google Nano Banana 2、xAI Grok 4.20、Gemini 3.1 密集跟进。AI 视频赛道国产模型已从"追赶"转为"竞争"姿态。但 Agent 全链路成功率 0%（ICLR'26）揭示模型能力与实际可用之间仍有巨大鸿沟。V2EX 上"古法编程是一种乐趣"引发反 AI 声音。
+      <br><br>
+      <a href="../../深度专题/ai-models-week-2026-w09/index.html">&#8594; 查看 AI 模型速览卡</a>
+    </div>
+    <div class="platforms">
+      <span class="ptag ptag-wechat">微信</span>
+      <span class="ptag ptag-xhs">小红书</span>
+      <span class="ptag ptag-bili">B站</span>
+      <span class="ptag ptag-yt">YouTube</span>
+    </div>
+    <ul class="evidence">
+      <li>
+        <span class="day">2/28</span>
+        <span class="src src-wechat">微信</span>
+        V2EX："我觉得古法编程是一种乐趣" — 反 AI 编程声音
+      </li>
+      <li>
+        <span class="day">2/27</span>
+        <span class="src src-wechat">微信</span>
+        AI洞察日报：Grok 4.20 + Gemini 3.1 + Seedance 2.0 同日发布
+      </li>
+      <li>
+        <span class="day">2/27</span>
+        <span class="src src-wechat">微信</span>
+        新智元：Seedance 2.0 炸场 + SkyReels-V4 双登顶 AI 视频赛道
+      </li>
+      <li>
+        <span class="day">2/27</span>
+        <span class="src src-wechat">微信</span>
+        新智元：Agent 全链路成功率 0%（ICLR'26 DevOps-Gym 基准）
+      </li>
+      <li>
+        <span class="day">2/25</span>
+        <span class="src src-wechat">微信</span>
+        阿里发布 Qwen 3.5 全系模型；Claude Code 支持手机远程操控
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- Topic 5: Markets -->
+<div class="topic collapsed" id="t5">
+  <div class="topic-header" onclick="this.closest('.topic').classList.toggle('collapsed')">
+    <span class="arrow">&#9662;</span>
+    <span class="icon">&#128200;</span>
+    <h2>美股震荡与避险资产重估</h2>
+    <span class="heat heat-warm">全周演变</span>
+  </div>
+  <div class="topic-body">
+    <div class="insight">
+      <strong>核心洞察：</strong>本周市场叙事经历三段转变：(1) NVDA 超预期但股价不涨反跌，"AI 泡沫"论甚嚣尘上；(2) OpenAI $110B 融资暂时提振信心；(3) 周末中东危机完全改写风险定价 — 从"AI 泡沫会不会破"转向"避险资产怎么配"。黄金、原油成为焦点。Superlinear 社区首次出现紧急投资组合讨论。3/2 周一开盘将是信息差兑现日 — 散户已在社交平台讨论两天，机构将在开盘集中反应。
     </div>
     <div class="platforms">
       <span class="ptag ptag-wechat">微信</span>
       <span class="ptag ptag-xhs">小红书</span>
       <span class="ptag ptag-yt">YouTube</span>
+      <span class="ptag ptag-sl">Superlinear</span>
     </div>
     <ul class="evidence">
       <li>
-        <span class="day">2/27</span>
+        <span class="day">3/1</span>
+        <span class="src src-wechat">微信</span>
+        新浪财经：中东局势如何影响 A 股、黄金和原油
+      </li>
+      <li>
+        <span class="day">3/1</span>
         <span class="src src-yt">YouTube</span>
-        美投侃新闻：英伟达还能涨起来吗？高盛喊话该抄底大科技了！· 4.1万观看
+        财经频道从 AI 话题全面转向避险资产配置
+      </li>
+      <li>
+        <span class="day">3/1</span>
+        <span class="src src-sl">Superlinear</span>
+        社区紧急讨论：中东局势对投资组合的影响
       </li>
       <li>
         <span class="day">2/27</span>
-        <span class="src src-wechat">微信</span>
-        黄仁勋每天都用的AI工具，要抢金融行业饭碗了？
+        <span class="src src-yt">YouTube</span>
+        美投侃新闻：英伟达还能涨起来吗？高盛喊话抄底 · 4.1万观看
       </li>
       <li>
         <span class="day">2/26</span>
         <span class="src src-yt">YouTube</span>
-        视野环球财经：NVDA超预期不涨！CRM前瞻欠佳！· 6.2万观看
-      </li>
-      <li>
-        <span class="day">2/26</span>
-        <span class="src src-wechat">微信</span>
-        晚间要闻：英伟达Q4超预期 + "2028全球智能危机"报告引恐慌
+        视野环球：NVDA 超预期不涨！"2028全球智能危机"报告引恐慌 · 6.2万观看
       </li>
       <li>
         <span class="day">2/26</span>
         <span class="src src-xhs">小红书</span>
-        "美股疯了" · 276赞 + "2026对新入场投资者不友好" · 413赞
-      </li>
-      <li>
-        <span class="day">2/25</span>
-        <span class="src src-yt">YouTube</span>
-        高盛研报解读：2026中国经济展望 · 45万观看
+        "美股疯了" · 276 赞 + "2026 对新入场投资者不友好" · 413 赞
       </li>
     </ul>
   </div>
 </div>
 
-<!-- Topic 4 -->
-<div class="topic" id="t4">
+<!-- Topic 6: B站 + Platform Ecology -->
+<div class="topic collapsed" id="t6">
   <div class="topic-header" onclick="this.closest('.topic').classList.toggle('collapsed')">
-    <span class="arrow">▾</span>
-    <span class="icon">🌏</span>
-    <h2>海外生活成本与"地理套利"</h2>
-    <span class="heat heat-rising">上升中</span>
+    <span class="arrow">&#9662;</span>
+    <span class="icon">&#128250;</span>
+    <h2>B 站生态：治愈系霸榜 + 军事区崛起</h2>
+    <span class="heat heat-rising">持续变化</span>
   </div>
   <div class="topic-body">
     <div class="insight">
-      <strong>核心洞察：</strong>小红书成为海外华人生活成本讨论的主阵地。"美国物价贵到离谱"（3991赞）和"加州湾区中产贫民窟"（354赞）引发共鸣，而"从纽约回亚洲，体会到时代红利"提出了"地理套利"概念 — 用美国的学历经验 + 亚洲的生活成本实现最优解。这一话题与 AI 裁员恐慌形成联动：当高薪科技岗位不再安全，"在哪里生活"成为更核心的决策。
-    </div>
-    <div class="platforms">
-      <span class="ptag ptag-xhs">小红书</span>
-      <span class="ptag ptag-yt">YouTube</span>
-    </div>
-    <ul class="evidence">
-      <li>
-        <span class="day">2/26</span>
-        <span class="src src-xhs">小红书</span>
-        "华人真的不觉得美国现在贵到离谱吗？" · 3991赞（长文详述物价对比）
-      </li>
-      <li>
-        <span class="day">2/26</span>
-        <span class="src src-xhs">小红书</span>
-        "从纽约回亚洲，体会到我们的时代红利" · 680赞（提出"地理套利"概念）
-      </li>
-      <li>
-        <span class="day">2/26</span>
-        <span class="src src-xhs">小红书</span>
-        "加州湾区大部分城市实际是个中产贫民窟" · 354赞
-      </li>
-      <li>
-        <span class="day">2/25</span>
-        <span class="src src-yt">YouTube</span>
-        攒够多少钱可以辞职躺平？探访存款10w和500w的退休青年 · 15万观看
-      </li>
-      <li>
-        <span class="day">2/25</span>
-        <span class="src src-xhs">小红书</span>
-        硅谷和苏黎世幸福指数对比
-      </li>
-    </ul>
-  </div>
-</div>
-
-<!-- B站 special -->
-<div class="topic collapsed" id="t5">
-  <div class="topic-header" onclick="this.closest('.topic').classList.toggle('collapsed')">
-    <span class="arrow">▾</span>
-    <span class="icon">📺</span>
-    <h2>B站特色：春节余热 + 科普类崛起</h2>
-    <span class="heat heat-warm">持续热</span>
-  </div>
-  <div class="topic-body">
-    <div class="insight">
-      <strong>核心洞察：</strong>B站的内容生态与其他三个平台明显不同 — 春节情感类和二创内容仍占据榜首（"听妈妈的话"从 482 万涨到 531 万），但科普类异军突起（"呆呆说万物" 913 万登顶）标志着 B 站用户对信息密度的需求升级。猫 meme 自述类成为新的情感出口。AI 相关内容在 B 站表现为更下沉的讨论形态：不是"模型对比"，而是"这首歌是不是 AI 编的"。
+      <strong>核心洞察：</strong>B 站本周呈现有趣的"两个世界"：治愈系内容持续霸榜（雪景短片从 519 万涨到 600 万+），科普类异军突起（呆呆说万物 913 万登顶）。但 3/1 中东危机爆发后，军事区流量激增，"美国航母被伊朗导弹击中"冲上热门。B 站对同一事件的"加工角度"与其他平台显著不同 — 偏军事解读而非财经分析。实用知识类（租房指南）持续百万+流量。
     </div>
     <div class="platforms">
       <span class="ptag ptag-bili">B站</span>
     </div>
     <ul class="evidence">
       <li>
-        <span class="day">2/27</span>
+        <span class="day">3/1</span>
         <span class="src src-bili">B站</span>
-        呆呆说万物"碰见这种鱼能不能吃" · 913.6万播放（科普登顶）
+        "美国航母被伊朗高超音速导弹击中" · 13.3 万播放（军事区热门）
       </li>
       <li>
-        <span class="day">2/25→27</span>
+        <span class="day">2/25&#8594;3/1</span>
         <span class="src src-bili">B站</span>
-        "听妈妈的话" 482万→531万（持续增长）；春晚Remix 363万→379万
-      </li>
-      <li>
-        <span class="day">2/27</span>
-        <span class="src src-bili">B站</span>
-        AI音乐争议：《说谎的马卡龙》是不是AI编曲？· 38.1万播放
+        雪景短片 519 万 &#8594; 600 万+（治愈系持续霸榜第二周）
       </li>
       <li>
         <span class="day">2/27</span>
         <span class="src src-bili">B站</span>
-        FARS科研直播 · 12.5万播放（AI工具在学术圈的渗透）
+        呆呆说万物 913.6 万播放登顶（科普类崛起标志）
       </li>
       <li>
-        <span class="day">2/26→27</span>
+        <span class="day">2/28</span>
         <span class="src src-bili">B站</span>
-        猫meme自述类：从"我叛逆的一生"到"自卑杀死了我的青春"
+        "如何租房" · 108 万播放（实用知识类突破百万）
+      </li>
+      <li>
+        <span class="day">2/27</span>
+        <span class="src src-bili">B站</span>
+        "说谎的马卡龙是不是 AI 编曲？" · 38.1 万播放（AI 争议下沉形态）
       </li>
     </ul>
   </div>
 </div>
 
 <div class="footer">
-  数据来源：每日汇总 2026-02-25 / 02-26 / 02-27<br>
-  覆盖平台：微信（Folo RSS）· 小红书 · B站 · YouTube<br>
-  生成时间：2026-02-27 22:00
+  数据来源：每日汇总 2026-02-25 / 02-26 / 02-27 / 02-28 / 03-01<br>
+  覆盖平台：微信（Folo RSS）· 小红书 · B站 · YouTube · Superlinear<br>
+  初版生成：2026-02-27 22:00 · 完整版更新：2026-03-02 00:30<br>
+  <a href="../../index.html">返回监测站首页</a>
 </div>
 
 </div>
