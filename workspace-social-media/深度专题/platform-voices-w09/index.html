@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>五平台声音对比：同一事件的五种加工 — W09 分析</title>
+<style>
+  :root {
+    --bg: #0d1117; --card: #161b22; --border: #30363d;
+    --text: #e6edf3; --text2: #8b949e; --accent: #58a6ff;
+    --green: #3fb950; --red: #f85149; --orange: #d29922; --purple: #bc8cff;
+    --wechat: #07c160; --xhs: #fe2c55; --bili: #00a1d6; --yt: #ff0000; --sl: #9b59b6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--text);
+    font: 15px/1.8 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    padding: 32px 20px; min-height: 100vh;
+  }
+  .container { max-width: 860px; margin: 0 auto; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .back { font-size: 13px; color: var(--text2); margin-bottom: 24px; display: inline-block; }
+
+  .hero {
+    background: linear-gradient(135deg, rgba(88,166,255,0.08), rgba(188,140,255,0.06));
+    border: 1px solid rgba(88,166,255,0.25);
+    border-radius: 16px; padding: 36px; margin-bottom: 32px;
+  }
+  .hero .tag {
+    display: inline-block; padding: 4px 12px; border-radius: 12px;
+    font-size: 11px; font-weight: 700; letter-spacing: 1px;
+    background: rgba(88,166,255,0.15); color: var(--accent); margin-bottom: 14px;
+  }
+  .hero h1 { font-size: 26px; line-height: 1.3; margin-bottom: 10px; }
+  .hero .sub { font-size: 14px; color: var(--text2); line-height: 1.7; margin-bottom: 16px; }
+  .hero .meta { font-size: 12px; color: var(--text2); display: flex; gap: 16px; flex-wrap: wrap; }
+
+  .section { margin-bottom: 36px; }
+  .section-title {
+    font-size: 13px; color: var(--text2); text-transform: uppercase;
+    letter-spacing: 1px; margin-bottom: 14px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Platform profile cards */
+  .platform-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; margin-bottom: 16px; overflow: hidden;
+  }
+  .pc-header {
+    padding: 18px 20px; display: flex; align-items: center; gap: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .pc-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+  .pc-name { font-size: 16px; font-weight: 700; }
+  .pc-persona {
+    font-size: 12px; padding: 3px 10px; border-radius: 10px;
+    margin-left: auto; font-weight: 600;
+  }
+  .pc-body { padding: 18px 20px; }
+  .pc-body h3 { font-size: 14px; margin-bottom: 8px; color: var(--text); }
+  .pc-body p { font-size: 13px; color: var(--text2); line-height: 1.7; margin-bottom: 12px; }
+
+  .pc-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .pc-tag {
+    font-size: 11px; padding: 3px 10px; border-radius: 8px;
+    background: rgba(88,166,255,0.08); color: var(--text2);
+  }
+
+  .pc-examples {
+    list-style: none; padding: 0; margin: 0;
+    border-top: 1px solid var(--border); padding-top: 12px;
+  }
+  .pc-examples li {
+    font-size: 12px; color: var(--text2); padding: 4px 0;
+    display: flex; gap: 6px; align-items: baseline;
+  }
+  .pc-examples .day { color: var(--accent); font-weight: 600; min-width: 32px; }
+
+  /* Comparison matrix */
+  .matrix {
+    width: 100%; border-collapse: collapse; font-size: 12px;
+    margin-bottom: 20px;
+  }
+  .matrix th, .matrix td {
+    padding: 10px 12px; text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .matrix th {
+    background: var(--card); color: var(--text2); font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.5px; position: sticky; top: 0;
+  }
+  .matrix td { color: var(--text); vertical-align: top; }
+  .matrix td:first-child { font-weight: 600; white-space: nowrap; }
+  .matrix tr:hover td { background: rgba(88,166,255,0.03); }
+
+  /* Insight box */
+  .insight-box {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 20px; margin-bottom: 16px;
+  }
+  .insight-box h3 { font-size: 14px; margin-bottom: 8px; }
+  .insight-box p { font-size: 13px; color: var(--text2); line-height: 1.7; }
+
+  .footer {
+    text-align: center; padding: 24px; color: var(--text2); font-size: 12px;
+    border-top: 1px solid var(--border); margin-top: 20px;
+  }
+
+  @media (max-width: 700px) {
+    .hero { padding: 24px 18px; }
+    .hero h1 { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<a class="back" href="../../index.html">&larr; 返回监测站</a>
+
+<div class="hero">
+  <span class="tag">跨平台分析</span>
+  <h1>五平台声音对比：同一事件的五种加工</h1>
+  <div class="sub">
+    当"美以袭击伊朗"在 12 小时内登上五大平台头条，每个平台的用户如何"消化"同一条新闻？B 站看导弹型号，小红书讨论加仓黄金，微信读券商研报，YouTube 分析地缘博弈，Superlinear 调整投资组合。本页基于 W09（2/25-3/2）完整数据，解剖五平台的叙事人格差异。
+  </div>
+  <div class="meta">
+    <span>2026-03-02 分析</span>
+    <span>W09 完整数据</span>
+    <span>5 平台 · 6 天 · ~140 条</span>
+  </div>
+</div>
+
+<!-- Platform Profiles -->
+<div class="section">
+  <div class="section-title">五平台叙事人格</div>
+
+  <!-- WeChat -->
+  <div class="platform-card">
+    <div class="pc-header">
+      <span class="pc-dot" style="background:var(--wechat)"></span>
+      <span class="pc-name">微信 / 中文资讯</span>
+      <span class="pc-persona" style="background:rgba(7,193,96,0.12);color:var(--wechat)">专业分析师</span>
+    </div>
+    <div class="pc-body">
+      <h3>叙事角色：权威解读 + 机构视角</h3>
+      <p>
+        微信生态（36 氪、中新网、新浪财经、Folo RSS）扮演"专业分析师"角色。内容以券商研报解读、宏观经济分析、行业影响评估为主。情绪表达克制但紧迫 — 用"地缘黑天鹅""定价逻辑已变"等专业术语传递危机感。信息密度最高，但可读性门槛也最高。
+      </p>
+      <div class="pc-tags">
+        <span class="pc-tag">券商研报</span>
+        <span class="pc-tag">宏观分析</span>
+        <span class="pc-tag">行业影响</span>
+        <span class="pc-tag">数据密集</span>
+      </div>
+      <ul class="pc-examples">
+        <li><span class="day">3/2</span> 券商连夜开策略会，全球大类资产定价逻辑已生变</li>
+        <li><span class="day">3/1</span> 中东局势骤然升级，如何影响 A 股、黄金和原油</li>
+        <li><span class="day">2/28</span> OpenAI 获 1100 亿美元融资（亚马逊 500 亿 + 英伟达 300 亿 + 软银 300 亿）</li>
+        <li><span class="day">2/27</span> 一夜暴裁 4000 人，股价飙涨 25%，AI 时代不需要那么多人</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Xiaohongshu -->
+  <div class="platform-card">
+    <div class="pc-header">
+      <span class="pc-dot" style="background:var(--xhs)"></span>
+      <span class="pc-name">小红书</span>
+      <span class="pc-persona" style="background:rgba(254,44,85,0.12);color:var(--xhs)">行动派散户</span>
+    </div>
+    <div class="pc-body">
+      <h3>叙事角色：个人体验 + 即时行动</h3>
+      <p>
+        小红书用户把所有新闻转化为"跟我有什么关系"和"我该怎么做"。中东危机 → "油价要飙了吗？加仓黄金！"；Block 裁员 → "6 年被裁，生命已枯萎"个人叙述（1252 赞）；OpenClaw → "杭州上门安装 500 一次"（2189 赞）。情绪最强烈、行动力最高，但分析深度最浅。点赞数直接反映情绪共鸣强度。
+      </p>
+      <div class="pc-tags">
+        <span class="pc-tag">个人体验</span>
+        <span class="pc-tag">情绪共鸣</span>
+        <span class="pc-tag">即时行动</span>
+        <span class="pc-tag">点赞=温度</span>
+      </div>
+      <ul class="pc-examples">
+        <li><span class="day">3/2</span> "黄金破 5300 了！上周加仓的恭喜" — 晒盈利模式</li>
+        <li><span class="day">3/1</span> "美军打伊朗了，油价要飙了吗？" — 财经热议</li>
+        <li><span class="day">2/28</span> OpenClaw 杭州上门安装 500 一次 · 2189 赞</li>
+        <li><span class="day">2/26</span> "华人真的不觉得美国物价贵到离谱吗？" · 3991 赞</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Bilibili -->
+  <div class="platform-card">
+    <div class="pc-header">
+      <span class="pc-dot" style="background:var(--bili)"></span>
+      <span class="pc-name">B 站</span>
+      <span class="pc-persona" style="background:rgba(0,161,214,0.12);color:var(--bili)">好奇心观众</span>
+    </div>
+    <div class="pc-body">
+      <h3>叙事角色：视觉化 + "看个热闹"+ 深度科普</h3>
+      <p>
+        B 站呈现独特的"双线叙事"：一边是中东危机 → 导弹型号分析、航母被击视频、冲突推演（军事向）；另一边是治愈系雪景 600 万+播放持续霸榜（情感向）。对 AI 话题的处理最"下沉" — 不是模型对比，而是"这首歌是不是 AI 编的？"播放量是唯一硬通货，科普类（呆呆说万物 913 万）证明 B 站用户对信息密度有需求。
+      </p>
+      <div class="pc-tags">
+        <span class="pc-tag">视频为王</span>
+        <span class="pc-tag">军事向</span>
+        <span class="pc-tag">治愈系</span>
+        <span class="pc-tag">播放量=货币</span>
+      </div>
+      <ul class="pc-examples">
+        <li><span class="day">3/2</span> 地缘分析：美伊以冲突推演（26 年 2-3 月）— 军事区热门</li>
+        <li><span class="day">3/1</span> 美国航母被伊朗高超音速导弹击中 · 13.3 万播放</li>
+        <li><span class="day">2/28</span> 雪景短片 519 万→600 万+（治愈系持续霸榜）</li>
+        <li><span class="day">2/27</span> 呆呆说万物 913.6 万播放（科普登顶）</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- YouTube -->
+  <div class="platform-card">
+    <div class="pc-header">
+      <span class="pc-dot" style="background:var(--yt)"></span>
+      <span class="pc-name">YouTube</span>
+      <span class="pc-persona" style="background:rgba(255,0,0,0.12);color:var(--yt)">时政评论员</span>
+    </div>
+    <div class="pc-body">
+      <h3>叙事角色：地缘博弈 + 财经深度</h3>
+      <p>
+        YouTube 中文频道在两个极端间切换：时政军事（"斩首行动""后哈梅内伊时代"）和理性财经（美投侃新闻、视野环球）。相比小红书的情绪化，YouTube 财经频道更倾向结构化分析（"美股/黄金/原油三大资产不同影响路径"）。本周经历了从"AI 叙事"到"避险叙事"的完整转向 — 科技话题几乎被完全挤出。
+      </p>
+      <div class="pc-tags">
+        <span class="pc-tag">长视频</span>
+        <span class="pc-tag">时政分析</span>
+        <span class="pc-tag">理性财经</span>
+        <span class="pc-tag">叙事转向最明显</span>
+      </div>
+      <ul class="pc-examples">
+        <li><span class="day">3/2</span> "川普斩首中东！一场战争 3 策略" — 时政热门</li>
+        <li><span class="day">3/1</span> 伊朗局势如何影响美股、黄金和原油 — 财经分析</li>
+        <li><span class="day">2/27</span> 投资 TALK 君：裁员近一半！AI 引发的悲剧？</li>
+        <li><span class="day">2/26</span> 视野环球：NVDA 超预期不涨！· 6.2 万观看</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Superlinear -->
+  <div class="platform-card">
+    <div class="pc-header">
+      <span class="pc-dot" style="background:var(--sl)"></span>
+      <span class="pc-name">Superlinear</span>
+      <span class="pc-persona" style="background:rgba(155,89,182,0.12);color:var(--sl)">理性创业者</span>
+    </div>
+    <div class="pc-body">
+      <h3>叙事角色：社区讨论 + 方法论驱动</h3>
+      <p>
+        Superlinear 是五平台中最小众但最理性的声音。讨论以方法论驱动 — 不是"油价涨了"而是"我的投资组合该怎么调"；不是"AI 搜索流量暴增"而是"四步让 AI 引用你的文章"（GEO 概念）。社区人数少但参与深度高，每篇帖子都有实操价值。中东危机后从 GEO 讨论紧急转向投资组合调整。
+      </p>
+      <div class="pc-tags">
+        <span class="pc-tag">社区讨论</span>
+        <span class="pc-tag">方法论</span>
+        <span class="pc-tag">实操导向</span>
+        <span class="pc-tag">小众深度</span>
+      </div>
+      <ul class="pc-examples">
+        <li><span class="day">3/2</span> 周一开盘复盘：我的投资组合调了什么</li>
+        <li><span class="day">3/1</span> 中东局势对投资组合的影响 — 周末紧急讨论</li>
+        <li><span class="day">2/28</span> AI 搜索流量暴增 527% — GEO 四步法</li>
+        <li><span class="day">2/28</span> 造轮子与改轮子：AI Coding 体感差异</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Same-event comparison matrix -->
+<div class="section">
+  <div class="section-title">同一事件 &times; 五种声音</div>
+  <table class="matrix">
+    <tr>
+      <th style="width:14%">事件</th>
+      <th style="width:17%;color:var(--wechat)">微信</th>
+      <th style="width:17%;color:var(--xhs)">小红书</th>
+      <th style="width:17%;color:var(--bili)">B站</th>
+      <th style="width:17%;color:var(--yt)">YouTube</th>
+      <th style="width:18%;color:var(--sl)">Superlinear</th>
+    </tr>
+    <tr>
+      <td style="color:var(--red)">美以打击伊朗</td>
+      <td>券商连夜开策略会，大类资产定价逻辑已变</td>
+      <td>"油价要飙了吗？" + 加仓黄金讨论</td>
+      <td>航母被导弹击中视频 + 冲突推演</td>
+      <td>"斩首行动"分析 + 避险资产配置</td>
+      <td>投资组合紧急调整讨论</td>
+    </tr>
+    <tr>
+      <td>Block 裁员 40%</td>
+      <td>36 氪数据分析：4000 人、+25%、AI Washing</td>
+      <td>"6 年被裁，生命已枯萎" 个人叙述 1252 赞</td>
+      <td>（较少讨论，B 站偏娱乐/科技）</td>
+      <td>投资 TALK 君：裁员是 AI 悲剧？</td>
+      <td>（未显著讨论）</td>
+    </tr>
+    <tr>
+      <td>OpenAI $110B</td>
+      <td>融资结构分析（亚马逊/英伟达/软银份额）</td>
+      <td>"太炸了！OpenClaw 史诗级更新" + 赚钱故事</td>
+      <td>（未成热门，AI 话题以"AI 编曲"呈现）</td>
+      <td>OpenAI 融资后续影响讨论</td>
+      <td>AI 搜索流量暴增 527%（GEO）</td>
+    </tr>
+    <tr>
+      <td>黄金破 $5300</td>
+      <td>机构看涨至 $6000 · 专业定价分析</td>
+      <td>"上周加仓的恭喜" · 晒盈利模式</td>
+      <td>（财经话题不是 B 站主场）</td>
+      <td>避险资产配置指南</td>
+      <td>"我调了什么"实操分享</td>
+    </tr>
+  </table>
+</div>
+
+<!-- Key Insights -->
+<div class="section">
+  <div class="section-title">跨平台洞察</div>
+
+  <div class="insight-box">
+    <h3 style="color:var(--accent)">洞察 1：信息加工的"漏斗模型"</h3>
+    <p>
+      同一事件从"原始信息"到"用户消费"经历不同平台的加工漏斗：<br>
+      <strong>微信</strong>：原始信息 → 专业分析 → 机构视角（加深度）<br>
+      <strong>小红书</strong>：原始信息 → 个人关联 → 行动指令（加行动力）<br>
+      <strong>B 站</strong>：原始信息 → 视觉化 → 娱乐/科普（加可看性）<br>
+      <strong>YouTube</strong>：原始信息 → 结构化评论 → 观点输出（加立场）<br>
+      <strong>Superlinear</strong>：原始信息 → 方法论 → 实操步骤（加可执行性）
+    </p>
+  </div>
+
+  <div class="insight-box">
+    <h3 style="color:var(--orange)">洞察 2："叙事断裂"的传导速度不同</h3>
+    <p>
+      3/1 中东危机后，各平台完成话题切换的速度和方式不同：<br>
+      <strong>微信</strong>：最快（~2h），36 氪/新浪即时切换，专业媒体反应最灵敏<br>
+      <strong>小红书</strong>：中等（~4h），需要个人化加工（"跟我有什么关系？"）后才爆发<br>
+      <strong>B 站</strong>：较慢（~6h），等待 UP 主制作视频，但军事区反应较快<br>
+      <strong>YouTube</strong>：中等（~4h），时政频道快、财经频道需时分析<br>
+      <strong>Superlinear</strong>：最慢（~12h），社区讨论需要成员发起帖子
+    </p>
+  </div>
+
+  <div class="insight-box">
+    <h3 style="color:var(--green)">洞察 3：平台 &times; 用户群 = 叙事"温度差"</h3>
+    <p>
+      对中东危机的"温度"：微信（85% 恐慌，专业紧迫）> YouTube（82%，分析避险）> 小红书（78%，恐慌+行动）> Superlinear（72%，理性调仓）> B 站（60%，吃瓜+军事兴趣）。<br><br>
+      <strong>关键发现</strong>：B 站是唯一一个"治愈系内容"能在全球危机中持续霸榜的平台 — 雪景短片 600 万+播放与军事热点并存，折射出 B 站用户群的独特心理需求：在信息过载中寻找情绪避风港。
+    </p>
+  </div>
+
+  <div class="insight-box">
+    <h3 style="color:var(--purple)">洞察 4：社媒监测的"五维雷达"</h3>
+    <p>
+      如果将五平台视为一个"感知系统"：<br>
+      <strong>微信</strong> = 专业嗅觉（最快捕捉机构动向）<br>
+      <strong>小红书</strong> = 情绪温度计（最快反映散户恐慌/贪婪）<br>
+      <strong>B 站</strong> = 大众兴趣指标（什么话题能破百万播放）<br>
+      <strong>YouTube</strong> = 深度观点市场（最完整的因果分析）<br>
+      <strong>Superlinear</strong> = 精英行动信号（创业者/投资者实际在做什么）<br><br>
+      单看任何一个平台都是盲人摸象。五维叠加才能获得完整图景 — 这正是本工作空间存在的价值。
+    </p>
+  </div>
+</div>
+
+<div class="footer">
+  跨平台声音对比 · 社交媒体监测站<br>
+  数据基础：W09（2/25-3/2）· 5 平台 · ~140 条内容<br>
+  生成时间：2026-03-02 19:30<br>
+  <a href="../../index.html">返回监测站首页</a>
+</div>
+
+</div>
+</body>
+</html>
