@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>供需互锁 — 中国宏观经济分析框架</title>
+<style>
+  :root {
+    --bg: #0a0a0f; --surface: #12121a; --surface2: #1a1a25; --border: #2a2a3a;
+    --text: #e0e0e8; --text2: #9090a0; --accent: #f0c040;
+    --red: #e05050; --green: #40c080; --blue: #5080e0; --orange: #e08040;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.7; -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  a { color: var(--accent); text-decoration: none; }
+
+  .header {
+    padding: 60px 0 40px; text-align: center; border-bottom: 1px solid var(--border);
+  }
+  .header .back { font-size: 0.85em; color: var(--text2); margin-bottom: 16px; display: block; }
+  .header h1 { font-size: 2em; font-weight: 700; letter-spacing: 0.04em; margin-bottom: 10px; }
+  .header .dim-label {
+    display: inline-block; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 6px; padding: 3px 12px; font-size: 0.8em; color: var(--accent);
+    font-weight: 600; margin-bottom: 14px;
+  }
+  .header .subtitle { font-size: 0.95em; color: var(--text2); max-width: 740px; margin: 0 auto; }
+
+  .key-nums {
+    display: flex; justify-content: center; gap: 24px; padding: 28px 0;
+    border-bottom: 1px solid var(--border); flex-wrap: wrap;
+  }
+  .kn-item { text-align: center; min-width: 100px; }
+  .kn-value { font-size: 1.5em; font-weight: 700; color: var(--accent); }
+  .kn-value.danger { color: var(--red); }
+  .kn-label { font-size: 0.72em; color: var(--text2); margin-top: 2px; }
+
+  .section { padding: 44px 0; border-bottom: 1px solid var(--border); }
+  .section h2 {
+    text-align: center; font-size: 1.25em; font-weight: 600;
+    color: var(--text2); letter-spacing: 0.06em; margin-bottom: 24px;
+  }
+  .section .sub {
+    text-align: center; font-size: 0.88em; color: var(--text2);
+    margin-top: -16px; margin-bottom: 24px;
+  }
+
+  .bar-section { max-width: 700px; margin: 0 auto; }
+  .bar-group { margin-bottom: 12px; }
+  .bar-header { display: flex; justify-content: space-between; font-size: 0.82em; margin-bottom: 4px; }
+  .bar-header .lbl { color: var(--text2); }
+  .bar-header .val { font-weight: 600; }
+  .bar-track { height: 10px; background: var(--surface2); border-radius: 5px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 5px; }
+
+  .dbar-group { margin-bottom: 16px; max-width: 700px; margin-left: auto; margin-right: auto; }
+  .dbar-label { font-size: 0.85em; font-weight: 600; margin-bottom: 6px; }
+  .dbar-row { display: flex; gap: 10px; align-items: center; margin-bottom: 4px; }
+  .dbar-tag { width: 50px; font-size: 0.72em; color: var(--text2); text-align: right; flex-shrink: 0; }
+  .dbar-track { flex: 1; height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
+  .dbar-fill { height: 100%; border-radius: 4px; }
+  .dbar-val { width: 50px; font-size: 0.75em; font-weight: 600; flex-shrink: 0; }
+
+  .cmp-table {
+    width: 100%; border-collapse: collapse; font-size: 0.85em;
+  }
+  .cmp-table th, .cmp-table td {
+    padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border);
+  }
+  .cmp-table th { color: var(--accent); font-weight: 600; font-size: 0.82em; background: var(--surface); }
+  .cmp-table tr:hover td { background: var(--surface); }
+  .cmp-table .hl { color: var(--accent); font-weight: 600; }
+  .cmp-table .warn { color: var(--red); font-weight: 600; }
+  .cmp-table .good { color: var(--green); font-weight: 600; }
+  .cmp-table .slow { color: var(--orange); font-weight: 600; }
+
+  .card-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px;
+  }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 20px;
+  }
+  .card h3 { font-size: 0.88em; font-weight: 600; margin-bottom: 8px; }
+  .card p { font-size: 0.8em; color: var(--text2); line-height: 1.5; }
+  .card .big { font-size: 1.4em; font-weight: 700; margin-bottom: 6px; }
+
+  .wide-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 14px;
+  }
+  .wide-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px 22px;
+  }
+  .wide-card h3 { font-size: 0.92em; font-weight: 600; color: var(--accent); margin-bottom: 8px; }
+  .wide-card p { font-size: 0.85em; color: var(--text2); line-height: 1.6; }
+  .wide-card ul { font-size: 0.82em; color: var(--text2); line-height: 1.6; padding-left: 16px; margin-top: 6px; }
+
+  .ascii-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 24px; max-width: 700px; margin: 0 auto;
+    font-family: "SF Mono", "Fira Code", monospace; font-size: 0.84em;
+    line-height: 1.8; color: var(--text2); white-space: pre; overflow-x: auto;
+  }
+  .ascii-box .hl { color: var(--accent); font-weight: 600; }
+  .ascii-box .r { color: var(--red); font-weight: 600; }
+  .ascii-box .g { color: var(--green); }
+  .ascii-box .b { color: var(--blue); }
+  .ascii-box .o { color: var(--orange); }
+
+  .callout {
+    margin-top: 18px; padding: 16px 20px; background: var(--surface);
+    border: 1px solid var(--border); border-left: 3px solid var(--accent);
+    border-radius: 8px; font-size: 0.84em; max-width: 700px; margin-left: auto; margin-right: auto;
+  }
+  .callout.warn { border-left-color: var(--red); }
+  .callout.info { border-left-color: var(--blue); }
+  .callout .cl-title { color: var(--accent); font-weight: 600; margin-bottom: 6px; }
+  .callout.warn .cl-title { color: var(--red); }
+  .callout.info .cl-title { color: var(--blue); }
+  .callout .cl-body { color: var(--text2); line-height: 1.5; }
+
+  .dual-box { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: 700px; margin: 20px auto 0; }
+  .dual-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 20px;
+  }
+  .dual-card h4 { font-size: 0.85em; font-weight: 600; margin-bottom: 8px; }
+  .dual-card p { font-size: 0.8em; color: var(--text2); line-height: 1.5; }
+  .dual-card.left h4 { color: var(--orange); }
+  .dual-card.right h4 { color: var(--blue); }
+
+  .mismatch-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px; margin-bottom: 20px; max-width: 700px;
+    margin-left: auto; margin-right: auto;
+  }
+  .mismatch-card .mc-num { color: var(--accent); font-weight: 700; font-size: 0.75em; margin-bottom: 4px; }
+  .mismatch-card h3 { font-size: 1em; font-weight: 600; margin-bottom: 12px; }
+
+  .verdict {
+    padding: 44px 0;
+  }
+  .verdict h2 {
+    text-align: center; font-size: 1.25em; font-weight: 600;
+    color: var(--text2); letter-spacing: 0.06em; margin-bottom: 24px;
+  }
+  .verdict-list { max-width: 700px; margin: 0 auto; }
+  .verdict-item {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 22px; margin-bottom: 12px;
+  }
+  .verdict-item .vi-num { color: var(--accent); font-weight: 700; font-size: 0.8em; margin-bottom: 4px; }
+  .verdict-item .vi-text { font-size: 0.88em; line-height: 1.6; }
+  .verdict-item .vi-detail { font-size: 0.8em; color: var(--text2); margin-top: 6px; line-height: 1.5; }
+
+  .footer { padding: 36px 0; text-align: center; color: var(--text2); font-size: 0.8em; }
+
+  @media (max-width: 600px) {
+    .key-nums { gap: 12px; }
+    .kn-value { font-size: 1.2em; }
+    .card-grid, .wide-grid { grid-template-columns: 1fr; }
+    .dual-box { grid-template-columns: 1fr; }
+    .ascii-box { font-size: 0.72em; padding: 14px; }
+    .cmp-table { font-size: 0.75em; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <section class="header">
+    <a class="back" href="../index.html">&larr; 返回总览</a>
+    <div class="dim-label">维度十二 · 方法论基底</div>
+    <h1>供需互锁</h1>
+    <p class="subtitle">中国经济最深层的问题：不是"供给不足"也不是"需求不足"，而是供需之间的传导管道多处堵塞。六大结构性错配构成一个互锁的循环系统——单侧刺激治标不治本，需要同时疏通分配、制度和预期三大堵点。</p>
+  </section>
+
+  <div class="key-nums">
+    <div class="kn-item"><div class="kn-value danger">6</div><div class="kn-label">大供需错配</div></div>
+    <div class="kn-item"><div class="kn-value danger">3</div><div class="kn-label">大结构性堵点</div></div>
+    <div class="kn-item"><div class="kn-value danger">~74%</div><div class="kn-label">制造业产能利用率</div></div>
+    <div class="kn-item"><div class="kn-value">151万亿</div><div class="kn-label">居民存款（花不出去）</div></div>
+    <div class="kn-item"><div class="kn-value danger">5.5%</div><div class="kn-label">托幼覆盖率（发达国30-50%）</div></div>
+    <div class="kn-item"><div class="kn-value danger">1,179万</div><div class="kn-label">年毕业生 vs 技工缺2,000万</div></div>
+  </div>
+
+  <!-- Methodology: why single-side fails -->
+  <section class="section">
+    <h2>方 法 论 ：为 什 么 单 侧 分 析 失 灵</h2>
+    <p class="sub">萨伊定律和凯恩斯都假设"另一侧会自适应"——但中国两边同时卡住了</p>
+
+    <div class="dual-box">
+      <div class="dual-card left">
+        <h4>萨伊定律（供给侧）</h4>
+        <p>"供给创造需求"——造出更好更便宜的东西，消费者自然来买。中国语境："供给侧结构性改革"。<br><br><strong style="color:var(--red)">失灵证据：</strong>光伏产能1,200GW，全球需求仅500GW。生产出来了，但卖不掉。</p>
+      </div>
+      <div class="dual-card right">
+        <h4>凯恩斯（需求侧）</h4>
+        <p>"需求决定供给"——居民有钱就会消费。中国语境："扩大内需"。<br><br><strong style="color:var(--red)">失灵证据：</strong>居民存款151万亿，但优质养老/医疗/托幼供给严重不足。有钱也花不出去。</p>
+      </div>
+    </div>
+
+    <div class="ascii-box" style="margin-top:24px"><span class="hl">"另一侧不适应"的六个证据</span>
+
+  <span class="r">❶ 供给过剩但消费不足</span>  → 萨伊定律失灵
+     光伏/锂电/电动车产能远超需求
+
+  <span class="r">❷ 有储蓄但无处消费</span>    → 凯恩斯也失灵
+     151万亿存款 vs 养老/医疗/托幼供给不足
+
+  <span class="r">❸ 技术升级但就业不升级</span>
+     自动化替代工人→消费下降→产品卖不掉
+
+  <span class="r">❹ 基建投了但回报不来</span>
+     投资乘数从3x下降至~1.2x，空城空港
+
+  <span class="r">❺ 降息了但没人借</span>
+     M2增速8% vs CPI 0.2%，流动性陷阱
+
+  <span class="r">❻ 出口强但内需弱</span>
+     贸易顺差近1万亿$ vs 外需不传导为内需</div>
+
+    <div class="callout warn" style="margin-top:18px">
+      <div class="cl-title">核心洞察</div>
+      <div class="cl-body">经济不是两个独立的"侧面"，而是一个循环系统。当前中国的问题是这个循环系统的多个管道同时堵塞了。单纯的供给侧改革（提效率、搞创新）或需求侧刺激（降息、发钱）都只治标。</div>
+    </div>
+  </section>
+
+  <!-- Six Mismatches -->
+  <section class="section">
+    <h2>六 大 供 需 错 配</h2>
+    <p class="sub">不是"多了"或"少了"，而是在结构上对不上——有人想买的没人造，有人造的没人买</p>
+
+    <!-- Mismatch 1 -->
+    <div class="mismatch-card">
+      <div class="mc-num">错配一</div>
+      <h3>制造业过剩 vs 服务业短缺</h3>
+      <div class="dbar-group">
+        <div class="dbar-label">制造业</div>
+        <div class="dbar-row">
+          <div class="dbar-tag">产能</div>
+          <div class="dbar-track"><div class="dbar-fill" style="width:100%;background:var(--red)"></div></div>
+          <div class="dbar-val" style="color:var(--red)">100%</div>
+        </div>
+        <div class="dbar-row">
+          <div class="dbar-tag">需求</div>
+          <div class="dbar-track"><div class="dbar-fill" style="width:60%;background:var(--orange)"></div></div>
+          <div class="dbar-val" style="color:var(--orange)">~60%</div>
+        </div>
+      </div>
+      <div class="dbar-group">
+        <div class="dbar-label">服务业（医疗·养老·教育·托幼）</div>
+        <div class="dbar-row">
+          <div class="dbar-tag">需求</div>
+          <div class="dbar-track"><div class="dbar-fill" style="width:100%;background:var(--green)"></div></div>
+          <div class="dbar-val" style="color:var(--green)">100%</div>
+        </div>
+        <div class="dbar-row">
+          <div class="dbar-tag">供给</div>
+          <div class="dbar-track"><div class="dbar-fill" style="width:40%;background:var(--red)"></div></div>
+          <div class="dbar-val" style="color:var(--red)">~40%</div>
+        </div>
+      </div>
+      <div class="card-grid" style="margin-top:12px">
+        <div class="card"><div class="big" style="color:var(--red)">~74%</div><h3>制造业产能利用率</h3><p>光伏仅50%。锂电池产能2,000GWh vs 全球需求900GWh。</p></div>
+        <div class="card"><div class="big" style="color:var(--red)">500万</div><h3>养老床位缺口</h3><p>每千人医师2.4（发达国家3-4）。托幼覆盖率仅5.5%。</p></div>
+      </div>
+      <p style="font-size:0.82em;color:var(--text2);margin-top:12px"><strong style="color:var(--green)">修复路径：</strong>放开服务业管制→创造大量就业（每亿元投入就业为制造业1.5-2倍）→收入增加→消费吸纳制造业产出。</p>
+    </div>
+
+    <!-- Mismatch 2 -->
+    <div class="mismatch-card">
+      <div class="mc-num">错配二</div>
+      <h3>高端供给能力 vs 低端消费能力</h3>
+      <div class="ascii-box" style="margin:0"><span class="hl">需求的实际分布</span>
+
+  高端消费  <span class="g">██</span>            ~5%  ← 能匹配高端供给
+  中端消费  <span class="o">████████████████</span>  ~35% ← 勉强够
+  基础消费  <span class="r">██████████████████████████████</span> ~60% ← 收入不足以消费升级
+
+  <span class="o">供给在升级，但多数人的购买力没跟上</span>
+  比亚迪仰望百万级 vs 月入3,000-5,000元群体
+  瑞幸替代星巴克、拼多多替代京东 = 消费降级</div>
+      <p style="font-size:0.82em;color:var(--text2);margin-top:12px"><strong style="color:var(--red)">核心矛盾：</strong>产业政策推动供给向高端走，但分配政策没有同步让需求跟上。高端产品靠出口消化，国内市场反而在消费降级。</p>
+    </div>
+
+    <!-- Mismatch 3 -->
+    <div class="mismatch-card">
+      <div class="mc-num">错配三</div>
+      <h3>投资的地方 vs 需要投资的地方</h3>
+      <div class="wide-grid">
+        <div class="wide-card">
+          <h3 style="color:var(--red)">钱去的地方</h3>
+          <ul>
+            <li>基建 ~20万亿（大量低回报项目）</li>
+            <li>制造业 ~16万亿（部分严重过剩）</li>
+            <li>房地产 ~10万亿（仍在收缩）</li>
+            <li>地方产业园（同质竞争）</li>
+            <li>城投平台（低效循环）</li>
+          </ul>
+        </div>
+        <div class="wide-card">
+          <h3 style="color:var(--green)">钱应该去的地方</h3>
+          <ul>
+            <li>社会保障（占GDP仅10%，发达国18-30%）</li>
+            <li>公共卫生</li>
+            <li>职业教育</li>
+            <li>农村最后一公里基础设施</li>
+            <li>科技基础研究（仅占R&D 6.8%）</li>
+          </ul>
+        </div>
+      </div>
+      <p style="font-size:0.82em;color:var(--text2);margin-top:12px"><strong style="color:var(--orange)">为什么不调整：</strong>地方官员考核偏好投资和GDP不考核福利；银行偏好有抵押品的基建地产不贷给服务业小微；财政投资性支出占比高民生增长慢。</p>
+    </div>
+
+    <!-- Mismatch 4 -->
+    <div class="mismatch-card">
+      <div class="mc-num">错配四</div>
+      <h3>劳动力技能 vs 产业需求</h3>
+      <div class="wide-grid">
+        <div class="wide-card">
+          <h3 style="color:var(--orange)">供给侧（毕业生）</h3>
+          <ul>
+            <li>管理学 18%、工学 15%、文学 8%</li>
+            <li>法学 6%、艺术 6%、经济学 5%</li>
+            <li>每年1,179万大学毕业生</li>
+            <li>偏向"坐办公室"岗位</li>
+          </ul>
+        </div>
+        <div class="wide-card">
+          <h3 style="color:var(--red)">需求侧（企业）</h3>
+          <ul>
+            <li>高级技工 <strong style="color:var(--red)">急缺</strong></li>
+            <li>AI/数据工程 <strong style="color:var(--red)">急缺</strong></li>
+            <li>养老护理 <strong style="color:var(--red)">急缺</strong></li>
+            <li>技工缺口约2,000万</li>
+          </ul>
+        </div>
+      </div>
+      <p style="font-size:0.82em;color:var(--text2);margin-top:12px"><strong style="color:var(--red)">悖论：</strong>青年失业率15-17% vs 制造业"招工难"并存。AI正在替代的恰恰是大学教育培养最多的岗位（行政、文案、基础分析）。教育体制调整需5-10年，远跟不上市场变化。</p>
+    </div>
+
+    <!-- Mismatch 5 -->
+    <div class="mismatch-card">
+      <div class="mc-num">错配五</div>
+      <h3>居民储蓄 vs 投资渠道</h3>
+      <div class="ascii-box" style="margin:0"><span class="hl">中国居民资产配置（~690万亿）</span>
+
+  房  产  <span class="r">████████████████████████████████</span> <span class="r">63%（432万亿）</span>
+  存  款  <span class="o">███████████</span>                     <span class="o">22%（151万亿）</span>
+  理  财  <span class="b">██</span>                              5%（32万亿）
+  保  险  <span class="b">██</span>                              4%（31万亿）
+  股  票  <span class="r">█</span>                               <span class="r">3%（22万亿）</span>
+  基  金  <span class="b">█</span>                               3%（19万亿）
+
+  <span class="hl">vs 美国居民资产配置</span>
+  房  产  <span class="b">████████████</span>                    25-30%
+  股票基金 <span class="g">█████████</span>                     20-25%
+  养老金  <span class="g">█████████</span>                      20-25%
+  存  款  <span class="b">█████</span>                           10-15%
+
+  <span class="r">→ 中国：63%压在房产、22%躺在银行 = 85%被锁死</span>
+  <span class="r">→ A股长期不赚钱 → 不敢投 → 资本市场融资弱 → 创新融资难</span></div>
+    </div>
+
+    <!-- Mismatch 6 -->
+    <div class="mismatch-card">
+      <div class="mc-num">错配六</div>
+      <h3>城市化的人 vs 城市化的权利</h3>
+      <div class="ascii-box" style="margin:0"><span class="hl">2.6亿农民工在城市：</span>
+
+  贡献了GDP              <span class="g">✓</span>
+  拥有城市户口            <span class="r">✗</span>
+  子女在城市上学          <span class="o">部分 / 受限</span>
+  享受城市医保            <span class="o">部分 / 低水平</span>
+  在城市买房              <span class="r">极难（一线）</span>
+  未来在城市养老          <span class="r">不确定</span>
+
+  消费行为 = "暂住者"模式：能省则省，钱汇回老家
+  <span class="g">如果获得市民权利 → 消费行为根本改变</span>
+  <span class="g">户籍城镇化率每↑1% → 消费增加2,000-3,000亿元</span></div>
+    </div>
+  </section>
+
+  <!-- Three Structural Blockages -->
+  <section class="section">
+    <h2>三 大 结 构 性 堵 点</h2>
+    <p class="sub">供给和需求之间的传导管道为什么不通？</p>
+
+    <div class="ascii-box"><span class="hl">供给 ──────→ ✕ ──────→ 需求</span>
+                  │
+             结构性堵点
+                  │
+    ┌─────────────┼──────────────┐
+    │             │              │
+ <span class="r">分配堵点</span>      <span class="o">制度堵点</span>       <span class="b">预期堵点</span>
+    │             │              │
+ 钱到不了       想花花不了       不敢花
+ 消费者手里     供给被管制       对未来悲观</div>
+
+    <div class="card-grid" style="margin-top:24px">
+      <div class="card" style="border-left:3px solid var(--red)">
+        <h3 style="color:var(--red)">分配堵点</h3>
+        <p>劳动报酬占GDP仅52%（发达国家60-65%）。企业留存高分红少，政府收入用于投资而非转移给居民。生产了很多，但劳动者分到的不够买回自己生产的东西。</p>
+      </div>
+      <div class="card" style="border-left:3px solid var(--orange)">
+        <h3 style="color:var(--orange)">制度堵点</h3>
+        <p>医疗公立主导民营受限。教育公立不均民营被压。养老市场发育不足。金融投资渠道匮乏。土地住房供给端管制。有需求的领域，供给被行政管制卡死。</p>
+      </div>
+      <div class="card" style="border-left:3px solid var(--blue)">
+        <h3 style="color:var(--blue)">预期堵点</h3>
+        <p>居民预期收入下降→不消费。企业预期需求下降→不投资。银行预期不良上升→不放贷。地方预期土地卖不掉→不开工。每方的"理性"行为合成了集体的"非理性"结果。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- The Loop -->
+  <section class="section">
+    <h2>互 锁 的 循 环</h2>
+    <p class="sub">六大错配不是独立的，它们构成一个自我强化的恶性循环</p>
+
+    <div class="ascii-box"><span class="hl">六大错配的互锁循环</span>
+
+       <span class="r">制造业过剩</span> ←──┐
+            │         │
+            ↓         │
+       价格下跌    <span class="o">投资错位</span>
+       （通缩）   （钱去了不该去的地方）
+            │         │
+            ↓         │
+       企业利润↓      │
+            │         │
+            ↓         │
+   <span class="o">劳动力技能错配</span> → <span class="r">就业困难</span> → 收入不足
+                                    │
+                                    ↓
+                              <span class="o">储蓄困在银行</span>
+                              （投资渠道差）
+                                    │
+                                    ↓
+                          <span class="r">消费不足 + 服务业短缺</span>
+                          （想花的地方供给不够）
+                                    │
+                                    ↓
+                          需求不足 → <span class="r">制造业更过剩</span>
+                                         ↑
+                                    回到起点 ──→ 循环加速</div>
+
+    <div class="callout warn" style="margin-top:18px">
+      <div class="cl-title">这不是哪一侧的问题</div>
+      <div class="cl-body">这是整个循环系统的管道堵塞。每一处堵点都在加重其他堵点。供给过剩压低价格→企业降薪裁员→消费更弱→需求更不足→供给更过剩。打破循环需要同时在多个堵点上动手术，而每一项都涉及深层利益重新分配。</div>
+    </div>
+  </section>
+
+  <!-- Connection mechanisms -->
+  <section class="section">
+    <h2>六 条 传 导 管 道 的 健 康 评 估</h2>
+    <p class="sub">不是"供给侧OR需求侧"，而是分析它们之间的连接机制</p>
+
+    <table class="cmp-table">
+      <tr><th>传导管道</th><th>健康状态</th><th>中国当前</th><th>严重度</th></tr>
+      <tr><td>收入分配</td><td>生产→劳动报酬→消费</td><td class="warn">堵：劳动报酬偏低</td><td class="warn">严重</td></tr>
+      <tr><td>社会保障</td><td>安全感→消费意愿</td><td class="warn">堵：社保不足→被迫储蓄</td><td class="warn">严重</td></tr>
+      <tr><td>金融中介</td><td>储蓄→投资→就业→收入</td><td class="warn">堵：银行惜贷、投资低效</td><td class="slow">中等</td></tr>
+      <tr><td>价格信号</td><td>供需→价格→资源配置</td><td class="slow">扭曲：管制+补贴+地方保护</td><td class="slow">中等</td></tr>
+      <tr><td>预期管理</td><td>政策信号→信心→行为</td><td class="warn">堵：政策反复→信心缺失</td><td class="warn">严重</td></tr>
+      <tr><td>劳动力市场</td><td>技术变革→新岗位→新收入</td><td class="slow">堵：失业与用工荒并存</td><td class="slow">中等</td></tr>
+    </table>
+
+    <!-- Policy implications -->
+    <div style="margin-top:24px">
+      <table class="cmp-table">
+        <tr><th>堵点</th><th>对应政策</th><th>当前进展</th></tr>
+        <tr><td>收入分配</td><td>提高劳动报酬、社保转移支付</td><td class="slow">慢</td></tr>
+        <tr><td>服务业管制</td><td>放开医疗教育养老准入</td><td class="slow">慢</td></tr>
+        <tr><td>投资方向</td><td>从基建转向民生</td><td class="warn">口号多、行动少</td></tr>
+        <tr><td>教育体制</td><td>职业教育改革、专业调整</td><td class="slow">进行中但缓慢</td></tr>
+        <tr><td>金融渠道</td><td>资本市场改革、养老金入市</td><td class="good">有进展</td></tr>
+        <tr><td>户籍制度</td><td>深化改革、公共服务均等化</td><td class="slow">中小城市有进展</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- Core Verdicts -->
+  <section class="verdict">
+    <h2>核 心 判 断</h2>
+    <div class="verdict-list">
+      <div class="verdict-item">
+        <div class="vi-num">判断 01</div>
+        <div class="vi-text">中国经济的核心问题是"供需传导管道的多处堵塞"而非简单的供给或需求不足</div>
+        <div class="vi-detail">单看任何一侧都会误诊：供给侧看到产能过剩以为要去产能，需求侧看到消费不足以为要发钱。但问题的根源是两侧之间的传导机制——分配、制度、预期——同时出了问题。生产者造的东西消费者买不起或不需要，消费者想要的东西没人造或被管制挡住了。</div>
+      </div>
+      <div class="verdict-item">
+        <div class="vi-num">判断 02</div>
+        <div class="vi-text">六大错配互相强化，构成自锁循环——没有单一突破口</div>
+        <div class="vi-detail">制造业过剩→价格战→企业降薪→消费不足→需求更弱→制造业更过剩。劳动力技能错配→就业困难→收入下降→储蓄困在银行→资本市场弱→创新融资难→产业升级卡壳。每处堵点都在加重其他堵点，没有哪一处是独立的。</div>
+      </div>
+      <div class="verdict-item">
+        <div class="vi-num">判断 03</div>
+        <div class="vi-text">真正需要的是"疏通传导机制"的结构性改革，而非刺激政策</div>
+        <div class="vi-detail">分配改革（提高劳动报酬占比）、制度改革（放开服务业管制、户籍改革）、市场化改革（让价格信号发挥作用）——这三类改革才是治本之策。但每一项都涉及深层利益的重新分配：劳动报酬上升意味着企业利润和政府税收下降；放开服务业管制意味着国有机构让出空间；户籍改革意味着城市居民分享公共资源。</div>
+      </div>
+      <div class="verdict-item">
+        <div class="vi-num">判断 04</div>
+        <div class="vi-text">改革之所以难推，恰恰因为它需要同时在多个利益集团的奶酪上动刀</div>
+        <div class="vi-detail">这是一个政治经济学问题而非纯经济学问题。技术上知道该怎么做（提高劳动报酬、放开管制、改革户籍、完善社保），但每一步都面临强大的既得利益阻力。渐进式改革的时间窗口正在收窄——人口老龄化、外部环境恶化、债务压力上升都在要求更快的行动。</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">
+    维度十二 · 供需互锁 · 数据基于Q46-Q47研究笔记 · 中国宏观经济分析框架<br>
+    <span style="color:var(--accent)">至此，12个维度专题展示页全部完成</span>
+  </div>
+
+</div>
+</body>
+</html>
