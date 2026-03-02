@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>春季日常速查卡 · Lifestyle Workspace</title>
+<style>
+  :root {
+    --bg: #faf9f6;
+    --text: #2d2d2d;
+    --accent: #5a7d64;
+    --accent-light: #e8f0eb;
+    --border: #e0ddd8;
+    --muted: #8a8580;
+    --morning: #d4813b;
+    --morning-bg: #fdf3e8;
+    --day: #5a7d64;
+    --day-bg: #e8f0eb;
+    --evening: #3d4f6f;
+    --evening-bg: #e8ecf3;
+    --weekend: #7b6b8a;
+    --weekend-bg: #f0edf3;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Noto Sans SC", "Helvetica Neue", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 2rem 1.5rem;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .breadcrumb { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.5rem; }
+  header { margin-bottom: 1.5rem; text-align: center; }
+  header h1 { font-size: 1.4rem; font-weight: 600; margin-bottom: 0.2rem; }
+  header p { color: var(--muted); font-size: 0.85rem; }
+  .print-hint {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    padding: 0.5rem;
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+  }
+
+  /* Card layout */
+  .card-section {
+    margin-bottom: 1.2rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 0.6rem 1rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #fff;
+  }
+  .card-header.morning { background: var(--morning); }
+  .card-header.daytime { background: var(--day); }
+  .card-header.evening { background: var(--evening); }
+  .card-header.weekend { background: var(--weekend); }
+  .card-header.rules { background: var(--muted); }
+  .card-body {
+    padding: 0.8rem 1rem;
+    background: #fff;
+  }
+
+  /* Timeline items */
+  .tl-item {
+    display: flex;
+    gap: 0.6rem;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid #f5f4f1;
+    font-size: 0.82rem;
+    align-items: baseline;
+  }
+  .tl-item:last-child { border-bottom: none; }
+  .tl-time {
+    flex-shrink: 0;
+    width: 48px;
+    font-weight: 600;
+    font-size: 0.78rem;
+  }
+  .tl-time.m { color: var(--morning); }
+  .tl-time.d { color: var(--day); }
+  .tl-time.e { color: var(--evening); }
+  .tl-action { flex: 1; }
+  .tl-action strong { font-weight: 600; }
+  .tl-source {
+    flex-shrink: 0;
+    font-size: 0.68rem;
+    color: var(--muted);
+    background: #f5f4f1;
+    padding: 0.1rem 0.3rem;
+    border-radius: 2px;
+  }
+
+  /* Rules grid */
+  .rules-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+  .rule-item {
+    padding: 0.5rem;
+    background: #f8f7f4;
+    border-radius: 4px;
+    font-size: 0.78rem;
+    border-left: 3px solid var(--accent);
+  }
+  .rule-item strong {
+    display: block;
+    font-size: 0.8rem;
+    margin-bottom: 0.15rem;
+  }
+  .rule-item.food { border-left-color: var(--morning); }
+  .rule-item.sleep { border-left-color: var(--evening); }
+  .rule-item.move { border-left-color: var(--day); }
+  .rule-item.mind { border-left-color: var(--weekend); }
+  .rule-item.home { border-left-color: #4a7d9b; }
+  .rule-item.digital { border-left-color: #6b5b8a; }
+
+  /* Weekend variant */
+  .weekend-row {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.35rem 0;
+    border-bottom: 1px solid #f5f4f1;
+    font-size: 0.82rem;
+    align-items: baseline;
+  }
+  .weekend-row:last-child { border-bottom: none; }
+  .weekend-row .emoji {
+    flex-shrink: 0;
+    width: 20px;
+    text-align: center;
+  }
+
+  /* Source index */
+  .source-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.3rem;
+    font-size: 0.75rem;
+  }
+  .source-list a {
+    display: block;
+    padding: 0.3rem 0.4rem;
+    background: #f8f7f4;
+    border-radius: 3px;
+    color: var(--text);
+  }
+  .source-list a:hover { background: var(--accent-light); text-decoration: none; }
+  .source-list .src-label { color: var(--muted); }
+
+  footer {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  /* Print styles */
+  @media print {
+    body { padding: 0.5cm; font-size: 9pt; max-width: none; }
+    .breadcrumb, .print-hint, footer { display: none; }
+    .card-section { break-inside: avoid; margin-bottom: 0.5cm; }
+    a { color: var(--text); }
+    .tl-source { background: #eee; }
+  }
+  @media (max-width: 500px) {
+    .rules-grid { grid-template-columns: 1fr; }
+    .source-list { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="breadcrumb"><a href="../index.html">Lifestyle Workspace</a> / 日常速查卡</div>
+
+<header>
+  <h1>春季日常速查卡</h1>
+  <p>9 篇专题 → 1 页行动指南 · 贴在桌前或存手机</p>
+</header>
+
+<div class="print-hint">Ctrl/Cmd + P 打印此页 · 建议 A4 横向 · 缩放 80%</div>
+
+<!-- 工作日：早晨 -->
+<div class="card-section">
+  <div class="card-header morning">工作日早晨 6:30 - 9:00</div>
+  <div class="card-body">
+    <div class="tl-item">
+      <span class="tl-time m">6:30</span>
+      <span class="tl-action"><strong>固定时间起床</strong>（包括周末 ± 1h）。醒来立刻拉窗帘见光</span>
+      <span class="tl-source">睡眠</span>
+    </div>
+    <div class="tl-item">
+      <span class="tl-time m">6:35</span>
+      <span class="tl-action">冷水洗脸 → 喝温水一杯 → 5 分钟拉伸（颈/猫牛/体前屈）</span>
+      <span class="tl-source">睡眠+运动</span>
+    </div>
+    <div class="tl-item">
+      <span class="tl-time m">7:00</span>
+      <span class="tl-action">早餐：蛋白质 + 碳水 + 蔬果。<strong>不碰手机到洗漱完</strong></span>
+      <span class="tl-source">食谱+数字</span>
+    </div>
+    <div class="tl-item">
+      <span class="tl-time m">9:00</span>
+      <span class="tl-action">第一杯咖啡（起床后 90min）。之后开始<strong>深度工作</strong>，手机静音朝下</span>
+      <span class="tl-source">睡眠+精力</span>
+    </div>
+  </div>
+</div>
+
+<!-- 工作日：白天 -->
+<div class="card-section">
+  <div class="card-header daytime">工作日白天 9:00 - 17:30</div>
+  <div class="card-body">
+    <div class="tl-item">
+      <span class="tl-time d">9-11:30</span>
+      <span class="tl-action"><strong>深度工作</strong>（最难的任务）。关微信通知。不查邮件</span>
+      <span class="tl-source">精力</span>
+    </div>
+    <div class="tl-item">
+      <span class="tl-time d">11:30</span>
+      <span class="tl-action">第一次集中处理消息/邮件。沟通协作窗口</span>
+      <span class="tl-source">精力+数字</span>
+    </div>
+    <div class="tl-item">
+      <span class="tl-time d">12:30</span>
+      <span class="tl-action">午餐<strong>七分饱</strong>，减少主食量。多蛋白质和蔬菜 → 防午后崩溃</span>
+      <span class="tl-source">食谱+精力</span>
+    </div>
+    <div class="tl-item">
+      <span class="tl-time d">13:00</span>
+      <span class="tl-action">闭眼 10-20 分钟（设闹钟！）。醒后做<strong>低精力事务</strong></span>
+      <span class="tl-source">睡眠+精力</span>
+    </div>
+    <div class="tl-item">
+      <span class="tl-time d">14:00</span>
+      <span class="tl-action"><strong>咖啡截止线</strong>。之后只喝水或花草茶</span>
+      <span class="tl-source">睡眠</span>
+    </div>
+    <div class="tl-item">
+      <span class="tl-time d">14:30</span>
+      <span class="tl-action">第二波深度工作。每 50 分钟站起来走动 + 喝水</span>
+      <span class="tl-source">精力+运动</span>
+    </div>
+    <div class="tl-item">
+      <span class="tl-time d">16:00</span>
+      <span class="tl-action">第二次集中处理消息。开始收尾 + 写<strong>明天第一件事</strong></span>
+      <span class="tl-source">精力+数字</span>
+    </div>
+    <div class="tl-item">
+      <span class="tl-time d">17:30</span>
+      <span class="tl-action"><strong>下班仪式</strong>：清收件箱 → 写明日任务 → 物理收拾 → 换路回家</span>
+      <span class="tl-source">精力</span>
+    </div>
+  </div>
+</div>
+
+<!-- 工作日：傍晚 -->
+<div class="card-section">
+  <div class="card-header evening">工作日傍晚 & 夜晚 18:00 - 23:00</div>
+  <div class="card-body">
+    <div class="tl-item">
+      <span class="tl-time e">18:00</span>
+      <span class="tl-action">运动时间（本周目标见<a href="../spring-exercise/index.html">运动方案</a>）。运动后 30 分钟内补蛋白质</span>
+      <span class="tl-source">运动</span>
+    </div>
+    <div class="tl-item">
+      <span class="tl-time e">19:00</span>
+      <span class="tl-action">晚餐。春季宜清淡，试试<a href="../spring-food/index.html">时令食谱</a></span>
+      <span class="tl-source">食谱</span>
+    </div>
+    <div class="tl-item">
+      <span class="tl-time e">21:00</span>
+      <span class="tl-action">检查除湿机水箱/房间通风状况（回南天时期）</span>
+      <span class="tl-source">居家</span>
+    </div>
+    <div class="tl-item">
+      <span class="tl-time e">21:30</span>
+      <span class="tl-action"><strong>手机进勿扰模式</strong>。看书/拉伸/和人聊天。不刷短视频</span>
+      <span class="tl-source">数字+睡眠</span>
+    </div>
+    <div class="tl-item">
+      <span class="tl-time e">22:30</span>
+      <span class="tl-action">上床。目标 7-8 小时。脚冷穿袜子。遮光窗帘拉好</span>
+      <span class="tl-source">睡眠</span>
+    </div>
+  </div>
+</div>
+
+<!-- 周末版本 -->
+<div class="card-section">
+  <div class="card-header weekend">周末版（周六自由 · 周日重启）</div>
+  <div class="card-body">
+    <div class="weekend-row"><span class="emoji">*</span> 比工作日最多<strong>晚起 1 小时</strong>，不要超过</div>
+    <div class="weekend-row"><span class="emoji">*</span> 周六：<strong>出门</strong>。散步/骑行/菜市场/咖啡馆。至少半天低数字</div>
+    <div class="weekend-row"><span class="emoji">*</span> 周六：做一顿比平时讲究的饭。试一道新<a href="../spring-food/index.html">食谱</a></div>
+    <div class="weekend-row"><span class="emoji">*</span> 周日上午：<strong>30 分钟清理</strong>（桌面归零 + 杂物归位 + 倒垃圾）</div>
+    <div class="weekend-row"><span class="emoji">*</span> 周日 14:00：<a href="../weekend-reset/index.html"><strong>周回顾</strong></a> — 5 个反思问题 + 填<a href="../march-plan/index.html">周计划表</a></div>
+    <div class="weekend-row"><span class="emoji">*</span> 周日 15:00：<strong>数字清理</strong>（手机相册/未读消息/邮件清零）</div>
+    <div class="weekend-row"><span class="emoji">*</span> 周日晚：<strong>比平时早 30 分钟睡</strong>。为周一充电</div>
+  </div>
+</div>
+
+<!-- 常驻规则 -->
+<div class="card-section">
+  <div class="card-header rules">常驻规则 · 随时适用</div>
+  <div class="card-body">
+    <div class="rules-grid">
+      <div class="rule-item food">
+        <strong>饮食</strong>
+        春季养肝。多绿叶菜和芽菜。午餐控量防困。桌上永远有水杯。
+      </div>
+      <div class="rule-item sleep">
+        <strong>睡眠</strong>
+        固定起床时间 > 固定入睡时间。午休 ≤ 20min。咖啡截止 14:00。
+      </div>
+      <div class="rule-item move">
+        <strong>运动</strong>
+        每 50 分钟站起来。运动前后补水。剧烈运动离睡前 3h+。
+      </div>
+      <div class="rule-item mind">
+        <strong>心智</strong>
+        正念 = 注意当下。五感重启随时可做。焦虑时"忧虑倾倒"写出来。
+      </div>
+      <div class="rule-item home">
+        <strong>居家</strong>
+        回南天关窗 + 除湿机。通风选晴天午后。干货密封存放。
+      </div>
+      <div class="rule-item digital">
+        <strong>数字</strong>
+        通知只留 3 个 App。消息集中处理 2 次/天。睡前 1h 放手机。
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Source index -->
+<div class="card-section">
+  <div class="card-header" style="background: var(--accent);">详细内容 · 点击深入</div>
+  <div class="card-body">
+    <div class="source-list">
+      <a href="../spring-food/index.html">初春时令食谱 <span class="src-label">· 4 食材 8 菜</span></a>
+      <a href="../spring-sleep/index.html">春困与睡眠 <span class="src-label">· 机制+环境</span></a>
+      <a href="../spring-exercise/index.html">春季运动指南 <span class="src-label">· 4 周方案</span></a>
+      <a href="../spring-home/index.html">居家防潮 <span class="src-label">· 除湿+通风</span></a>
+      <a href="../spring-declutter/index.html">衣橱整理 <span class="src-label">· 断舍离</span></a>
+      <a href="../workday-energy/index.html">精力管理 <span class="src-label">· 时间块策略</span></a>
+      <a href="../weekend-reset/index.html">周末重启 <span class="src-label">· 五感+反思</span></a>
+      <a href="../digital-wellness/index.html">数字健康 <span class="src-label">· 屏幕时间</span></a>
+      <a href="../march-plan/index.html">三月规划 <span class="src-label">· 目标+追踪</span></a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p><a href="../index.html">&larr; 返回首页</a></p>
+  <p>更新：2026-03-02 13:00 GMT+8 · 综合 9 篇专题 · 自主推进生成</p>
+</footer>
+
+</body>
+</html>
