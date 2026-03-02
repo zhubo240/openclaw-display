@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>可转债投资研究 | A股研究知识库</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --border: #252535;
+    --text: #e0e0e8;
+    --text2: #8888a0;
+    --accent: #e05050;
+    --gold: #f0c040;
+    --green: #40c080;
+    --blue: #5080e0;
+    --orange: #e08040;
+    --purple: #a070e0;
+    --cyan: #40b8d0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  .breadcrumb { padding: 16px 0; font-size: 0.85em; color: var(--text2); }
+  .breadcrumb a { color: var(--blue); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+
+  .hero { padding: 56px 0 48px; text-align: center; border-bottom: 1px solid var(--border); }
+  .hero h1 { font-size: 2.4em; font-weight: 700; letter-spacing: 0.06em; margin-bottom: 12px; }
+  .hero h1 .hl { color: var(--gold); }
+  .hero .subtitle { font-size: 1.05em; color: var(--text2); margin-bottom: 28px; }
+  .hero-stats { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
+  .hero-stat { text-align: center; }
+  .hero-stat .num { font-size: 2em; font-weight: 700; color: var(--gold); }
+  .hero-stat .label { font-size: 0.85em; color: var(--text2); margin-top: 4px; }
+
+  .section { padding: 48px 0; border-bottom: 1px solid var(--border); }
+  .section:last-child { border-bottom: none; }
+  .section-title { font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.85em; margin-bottom: 8px; }
+  .section-desc { color: var(--text2); margin-bottom: 28px; font-size: 0.95em; }
+
+  /* Dual nature visual */
+  .dual-nature {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 0;
+    align-items: stretch;
+    margin-bottom: 32px;
+  }
+  .dual-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+  }
+  .dual-box h4 { margin-bottom: 12px; font-size: 1em; }
+  .dual-box ul { list-style: none; font-size: 0.88em; color: var(--text2); }
+  .dual-box ul li { padding: 4px 0; }
+  .dual-box ul li::before { margin-right: 8px; }
+  .dual-plus {
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2em; color: var(--text2); padding: 0 16px;
+  }
+
+  /* Key terms grid */
+  .terms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .term-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px;
+  }
+  .term-card .tc-name { font-weight: 600; font-size: 0.95em; margin-bottom: 6px; }
+  .term-card .tc-desc { font-size: 0.82em; color: var(--text2); line-height: 1.5; }
+
+  /* Strategy cards */
+  .strat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+  }
+  .strat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    transition: all 0.2s ease;
+  }
+  .strat-card:hover {
+    border-color: var(--gold);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  }
+  .strat-card .sc-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .strat-card .sc-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1em; flex-shrink: 0;
+  }
+  .strat-card .sc-name { font-weight: 600; font-size: 1.05em; }
+  .strat-card .sc-desc { font-size: 0.85em; color: var(--text2); line-height: 1.5; margin-bottom: 12px; }
+  .strat-card .sc-meta { display: flex; flex-wrap: wrap; gap: 6px; }
+  .sc-tag {
+    font-size: 0.72em; padding: 2px 8px; border-radius: 12px;
+    background: var(--surface2); color: var(--text2); border: 1px solid var(--border);
+  }
+  .sc-tag.good { border-color: var(--green); color: var(--green); }
+  .sc-tag.caution { border-color: var(--orange); color: var(--orange); }
+
+  /* Chart containers */
+  .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .chart-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 24px;
+  }
+  .chart-box h4 { font-size: 0.95em; margin-bottom: 16px; color: var(--text2); }
+  .chart-box canvas { max-height: 280px; }
+
+  /* Dashboard */
+  .dashboard { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
+  .dash-item {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px; text-align: center;
+  }
+  .dash-item .dv { font-size: 1.4em; font-weight: 700; }
+  .dash-item .dl { font-size: 0.8em; color: var(--text2); margin-top: 4px; }
+  .dash-item .dt { font-size: 0.75em; margin-top: 4px; }
+
+  /* Risk cards */
+  .risk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+  .risk-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 18px;
+  }
+  .risk-card .rc-level { font-weight: 600; margin-bottom: 6px; font-size: 0.9em; }
+  .risk-card .rc-cond { font-size: 0.82em; color: var(--text2); line-height: 1.5; }
+
+  .footer {
+    padding: 40px 0; text-align: center; color: var(--text2);
+    font-size: 0.85em; border-top: 1px solid var(--border);
+  }
+  .footer a { color: var(--blue); text-decoration: none; }
+
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 1.8em; }
+    .dual-nature { grid-template-columns: 1fr; }
+    .dual-plus { padding: 12px 0; }
+    .chart-row { grid-template-columns: 1fr; }
+    .strat-grid { grid-template-columns: 1fr; }
+    .dashboard { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <nav class="breadcrumb">
+    <a href="../index.html">A股研究知识库</a> &rsaquo; 可转债投资研究
+  </nav>
+</div>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <h1><span class="hl">可转债</span>投资研究</h1>
+    <p class="subtitle">进可攻退可守 &middot; A股独特的非对称收益品种</p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="num">~500只</div>
+        <div class="label">存量转债</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">~8000亿</div>
+        <div class="label">市场余额</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">T+0</div>
+        <div class="label">交易制度</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">0</div>
+        <div class="label">印花税</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Dual Nature -->
+<section class="section">
+  <div class="container">
+    <div class="section-title">核心双重属性</div>
+    <p class="section-desc">可转债 = 纯债价值 + 转股期权价值，兼具债券的安全性与股票的成长性</p>
+    <div class="dual-nature">
+      <div class="dual-box">
+        <h4 style="color: var(--cyan);">&#9632; 债券属性</h4>
+        <ul>
+          <li>&#8226; 票面利率（0.2-3%递增）</li>
+          <li>&#8226; 到期赎回价（100-115元）</li>
+          <li>&#8226; 信用评级（AAA~A）</li>
+          <li>&#8226; <strong style="color: var(--green);">下有保底</strong>（纯债价值）</li>
+        </ul>
+      </div>
+      <div class="dual-plus">+</div>
+      <div class="dual-box">
+        <h4 style="color: var(--accent);">&#9650; 股票属性</h4>
+        <ul>
+          <li>&#8226; 转股权（看涨期权）</li>
+          <li>&#8226; 跟随正股上涨</li>
+          <li>&#8226; 转股溢价率定价</li>
+          <li>&#8226; <strong style="color: var(--gold);">上不封顶</strong>（理论上）</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Key Terms -->
+<section class="section">
+  <div class="container">
+    <div class="section-title">关键条款</div>
+    <p class="section-desc">四大核心条款构成转债的博弈空间</p>
+    <div class="terms-grid">
+      <div class="term-card">
+        <div class="tc-name" style="color: var(--gold);">转股价</div>
+        <div class="tc-desc">每张转债可转换的股数 = 100/转股价。可向下修正（下修），不可上调。初始价通常为发行时正股价附近。</div>
+      </div>
+      <div class="term-card">
+        <div class="tc-name" style="color: var(--blue);">转股溢价率</div>
+        <div class="tc-desc">转债价格/转股价值-1。越低股性越强，&lt;5%为强股性，&gt;50%为纯债性。核心定价指标。</div>
+      </div>
+      <div class="term-card">
+        <div class="tc-name" style="color: var(--accent);">强制赎回(130%)</div>
+        <div class="tc-desc">正股30日中15日&ge;转股价130% → 公司可面值赎回。实质天花板约130元，促使投资者转股。</div>
+      </div>
+      <div class="term-card">
+        <div class="tc-name" style="color: var(--green);">回售条款(70%)</div>
+        <div class="tc-desc">正股30日低于转股价70% → 持有人可面值回售。投资者保护伞，倒逼公司下修转股价。</div>
+      </div>
+      <div class="term-card">
+        <div class="tc-name" style="color: var(--purple);">转股价下修</div>
+        <div class="tc-desc">公司主动降低转股价 → 转股价值提升 → 转债利好。需股东大会通过。下修博弈是重要策略。</div>
+      </div>
+      <div class="term-card">
+        <div class="tc-name" style="color: var(--orange);">双低值</div>
+        <div class="tc-desc">转债价格+转股溢价率&times;100。&lt;120极低估，120-130低估，&gt;150偏高。综合筛选核心指标。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Market Dashboard -->
+<section class="section">
+  <div class="container">
+    <div class="section-title">市场数据仪表盘</div>
+    <p class="section-desc">A股可转债市场概况（2025基准数据）</p>
+    <div class="dashboard">
+      <div class="dash-item">
+        <div class="dv" style="color: var(--gold);">~500只</div>
+        <div class="dl">存量转债数</div>
+      </div>
+      <div class="dash-item">
+        <div class="dv" style="color: var(--blue);">~8000亿</div>
+        <div class="dl">市场余额</div>
+      </div>
+      <div class="dash-item">
+        <div class="dv" style="color: var(--green);">300-500亿</div>
+        <div class="dl">日均成交</div>
+      </div>
+      <div class="dash-item">
+        <div class="dv" style="color: var(--purple);">~3.5年</div>
+        <div class="dl">平均剩余期限</div>
+      </div>
+      <div class="dash-item">
+        <div class="dv" style="color: var(--cyan);">AA</div>
+        <div class="dl">中位数评级</div>
+      </div>
+      <div class="dash-item">
+        <div class="dv" style="color: var(--orange);">~1.2%</div>
+        <div class="dl">加权票面利率</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Charts -->
+<section class="section">
+  <div class="container">
+    <div class="section-title">历史表现与市场分布</div>
+    <div class="chart-row">
+      <div class="chart-box">
+        <h4>年度收益对比：转债 vs 沪深300</h4>
+        <canvas id="annualReturnChart"></canvas>
+      </div>
+      <div class="chart-box">
+        <h4>当前价格分布</h4>
+        <canvas id="priceDistChart"></canvas>
+      </div>
+    </div>
+    <div class="chart-row" style="margin-top: 20px;">
+      <div class="chart-box">
+        <h4>评级分布</h4>
+        <canvas id="ratingChart"></canvas>
+      </div>
+      <div class="chart-box">
+        <h4>打新首日涨幅 &amp; 破发率</h4>
+        <canvas id="ipoChart"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Strategies -->
+<section class="section">
+  <div class="container">
+    <div class="section-title">五大投资策略</div>
+    <p class="section-desc">从零门槛打新到专业条款博弈</p>
+    <div class="strat-grid">
+
+      <div class="strat-card">
+        <div class="sc-header">
+          <div class="sc-icon" style="background: #1a2520; color: var(--green);">1</div>
+          <div class="sc-name">转债打新</div>
+        </div>
+        <div class="sc-desc">零市值零资金的信用申购，中签后缴款即可。历史正期望收益，是最接近"免费午餐"的投资机会。</div>
+        <div class="sc-meta">
+          <span class="sc-tag good">零门槛</span>
+          <span class="sc-tag good">正期望</span>
+          <span class="sc-tag">适合所有人</span>
+        </div>
+      </div>
+
+      <div class="strat-card">
+        <div class="sc-header">
+          <div class="sc-icon" style="background: #2a2515; color: var(--gold);">2</div>
+          <div class="sc-name">双低策略</div>
+        </div>
+        <div class="sc-desc">买入"低价格+低溢价率"的转债组合，月度调仓。历史年化15-20%，夏普比率1.0-1.5。2024年后需加信用筛选。</div>
+        <div class="sc-meta">
+          <span class="sc-tag good">年化15-20%</span>
+          <span class="sc-tag good">夏普>1.0</span>
+          <span class="sc-tag caution">需信用筛选</span>
+        </div>
+      </div>
+
+      <div class="strat-card">
+        <div class="sc-header">
+          <div class="sc-icon" style="background: #1a1a28; color: var(--purple);">3</div>
+          <div class="sc-name">下修博弈</div>
+        </div>
+        <div class="sc-desc">当正股大跌、公司面临回售压力时，博弈公司下修转股价。下修成功转债通常涨5-15%，失败有债底保护。</div>
+        <div class="sc-meta">
+          <span class="sc-tag good">非对称收益</span>
+          <span class="sc-tag">需研究能力</span>
+          <span class="sc-tag caution">可能被否决</span>
+        </div>
+      </div>
+
+      <div class="strat-card">
+        <div class="sc-header">
+          <div class="sc-icon" style="background: #2a1a15; color: var(--orange);">4</div>
+          <div class="sc-name">强赎博弈</div>
+        </div>
+        <div class="sc-desc">正股接近130%触发线时买入。触发强赎后转债锚定130元左右。需注意及时转股避免被低价赎回。</div>
+        <div class="sc-meta">
+          <span class="sc-tag">跟踪正股</span>
+          <span class="sc-tag caution">勿忘转股</span>
+        </div>
+      </div>
+
+      <div class="strat-card">
+        <div class="sc-header">
+          <div class="sc-icon" style="background: #15252a; color: var(--cyan);">5</div>
+          <div class="sc-name">摊大饼（分散化）</div>
+        </div>
+        <div class="sc-desc">等权买入大量低价转债，利用非对称收益特性。类似"买一篮子看涨期权"。2024年后必须排除信用风险标的。</div>
+        <div class="sc-meta">
+          <span class="sc-tag">简单执行</span>
+          <span class="sc-tag good">分散风险</span>
+          <span class="sc-tag caution">需信用过滤</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Credit Risk (Post-2024) -->
+<section class="section">
+  <div class="container">
+    <div class="section-title">2024年后的信用风险框架</div>
+    <p class="section-desc">退市新规打破"零违约"神话，信用筛选成为必修课</p>
+    <div class="risk-grid">
+      <div class="risk-card">
+        <div class="rc-level" style="color: var(--green);">&#9632; 安全</div>
+        <div class="rc-cond">AAA/AA+ 评级<br>正股市值 &gt; 100亿<br>&#8594; 正常买入</div>
+      </div>
+      <div class="risk-card">
+        <div class="rc-level" style="color: var(--gold);">&#9632; 关注</div>
+        <div class="rc-cond">AA 评级<br>正股市值 50-100亿<br>&#8594; 控制仓位</div>
+      </div>
+      <div class="risk-card">
+        <div class="rc-level" style="color: var(--orange);">&#9632; 警惕</div>
+        <div class="rc-cond">AA-/A+ 评级<br>正股市值 &lt; 50亿<br>&#8594; 不超5%仓位</div>
+      </div>
+      <div class="risk-card">
+        <div class="rc-level" style="color: var(--accent);">&#9632; 回避</div>
+        <div class="rc-cond">A及以下 / ST正股<br>审计异常 / 退市风险<br>&#8594; 不参与</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Trading Advantages -->
+<section class="section">
+  <div class="container">
+    <div class="section-title">交易制度优势</div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px;">
+      <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 24px;">
+        <h4 style="color: var(--green); margin-bottom: 10px;">vs 股票的优势</h4>
+        <div style="font-size: 0.88em; color: var(--text2); line-height: 1.8;">
+          <p><strong style="color: var(--text);">T+0 交易</strong> &mdash; 当日买卖，可及时纠错</p>
+          <p><strong style="color: var(--text);">无印花税</strong> &mdash; 费用仅约万0.5-1</p>
+          <p><strong style="color: var(--text);">下有保底</strong> &mdash; 纯债价值提供安全垫</p>
+          <p><strong style="color: var(--text);">条款博弈</strong> &mdash; 独有的alpha来源</p>
+        </div>
+      </div>
+      <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 24px;">
+        <h4 style="color: var(--orange); margin-bottom: 10px;">风险提示</h4>
+        <div style="font-size: 0.88em; color: var(--text2); line-height: 1.8;">
+          <p><strong style="color: var(--text);">信用风险</strong> &mdash; 2024年后退市风险真实存在</p>
+          <p><strong style="color: var(--text);">强赎风险</strong> &mdash; 忘记转股将损失惨重</p>
+          <p><strong style="color: var(--text);">130%天花板</strong> &mdash; 上涨空间不如直接持股</p>
+          <p><strong style="color: var(--text);">流动性</strong> &mdash; 小规模转债买卖价差大</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <p>可转债投资研究 &middot; 数据基于2025年A股转债市场 &middot; 内容为研究参考，不构成投资建议</p>
+    <p style="margin-top: 8px;"><a href="../index.html">&larr; 返回知识库首页</a></p>
+  </div>
+</footer>
+
+<script>
+// Annual Return Comparison
+new Chart(document.getElementById('annualReturnChart').getContext('2d'), {
+  type: 'bar',
+  data: {
+    labels: ['2019', '2020', '2021', '2022', '2023', '2024'],
+    datasets: [
+      {
+        label: '中证转债',
+        data: [25.2, 5.3, 18.5, -2.0, -0.5, 2.8],
+        backgroundColor: 'rgba(240, 192, 64, 0.7)',
+        borderColor: '#f0c040',
+        borderWidth: 1,
+        borderRadius: 3
+      },
+      {
+        label: '沪深300',
+        data: [36.1, 27.2, -5.2, -21.6, -11.4, 14.7],
+        backgroundColor: 'rgba(80, 128, 224, 0.5)',
+        borderColor: '#5080e0',
+        borderWidth: 1,
+        borderRadius: 3
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { labels: { color: '#e0e0e8', font: { size: 11 } } },
+      tooltip: { callbacks: { label: c => `${c.dataset.label}: ${c.raw > 0 ? '+' : ''}${c.raw}%` } }
+    },
+    scales: {
+      y: { ticks: { color: '#8888a0', callback: v => v + '%' }, grid: { color: '#252535' } },
+      x: { ticks: { color: '#e0e0e8' }, grid: { display: false } }
+    }
+  }
+});
+
+// Price Distribution
+new Chart(document.getElementById('priceDistChart').getContext('2d'), {
+  type: 'doughnut',
+  data: {
+    labels: ['<100元 (债性/风险)', '100-110元 (低价安全)', '110-120元 (攻守兼备)', '120-130元 (偏股)', '>130元 (强赎区)'],
+    datasets: [{
+      data: [10, 25, 28, 18, 19],
+      backgroundColor: [
+        'rgba(224, 80, 80, 0.7)',
+        'rgba(64, 192, 128, 0.7)',
+        'rgba(80, 128, 224, 0.7)',
+        'rgba(240, 192, 64, 0.7)',
+        'rgba(160, 112, 224, 0.7)'
+      ],
+      borderColor: '#0a0a0f',
+      borderWidth: 2
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { position: 'right', labels: { color: '#e0e0e8', font: { size: 10 }, padding: 8 } },
+      tooltip: { callbacks: { label: c => `${c.label}: ${c.raw}%` } }
+    }
+  }
+});
+
+// Rating Distribution
+new Chart(document.getElementById('ratingChart').getContext('2d'), {
+  type: 'bar',
+  data: {
+    labels: ['AAA', 'AA+', 'AA', 'AA-', 'A+', 'A及以下'],
+    datasets: [{
+      label: '占比',
+      data: [15, 22, 38, 15, 7, 3],
+      backgroundColor: [
+        'rgba(64, 192, 128, 0.8)',
+        'rgba(64, 184, 208, 0.7)',
+        'rgba(80, 128, 224, 0.7)',
+        'rgba(240, 192, 64, 0.7)',
+        'rgba(224, 128, 64, 0.7)',
+        'rgba(224, 80, 80, 0.7)'
+      ],
+      borderRadius: 4
+    }]
+  },
+  options: {
+    responsive: true,
+    indexAxis: 'y',
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: c => `占比: ${c.raw}%` } }
+    },
+    scales: {
+      x: { ticks: { color: '#8888a0', callback: v => v + '%' }, grid: { color: '#252535' } },
+      y: { ticks: { color: '#e0e0e8' }, grid: { display: false } }
+    }
+  }
+});
+
+// IPO Performance
+new Chart(document.getElementById('ipoChart').getContext('2d'), {
+  type: 'line',
+  data: {
+    labels: ['2019', '2020', '2021', '2022', '2023', '2024'],
+    datasets: [
+      {
+        label: '首日平均涨幅 (%)',
+        data: [18.5, 22.3, 30.1, 15.2, 10.8, 8.5],
+        borderColor: '#40c080',
+        backgroundColor: 'rgba(64, 192, 128, 0.1)',
+        tension: 0.3,
+        fill: true,
+        yAxisID: 'y'
+      },
+      {
+        label: '破发率 (%)',
+        data: [3, 1, 0, 12, 18, 22],
+        borderColor: '#e05050',
+        backgroundColor: 'rgba(224, 80, 80, 0.1)',
+        tension: 0.3,
+        fill: true,
+        yAxisID: 'y1'
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { labels: { color: '#e0e0e8', font: { size: 11 } } },
+      tooltip: { callbacks: { label: c => `${c.dataset.label}: ${c.raw}%` } }
+    },
+    scales: {
+      y: {
+        type: 'linear', position: 'left',
+        ticks: { color: '#40c080', callback: v => v + '%' },
+        grid: { color: '#252535' },
+        title: { display: true, text: '首日涨幅', color: '#40c080' }
+      },
+      y1: {
+        type: 'linear', position: 'right',
+        ticks: { color: '#e05050', callback: v => v + '%' },
+        grid: { drawOnChartArea: false },
+        title: { display: true, text: '破发率', color: '#e05050' }
+      },
+      x: { ticks: { color: '#e0e0e8' }, grid: { display: false } }
+    }
+  }
+});
+</script>
+
+</body>
+</html>
