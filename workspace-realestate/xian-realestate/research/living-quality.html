@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高新区居住品质分析 | 西安房地产研究</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#f5f0eb;color:#3d3229;line-height:1.6}
+a{color:#8b6914;text-decoration:none}
+.hero{background:linear-gradient(135deg,#2c1810 0%,#4a2c17 50%,#5d3a1a 100%);color:#f5f0eb;padding:48px 24px 40px;text-align:center}
+.hero h1{font-size:30px;margin-bottom:6px;letter-spacing:1px}
+.hero p{font-size:14px;opacity:0.7;max-width:640px;margin:0 auto}
+.hero .tag{display:inline-block;background:rgba(218,165,32,0.15);border:1px solid rgba(218,165,32,0.4);color:#daa520;padding:3px 12px;border-radius:16px;font-size:11px;margin-top:12px}
+.container{max-width:1100px;margin:0 auto;padding:0 20px}
+.section{margin:36px 0}
+.section-title{font-size:20px;font-weight:700;color:#2c1810;margin-bottom:4px}
+.section-sub{font-size:13px;color:#8b7355;margin-bottom:18px}
+.card{background:#fff;border:1px solid #e5ddd3;border-radius:10px;padding:24px;margin-bottom:20px;box-shadow:0 2px 12px rgba(0,0,0,0.04)}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:24px 0}
+.kpi{background:#fff;border:1px solid #e5ddd3;border-radius:10px;padding:16px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.03)}
+.kpi .v{font-size:24px;font-weight:700}
+.kpi .v.gold{color:#8b6914}
+.kpi .v.green{color:#2d8a4e}
+.kpi .v.brown{color:#8b4513}
+.kpi .v.blue{color:#2563eb}
+.kpi .l{font-size:11px;color:#8b7355;margin-top:2px}
+
+/* Bars */
+.bar-chart{margin:12px 0}
+.bar-row{display:flex;align-items:center;margin:7px 0}
+.bar-label{width:110px;font-size:12px;text-align:right;padding-right:10px;color:#6b5b4a;flex-shrink:0}
+.bar-track{flex:1;background:#f0e8dd;border-radius:4px;height:30px;position:relative;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding:0 10px;font-size:11px;color:#fff;font-weight:600;transition:width 0.6s}
+.bar-fill.g1{background:linear-gradient(90deg,#2d8a4e,#40b66b)}
+.bar-fill.g2{background:linear-gradient(90deg,#2563eb,#4f8af7)}
+.bar-fill.g3{background:linear-gradient(90deg,#8b6914,#c49b2a)}
+.bar-fill.g4{background:linear-gradient(90deg,#8b4513,#b5651d)}
+.bar-fill.g5{background:linear-gradient(90deg,#6b21a8,#9333ea)}
+.bar-val{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:11px;color:#6b5b4a}
+
+/* Correlation chart - CSS scatter */
+.corr-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;margin:12px 0}
+.corr-cell{text-align:center;padding:14px 6px;border-radius:6px;font-size:12px;font-weight:700}
+.corr-header{background:#f0e8dd;color:#6b5b4a;font-weight:600;font-size:11px;padding:10px 6px}
+.c-high{background:#dcfce7;color:#166534}
+.c-med{background:#e0f2fe;color:#075985}
+.c-low{background:#fef9c3;color:#854d0e}
+.c-vlow{background:#fee2e2;color:#991b1b}
+
+/* Table */
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#f0e8dd;color:#6b5b4a;font-weight:600;padding:10px 12px;text-align:left;border-bottom:2px solid #e5ddd3}
+td{padding:10px 12px;border-bottom:1px solid #f0e8dd}
+tr:hover td{background:#faf7f2}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600}
+.badge.premium{background:#fef3c7;color:#92400e}
+.badge.good{background:#dcfce7;color:#166534}
+.badge.avg{background:#e0f2fe;color:#075985}
+.badge.low{background:#fee2e2;color:#991b1b}
+
+/* Donut */
+.donut-row{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;margin:16px 0}
+.donut-item{text-align:center;width:100px}
+.donut-ring{width:80px;height:80px;border-radius:50%;margin:0 auto 8px;position:relative;display:flex;align-items:center;justify-content:center}
+.donut-ring .inner{position:absolute;width:52px;height:52px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700}
+.donut-label{font-size:11px;color:#6b5b4a}
+
+/* Quality meter */
+.meter{display:flex;align-items:center;gap:8px;margin:6px 0}
+.meter-bar{flex:1;height:8px;background:#f0e8dd;border-radius:4px;overflow:hidden}
+.meter-fill{height:100%;border-radius:4px}
+
+/* Insight */
+.insight{display:flex;gap:12px;margin:12px 0;padding:14px;border-radius:8px;border-left:3px solid #8b6914;background:#faf7f2}
+.insight.green{border-left-color:#2d8a4e}
+.insight.red{border-left-color:#dc2626}
+.insight .icon{font-size:20px;flex-shrink:0}
+.insight .text{font-size:13px;line-height:1.6}
+.insight .text strong{color:#2c1810}
+
+.footer{text-align:center;padding:32px 20px;font-size:12px;color:#8b7355;border-top:1px solid #e5ddd3;margin-top:40px}
+.back-link{display:inline-block;margin:20px 0;font-size:13px}
+@media(max-width:700px){
+    .hero h1{font-size:22px}
+    .bar-label{width:70px;font-size:10px}
+    .kpi-grid{grid-template-columns:repeat(2,1fr)}
+    .corr-grid{font-size:10px}
+}
+</style>
+</head>
+<body>
+<div class="hero">
+    <h1>高新区居住品质分析</h1>
+    <p>456 个小区的容积率、绿化率、物业费、建筑类型、开发商与品质评分 — 用数据量化"住得好不好"</p>
+    <div class="tag">456 小区详情 | 380 有容积率 | 357 有物业费 | 品质评分</div>
+</div>
+
+<div class="container">
+    <a class="back-link" href="../../index.html">&larr; 返回研究门户</a>
+
+    <!-- KPI -->
+    <div class="kpi-grid">
+        <div class="kpi"><div class="v gold">3.1</div><div class="l">平均容积率</div></div>
+        <div class="kpi"><div class="v green">33%</div><div class="l">平均绿化率</div></div>
+        <div class="kpi"><div class="v brown">1.6</div><div class="l">平均物业费<br>元/㎡·月</div></div>
+        <div class="kpi"><div class="v blue">板楼</div><div class="l">最多建筑类型<br>175/456</div></div>
+        <div class="kpi"><div class="v gold">天地源</div><div class="l">最大品牌开发商<br>14 盘</div></div>
+        <div class="kpi"><div class="v green">81.7</div><div class="l">最高品质评分<br>绿地诺丁山</div></div>
+    </div>
+
+    <!-- Section 1: FAR vs Price -->
+    <div class="section">
+        <h2 class="section-title">容积率 vs 房价</h2>
+        <p class="section-sub">容积率越低 = 密度越低 = 居住舒适度越高，380 个有效样本</p>
+        <div class="card">
+            <div class="bar-chart">
+                <div class="bar-row">
+                    <div class="bar-label">&le;1.5 低密<br><span style="font-size:10px;color:#8b7355">n=19</span></div>
+                    <div class="bar-track">
+                        <div class="bar-fill g1" style="width:78%">17,929 元/㎡</div>
+                    </div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">1.5-2.5 中密<br><span style="font-size:10px;color:#8b7355">n=83</span></div>
+                    <div class="bar-track">
+                        <div class="bar-fill g1" style="width:79%">18,210 元/㎡</div>
+                    </div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">2.5-3.5 中高密<br><span style="font-size:10px;color:#8b7355">n=142</span></div>
+                    <div class="bar-track">
+                        <div class="bar-fill g2" style="width:74%">17,156 元/㎡</div>
+                    </div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">3.5-5.0 高密<br><span style="font-size:10px;color:#8b7355">n=98</span></div>
+                    <div class="bar-track">
+                        <div class="bar-fill g3" style="width:61%">14,004 元/㎡</div>
+                    </div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">&gt;5.0 超高密<br><span style="font-size:10px;color:#8b7355">n=38</span></div>
+                    <div class="bar-track">
+                        <div class="bar-fill g4" style="width:52%">12,039 元/㎡</div>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top:14px;padding:12px;background:#faf7f2;border-radius:6px;font-size:12px;color:#6b5b4a">
+                <strong style="color:#2c1810">关键发现：</strong>
+                容积率 &le;2.5 的中低密小区中位价 ~18,000，比超高密（&gt;5.0）高 <strong style="color:#2d8a4e">+49%</strong>。
+                但低密小区仅占 5%（19 个），多为别墅或花园洋房，供应稀缺。
+                <strong>性价比甜点：</strong>容积率 2.5-3.5 区间（142 个，中位 17,156）——密度适中、价格合理、选择多。
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 2: Green Ratio vs Price -->
+    <div class="section">
+        <h2 class="section-title">绿化率 vs 房价</h2>
+        <p class="section-sub">绿化率反映小区环境品质，379 个有效样本</p>
+        <div class="card">
+            <div class="bar-chart">
+                <div class="bar-row">
+                    <div class="bar-label">&lt;30%<br><span style="font-size:10px;color:#8b7355">n=68</span></div>
+                    <div class="bar-track">
+                        <div class="bar-fill g4" style="width:52%">12,090 元/㎡</div>
+                    </div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">30-35%<br><span style="font-size:10px;color:#8b7355">n=83</span></div>
+                    <div class="bar-track">
+                        <div class="bar-fill g3" style="width:68%">15,741 元/㎡</div>
+                    </div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">35-40%<br><span style="font-size:10px;color:#8b7355">n=120</span></div>
+                    <div class="bar-track">
+                        <div class="bar-fill g1" style="width:73%">16,820 元/㎡</div>
+                    </div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">&ge;40%<br><span style="font-size:10px;color:#8b7355">n=108</span></div>
+                    <div class="bar-track">
+                        <div class="bar-fill g1" style="width:68%">15,730 元/㎡</div>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top:14px;padding:12px;background:#faf7f2;border-radius:6px;font-size:12px;color:#6b5b4a">
+                <strong style="color:#2c1810">发现：</strong>
+                绿化率 &lt;30% 的小区价格明显偏低（12,090），多为老旧单位房或商住混合。
+                35-40% 区间价格最高（16,820），说明市场对"绿化适中"有溢价。
+                &ge;40% 反而略低于 35-40%，可能因为高绿化率小区多为偏远大盘（容积率也高）。
+                <strong>最佳区间：</strong>35-40% 绿化率 = 品质感与价格的最佳平衡。
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 3: Property Fee vs Price -->
+    <div class="section">
+        <h2 class="section-title">物业费 vs 房价</h2>
+        <p class="section-sub">物业费是居住品质的直接指标 — 费越高、服务越好、房价越高，357 个有效样本</p>
+        <div class="card">
+            <div class="bar-chart">
+                <div class="bar-row">
+                    <div class="bar-label">&lt;1.0 元<br><span style="font-size:10px;color:#8b7355">n=69</span></div>
+                    <div class="bar-track">
+                        <div class="bar-fill g4" style="width:40%">12,090 元/㎡</div>
+                    </div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">1.0-2.0 元<br><span style="font-size:10px;color:#8b7355">n=216</span></div>
+                    <div class="bar-track">
+                        <div class="bar-fill g3" style="width:46%">13,932 元/㎡</div>
+                    </div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">2.0-3.0 元<br><span style="font-size:10px;color:#8b7355">n=41</span></div>
+                    <div class="bar-track">
+                        <div class="bar-fill g2" style="width:60%">18,153 元/㎡</div>
+                    </div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">3.0-5.0 元<br><span style="font-size:10px;color:#8b7355">n=24</span></div>
+                    <div class="bar-track">
+                        <div class="bar-fill g1" style="width:80%">24,258 元/㎡</div>
+                    </div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">&ge;5.0 元<br><span style="font-size:10px;color:#8b7355">n=7</span></div>
+                    <div class="bar-track">
+                        <div class="bar-fill g5" style="width:50%">15,133 元/㎡</div>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top:14px;padding:12px;background:#faf7f2;border-radius:6px;font-size:12px;color:#6b5b4a">
+                <strong style="color:#2c1810">强相关：</strong>
+                物业费与房价呈显著正相关。3.0-5.0 元/㎡·月的高端物业中位价 <strong style="color:#2d8a4e">24,258 元</strong>，是低端物业（&lt;1.0 元）的 <strong>2 倍</strong>。
+                &ge;5.0 元异常回落，因样本仅 7 个且含特殊商住项目。
+                <strong style="color:#8b6914">投资启示：</strong>物业费 2.0-3.0 元是"品质跃升"临界点——性价比最高的改善区间。
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 4: Building Type -->
+    <div class="section">
+        <h2 class="section-title">建筑类型分布</h2>
+        <p class="section-sub">板楼通风采光佳，塔楼得房率低但视野好，板塔结合兼顾两者</p>
+        <div class="card">
+            <div class="donut-row">
+                <div class="donut-item">
+                    <div class="donut-ring" style="background:conic-gradient(#2d8a4e 0% 39%, #f0e8dd 39%)">
+                        <div class="inner">39%</div>
+                    </div>
+                    <div class="donut-label"><strong>板楼</strong><br>175 个</div>
+                </div>
+                <div class="donut-item">
+                    <div class="donut-ring" style="background:conic-gradient(#2563eb 0% 23%, #f0e8dd 23%)">
+                        <div class="inner">23%</div>
+                    </div>
+                    <div class="donut-label"><strong>板塔结合</strong><br>106 个</div>
+                </div>
+                <div class="donut-item">
+                    <div class="donut-ring" style="background:conic-gradient(#8b6914 0% 17%, #f0e8dd 17%)">
+                        <div class="inner">17%</div>
+                    </div>
+                    <div class="donut-label"><strong>未知</strong><br>76 个</div>
+                </div>
+                <div class="donut-item">
+                    <div class="donut-ring" style="background:conic-gradient(#8b4513 0% 8%, #f0e8dd 8%)">
+                        <div class="inner">8%</div>
+                    </div>
+                    <div class="donut-label"><strong>塔楼</strong><br>37 个</div>
+                </div>
+                <div class="donut-item">
+                    <div class="donut-ring" style="background:conic-gradient(#6b21a8 0% 13%, #f0e8dd 13%)">
+                        <div class="inner">13%</div>
+                    </div>
+                    <div class="donut-label"><strong>混合</strong><br>62 个</div>
+                </div>
+            </div>
+            <div style="padding:12px;background:#faf7f2;border-radius:6px;font-size:12px;color:#6b5b4a">
+                <strong style="color:#2c1810">板楼占主导（39%）</strong>——符合北方城市特点，南北通透、采光好。
+                板塔结合（23%）多出现在 2010 年后的中高端盘，兼顾效率与品质。
+                纯塔楼仅 8%，多为商住或超高层项目。
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 5: Developer Ranking -->
+    <div class="section">
+        <h2 class="section-title">开发商品牌矩阵</h2>
+        <p class="section-sub">按中位价排名的品牌开发商（&ge;2 盘），含物业费与容积率对比</p>
+        <div class="card" style="overflow-x:auto">
+            <table>
+                <thead>
+                    <tr>
+                        <th>开发商</th>
+                        <th>楼盘数</th>
+                        <th>中位价</th>
+                        <th>物业费</th>
+                        <th>容积率</th>
+                        <th>定位</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>高新地产</strong></td>
+                        <td>6</td>
+                        <td style="color:#2d8a4e;font-weight:700">26,182</td>
+                        <td>1.15</td>
+                        <td>2.73</td>
+                        <td><span class="badge premium">高端</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>中海</strong></td>
+                        <td>3</td>
+                        <td style="color:#2d8a4e;font-weight:700">25,436</td>
+                        <td>1.80</td>
+                        <td>2.70</td>
+                        <td><span class="badge premium">高端</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>绿地</strong></td>
+                        <td>6</td>
+                        <td style="color:#2d8a4e;font-weight:700">24,550</td>
+                        <td>1.63</td>
+                        <td>2.13</td>
+                        <td><span class="badge premium">高端</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>天地源</strong></td>
+                        <td>14</td>
+                        <td style="color:#8b6914;font-weight:700">23,515</td>
+                        <td>1.41</td>
+                        <td>5.31</td>
+                        <td><span class="badge premium">高端</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>万达</strong></td>
+                        <td>2</td>
+                        <td style="color:#8b6914;font-weight:700">20,310</td>
+                        <td>2.50</td>
+                        <td>3.25</td>
+                        <td><span class="badge good">改善</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>高科</strong></td>
+                        <td>20</td>
+                        <td style="color:#8b6914;font-weight:700">19,956</td>
+                        <td>1.56</td>
+                        <td>2.61</td>
+                        <td><span class="badge good">改善</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>融创</strong></td>
+                        <td>3</td>
+                        <td style="color:#2563eb;font-weight:700">18,925</td>
+                        <td>3.20</td>
+                        <td>2.66</td>
+                        <td><span class="badge good">高物业</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>金地</strong></td>
+                        <td>2</td>
+                        <td style="color:#2563eb;font-weight:700">17,953</td>
+                        <td>1.93</td>
+                        <td>3.59</td>
+                        <td><span class="badge avg">中端</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>紫薇</strong></td>
+                        <td>4</td>
+                        <td style="color:#2563eb;font-weight:700">16,984</td>
+                        <td>1.75</td>
+                        <td>2.48</td>
+                        <td><span class="badge avg">中端</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>万科</strong></td>
+                        <td>2</td>
+                        <td style="color:#2563eb;font-weight:700">16,444</td>
+                        <td>1.20</td>
+                        <td>2.90</td>
+                        <td><span class="badge avg">中端</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>金辉</strong></td>
+                        <td>2</td>
+                        <td style="color:#6b5b4a;font-weight:700">15,045</td>
+                        <td>1.85</td>
+                        <td>4.00</td>
+                        <td><span class="badge avg">中端</span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="margin-top:12px;padding:10px;background:#faf7f2;border-radius:6px;font-size:11px;color:#6b5b4a">
+                <strong style="color:#2c1810">注意：</strong>天地源虽然中位价高（23,515），但平均容积率达 5.31——说明其高价来自区位（高新一中学区）而非低密品质。
+                融创物业费最高（3.20 元/㎡·月），品质定位清晰。
+                高科是高新区最大本土品牌（20 盘），性价比与品质兼顾。
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 6: Property Management -->
+    <div class="section">
+        <h2 class="section-title">物业公司 TOP 10</h2>
+        <p class="section-sub">物业公司直接决定居住体验 — 按所管楼盘中位价排名</p>
+        <div class="card" style="overflow-x:auto">
+            <table>
+                <thead>
+                    <tr>
+                        <th>物业公司</th>
+                        <th>管理盘数</th>
+                        <th>楼盘中位价</th>
+                        <th>平均物业费</th>
+                        <th>品质等级</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>高新枫叶物业</strong></td>
+                        <td>7</td>
+                        <td style="color:#2d8a4e;font-weight:700">27,868</td>
+                        <td>1.44</td>
+                        <td><span class="badge premium">顶级</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>樱园物业</strong></td>
+                        <td>2</td>
+                        <td style="color:#2d8a4e;font-weight:700">27,626</td>
+                        <td>0.70</td>
+                        <td><span class="badge premium">高性价比</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>合肥高新物业</strong></td>
+                        <td>6</td>
+                        <td style="color:#2d8a4e;font-weight:700">25,466</td>
+                        <td>1.43</td>
+                        <td><span class="badge premium">顶级</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>碧桂园物业</strong></td>
+                        <td>2</td>
+                        <td style="color:#8b6914;font-weight:700">24,728</td>
+                        <td>3.90</td>
+                        <td><span class="badge good">高端高费</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>融创物业</strong></td>
+                        <td>2</td>
+                        <td style="color:#8b6914;font-weight:700">23,562</td>
+                        <td>3.70</td>
+                        <td><span class="badge good">高端高费</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>天地源物业</strong></td>
+                        <td>16</td>
+                        <td style="color:#8b6914;font-weight:700">22,566</td>
+                        <td>1.85</td>
+                        <td><span class="badge good">大规模稳定</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>龙湖物业</strong></td>
+                        <td>7</td>
+                        <td style="color:#2563eb;font-weight:700">21,312</td>
+                        <td>3.68</td>
+                        <td><span class="badge good">全国标杆</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>绿城物业</strong></td>
+                        <td>2</td>
+                        <td style="color:#2563eb;font-weight:700">20,892</td>
+                        <td>2.10</td>
+                        <td><span class="badge good">品质优选</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>中海物业</strong></td>
+                        <td>3</td>
+                        <td style="color:#2563eb;font-weight:700">20,816</td>
+                        <td>1.80</td>
+                        <td><span class="badge good">央企稳健</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>高科物业</strong></td>
+                        <td>21</td>
+                        <td style="color:#8b6914;font-weight:700">19,839</td>
+                        <td>1.54</td>
+                        <td><span class="badge avg">本土最大</span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="margin-top:12px;padding:10px;background:#faf7f2;border-radius:6px;font-size:11px;color:#6b5b4a">
+                <strong style="color:#2c1810">物业选择指南：</strong>
+                追求极致服务 → 龙湖/融创（费高但口碑好）；
+                性价比 → 高新枫叶/合肥高新（中等费用，高端楼盘）；
+                稳定可靠 → 天地源/高科（本土最大，社区成熟）。
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 7: Quality Score Top -->
+    <div class="section">
+        <h2 class="section-title">品质评分 TOP 10</h2>
+        <p class="section-sub">综合绿化率(30%)、容积率(20%)、物业费(30%)、楼龄(20%) 的加权评分</p>
+        <div class="card" style="overflow-x:auto">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>小区</th>
+                        <th>评分</th>
+                        <th>均价</th>
+                        <th>容积率</th>
+                        <th>绿化率</th>
+                        <th>物业费</th>
+                        <th>建成</th>
+                        <th>板块</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="background:#f0fdf4">
+                        <td>1</td>
+                        <td><strong>绿地诺丁山别墅</strong></td>
+                        <td style="color:#2d8a4e;font-weight:700">81.7</td>
+                        <td>36,496</td>
+                        <td>0.7</td>
+                        <td>35%</td>
+                        <td>3.50</td>
+                        <td>2011</td>
+                        <td>锦业路</td>
+                    </tr>
+                    <tr style="background:#f0fdf4">
+                        <td>2</td>
+                        <td><strong>高科&middot;云天</strong></td>
+                        <td style="color:#2d8a4e;font-weight:700">79.9</td>
+                        <td>30,291</td>
+                        <td>2.8</td>
+                        <td>35%</td>
+                        <td>4.90</td>
+                        <td>2025</td>
+                        <td>软件新城</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td><strong>融创珺庭府</strong></td>
+                        <td style="color:#2d8a4e;font-weight:700">78.3</td>
+                        <td>21,988</td>
+                        <td>2.8</td>
+                        <td>35%</td>
+                        <td>4.90</td>
+                        <td>2023</td>
+                        <td>锦业路</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td><strong>科技路金茂府</strong></td>
+                        <td style="color:#2d8a4e;font-weight:700">77.8</td>
+                        <td>22,344</td>
+                        <td>3.01</td>
+                        <td>35%</td>
+                        <td>4.50</td>
+                        <td>2026</td>
+                        <td>鱼化寨</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td><strong>中大国际九号</strong></td>
+                        <td style="color:#8b6914;font-weight:700">76.3</td>
+                        <td>89,622</td>
+                        <td>3.34</td>
+                        <td>40%</td>
+                        <td>5.00</td>
+                        <td>2017</td>
+                        <td>高新一中</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td><strong>万达长安龙胤</strong></td>
+                        <td style="color:#8b6914;font-weight:700">76.0</td>
+                        <td>80,694</td>
+                        <td>2.0</td>
+                        <td>30%</td>
+                        <td>7.00</td>
+                        <td>2020</td>
+                        <td>科技六路</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td><strong>企业壹号公园别墅</strong></td>
+                        <td style="color:#2563eb;font-weight:700">72.1</td>
+                        <td>37,222</td>
+                        <td>2.0</td>
+                        <td>65%</td>
+                        <td>3.00</td>
+                        <td>2001</td>
+                        <td>锦业路</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td><strong>中天&middot;未来印</strong></td>
+                        <td style="color:#2563eb;font-weight:700">71.9</td>
+                        <td>27,731</td>
+                        <td>2.8</td>
+                        <td>35%</td>
+                        <td>3.70</td>
+                        <td>2024</td>
+                        <td>郭杜</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td><strong>紫薇生态城</strong></td>
+                        <td style="color:#2563eb;font-weight:700">71.1</td>
+                        <td>21,212</td>
+                        <td>1.5</td>
+                        <td>35%</td>
+                        <td>2.80</td>
+                        <td>2022</td>
+                        <td>西万路口</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td><strong>唐延九珺</strong></td>
+                        <td style="color:#2563eb;font-weight:700">70.9</td>
+                        <td>23,974</td>
+                        <td>3.1</td>
+                        <td>30%</td>
+                        <td>5.80</td>
+                        <td>2018</td>
+                        <td>科技六路</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Section 8: Correlation Summary -->
+    <div class="section">
+        <h2 class="section-title">品质因子 vs 房价相关性</h2>
+        <p class="section-sub">各品质维度对房价的影响力排名</p>
+        <div class="card">
+            <div class="corr-grid">
+                <div class="corr-header">品质因子</div>
+                <div class="corr-header">低档</div>
+                <div class="corr-header">中档</div>
+                <div class="corr-header">中高档</div>
+                <div class="corr-header">高档</div>
+
+                <div class="corr-header">物业费</div>
+                <div class="corr-cell c-vlow">&lt;1.0<br>12,090</div>
+                <div class="corr-cell c-low">1.0-2.0<br>13,932</div>
+                <div class="corr-cell c-med">2.0-3.0<br>18,153</div>
+                <div class="corr-cell c-high">3.0-5.0<br>24,258</div>
+
+                <div class="corr-header">容积率</div>
+                <div class="corr-cell c-high">&le;2.5<br>18,070</div>
+                <div class="corr-cell c-med">2.5-3.5<br>17,156</div>
+                <div class="corr-cell c-low">3.5-5.0<br>14,004</div>
+                <div class="corr-cell c-vlow">&gt;5.0<br>12,039</div>
+
+                <div class="corr-header">绿化率</div>
+                <div class="corr-cell c-vlow">&lt;30%<br>12,090</div>
+                <div class="corr-cell c-med">30-35%<br>15,741</div>
+                <div class="corr-cell c-high">35-40%<br>16,820</div>
+                <div class="corr-cell c-med">&ge;40%<br>15,730</div>
+
+                <div class="corr-header">规模</div>
+                <div class="corr-cell c-vlow">&lt;200户<br>12,971</div>
+                <div class="corr-cell c-med">200-500<br>15,192</div>
+                <div class="corr-cell c-high">1K-2K<br>16,193</div>
+                <div class="corr-cell c-med">&ge;2000<br>15,820</div>
+            </div>
+            <div style="margin-top:14px;padding:12px;background:#faf7f2;border-radius:6px;font-size:12px;color:#6b5b4a">
+                <strong style="color:#2c1810">影响力排序：</strong>
+                物业费 &gt; 容积率 &gt; 绿化率 &gt; 小区规模。
+                物业费从低到高价差 <strong>+101%</strong>，容积率 <strong>+50%</strong>，绿化率 <strong>+39%</strong>，规模 <strong>+25%</strong>。
+                <br><strong style="color:#8b6914">选房优先级：</strong>先看物业费（直接反映品质），再看容积率，绿化率和规模作参考。
+            </div>
+        </div>
+    </div>
+
+    <!-- Key Insights -->
+    <div class="section">
+        <h2 class="section-title">核心洞察</h2>
+        <div class="insight green">
+            <div class="icon">&#x2728;</div>
+            <div class="text">
+                <strong>"品质甜点区间"</strong><br>
+                容积率 2.5-3.5 + 绿化率 35-40% + 物业费 2.0-3.0 元 = 居住品质跃升临界点。
+                对应中位价 ~17,000-18,000，比低品质区间高 40%+，但远低于顶级豪宅。
+                典型代表：融创珺庭府、紫薇生态城、科技路金茂府。
+            </div>
+        </div>
+        <div class="insight">
+            <div class="icon">&#x1F3E2;</div>
+            <div class="text">
+                <strong>开发商品牌溢价分化</strong><br>
+                本土品牌（高新地产/高科/天地源）凭区位优势定价高；
+                全国品牌（龙湖/融创/碧桂园）凭物业服务溢价。
+                <strong>买品质选融创/龙湖，买区位选天地源/高科。</strong>
+            </div>
+        </div>
+        <div class="insight red">
+            <div class="icon">&#x26A0;</div>
+            <div class="text">
+                <strong>品质陷阱警示</strong><br>
+                枫叶苑北/南区：均价 27,167-32,631 但物业费仅 0.4 元——"高价低管"典型。
+                天地源容积率 5.31 但中位价 23,515——"品牌光环下的高密度"。
+                选房时不能只看价格或品牌，必须交叉验证品质指标。
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    高新区居住品质分析 | 456 小区详情数据 | 生成于 2026-03-02<br>
+    <a href="../../index.html">返回研究门户</a> | 数据来源：房天下
+</div>
+</body>
+</html>
