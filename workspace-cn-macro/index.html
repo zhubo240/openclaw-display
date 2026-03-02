@@ -548,6 +548,60 @@
     margin-right: 3px; white-space: nowrap;
   }
 
+  /* Sticky quick nav */
+  .quick-nav {
+    position: fixed; top: 50%; right: 12px; transform: translateY(-50%);
+    z-index: 100; display: flex; flex-direction: column; gap: 4px;
+  }
+  .quick-nav a {
+    display: block; width: 32px; height: 32px; line-height: 32px;
+    text-align: center; font-size: 0.7em; font-weight: 600;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 6px; color: var(--text2); text-decoration: none;
+    transition: all 0.2s;
+  }
+  .quick-nav a:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .quick-nav a[title]:hover::before {
+    content: attr(title); position: absolute; right: 40px; top: 50%;
+    transform: translateY(-50%); background: var(--surface);
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 4px 10px; font-size: 1.1em; white-space: nowrap; color: var(--text);
+  }
+
+  /* Reading paths */
+  .paths {
+    padding: 48px 0; border-bottom: 1px solid var(--border);
+  }
+  .paths h2 {
+    text-align: center; font-size: 1.3em; font-weight: 600;
+    margin-bottom: 8px; color: var(--text2); letter-spacing: 0.08em;
+  }
+  .paths .sub {
+    text-align: center; color: var(--text2); font-size: 0.88em; margin-bottom: 28px;
+  }
+  .path-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 14px; max-width: 960px; margin: 0 auto;
+  }
+  .path-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px 22px;
+  }
+  .path-card h4 { font-size: 0.92em; font-weight: 600; color: var(--accent); margin-bottom: 6px; }
+  .path-card .path-audience { font-size: 0.78em; color: var(--text2); margin-bottom: 12px; }
+  .path-card .path-steps {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 4px;
+    font-size: 0.82em; line-height: 2;
+  }
+  .path-card .path-steps .ps-dim {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 5px; padding: 2px 8px; color: var(--accent);
+    font-weight: 600; text-decoration: none; transition: all 0.2s;
+  }
+  .path-card .path-steps .ps-dim:hover { background: var(--accent); color: var(--bg); }
+  .path-card .path-steps .ps-arrow { color: var(--text2); }
+  .path-card .path-why { font-size: 0.78em; color: var(--text2); margin-top: 10px; line-height: 1.5; }
+
   /* Footer */
   .footer {
     padding: 40px 0;
@@ -569,15 +623,31 @@
     .chain-grid { grid-template-columns: 1fr; }
     .sc-grid { grid-template-columns: 1fr; }
     .reform-table { font-size: 0.72em; }
+    .quick-nav { display: none; }
+    .path-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
 
+<!-- Sticky quick nav -->
+<nav class="quick-nav">
+  <a href="#top" title="顶部">&#8679;</a>
+  <a href="#contradiction" title="核心矛盾">矛</a>
+  <a href="#judgments" title="五大判断">判</a>
+  <a href="#causal" title="因果关联">因</a>
+  <a href="#dashboard" title="数据仪表盘">数</a>
+  <a href="#dims" title="十二维度">维</a>
+  <a href="#paths" title="阅读路径">读</a>
+  <a href="#circulation" title="供需循环">循</a>
+  <a href="#mismatches" title="六大错配">错</a>
+  <a href="#scenarios" title="情景推演">景</a>
+</nav>
+
 <div class="container">
 
   <!-- Hero -->
-  <section class="hero">
+  <section class="hero" id="top">
     <h1>中国宏观经济分析框架</h1>
     <p class="subtitle">51 个关键问题 &middot; 12 个维度 &middot; 一幅完整的全景图</p>
     <div class="tagline">
@@ -592,7 +662,7 @@
   </section>
 
   <!-- Core contradiction -->
-  <section class="contradiction">
+  <section class="contradiction" id="contradiction">
     <h2>核 心 矛 盾</h2>
     <div class="engines">
       <div class="engine-box old">
@@ -614,7 +684,7 @@
   </section>
 
   <!-- Five judgments -->
-  <section class="judgments">
+  <section class="judgments" id="judgments">
     <h2>五 大 关 键 判 断</h2>
     <div class="judgment-list">
       <div class="judgment-item">
