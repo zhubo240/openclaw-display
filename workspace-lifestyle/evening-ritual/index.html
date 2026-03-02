@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>晚间仪式 · 下班到入睡的黄金三小时</title>
+<style>
+  :root {
+    --bg: #faf9f6;
+    --text: #2d2d2d;
+    --accent: #5a6d8a;
+    --accent-light: #e8edf3;
+    --border: #e0ddd8;
+    --muted: #8a8580;
+    --warm: #c4873c;
+    --warm-light: #fdf5ed;
+    --purple: #7b6b8a;
+    --purple-light: #f0edf3;
+    --green: #5a7d64;
+    --green-light: #e8f0eb;
+    --night: #3d3557;
+    --night-light: #edeaf2;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Noto Sans SC", "Helvetica Neue", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 3rem 1.5rem;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  header { margin-bottom: 2.5rem; }
+  header h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.3rem;
+  }
+  header p { color: var(--muted); font-size: 0.9rem; }
+  .breadcrumb {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .section h2 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--accent);
+  }
+  .section h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 1rem 0 0.5rem;
+  }
+
+  /* Intro banner */
+  .intro-banner {
+    padding: 1.2rem 1.4rem;
+    background: linear-gradient(135deg, var(--accent-light) 0%, var(--night-light) 100%);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+  }
+  .intro-banner strong { color: var(--night); }
+
+  /* Timeline */
+  .timeline {
+    position: relative;
+    padding-left: 2.2rem;
+  }
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 0.5rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--warm) 0%, var(--purple) 40%, var(--night) 100%);
+  }
+  .tl-item {
+    position: relative;
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.2rem;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .tl-item::before {
+    content: "";
+    position: absolute;
+    left: -1.85rem;
+    top: 1.2rem;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    background: var(--bg);
+  }
+  .tl-item.phase-1::before { border-color: var(--warm); }
+  .tl-item.phase-2::before { border-color: var(--purple); }
+  .tl-item.phase-3::before { border-color: var(--night); }
+  .tl-time {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 0.3rem;
+  }
+  .tl-item.phase-1 .tl-time { color: var(--warm); }
+  .tl-item.phase-2 .tl-time { color: var(--purple); }
+  .tl-item.phase-3 .tl-time { color: var(--night); }
+  .tl-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+  .tl-body {
+    font-size: 0.88rem;
+    color: var(--muted);
+  }
+  .tl-body ul {
+    padding-left: 1.2rem;
+    margin-top: 0.3rem;
+  }
+  .tl-body li { margin-bottom: 0.2rem; }
+
+  /* Phase labels */
+  .phase-tag {
+    display: inline-block;
+    padding: 0.1rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+  }
+  .pt-transition { background: var(--warm-light); color: var(--warm); }
+  .pt-golden { background: var(--purple-light); color: var(--purple); }
+  .pt-wind { background: var(--night-light); color: var(--night); }
+
+  /* Cards grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  .card {
+    padding: 1rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+  .card h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+  }
+  .card p, .card ul {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .card ul { padding-left: 1.2rem; }
+  .card-warm { background: var(--warm-light); border-color: var(--warm); }
+  .card-purple { background: var(--purple-light); border-color: var(--purple); }
+  .card-night { background: var(--night-light); border-color: var(--night); }
+  .card-green { background: var(--green-light); border-color: var(--green); }
+
+  /* Table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    margin-top: 0.8rem;
+  }
+  th, td {
+    padding: 0.5rem 0.6rem;
+    border: 1px solid var(--border);
+    text-align: left;
+  }
+  th {
+    background: var(--accent-light);
+    font-weight: 600;
+    font-size: 0.8rem;
+  }
+
+  /* Do/Don't */
+  .do-dont {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 0.8rem;
+  }
+  .do-col, .dont-col {
+    padding: 1rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+  }
+  .do-col {
+    background: var(--green-light);
+    border: 1px solid var(--green);
+  }
+  .dont-col {
+    background: #fdf0f0;
+    border: 1px solid #c47070;
+  }
+  .do-col h4 { color: var(--green); }
+  .dont-col h4 { color: #c47070; }
+  .do-col ul, .dont-col ul {
+    padding-left: 1.2rem;
+    margin-top: 0.4rem;
+    color: var(--muted);
+  }
+
+  /* Cross-ref */
+  .xref {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid var(--border);
+  }
+  .xref a {
+    display: inline-block;
+    padding: 0.3rem 0.7rem;
+    background: var(--accent-light);
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: var(--accent);
+  }
+  .xref a:hover {
+    background: var(--accent);
+    color: #fff;
+    text-decoration: none;
+  }
+
+  /* Dimming scale */
+  .dim-scale {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 0.8rem 0;
+    height: 2rem;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .dim-seg {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  @media (max-width: 480px) {
+    body { padding: 2rem 1rem; }
+    .do-dont { grid-template-columns: 1fr; }
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="breadcrumb"><a href="../index.html">← 首页</a></div>
+
+<header>
+  <h1>晚间仪式</h1>
+  <p>下班到入睡的黄金三小时 · 一天中最值得经营的过渡带</p>
+</header>
+
+<div class="intro-banner">
+  <strong>为什么晚间如此重要？</strong><br>
+  工作日精力管理止于下班，睡眠指南从上床才开始。中间这 3-4 小时是「无主之地」——大多数人用刷手机填充。
+  但研究表明，睡前 2-3 小时的活动质量直接预测睡眠质量和次日精力水平。经营好这段时间，回报是双倍的：当晚睡得更好，明天状态更佳。
+</div>
+
+<!-- Section 1: Three Phases -->
+<div class="section">
+  <h2>晚间三阶段</h2>
+  <p style="font-size: 0.88rem; color: var(--muted); margin-bottom: 1rem;">
+    将 18:00-23:00 分为三个阶段，每个阶段有不同的节奏和目标。不需要精确卡时间——感受身体的节奏，顺势而为。
+  </p>
+
+  <table>
+    <tr>
+      <th>阶段</th>
+      <th>时间</th>
+      <th>关键词</th>
+      <th>目标</th>
+    </tr>
+    <tr>
+      <td>🔶 过渡期</td>
+      <td>18:00 - 19:00</td>
+      <td>切换 · 卸载</td>
+      <td>从工作模式彻底退出</td>
+    </tr>
+    <tr>
+      <td>🟣 黄金期</td>
+      <td>19:00 - 21:30</td>
+      <td>滋养 · 充电</td>
+      <td>做真正想做的事</td>
+    </tr>
+    <tr>
+      <td>🌙 收束期</td>
+      <td>21:30 - 23:00</td>
+      <td>安顿 · 归零</td>
+      <td>身心逐步安静下来</td>
+    </tr>
+  </table>
+</div>
+
+<!-- Section 2: Timeline -->
+<div class="section">
+  <h2>晚间时间线</h2>
+
+  <div class="timeline">
+    <!-- Phase 1: Transition -->
+    <div class="tl-item phase-1">
+      <div class="tl-time">18:00 - 18:15 · 切换仪式</div>
+      <div class="tl-title">下班断开 <span class="phase-tag pt-transition">过渡期</span></div>
+      <div class="tl-body">
+        <ul>
+          <li><strong>关闭工作软件</strong>——合上笔记本 / 退出钉钉飞书 / 关闭工作邮件提醒</li>
+          <li><strong>写下明日待办</strong>——把脑中未完成事项「卸载」到纸上（3 条以内）</li>
+          <li><strong>换衣服</strong>——物理信号告诉大脑：工作结束了</li>
+          <li>可选：出门走 5-10 分钟，用通勤时间做缓冲</li>
+        </ul>
+        <p style="margin-top: 0.5rem;">
+          为什么要仪式化？<strong>切换成本</strong>。大脑不能瞬间从工作切换到休息。
+          没有仪式 → 身体在家，脑子还在公司 → 「假休息」→ 越休越累。
+        </p>
+      </div>
+    </div>
+
+    <div class="tl-item phase-1">
+      <div class="tl-time">18:15 - 19:00 · 晚餐时间</div>
+      <div class="tl-title">有意识地吃 <span class="phase-tag pt-transition">过渡期</span></div>
+      <div class="tl-body">
+        <ul>
+          <li>不边看手机/视频边吃——这是一天中最值得放慢的 30 分钟</li>
+          <li>七分饱即止。太饱 → 血糖飙升 → 犯困 → 黄金期报废</li>
+          <li>如果做饭：过程本身就是冥想（洗菜、切菜、听食物的声音）</li>
+          <li>如果外卖：至少把饭放到盘子里，坐下来吃</li>
+        </ul>
+        <p style="margin-top: 0.5rem;">
+          → 时令食谱灵感见 <a href="../spring-food/index.html">初春时令食谱</a>
+        </p>
+      </div>
+    </div>
+
+    <!-- Phase 2: Golden Hours -->
+    <div class="tl-item phase-2">
+      <div class="tl-time">19:00 - 21:30 · 黄金时间</div>
+      <div class="tl-title">做真正想做的事 <span class="phase-tag pt-golden">黄金期</span></div>
+      <div class="tl-body">
+        <p>这 2.5 小时是全天唯一「完全属于你」的大块时间。工作占走了上午，家务和睡前准备分走了两头。<strong>不要默认交给算法。</strong></p>
+        <p style="margin-top: 0.5rem;">选 1-2 件让你充电的事：</p>
+        <ul style="margin-top: 0.3rem;">
+          <li>阅读（纸质书优先，Kindle 次之，手机最差）</li>
+          <li>运动/散步（→ <a href="../spring-exercise/index.html">运动指南</a>，注意睡前 2h 不做剧烈运动）</li>
+          <li>手工/创作（写字、画画、乐器、下厨做甜品）</li>
+          <li>面对面社交（跟家人聊天、约朋友散步）</li>
+          <li>泡澡 / 护肤（水温 38-40°C，时间 15-20 分钟）</li>
+          <li>学习/项目（有节制地做，设定结束时间，别让它占满黄金期）</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Phase 3: Wind-down -->
+    <div class="tl-item phase-3">
+      <div class="tl-time">21:30 · 屏幕宵禁</div>
+      <div class="tl-title">开始告别屏幕 <span class="phase-tag pt-wind">收束期</span></div>
+      <div class="tl-body">
+        <ul>
+          <li>手机设定「就寝模式」——自动灰度 + 勿扰</li>
+          <li>电脑合上。不检查工作消息（明早它还在那儿）</li>
+          <li>如果实在要用手机，仅限：听播客、有声书、白噪音</li>
+        </ul>
+        <p style="margin-top: 0.5rem;">
+          → 更多策略见 <a href="../digital-wellness/index.html">数字健康指南</a>
+        </p>
+      </div>
+    </div>
+
+    <div class="tl-item phase-3">
+      <div class="tl-time">21:30 - 22:30 · 安顿时间</div>
+      <div class="tl-title">身心收束 <span class="phase-tag pt-wind">收束期</span></div>
+      <div class="tl-body">
+        <ul>
+          <li><strong>明日准备</strong>：挑好衣服、装好包、看一眼日历</li>
+          <li><strong>轻度整理</strong>：收拾桌面、洗碗、把物品归位（5 分钟够了）</li>
+          <li><strong>拉伸/瑜伽</strong>：5-10 分钟温和拉伸（→ <a href="../spring-exercise/index.html">拉伸六步法</a>）</li>
+          <li><strong>简单记录</strong>：今天最好的 1 件事 + 明天最期待的 1 件事</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tl-item phase-3">
+      <div class="tl-time">22:30 - 23:00 · 入睡预备</div>
+      <div class="tl-title">最后 30 分钟 <span class="phase-tag pt-wind">收束期</span></div>
+      <div class="tl-body">
+        <ul>
+          <li>调暗灯光（→ 见下方"灯光递减策略"）</li>
+          <li>洗漱完毕，上床</li>
+          <li>床上只做两件事：睡觉和阅读纸质书</li>
+          <li>如果 20 分钟未入睡 → 起来，到另一个房间做轻松的事，有睡意再回床上</li>
+        </ul>
+        <p style="margin-top: 0.5rem;">
+          → 睡眠环境详细优化见 <a href="../spring-sleep/index.html">春困与睡眠指南</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Section 3: Light dimming strategy -->
+<div class="section">
+  <h2>灯光递减策略</h2>
+  <p style="font-size: 0.88rem; color: var(--muted); margin-bottom: 0.5rem;">
+    光是调节褪黑素的最强信号。晚间灯光应该像日落一样逐渐变暗变暖。
+  </p>
+
+  <div class="dim-scale">
+    <div class="dim-seg" style="background: #f0c040;">18:00</div>
+    <div class="dim-seg" style="background: #e0a030;">19:00</div>
+    <div class="dim-seg" style="background: #c08030;">20:00</div>
+    <div class="dim-seg" style="background: #906030;">21:00</div>
+    <div class="dim-seg" style="background: #604030;">22:00</div>
+    <div class="dim-seg" style="background: #302020;">23:00</div>
+  </div>
+
+  <table>
+    <tr>
+      <th>时段</th>
+      <th>灯光建议</th>
+      <th>色温</th>
+      <th>亮度</th>
+    </tr>
+    <tr>
+      <td>18:00 - 20:00</td>
+      <td>暖白主灯 + 关闭部分灯</td>
+      <td>3000K</td>
+      <td>70-100%</td>
+    </tr>
+    <tr>
+      <td>20:00 - 21:30</td>
+      <td>只开台灯 / 落地灯，关主灯</td>
+      <td>2700K</td>
+      <td>40-60%</td>
+    </tr>
+    <tr>
+      <td>21:30 - 22:30</td>
+      <td>床头灯 / 壁灯</td>
+      <td>2200K</td>
+      <td>20-30%</td>
+    </tr>
+    <tr>
+      <td>22:30+</td>
+      <td>仅夜灯（琥珀色最佳）</td>
+      <td>≤2000K</td>
+      <td>5-10%</td>
+    </tr>
+  </table>
+
+  <p style="font-size: 0.82rem; color: var(--muted); margin-top: 0.5rem;">
+    没有智能灯？最简方案：20 点后只开暖色台灯，21:30 后只开最暗的那盏。浴室也要暗——刷牙时关掉顶灯只开镜前灯。
+  </p>
+</div>
+
+<!-- Section 4: Evening meal principles -->
+<div class="section">
+  <h2>晚餐四原则</h2>
+  <div class="grid">
+    <div class="card card-warm">
+      <h4>原则 1：七分饱</h4>
+      <p>放下筷子时应该「还能再吃几口」。过饱 → 胰岛素飙升 → 困但睡不着。</p>
+    </div>
+    <div class="card card-warm">
+      <h4>原则 2：睡前 3h</h4>
+      <p>23:00 睡 → 20:00 前吃完。来不及就少吃。宵夜选择：一小碗粥、几颗坚果、一杯热牛奶。</p>
+    </div>
+    <div class="card card-warm">
+      <h4>原则 3：轻为主</h4>
+      <p>蔬菜 > 蛋白质 > 碳水。避免油腻、辛辣、高糖（冰淇淋/奶茶留给下午）。春季推荐：清炒时蔬 + 蒸鱼/蛋羹。</p>
+    </div>
+    <div class="card card-warm">
+      <h4>原则 4：不喝酒</h4>
+      <p>酒精让你快速入睡但破坏深度睡眠。「助眠酒」是最大的睡眠谎言之一。用花草茶代替。</p>
+    </div>
+  </div>
+</div>
+
+<!-- Section 5: Golden Hours Menu -->
+<div class="section">
+  <h2>黄金期活动菜单</h2>
+  <p style="font-size: 0.88rem; color: var(--muted); margin-bottom: 1rem;">
+    不知道晚上做什么？从下面选。规则：选 1-2 项就够了，不要把黄金期排成第二个工作日。
+  </p>
+
+  <table>
+    <tr>
+      <th>类型</th>
+      <th>活动</th>
+      <th>充电指数</th>
+      <th>注意</th>
+    </tr>
+    <tr>
+      <td>🧘 身体</td>
+      <td>散步、瑜伽、游泳</td>
+      <td>★★★★</td>
+      <td>21:00 前完成中高强度运动</td>
+    </tr>
+    <tr>
+      <td>📖 阅读</td>
+      <td>纸质书、杂志、长文</td>
+      <td>★★★★★</td>
+      <td>避免刺激性内容（恐怖/焦虑）</td>
+    </tr>
+    <tr>
+      <td>🎨 创作</td>
+      <td>写日记、画画、乐器、手工</td>
+      <td>★★★★★</td>
+      <td>享受过程，不追求产出</td>
+    </tr>
+    <tr>
+      <td>👥 社交</td>
+      <td>和家人聊天、约朋友</td>
+      <td>★★★★</td>
+      <td>轻松话题优先，工作话题留到明天</td>
+    </tr>
+    <tr>
+      <td>🛁 自我关照</td>
+      <td>泡澡、护肤、精油</td>
+      <td>★★★★</td>
+      <td>水温不超过 40°C</td>
+    </tr>
+    <tr>
+      <td>📺 娱乐</td>
+      <td>电影、纪录片、游戏</td>
+      <td>★★★</td>
+      <td>设定时间上限，不连续刷剧</td>
+    </tr>
+    <tr>
+      <td>📚 学习</td>
+      <td>网课、技能练习、项目</td>
+      <td>★★★</td>
+      <td>设定结束时间！别让它吞噬整个黄金期</td>
+    </tr>
+  </table>
+
+  <p style="font-size: 0.82rem; color: var(--muted); margin-top: 0.5rem;">
+    星级 = 对恢复精力的帮助程度。注意：刷短视频/社交媒体 = ★☆☆☆☆（看似放松实则消耗注意力）。
+  </p>
+</div>
+
+<!-- Section 6: Screen curfew -->
+<div class="section">
+  <h2>屏幕宵禁执行方案</h2>
+  <p style="font-size: 0.88rem; color: var(--muted); margin-bottom: 1rem;">
+    不是「不能用手机」，是「有意识地减少屏幕的光和刺激」。
+  </p>
+
+  <div class="do-dont">
+    <div class="do-col">
+      <h4>21:30 后可以</h4>
+      <ul>
+        <li>听播客 / 有声书（屏幕朝下）</li>
+        <li>放白噪音 / 助眠音乐</li>
+        <li>Kindle 用暖色背光最低亮度</li>
+        <li>给家人发条晚安消息</li>
+        <li>用纸笔写东西</li>
+      </ul>
+    </div>
+    <div class="dont-col">
+      <h4>21:30 后避免</h4>
+      <ul>
+        <li>刷社交媒体 / 短视频</li>
+        <li>看新闻（尤其是负面的）</li>
+        <li>回工作消息 / 邮件</li>
+        <li>在线购物（蓝光 + 决策疲劳）</li>
+        <li>跟人争论 / 看评论区</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>手机设置清单（做一次就行）</h3>
+  <table>
+    <tr>
+      <th>设置</th>
+      <th>iOS</th>
+      <th>Android</th>
+    </tr>
+    <tr>
+      <td>就寝模式</td>
+      <td>专注模式 → 睡眠 → 21:30 启动</td>
+      <td>数字健康 → 就寝模式 → 21:30</td>
+    </tr>
+    <tr>
+      <td>灰度屏幕</td>
+      <td>辅助功能 → 颜色滤镜 → 灰度</td>
+      <td>数字健康 → 灰度模式</td>
+    </tr>
+    <tr>
+      <td>夜间模式</td>
+      <td>Night Shift → 日落到日出</td>
+      <td>显示 → 夜间模式 → 自动</td>
+    </tr>
+    <tr>
+      <td>亮度</td>
+      <td>控制中心手动调至最低</td>
+      <td>同左，或用自动调节</td>
+    </tr>
+  </table>
+</div>
+
+<!-- Section 7: Common traps -->
+<div class="section">
+  <h2>晚间五大陷阱</h2>
+
+  <div class="grid" style="grid-template-columns: 1fr;">
+    <div class="card" style="background: #fff;">
+      <h4>陷阱 1：「补偿心理」刷手机</h4>
+      <p>「上了一天班，刷会儿手机犒劳自己」→ 2 小时过去，更累了。<br>
+      <strong>破解</strong>：换一种犒劳方式（泡澡、吃喜欢的水果、看一章书）。犒劳不等于放纵。</p>
+    </div>
+    <div class="card" style="background: #fff;">
+      <h4>陷阱 2：加班到深夜</h4>
+      <p>「白天没做完，晚上补」→ 晚睡 → 明天效率更差 → 恶性循环。<br>
+      <strong>破解</strong>：18:00 强制断开（→ <a href="../workday-energy/index.html">end-of-day 仪式</a>）。做不完是任务量/方法的问题，不是时间的问题。</p>
+    </div>
+    <div class="card" style="background: #fff;">
+      <h4>陷阱 3：运动太晚</h4>
+      <p>21:00 还在跑步 → 心率和体温升高 → 入睡困难。<br>
+      <strong>破解</strong>：有氧/高强度在 21:00 前完成。之后只做拉伸、散步。</p>
+    </div>
+    <div class="card" style="background: #fff;">
+      <h4>陷阱 4：睡前复盘焦虑</h4>
+      <p>躺在床上想「今天还有什么没做」→ 越想越清醒。<br>
+      <strong>破解</strong>：在安顿期（21:30-22:30）完成记录，写下来就放下。床上不复盘。</p>
+    </div>
+    <div class="card" style="background: #fff;">
+      <h4>陷阱 5：周末晚间无结构</h4>
+      <p>周末不用上班 → 晚间没有锚点 → 熬到凌晨。<br>
+      <strong>破解</strong>：保留"收束期"时间不变（±30 分钟）。周末可以开始得晚一些，但结束时间要稳定。</p>
+    </div>
+  </div>
+</div>
+
+<!-- Section 8: Quick start -->
+<div class="section">
+  <h2>三步开始你的晚间仪式</h2>
+  <p style="font-size: 0.88rem; color: var(--muted); margin-bottom: 1rem;">
+    不要一口气全改。从最小可行版本开始。
+  </p>
+
+  <div class="grid" style="grid-template-columns: repeat(3, 1fr);">
+    <div class="card card-green">
+      <h4>第 1 周</h4>
+      <p>只做一件事：<strong>18:00 关工作软件</strong>。观察身体感受。</p>
+    </div>
+    <div class="card card-purple">
+      <h4>第 2 周</h4>
+      <p>加入<strong>屏幕宵禁 21:30</strong>。设好手机就寝模式。</p>
+    </div>
+    <div class="card card-night">
+      <h4>第 3 周</h4>
+      <p>固定一个<strong>黄金期活动</strong>（阅读/散步/创作）。形成期待感。</p>
+    </div>
+  </div>
+</div>
+
+<!-- Cross references -->
+<div class="section" style="background: var(--accent-light);">
+  <h2 style="color: var(--text);">关联阅读</h2>
+  <div class="xref" style="border: none; padding: 0;">
+    <a href="../workday-energy/index.html">工作日精力管理</a>
+    <a href="../spring-sleep/index.html">春困与睡眠</a>
+    <a href="../digital-wellness/index.html">数字健康</a>
+    <a href="../spring-food/index.html">时令食谱</a>
+    <a href="../spring-exercise/index.html">运动指南</a>
+    <a href="../weekend-reset/index.html">周末重启</a>
+    <a href="../daily-card/index.html">日常速查卡</a>
+  </div>
+</div>
+
+<footer>
+  <p><a href="../index.html">← 返回首页</a></p>
+  <p style="margin-top: 0.3rem;">晚间仪式 · 2026-03-02 · 自主推进生成</p>
+</footer>
+
+</body>
+</html>
