@@ -497,6 +497,57 @@
     white-space: nowrap;
   }
 
+  /* Scenarios & Reform */
+  .scenarios {
+    padding: 48px 0; border-bottom: 1px solid var(--border);
+  }
+  .scenarios h2 {
+    text-align: center; font-size: 1.3em; font-weight: 600;
+    margin-bottom: 8px; color: var(--text2); letter-spacing: 0.08em;
+  }
+  .scenarios .sub {
+    text-align: center; color: var(--text2); font-size: 0.88em; margin-bottom: 28px;
+  }
+  .sc-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+    max-width: 800px; margin: 0 auto;
+  }
+  .sc-card {
+    background: var(--surface); border: 2px solid var(--border);
+    border-radius: 12px; padding: 22px 20px; text-align: center;
+  }
+  .sc-card .sc-label {
+    font-size: 0.78em; font-weight: 600; letter-spacing: 0.06em;
+    margin-bottom: 8px; text-transform: uppercase;
+  }
+  .sc-card .sc-rate { font-size: 1.8em; font-weight: 700; margin-bottom: 4px; }
+  .sc-card .sc-prob { font-size: 0.82em; font-weight: 600; margin-bottom: 12px; }
+  .sc-card .sc-desc {
+    font-size: 0.78em; color: var(--text2); line-height: 1.5; text-align: left;
+  }
+  .reform-table {
+    width: 100%; border-collapse: collapse; font-size: 0.82em; margin-top: 28px;
+  }
+  .reform-table th, .reform-table td {
+    padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border);
+  }
+  .reform-table th {
+    color: var(--accent); font-weight: 600; font-size: 0.78em; background: var(--surface);
+  }
+  .reform-table tr:hover td { background: var(--surface); }
+  .reform-table .diff-high { color: var(--red); font-weight: 600; }
+  .reform-table .diff-mid { color: var(--orange); font-weight: 600; }
+  .reform-table .diff-low { color: var(--green); font-weight: 600; }
+  .reform-table .prog-slow { color: var(--red); }
+  .reform-table .prog-mid { color: var(--orange); }
+  .reform-table .prog-ok { color: var(--green); }
+  .reform-table .dim-tags { font-size: 0.85em; }
+  .reform-table .dim-tags span {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 3px; padding: 1px 5px; font-size: 0.88em; color: var(--accent);
+    margin-right: 3px; white-space: nowrap;
+  }
+
   /* Footer */
   .footer {
     padding: 40px 0;
@@ -516,6 +567,8 @@
     .cycle-box { font-size: 0.75em; padding: 16px; }
     .causal-box { font-size: 0.7em; padding: 16px; }
     .chain-grid { grid-template-columns: 1fr; }
+    .sc-grid { grid-template-columns: 1fr; }
+    .reform-table { font-size: 0.72em; }
   }
 </style>
 </head>
@@ -879,9 +932,94 @@
     </div>
   </section>
 
+  <!-- Scenarios & Reform Matrix -->
+  <section class="scenarios">
+    <h2>情 景 推 演 ：未 来 5-10 年</h2>
+    <p class="sub">政策选择（而非资源禀赋）决定走向哪个情景 &mdash; 综合12个维度的前瞻研判</p>
+    <div class="sc-grid">
+      <div class="sc-card" style="border-color:var(--green);">
+        <div class="sc-label" style="color:var(--green);">乐观情景</div>
+        <div class="sc-rate" style="color:var(--green);">4.5-5.5%</div>
+        <div class="sc-prob" style="color:var(--green);">概率 20%</div>
+        <div class="sc-desc">深化市场化改革突破利益藩篱；科技自主重大突破（芯片/AI）；房地产2025-26年触底企稳；中美关系趋稳；分配改革释放消费潜力；服务业管制大幅放开。</div>
+      </div>
+      <div class="sc-card" style="border-color:var(--accent);">
+        <div class="sc-label" style="color:var(--accent);">基准情景</div>
+        <div class="sc-rate" style="color:var(--accent);">3.5-4.5%</div>
+        <div class="sc-prob" style="color:var(--accent);">概率 55%</div>
+        <div class="sc-desc">渐进式改革部分突破；"卡脖子"有进展但未根本解决；房地产L型底持续2-3年；中美紧张但可控；消费恢复但不强劲；民企信心缓慢修复。</div>
+      </div>
+      <div class="sc-card" style="border-color:var(--red);">
+        <div class="sc-label" style="color:var(--red);">悲观情景</div>
+        <div class="sc-rate" style="color:var(--red);">2-3.5%</div>
+        <div class="sc-prob" style="color:var(--red);">概率 25%</div>
+        <div class="sc-desc">改革停滞或倒退；技术封锁全面升级；房地产日本式长期阴跌；地缘冲突升级（台海）；通缩循环固化；民企外资持续外流——"失去的十年"。</div>
+      </div>
+    </div>
+
+    <h2 style="margin-top:48px;">六 项 核 心 改 革 &mdash; 优 先 级 矩 阵</h2>
+    <p class="sub">每一项都涉及深层利益重新分配 &mdash; 这就是为什么"知道答案"和"做到"之间隔着鸿沟</p>
+    <table class="reform-table">
+      <thead>
+        <tr>
+          <th>改革方向</th>
+          <th>核心内容</th>
+          <th>涉及维度</th>
+          <th>难度</th>
+          <th>进展</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>收入分配改革</strong></td>
+          <td>提高劳动报酬占GDP比重（52%&rarr;60%+）、完善社保转移支付、缩小城乡差距</td>
+          <td class="dim-tags"><span>①</span><span>⑤</span><span>⑧</span><span>⑪</span><span>⑫</span></td>
+          <td class="diff-high">极高</td>
+          <td class="prog-slow">慢 &mdash; 触及政府和企业利益</td>
+        </tr>
+        <tr>
+          <td><strong>服务业市场化</strong></td>
+          <td>放开医疗/教育/养老/托幼准入、允许民营资本进入、培育现代服务业</td>
+          <td class="dim-tags"><span>③</span><span>⑨</span><span>⑪</span><span>⑫</span></td>
+          <td class="diff-high">高</td>
+          <td class="prog-slow">慢 &mdash; 意识形态敏感</td>
+        </tr>
+        <tr>
+          <td><strong>产权与法治</strong></td>
+          <td>强化私有产权保护、约束公权力、建立可预期的监管框架、恢复民企和外资信心</td>
+          <td class="dim-tags"><span>④</span><span>⑨</span><span>⑩</span></td>
+          <td class="diff-high">极高</td>
+          <td class="prog-slow">慢 &mdash; 政治经济学核心</td>
+        </tr>
+        <tr>
+          <td><strong>户籍与城镇化</strong></td>
+          <td>赋予2.6亿农民工完整市民权利、公共服务均等化、释放消费潜力</td>
+          <td class="dim-tags"><span>⑤</span><span>⑧</span><span>⑪</span><span>⑫</span></td>
+          <td class="diff-mid">中高</td>
+          <td class="prog-mid">中小城市有进展</td>
+        </tr>
+        <tr>
+          <td><strong>资本市场改革</strong></td>
+          <td>提升A股投资者回报、养老金入市、拓宽居民投资渠道、打通储蓄转化路径</td>
+          <td class="dim-tags"><span>③</span><span>⑫</span></td>
+          <td class="diff-mid">中</td>
+          <td class="prog-ok">有进展 &mdash; 注册制/退市</td>
+        </tr>
+        <tr>
+          <td><strong>科技自主创新</strong></td>
+          <td>突破半导体等卡脖子技术、提升基础研究占比（6.8%&rarr;15%+）、保护创新生态</td>
+          <td class="dim-tags"><span>②</span><span>⑥</span><span>⑦</span><span>⑩</span></td>
+          <td class="diff-mid">中高</td>
+          <td class="prog-mid">部分突破/持续投入</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
   <!-- Footer -->
   <section class="footer">
     <p>数据基准：2024 年 &middot; 本框架为分析参考，数据以官方统计和权威机构发布为准</p>
+    <p style="margin-top:8px;">12 个维度 &middot; 51 个问题 &middot; 13 个展示页 &middot; 全框架完成</p>
   </section>
 
 </div>
