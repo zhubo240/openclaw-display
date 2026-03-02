@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高新区投资回报分析 | 西安房地产研究</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#0d1117;color:#c9d1d9;line-height:1.6}
+a{color:#58a6ff;text-decoration:none}
+.hero{background:linear-gradient(135deg,#0d1117 0%,#161b22 40%,#1a2332 100%);padding:48px 24px 40px;text-align:center;border-bottom:1px solid #21262d}
+.hero h1{font-size:30px;color:#f0f6fc;margin-bottom:6px}
+.hero p{font-size:14px;color:#8b949e;max-width:640px;margin:0 auto}
+.hero .tag{display:inline-block;background:rgba(56,139,253,0.15);border:1px solid rgba(56,139,253,0.4);color:#58a6ff;padding:3px 12px;border-radius:16px;font-size:11px;margin-top:12px}
+.container{max-width:1100px;margin:0 auto;padding:0 20px}
+.section{margin:36px 0}
+.section-title{font-size:20px;font-weight:700;color:#f0f6fc;margin-bottom:4px}
+.section-sub{font-size:13px;color:#8b949e;margin-bottom:18px}
+.card{background:#161b22;border:1px solid #21262d;border-radius:10px;padding:24px;margin-bottom:20px}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:24px 0}
+.kpi{background:#161b22;border:1px solid #21262d;border-radius:10px;padding:16px;text-align:center}
+.kpi .v{font-size:24px;font-weight:700}
+.kpi .v.up{color:#3fb950}
+.kpi .v.dn{color:#f85149}
+.kpi .v.bl{color:#58a6ff}
+.kpi .v.yl{color:#d29922}
+.kpi .l{font-size:11px;color:#8b949e;margin-top:2px}
+
+/* Bar chart */
+.bar-chart{margin:12px 0}
+.bar-row{display:flex;align-items:center;margin:6px 0}
+.bar-label{width:90px;font-size:12px;text-align:right;padding-right:10px;color:#8b949e;flex-shrink:0}
+.bar-track{flex:1;background:#21262d;border-radius:4px;height:28px;position:relative;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding:0 8px;font-size:11px;color:#fff;font-weight:600;transition:width 0.5s}
+.bar-fill.green{background:linear-gradient(90deg,#238636,#3fb950)}
+.bar-fill.blue{background:linear-gradient(90deg,#1f6feb,#58a6ff)}
+.bar-fill.red{background:linear-gradient(90deg,#da3633,#f85149)}
+.bar-fill.orange{background:linear-gradient(90deg,#9e6a03,#d29922)}
+.bar-value{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:11px;color:#8b949e}
+
+/* Depreciation curve */
+.curve-wrap{display:flex;align-items:flex-end;gap:4px;height:200px;padding:0 4px}
+.curve-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end}
+.curve-bar{width:100%;border-radius:4px 4px 0 0;min-height:4px;transition:height 0.5s}
+.curve-val{font-size:10px;color:#8b949e;margin-bottom:4px;white-space:nowrap}
+.curve-lbl{font-size:10px;color:#58a6ff;margin-top:6px;white-space:nowrap}
+
+/* Table */
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#21262d;color:#8b949e;font-weight:600;padding:10px 12px;text-align:left;border-bottom:1px solid #30363d}
+td{padding:10px 12px;border-bottom:1px solid #21262d}
+tr:hover td{background:rgba(56,139,253,0.04)}
+.badge-sm{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600}
+.badge-sm.hot{background:rgba(248,81,73,0.15);color:#f85149}
+.badge-sm.value{background:rgba(63,185,80,0.15);color:#3fb950}
+.badge-sm.stable{background:rgba(56,139,253,0.15);color:#58a6ff}
+.badge-sm.warn{background:rgba(210,153,34,0.15);color:#d29922}
+
+/* Score matrix */
+.matrix{display:grid;grid-template-columns:120px repeat(4,1fr);gap:2px;font-size:12px}
+.matrix .mh{background:#21262d;padding:8px;text-align:center;font-weight:600;color:#8b949e;border-radius:4px}
+.matrix .mc{padding:8px;text-align:center;border-radius:4px;font-weight:700}
+.matrix .s5{background:rgba(63,185,80,0.2);color:#3fb950}
+.matrix .s4{background:rgba(63,185,80,0.12);color:#56d364}
+.matrix .s3{background:rgba(56,139,253,0.12);color:#58a6ff}
+.matrix .s2{background:rgba(210,153,34,0.1);color:#d29922}
+.matrix .s1{background:rgba(248,81,73,0.1);color:#f85149}
+
+/* Trend dots */
+.trend-chart{position:relative;height:240px;border:1px solid #21262d;border-radius:8px;background:#0d1117;padding:20px 40px 30px 50px;margin:12px 0}
+.trend-dot{position:absolute;width:8px;height:8px;border-radius:50%;background:#58a6ff;border:2px solid #0d1117;z-index:2}
+.trend-dot:hover{transform:scale(1.6);z-index:10}
+.trend-line{position:absolute;background:#21262d;z-index:0}
+.trend-axis{position:absolute;font-size:10px;color:#484f58}
+
+/* Findings */
+.finding{display:flex;gap:12px;margin:12px 0;padding:14px;border-radius:8px;border-left:3px solid #58a6ff;background:#161b22}
+.finding.green{border-left-color:#3fb950}
+.finding.red{border-left-color:#f85149}
+.finding.yellow{border-left-color:#d29922}
+.finding .icon{font-size:20px;flex-shrink:0}
+.finding .text{font-size:13px;line-height:1.6}
+.finding .text strong{color:#f0f6fc}
+
+.footer{text-align:center;padding:32px 20px;font-size:12px;color:#484f58;border-top:1px solid #21262d;margin-top:40px}
+.back-link{display:inline-block;margin:20px 0;font-size:13px;color:#58a6ff}
+@media(max-width:700px){
+    .hero h1{font-size:22px}
+    .bar-label{width:60px;font-size:10px}
+    .kpi-grid{grid-template-columns:repeat(2,1fr)}
+    .matrix{grid-template-columns:80px repeat(4,1fr);font-size:10px}
+}
+</style>
+</head>
+<body>
+<div class="hero">
+    <h1>高新区投资回报分析</h1>
+    <p>基于 372 个有效小区的建成年份与当前均价，分析板块升值率、房龄折旧曲线、价值洼地机会</p>
+    <div class="tag">数据样本 372 小区 | 建成 1990-2026 | 9 板块 5 片区</div>
+</div>
+
+<div class="container">
+    <a class="back-link" href="../../index.html">&larr; 返回研究门户</a>
+
+    <!-- KPI -->
+    <div class="kpi-grid">
+        <div class="kpi"><div class="v up">+4.4%</div><div class="l">最佳板块年化<br>(科技六路)</div></div>
+        <div class="kpi"><div class="v dn">-0.8%</div><div class="l">最差板块年化<br>(高新四路)</div></div>
+        <div class="kpi"><div class="v bl">20,480</div><div class="l">次新房中位价<br>(0-4年)</div></div>
+        <div class="kpi"><div class="v yl">8,427</div><div class="l">老房中位价<br>(30-34年)</div></div>
+        <div class="kpi"><div class="v up">2.6%</div><div class="l">全区年均折旧<br>(按中位价)</div></div>
+        <div class="kpi"><div class="v bl">372</div><div class="l">有效分析样本<br>(有价+有年份)</div></div>
+    </div>
+
+    <!-- Section 1: Age Depreciation -->
+    <div class="section">
+        <h2 class="section-title">房龄折旧曲线</h2>
+        <p class="section-sub">按房龄分组的中位价变化 — 每 5 年一个梯度，量化持有成本</p>
+        <div class="card">
+            <div class="curve-wrap">
+                <div class="curve-col">
+                    <div class="curve-val">20,480</div>
+                    <div class="curve-bar" style="height:100%;background:linear-gradient(180deg,#3fb950,#238636)"></div>
+                    <div class="curve-lbl">0-4年<br><span style="color:#484f58">n=26</span></div>
+                </div>
+                <div class="curve-col">
+                    <div class="curve-val">17,222</div>
+                    <div class="curve-bar" style="height:84%;background:linear-gradient(180deg,#56d364,#238636)"></div>
+                    <div class="curve-lbl">5-9年<br><span style="color:#484f58">n=36</span></div>
+                </div>
+                <div class="curve-col">
+                    <div class="curve-val">15,582</div>
+                    <div class="curve-bar" style="height:76%;background:linear-gradient(180deg,#58a6ff,#1f6feb)"></div>
+                    <div class="curve-lbl">10-14年<br><span style="color:#484f58">n=90</span></div>
+                </div>
+                <div class="curve-col">
+                    <div class="curve-val">13,565</div>
+                    <div class="curve-bar" style="height:66%;background:linear-gradient(180deg,#58a6ff,#1f6feb)"></div>
+                    <div class="curve-lbl">15-19年<br><span style="color:#484f58">n=96</span></div>
+                </div>
+                <div class="curve-col">
+                    <div class="curve-val">13,143</div>
+                    <div class="curve-bar" style="height:64%;background:linear-gradient(180deg,#d29922,#9e6a03)"></div>
+                    <div class="curve-lbl">20-24年<br><span style="color:#484f58">n=64</span></div>
+                </div>
+                <div class="curve-col">
+                    <div class="curve-val">10,506</div>
+                    <div class="curve-bar" style="height:51%;background:linear-gradient(180deg,#d29922,#9e6a03)"></div>
+                    <div class="curve-lbl">25-29年<br><span style="color:#484f58">n=51</span></div>
+                </div>
+                <div class="curve-col">
+                    <div class="curve-val">8,427</div>
+                    <div class="curve-bar" style="height:41%;background:linear-gradient(180deg,#f85149,#da3633)"></div>
+                    <div class="curve-lbl">30-34年<br><span style="color:#484f58">n=7</span></div>
+                </div>
+            </div>
+            <div style="margin-top:16px;padding:12px;background:#0d1117;border-radius:6px;font-size:12px;color:#8b949e">
+                <strong style="color:#f0f6fc">折旧规律：</strong>
+                前 5 年折旧最快（-16%），5-15 年趋缓（-10%），15-25 年缓慢下行（-3%/5年），25 年后加速折旧。
+                <strong style="color:#d29922">核心结论：</strong>买 5-10 年次新房（中位 15,500-17,200）是性价比最高的选择 — 大幅折旧已过，品质尚可。
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 2: District Appreciation -->
+    <div class="section">
+        <h2 class="section-title">板块升值排名</h2>
+        <p class="section-sub">比较同板块内"2015年前建成"vs"2015年后建成"小区中位价，推算年化升值率</p>
+        <div class="card">
+            <div class="bar-chart">
+                <div class="bar-row">
+                    <div class="bar-label">鱼化寨</div>
+                    <div class="bar-track">
+                        <div class="bar-fill green" style="width:88%">+5.68%/年</div>
+                    </div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">软件园</div>
+                    <div class="bar-track">
+                        <div class="bar-fill green" style="width:70%">+4.54%/年</div>
+                    </div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">科技六路</div>
+                    <div class="bar-track">
+                        <div class="bar-fill green" style="width:68%">+4.40%/年</div>
+                    </div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">高新一中</div>
+                    <div class="bar-track">
+                        <div class="bar-fill blue" style="width:58%">+3.73%/年</div>
+                    </div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">西万路口</div>
+                    <div class="bar-track">
+                        <div class="bar-fill blue" style="width:52%">+3.38%/年</div>
+                    </div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">大寨路</div>
+                    <div class="bar-track">
+                        <div class="bar-fill blue" style="width:44%">+2.83%/年</div>
+                    </div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">科技路西口</div>
+                    <div class="bar-track">
+                        <div class="bar-fill orange" style="width:35%">+2.24%/年</div>
+                    </div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">锦业路</div>
+                    <div class="bar-track">
+                        <div class="bar-fill orange" style="width:19%">+1.20%/年</div>
+                    </div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">高新四路</div>
+                    <div class="bar-track">
+                        <div class="bar-fill red" style="width:12%">-0.80%/年</div>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top:16px;padding:12px;background:#0d1117;border-radius:6px;font-size:12px;color:#8b949e">
+                <strong style="color:#3fb950">升值三甲：</strong>鱼化寨（新兴开发，基数低涨幅大）、软件园（产业导入持续）、科技六路（核心高端持续增值）<br>
+                <strong style="color:#f85149">警示：</strong>高新四路是唯一负增长板块（老旧小区集中、缺乏新盘拉动），锦业路虽然量大但升值动力不足
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 3: District Detail Table -->
+    <div class="section">
+        <h2 class="section-title">板块投资全景表</h2>
+        <p class="section-sub">新旧价差、年化收益、在售规模、投资评级一览</p>
+        <div class="card" style="overflow-x:auto">
+            <table>
+                <thead>
+                    <tr>
+                        <th>板块</th>
+                        <th>总样本</th>
+                        <th>旧盘中位价</th>
+                        <th>新盘中位价</th>
+                        <th>溢价率</th>
+                        <th>年化升值</th>
+                        <th>在售套数</th>
+                        <th>评级</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>鱼化寨</strong></td>
+                        <td>14</td>
+                        <td>12,655</td>
+                        <td>16,374</td>
+                        <td>+29.4%</td>
+                        <td style="color:#3fb950;font-weight:700">+5.68%</td>
+                        <td>135</td>
+                        <td><span class="badge-sm hot">高成长</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>软件园</strong></td>
+                        <td>17</td>
+                        <td>12,078</td>
+                        <td>17,552</td>
+                        <td>+45.3%</td>
+                        <td style="color:#3fb950;font-weight:700">+4.54%</td>
+                        <td>150</td>
+                        <td><span class="badge-sm hot">高成长</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>科技六路</strong></td>
+                        <td>38</td>
+                        <td>16,781</td>
+                        <td>24,002</td>
+                        <td>+43.0%</td>
+                        <td style="color:#3fb950;font-weight:700">+4.40%</td>
+                        <td>908</td>
+                        <td><span class="badge-sm hot">核心增值</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>高新一中</strong></td>
+                        <td>56</td>
+                        <td>20,601</td>
+                        <td>32,356</td>
+                        <td>+57.1%</td>
+                        <td style="color:#58a6ff;font-weight:700">+3.73%</td>
+                        <td>294</td>
+                        <td><span class="badge-sm stable">稳健增值</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>西万路口</strong></td>
+                        <td>18</td>
+                        <td>11,625</td>
+                        <td>16,025</td>
+                        <td>+37.8%</td>
+                        <td style="color:#58a6ff;font-weight:700">+3.38%</td>
+                        <td>326</td>
+                        <td><span class="badge-sm stable">稳健增值</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>大寨路</strong></td>
+                        <td>40</td>
+                        <td>10,003</td>
+                        <td>14,745</td>
+                        <td>+47.4%</td>
+                        <td style="color:#58a6ff;font-weight:700">+2.83%</td>
+                        <td>945</td>
+                        <td><span class="badge-sm value">价值洼地</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>科技路西口</strong></td>
+                        <td>36</td>
+                        <td>11,964</td>
+                        <td>15,211</td>
+                        <td>+27.1%</td>
+                        <td style="color:#d29922;font-weight:700">+2.24%</td>
+                        <td>717</td>
+                        <td><span class="badge-sm warn">温和增长</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>锦业路</strong></td>
+                        <td>53</td>
+                        <td>14,619</td>
+                        <td>16,055</td>
+                        <td>+9.8%</td>
+                        <td style="color:#d29922;font-weight:700">+1.20%</td>
+                        <td>581</td>
+                        <td><span class="badge-sm warn">增长乏力</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>高新四路</strong></td>
+                        <td>34</td>
+                        <td>13,376</td>
+                        <td>12,226</td>
+                        <td>-8.6%</td>
+                        <td style="color:#f85149;font-weight:700">-0.80%</td>
+                        <td>132</td>
+                        <td><span class="badge-sm hot" style="background:rgba(248,81,73,0.15);color:#f85149">贬值风险</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Section 4: Zone Comparison -->
+    <div class="section">
+        <h2 class="section-title">片区价值梯度</h2>
+        <p class="section-sub">高新一期 → 二期 → 三期 → 软件新城的价格与楼龄分布</p>
+        <div class="card">
+            <div class="bar-chart">
+                <div class="bar-row">
+                    <div class="bar-label">高新二期<br><span style="font-size:10px;color:#484f58">avg 2009</span></div>
+                    <div class="bar-track">
+                        <div class="bar-fill blue" style="width:82%">17,218 元/㎡</div>
+                        <span class="bar-value">175 小区 | 2,133 套</span>
+                    </div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">高新三期<br><span style="font-size:10px;color:#484f58">avg 2013</span></div>
+                    <div class="bar-track">
+                        <div class="bar-fill blue" style="width:75%">15,827 元/㎡</div>
+                        <span class="bar-value">23 小区 | 169 套</span>
+                    </div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">软件新城<br><span style="font-size:10px;color:#484f58">avg 2017</span></div>
+                    <div class="bar-track">
+                        <div class="bar-fill green" style="width:73%">15,352 元/㎡</div>
+                        <span class="bar-value">40 小区 | 383 套</span>
+                    </div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">高新一期<br><span style="font-size:10px;color:#484f58">avg 2008</span></div>
+                    <div class="bar-track">
+                        <div class="bar-fill orange" style="width:53%">11,206 元/㎡</div>
+                        <span class="bar-value">109 小区 | 1,786 套</span>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top:16px;padding:12px;background:#0d1117;border-radius:6px;font-size:12px;color:#8b949e">
+                <strong style="color:#58a6ff">片区投资逻辑：</strong>
+                二期（成熟核心，保值强但上涨空间有限）→ 软件新城（最年轻，产业导入期，成长潜力最大）→ 三期（新兴扩展，待观察）→ 一期（老旧化严重，适合自住不适合投资）
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 5: Value Picks -->
+    <div class="section">
+        <h2 class="section-title">价值投资精选</h2>
+        <p class="section-sub">筛选条件：价格低于板块中位价 + 房龄 ≤10 年 + 在售 ≥3 套（流动性保障）</p>
+        <div class="card" style="overflow-x:auto">
+            <table>
+                <thead>
+                    <tr>
+                        <th>小区</th>
+                        <th>均价</th>
+                        <th>板块中位</th>
+                        <th>折价率</th>
+                        <th>建成</th>
+                        <th>在售</th>
+                        <th>板块</th>
+                        <th>类型</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>保利双水磨</strong></td>
+                        <td style="color:#3fb950;font-weight:700">14,127</td>
+                        <td>22,147</td>
+                        <td style="color:#3fb950">-36.2%</td>
+                        <td>2020</td>
+                        <td>18</td>
+                        <td>科技六路</td>
+                        <td><span class="badge-sm value">深度折价</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>绿地国际花都</strong></td>
+                        <td style="color:#3fb950;font-weight:700">11,524</td>
+                        <td>16,003</td>
+                        <td style="color:#3fb950">-28.0%</td>
+                        <td>2016</td>
+                        <td>13</td>
+                        <td>鱼化寨</td>
+                        <td><span class="badge-sm value">价值洼地</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>丰硕佳园</strong></td>
+                        <td style="color:#3fb950;font-weight:700">10,854</td>
+                        <td>15,048</td>
+                        <td style="color:#3fb950">-27.9%</td>
+                        <td>2016</td>
+                        <td>5</td>
+                        <td>西万路口</td>
+                        <td><span class="badge-sm value">价值洼地</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>苏宁云著</strong></td>
+                        <td style="color:#3fb950;font-weight:700">16,331</td>
+                        <td>21,329</td>
+                        <td style="color:#3fb950">-23.4%</td>
+                        <td>2022</td>
+                        <td>82</td>
+                        <td>软件新城</td>
+                        <td><span class="badge-sm hot">高流动</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>紫薇西棠</strong></td>
+                        <td style="color:#3fb950;font-weight:700">12,755</td>
+                        <td>16,003</td>
+                        <td style="color:#3fb950">-20.3%</td>
+                        <td>2018</td>
+                        <td>12</td>
+                        <td>鱼化寨</td>
+                        <td><span class="badge-sm value">品牌折价</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>晶鑫华庭</strong></td>
+                        <td style="color:#56d364;font-weight:700">10,993</td>
+                        <td>12,716</td>
+                        <td style="color:#56d364">-13.5%</td>
+                        <td>2016</td>
+                        <td>14</td>
+                        <td>科技路西口</td>
+                        <td><span class="badge-sm stable">温和折价</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>万科金域国际</strong></td>
+                        <td style="color:#56d364;font-weight:700">18,153</td>
+                        <td>20,793</td>
+                        <td style="color:#56d364">-12.7%</td>
+                        <td>2018</td>
+                        <td>12</td>
+                        <td>高新一中</td>
+                        <td><span class="badge-sm stable">品牌折价</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>高新大都荟</strong></td>
+                        <td style="color:#56d364;font-weight:700">12,226</td>
+                        <td>13,365</td>
+                        <td style="color:#56d364">-8.5%</td>
+                        <td>2016</td>
+                        <td>17</td>
+                        <td>高新四路</td>
+                        <td><span class="badge-sm warn">小折价</span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="margin-top:12px;padding:10px;background:#0d1117;border-radius:6px;font-size:11px;color:#8b949e">
+                * 折价率 = (板块中位价 - 小区均价) / 板块中位价。折价原因可能包括：户型/楼层差异、物业品质、周边配套等。
+                <strong style="color:#d29922">重点关注：</strong>保利双水磨（核心板块深度折价）和苏宁云著（次新高流动）
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 6: Investment Scoring Matrix -->
+    <div class="section">
+        <h2 class="section-title">板块投资评分矩阵</h2>
+        <p class="section-sub">综合升值率、流动性、入手门槛、抗跌能力四维评分（5=最优）</p>
+        <div class="card">
+            <div class="matrix">
+                <div class="mh">板块</div>
+                <div class="mh">升值潜力</div>
+                <div class="mh">流动性</div>
+                <div class="mh">入手门槛</div>
+                <div class="mh">抗跌能力</div>
+
+                <div class="mh">科技六路</div>
+                <div class="mc s5">★★★★★</div>
+                <div class="mc s5">★★★★★</div>
+                <div class="mc s2">★★</div>
+                <div class="mc s5">★★★★★</div>
+
+                <div class="mh">鱼化寨</div>
+                <div class="mc s5">★★★★★</div>
+                <div class="mc s3">★★★</div>
+                <div class="mc s4">★★★★</div>
+                <div class="mc s3">★★★</div>
+
+                <div class="mh">软件园</div>
+                <div class="mc s4">★★★★</div>
+                <div class="mc s3">★★★</div>
+                <div class="mc s4">★★★★</div>
+                <div class="mc s3">★★★</div>
+
+                <div class="mh">高新一中</div>
+                <div class="mc s4">★★★★</div>
+                <div class="mc s3">★★★</div>
+                <div class="mc s1">★</div>
+                <div class="mc s5">★★★★★</div>
+
+                <div class="mh">西万路口</div>
+                <div class="mc s3">★★★</div>
+                <div class="mc s4">★★★★</div>
+                <div class="mc s4">★★★★</div>
+                <div class="mc s3">★★★</div>
+
+                <div class="mh">大寨路</div>
+                <div class="mc s3">★★★</div>
+                <div class="mc s5">★★★★★</div>
+                <div class="mc s5">★★★★★</div>
+                <div class="mc s2">★★</div>
+
+                <div class="mh">科技路西口</div>
+                <div class="mc s2">★★</div>
+                <div class="mc s5">★★★★★</div>
+                <div class="mc s4">★★★★</div>
+                <div class="mc s3">★★★</div>
+
+                <div class="mh">锦业路</div>
+                <div class="mc s1">★</div>
+                <div class="mc s4">★★★★</div>
+                <div class="mc s3">★★★</div>
+                <div class="mc s4">★★★★</div>
+
+                <div class="mh">高新四路</div>
+                <div class="mc s1">★</div>
+                <div class="mc s2">★★</div>
+                <div class="mc s4">★★★★</div>
+                <div class="mc s1">★</div>
+            </div>
+            <div style="margin-top:16px;padding:12px;background:#0d1117;border-radius:6px;font-size:12px;color:#8b949e">
+                <strong style="color:#f0f6fc">评分依据：</strong>
+                升值潜力 = 年化升值率排名；
+                流动性 = 在售套数/小区数（换手率代理）；
+                入手门槛 = 中位价倒序（越低越好）；
+                抗跌能力 = 新旧价差稳定性 + 板块成熟度
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 7: Key Findings -->
+    <div class="section">
+        <h2 class="section-title">核心发现与投资建议</h2>
+        <div class="finding green">
+            <div class="icon">&#x1F4C8;</div>
+            <div class="text">
+                <strong>最佳投资组合：科技六路 + 软件新城</strong><br>
+                科技六路年化 +4.4%、在售 908 套（流动性极强）、核心区位保值；
+                软件新城楼龄最新（avg 2017）、产业导入期升值空间大。两者搭配 = 稳健 + 成长。
+            </div>
+        </div>
+        <div class="finding green">
+            <div class="icon">&#x1F4B0;</div>
+            <div class="text">
+                <strong>最具性价比窗口：5-10 年次新房</strong><br>
+                大幅折旧已完成（-16%），品质仍在（10 年内无大修需求），中位 15,500-17,200 元/㎡。
+                典型代表：苏宁云著（2022年/16,331/82套在售）、紫薇西棠（2018年/12,755）。
+            </div>
+        </div>
+        <div class="finding yellow">
+            <div class="icon">&#x26A0;</div>
+            <div class="text">
+                <strong>高风险标的：大寨路 + 高新四路老旧盘</strong><br>
+                大寨路在售 945 套（供过于求），高新四路年化 -0.8%（唯一负增长）。
+                这两个板块适合自住刚需（价格低），但投资回报率不佳。
+            </div>
+        </div>
+        <div class="finding red">
+            <div class="icon">&#x1F6A8;</div>
+            <div class="text">
+                <strong>投资陷阱警示</strong><br>
+                1. 避免 25 年以上老房（中位 &lt;10,500，折旧加速且面临拆迁/棚改不确定性）<br>
+                2. 锦业路年化仅 1.2%，低于银行理财，不适合纯投资<br>
+                3. 高在售套数 ≠ 好投资（大寨路 945 套说明卖不动，非交易活跃）
+            </div>
+        </div>
+        <div class="finding">
+            <div class="icon">&#x1F4CB;</div>
+            <div class="text">
+                <strong>投资决策清单</strong><br>
+                &#9745; 优先选 5-15 年次新房，避开 25 年以上<br>
+                &#9745; 优先选科技六路/软件新城/鱼化寨，回避高新四路<br>
+                &#9745; 关注板块中位价以下的品牌盘（如万科/保利折价盘）<br>
+                &#9745; 在售套数 30-80 区间最佳（有流动性但不过剩）<br>
+                &#9745; 新房溢价 &gt;40% 的区域，二手房投资价值更高
+            </div>
+        </div>
+    </div>
+
+    <!-- Build Year Trend -->
+    <div class="section">
+        <h2 class="section-title">建成年份 × 当前均价趋势</h2>
+        <p class="section-sub">每个点 = 一个年份的中位价（样本 ≥2），展示"越新越贵"的整体趋势及波动</p>
+        <div class="card">
+            <div style="overflow-x:auto">
+                <div class="bar-chart">
+                    <div class="bar-row">
+                        <div class="bar-label">1990-94</div>
+                        <div class="bar-track"><div class="bar-fill red" style="width:20%">8,180</div></div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-label">1995-99</div>
+                        <div class="bar-track"><div class="bar-fill orange" style="width:24%">9,304</div></div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-label">2000-04</div>
+                        <div class="bar-track"><div class="bar-fill orange" style="width:36%">14,484</div></div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-label">2005-09</div>
+                        <div class="bar-track"><div class="bar-fill blue" style="width:38%">14,772</div></div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-label">2010-14</div>
+                        <div class="bar-track"><div class="bar-fill blue" style="width:33%">13,137</div></div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-label">2015-19</div>
+                        <div class="bar-track"><div class="bar-fill green" style="width:46%">17,552</div></div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-label">2020-26</div>
+                        <div class="bar-track"><div class="bar-fill green" style="width:50%">19,538</div></div>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top:12px;padding:10px;background:#0d1117;border-radius:6px;font-size:11px;color:#8b949e">
+                <strong style="color:#f0f6fc">注意 2010-2014 凹陷：</strong>
+                2010-14 年建成的小区中位价反而低于 2005-09，说明该批次可能是刚需集中供应期（大寨路/科技路西口大量中低端盘入市），并非"时间越近越贵"的简单线性关系。
+                <strong style="color:#3fb950">投资信号：</strong>2015 年后价格明显跳升，与西安限购政策、高新产业升级同步。
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="footer">
+    高新区投资回报分析 | 样本 372 小区 | 生成于 2026-03-02<br>
+    <a href="../../index.html">返回研究门户</a> | 数据来源：房天下 + 高德地图
+</div>
+</body>
+</html>
