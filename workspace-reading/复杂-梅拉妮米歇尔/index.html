@@ -255,6 +255,131 @@
       margin-bottom: 32px;
     }
 
+    /* Progress section */
+    .progress-section {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 40px;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .progress-header .status {
+      font-size: 14px;
+      color: #68d391;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .progress-header .count {
+      font-size: 13px;
+      color: #a0aec0;
+    }
+
+    .progress-bar-track {
+      width: 100%;
+      height: 8px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #3182ce, #63b3ed, #68d391);
+      border-radius: 4px;
+      transition: width 0.6s ease;
+    }
+
+    .progress-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-item .stat-num {
+      font-size: 24px;
+      font-weight: 700;
+      color: #e2e8f0;
+      line-height: 1;
+    }
+
+    .stat-item .stat-label {
+      font-size: 11px;
+      color: #718096;
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Knowledge map */
+    .thread-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .thread-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 22px 20px;
+      transition: all 0.25s;
+    }
+
+    .thread-card:hover {
+      background: rgba(99, 179, 237, 0.04);
+      border-color: rgba(99, 179, 237, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .thread-card .thread-icon {
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+
+    .thread-card h3 {
+      font-size: 15px;
+      color: #e2e8f0;
+      margin-bottom: 6px;
+    }
+
+    .thread-card p {
+      font-size: 12px;
+      color: #718096;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    .thread-card .ch-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .thread-card .ch-tag {
+      font-size: 10px;
+      padding: 2px 8px;
+      background: rgba(99, 179, 237, 0.1);
+      border: 1px solid rgba(99, 179, 237, 0.2);
+      border-radius: 10px;
+      color: #90cdf4;
+    }
+
     /* Key concepts */
     .concepts {
       display: grid;
@@ -405,6 +530,8 @@
       .hero { flex-direction: column; align-items: center; text-align: center; }
       .meta-grid { grid-template-columns: 1fr; }
       .concepts { grid-template-columns: 1fr; }
+      .thread-cards { grid-template-columns: 1fr; }
+      .progress-stats { grid-template-columns: repeat(2, 1fr); gap: 12px; }
       .author-section { flex-direction: column; align-items: center; text-align: center; }
     }
   </style>
@@ -478,6 +605,90 @@
         复杂性科学是一门研究复杂适应系统的跨学科科学。从蚁群的集体智慧到免疫系统的精妙运作，从互联网的涌现行为到经济市场的自组织现象——复杂系统无处不在。本书以清晰生动的笔触，带领读者走进这个迷人的领域，探索混沌、信息、计算、进化和网络等核心概念如何交织在一起，揭示自然界和人类社会中复杂性的深层规律。
       </p>
     </section>
+
+    <!-- Reading Progress -->
+    <section>
+      <h2 class="section-title">阅读进度</h2>
+      <div class="progress-section">
+        <div class="progress-header">
+          <span class="status">&#10003; 全书阅读完毕</span>
+          <span class="count">13 / 13 章</span>
+        </div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" style="width: 100%"></div>
+        </div>
+        <div class="progress-stats">
+          <div class="stat-item">
+            <div class="stat-num">5</div>
+            <div class="stat-label">部分</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">13</div>
+            <div class="stat-label">章节</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">476</div>
+            <div class="stat-label">页</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">4</div>
+            <div class="stat-label">知识主线</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Knowledge Map -->
+    <section>
+      <h2 class="section-title">四条知识主线</h2>
+      <div class="thread-cards">
+        <div class="thread-card">
+          <div class="thread-icon">&#127744;</div>
+          <h3>动力学与混沌</h3>
+          <p>确定性系统中的不可预测性，蝴蝶效应，奇异吸引子，混沌边缘——秩序与混沌的辩证。</p>
+          <div class="ch-tags">
+            <span class="ch-tag">ch02 混沌</span>
+            <span class="ch-tag">ch07 元胞自动机</span>
+            <span class="ch-tag">ch12 标度律</span>
+          </div>
+        </div>
+        <div class="thread-card">
+          <div class="thread-icon">&#128300;</div>
+          <h3>信息与计算</h3>
+          <p>香农信息论，图灵机与可计算性，自然系统中的分布式信息处理，粒子计算。</p>
+          <div class="ch-tags">
+            <span class="ch-tag">ch03 信息</span>
+            <span class="ch-tag">ch04 计算</span>
+            <span class="ch-tag">ch08 粒子计算</span>
+            <span class="ch-tag">ch09 生命系统</span>
+          </div>
+        </div>
+        <div class="thread-card">
+          <div class="thread-icon">&#129516;</div>
+          <h3>进化与适应</h3>
+          <p>达尔文自然选择，遗传算法，布尔网络与基因调控，鲁棒性与可进化性的共生。</p>
+          <div class="ch-tags">
+            <span class="ch-tag">ch05 进化</span>
+            <span class="ch-tag">ch06 遗传算法</span>
+            <span class="ch-tag">ch11 布尔网络</span>
+          </div>
+        </div>
+        <div class="thread-card">
+          <div class="thread-icon">&#128376;</div>
+          <h3>网络与标度</h3>
+          <p>小世界网络，无标度网络，幂律分布，偏好依附，自组织临界性——关系的拓扑学。</p>
+          <div class="ch-tags">
+            <span class="ch-tag">ch10 网络科学</span>
+            <span class="ch-tag">ch11 真实网络</span>
+            <span class="ch-tag">ch12 度量与模型</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
 
     <!-- Key Concepts -->
     <section>
