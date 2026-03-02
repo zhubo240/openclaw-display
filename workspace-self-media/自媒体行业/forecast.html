@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 重塑自媒体：2024-2030 趋势预测与未来情景</title>
+    <style>
+        :root {
+            --bg: #0f1117;
+            --card: #1a1d28;
+            --border: #2a2d3a;
+            --text: #e4e4e7;
+            --text-dim: #9ca3af;
+            --accent: #6366f1;
+            --accent-light: #818cf8;
+            --green: #34d399;
+            --orange: #fb923c;
+            --red: #f87171;
+            --yellow: #fbbf24;
+            --cyan: #22d3ee;
+            --purple: #c084fc;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        /* Nav */
+        .nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(15, 17, 23, 0.9);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+            padding: 0 24px;
+        }
+        .nav-inner {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 52px;
+        }
+        .nav a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.2s;
+        }
+        .nav a:hover { color: var(--text); }
+        .nav .title {
+            font-weight: 600;
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 120px 24px 70px;
+            background: linear-gradient(135deg, #1a1d28 0%, #0f1117 30%, #1a1040 60%, #0f1720 100%);
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(ellipse at 40% 40%, rgba(99,102,241,0.08) 0%, transparent 50%),
+                        radial-gradient(ellipse at 70% 60%, rgba(34,211,238,0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .hero-content { position: relative; z-index: 1; }
+        .hero .label {
+            display: inline-block;
+            padding: 5px 16px;
+            background: rgba(34,211,238,0.12);
+            border: 1px solid rgba(34,211,238,0.25);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--cyan);
+            margin-bottom: 24px;
+            letter-spacing: 0.05em;
+        }
+        .hero h1 {
+            font-size: 2.6rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #22d3ee, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
+        .hero .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-dim);
+            max-width: 640px;
+            margin: 0 auto;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 60px 24px 80px;
+        }
+
+        /* Section */
+        .section-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--accent-light);
+            margin-bottom: 20px;
+        }
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .section-desc {
+            font-size: 0.95rem;
+            color: var(--text-dim);
+            margin-bottom: 36px;
+            max-width: 700px;
+        }
+
+        /* Scenario Tabs */
+        .scenario-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+        .scenario-tab {
+            padding: 8px 20px;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .scenario-tab:hover { border-color: var(--accent); color: var(--text); }
+        .scenario-tab.active {
+            background: rgba(99,102,241,0.15);
+            border-color: var(--accent);
+            color: var(--accent-light);
+            font-weight: 600;
+        }
+        .scenario-tab.active.accelerated {
+            background: rgba(248,113,113,0.12);
+            border-color: var(--red);
+            color: var(--red);
+        }
+        .scenario-tab.active.conservative {
+            background: rgba(52,211,153,0.12);
+            border-color: var(--green);
+            color: var(--green);
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 36px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 14px; top: 0; bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--accent), var(--cyan), var(--green));
+            border-radius: 1px;
+        }
+        .tl-year {
+            position: relative;
+            margin-bottom: 48px;
+        }
+        .tl-year-label {
+            position: absolute;
+            left: -36px;
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #fff;
+            z-index: 2;
+        }
+        .tl-year-label.now { background: var(--cyan); }
+        .tl-year-label.future { background: var(--green); }
+        .tl-year-label.far { background: var(--purple); }
+
+        .tl-year-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .tl-year-title .phase-tag {
+            font-size: 0.7rem;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+        .phase-tag.disruption { background: rgba(248,113,113,0.15); color: var(--red); }
+        .phase-tag.transition { background: rgba(251,191,36,0.15); color: var(--yellow); }
+        .phase-tag.equilibrium { background: rgba(52,211,153,0.15); color: var(--green); }
+
+        .tl-year-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 16px;
+        }
+
+        .tl-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .tl-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px 20px;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+        .tl-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-1px);
+        }
+        .tl-card .card-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .tag-data { background: rgba(99,102,241,0.12); color: var(--accent-light); }
+        .tag-tech { background: rgba(34,211,238,0.12); color: var(--cyan); }
+        .tag-market { background: rgba(251,146,60,0.12); color: var(--orange); }
+        .tag-china { background: rgba(248,113,113,0.12); color: var(--red); }
+        .tag-creator { background: rgba(52,211,153,0.12); color: var(--green); }
+        .tag-regulation { background: rgba(251,191,36,0.12); color: var(--yellow); }
+
+        .tl-card h4 {
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+        }
+        .tl-card p {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            line-height: 1.6;
+        }
+        .tl-card .metric {
+            margin-top: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        .tl-card .metric.red { color: var(--red); }
+        .tl-card .metric.green { color: var(--green); }
+        .tl-card .metric.cyan { color: var(--cyan); }
+        .tl-card .metric.orange { color: var(--orange); }
+        .tl-card .metric.purple { color: var(--purple); }
+
+        .tl-card.wide {
+            grid-column: 1 / -1;
+        }
+
+        /* Scenario panels */
+        .scenario-panel {
+            display: none;
+        }
+        .scenario-panel.active { display: block; }
+
+        /* Market projection chart */
+        .projection-chart {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 32px;
+            margin-bottom: 48px;
+        }
+        .projection-chart h3 {
+            font-size: 1.1rem;
+            margin-bottom: 24px;
+        }
+        .proj-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        .proj-label {
+            width: 130px;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            text-align: right;
+        }
+        .proj-track {
+            flex: 1;
+            height: 32px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+        .proj-fill {
+            height: 100%;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            padding-left: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #fff;
+            transition: width 0.8s ease;
+        }
+        .proj-value {
+            width: 90px;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            flex-shrink: 0;
+        }
+
+        /* Hourglass */
+        .hourglass {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+        .hourglass-col {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 28px;
+        }
+        .hourglass-col h3 {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+        .hg-layer {
+            padding: 16px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+        .hg-layer:last-child { margin-bottom: 0; }
+        .hg-layer.top {
+            background: rgba(52,211,153,0.08);
+            border: 1px solid rgba(52,211,153,0.2);
+        }
+        .hg-layer.mid {
+            background: rgba(251,191,36,0.06);
+            border: 1px solid rgba(251,191,36,0.15);
+        }
+        .hg-layer.bot {
+            background: rgba(248,113,113,0.06);
+            border: 1px solid rgba(248,113,113,0.15);
+        }
+        .hg-layer .hg-tag {
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .hg-layer.top .hg-tag { color: var(--green); }
+        .hg-layer.mid .hg-tag { color: var(--yellow); }
+        .hg-layer.bot .hg-tag { color: var(--red); }
+        .hg-layer h4 { font-size: 0.95rem; margin-bottom: 4px; }
+        .hg-layer p { font-size: 0.82rem; color: var(--text-dim); }
+
+        /* Value shift */
+        .shift-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+        .shift-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+        .shift-card .shift-label {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-bottom: 10px;
+        }
+        .shift-card .shift-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        .shift-card .old-val {
+            font-size: 1rem;
+            color: var(--text-dim);
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+        .shift-card .new-val {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+        .shift-card .note {
+            font-size: 0.78rem;
+            color: var(--text-dim);
+        }
+
+        /* Quotes */
+        .quote-block {
+            background: var(--card);
+            border-left: 4px solid var(--cyan);
+            border-radius: 0 12px 12px 0;
+            padding: 24px 32px;
+            margin: 40px 0;
+            font-size: 1rem;
+            color: var(--text-dim);
+            font-style: italic;
+        }
+        .quote-block strong { color: var(--text); font-style: normal; }
+        .quote-block .quote-author {
+            margin-top: 10px;
+            font-size: 0.82rem;
+            font-style: normal;
+            color: var(--accent-light);
+        }
+
+        /* Action grid */
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+        .action-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+        .action-card .phase-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 10px;
+        }
+        .action-card h4 {
+            font-size: 1.05rem;
+            margin-bottom: 8px;
+        }
+        .action-card ul {
+            list-style: none;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+        .action-card li {
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .action-card li:last-child { border-bottom: none; }
+        .action-card li::before {
+            content: '→ ';
+            color: var(--accent-light);
+        }
+
+        /* CTA banner */
+        .cta-banner {
+            display: block;
+            background: linear-gradient(135deg, rgba(34,211,238,0.1), rgba(99,102,241,0.06));
+            border: 1px solid rgba(34,211,238,0.25);
+            border-radius: 14px;
+            padding: 28px 32px;
+            text-decoration: none;
+            color: inherit;
+            transition: border-color 0.2s, transform 0.2s;
+            margin-bottom: 20px;
+        }
+        .cta-banner:hover {
+            border-color: var(--cyan);
+            transform: translateY(-2px);
+        }
+        .cta-banner h3 {
+            font-size: 1.15rem;
+            margin-bottom: 6px;
+        }
+        .cta-banner p {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+        .cta-banner .cta-link {
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: var(--cyan);
+            font-weight: 500;
+        }
+        .cta-banner .cta-link::after { content: ' →'; }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 24px;
+            border-top: 1px solid var(--border);
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 1.8rem; }
+            .hero { padding: 100px 16px 50px; }
+            .tl-cards { grid-template-columns: 1fr; }
+            .hourglass { grid-template-columns: 1fr; }
+            .shift-grid { grid-template-columns: 1fr; }
+            .action-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 480px) {
+            .scenario-tabs { flex-direction: column; }
+            .proj-label { width: 90px; font-size: 0.78rem; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+    <div class="nav-inner">
+        <a href="index.html">← 返回调研总览</a>
+        <span class="title">趋势预测</span>
+        <a href="../index.html">工作空间</a>
+    </div>
+</nav>
+
+<header class="hero">
+    <div class="hero-content">
+        <span class="label">趋势预测 · 2024-2030</span>
+        <h1>AI 重塑自媒体<br>未来情景推演</h1>
+        <p class="subtitle">基于 8 篇系统性调研的数据外推——当 90% 的内容由 AI 生成，创作者经济的终局是什么？</p>
+    </div>
+</header>
+
+<div class="container">
+
+    <!-- Core Thesis -->
+    <p class="section-label">核心判断</p>
+    <div class="quote-block" style="margin-top: 0; border-left-color: var(--accent);">
+        AI 对自媒体行业的冲击不是线性的，而是<strong>三阶段跃迁</strong>：先是成本崩塌引发供给爆炸（2024-2026），然后中间层被挤压导致行业重组（2026-2028），最终收敛于"沙漏型"新均衡——顶部少数高价值人类创作者 + 底部海量免费 AI 内容，<strong>中间层消失</strong>。
+    </div>
+
+    <!-- Market Projections -->
+    <p class="section-label">市场规模预测</p>
+    <div class="projection-chart">
+        <h3>创作者经济全球规模（美元）</h3>
+        <div class="proj-row">
+            <span class="proj-label">2023 实际</span>
+            <div class="proj-track">
+                <div class="proj-fill" style="width: 12%; background: var(--accent-light);">$2,500亿</div>
+            </div>
+            <span class="proj-value">Goldman Sachs</span>
+        </div>
+        <div class="proj-row">
+            <span class="proj-label">2027 预测</span>
+            <div class="proj-track">
+                <div class="proj-fill" style="width: 23%; background: linear-gradient(90deg, var(--accent-light), var(--cyan));">$4,800亿</div>
+            </div>
+            <span class="proj-value">Goldman Sachs</span>
+        </div>
+        <div class="proj-row">
+            <span class="proj-label">2030 预测</span>
+            <div class="proj-track">
+                <div class="proj-fill" style="width: 29%; background: linear-gradient(90deg, var(--cyan), var(--green));">$6,000亿</div>
+            </div>
+            <span class="proj-value">ThriveCart</span>
+        </div>
+        <div class="proj-row">
+            <span class="proj-label">2035 预测</span>
+            <div class="proj-track">
+                <div class="proj-fill" style="width: 100%; background: linear-gradient(90deg, var(--green), var(--purple));">$20,845亿</div>
+            </div>
+            <span class="proj-value">Precedence</span>
+        </div>
+    </div>
+
+    <div class="projection-chart">
+        <h3>中国市场关键指标（人民币）</h3>
+        <div class="proj-row">
+            <span class="proj-label">AIGC 产业 2028</span>
+            <div class="proj-track">
+                <div class="proj-fill" style="width: 55%; background: linear-gradient(90deg, var(--orange), var(--yellow));">7,202 亿</div>
+            </div>
+            <span class="proj-value">→ 2030 破万亿</span>
+        </div>
+        <div class="proj-row">
+            <span class="proj-label">数字人市场 2029</span>
+            <div class="proj-track">
+                <div class="proj-fill" style="width: 20%; background: var(--cyan);">250 亿</div>
+            </div>
+            <span class="proj-value">YoY +85%</span>
+        </div>
+        <div class="proj-row">
+            <span class="proj-label">虚拟人驱动 2025</span>
+            <div class="proj-track">
+                <div class="proj-fill" style="width: 48%; background: var(--purple);">6,403 亿</div>
+            </div>
+            <span class="proj-value">含上下游</span>
+        </div>
+        <div class="proj-row">
+            <span class="proj-label">MCN 行业 2025</span>
+            <div class="proj-track">
+                <div class="proj-fill" style="width: 6%; background: var(--green);">700+ 亿</div>
+            </div>
+            <span class="proj-value">增速放缓</span>
+        </div>
+    </div>
+
+    <!-- Scenario Switcher -->
+    <p class="section-label">三条情景路径</p>
+    <h2 class="section-title">未来不止一种可能</h2>
+    <p class="section-desc">基于技术进展速度、监管力度和市场适应能力的不同组合，我们推演了三条路径。点击切换查看。</p>
+
+    <div class="scenario-tabs">
+        <button class="scenario-tab active" onclick="switchScenario('baseline')">基准情景</button>
+        <button class="scenario-tab accelerated" onclick="switchScenario('accelerated')">加速情景</button>
+        <button class="scenario-tab conservative" onclick="switchScenario('conservative')">保守情景</button>
+    </div>
+
+    <!-- Baseline Scenario -->
+    <div id="scenario-baseline" class="scenario-panel active">
+        <div class="timeline">
+            <!-- 2024 -->
+            <div class="tl-year">
+                <div class="tl-year-label">24</div>
+                <div class="tl-year-title">2024：成本崩塌元年 <span class="phase-tag disruption">冲击期</span></div>
+                <div class="tl-year-subtitle">AI 生产成本断崖式下降，供给侧发生结构性改变</div>
+                <div class="tl-cards">
+                    <div class="tl-card">
+                        <span class="card-tag tag-data">成本数据</span>
+                        <h4>内容生产成本暴跌</h4>
+                        <p>图片：$500+ → $0.04（降1万倍）<br>博客：$611 → $131（降4.7倍）<br>配音：$30-500/分钟 → $0.01</p>
+                    </div>
+                    <div class="tl-card">
+                        <span class="card-tag tag-data">供给数据</span>
+                        <h4>AI 内容占比飙升</h4>
+                        <p>新网页含 AI 生成内容达 74.2%，AI 音乐日产 700 万首——Suno 每两周超 Spotify 全库</p>
+                        <div class="metric red">74.2%</div>
+                    </div>
+                    <div class="tl-card">
+                        <span class="card-tag tag-china">中国</span>
+                        <h4>AI 用户快速渗透</h4>
+                        <p>中国 AI 应用用户达 7.29 亿，57.4% 已养成使用习惯。豆包月活 2.27 亿</p>
+                        <div class="metric cyan">7.29 亿</div>
+                    </div>
+                    <div class="tl-card">
+                        <span class="card-tag tag-market">就业</span>
+                        <h4>内容岗位首波裁员</h4>
+                        <p>全球媒体娱乐行业裁员 1.7 万+，写作自由职业需求降 30%，Fiverr 下载量降 18%</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2025 -->
+            <div class="tl-year">
+                <div class="tl-year-label now">25</div>
+                <div class="tl-year-title">2025：注意力争夺加剧 <span class="phase-tag disruption">冲击期</span></div>
+                <div class="tl-year-subtitle">AI 搜索分流传统平台，"slop"反噬开始，监管落地</div>
+                <div class="tl-cards">
+                    <div class="tl-card">
+                        <span class="card-tag tag-tech">搜索变革</span>
+                        <h4>AI 吞噬搜索流量</h4>
+                        <p>ChatGPT 日搜索量 16 亿次（Google 的 12%）。Google 美国份额从 93% 降至 86%，中国百度从 87% 降至 60%</p>
+                        <div class="metric orange">-33%</div>
+                    </div>
+                    <div class="tl-card">
+                        <span class="card-tag tag-data">Slop 反噬</span>
+                        <h4>"AI 泔水"成年度词</h4>
+                        <p>"Slop"当选年度词汇，负面情绪峰值 54%。Reddit、Discord 社区开始禁止 AI 内容</p>
+                    </div>
+                    <div class="tl-card">
+                        <span class="card-tag tag-china">中国监管</span>
+                        <h4>执法元年</h4>
+                        <p>"清朗行动"史上最大规模，算法审计常态化，未备案罚违法收入 10 倍。AI 内容强制标识</p>
+                    </div>
+                    <div class="tl-card">
+                        <span class="card-tag tag-creator">注意力</span>
+                        <h4>注意力天花板迫近</h4>
+                        <p>单条帖子注意力从 12.1 秒降至 8.25 秒。25 岁以下用户每 39 秒切换焦点。获取 1000 万粉丝从 54 天变为 601 天</p>
+                        <div class="metric red">8.25 秒</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2026 -->
+            <div class="tl-year">
+                <div class="tl-year-label now">26</div>
+                <div class="tl-year-title">2026：分层拐点 <span class="phase-tag transition">过渡期</span></div>
+                <div class="tl-year-subtitle">行业真正分层，中间层挤压开始，多模态 AI 突破</div>
+                <div class="tl-cards">
+                    <div class="tl-card wide">
+                        <span class="card-tag tag-data">关键拐点</span>
+                        <h4>线上内容 90% 由 AI 生成（Europol 预测）</h4>
+                        <p>当绝大部分内容来自机器，"人类创作"从默认状态变为差异化卖点。真实性溢价 (Authenticity Premium) 正式形成。EY 将 2026 趋势命名为"Authenticity 3.0"——要求对 AI 使用可验证的透明度。</p>
+                    </div>
+                    <div class="tl-card">
+                        <span class="card-tag tag-tech">技术</span>
+                        <h4>全模态 AI 突破</h4>
+                        <p>中国预计年底前实现全模态 AI 突破。AI Agent 成为下一核心战场。对话式 AI 影响 50% 搜索交互（Gartner）</p>
+                    </div>
+                    <div class="tl-card">
+                        <span class="card-tag tag-china">中国</span>
+                        <h4>数字人直播触顶</h4>
+                        <p>AI 数字人直播渗透率预计触及 55-60% 瓶颈。红利从"普惠"转向"能力型"，行业共识收敛为"AI 80% 效率 + 人类 20% 灵魂"</p>
+                        <div class="metric orange">55-60%</div>
+                    </div>
+                    <div class="tl-card">
+                        <span class="card-tag tag-market">内容</span>
+                        <h4>微短剧/播客爆发</h4>
+                        <p>微短剧应用内收入预计翻倍至 $78 亿。播客/视频播客广告收入达 ~$50 亿，同比增 20%（Deloitte）</p>
+                    </div>
+                    <div class="tl-card">
+                        <span class="card-tag tag-creator">行业</span>
+                        <h4>自媒体"真正分层"</h4>
+                        <p>行业共识：2026 年标志自媒体真正分化。头部用 AI 放大优势，中间层受最大挤压，底部模板化内容被全面替代</p>
+                    </div>
+                    <div class="tl-card">
+                        <span class="card-tag tag-data">真实性</span>
+                        <h4>人类内容溢价显现</h4>
+                        <p>人写内容读者留存率是 AI 的 3 倍，5 个月内流量高 5.44 倍，停留时长多 41%。仅 26% 消费者偏好 AI 内容（从 60% 骤降）</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2027-2028 -->
+            <div class="tl-year">
+                <div class="tl-year-label future">28</div>
+                <div class="tl-year-title">2027-2028：行业重组 <span class="phase-tag transition">过渡期</span></div>
+                <div class="tl-year-subtitle">中间层大规模出清，商业模式从广告转向社区/订阅</div>
+                <div class="tl-cards">
+                    <div class="tl-card">
+                        <span class="card-tag tag-market">经济规模</span>
+                        <h4>创作者经济 $4,800 亿</h4>
+                        <p>Goldman Sachs 2027 预测。但增长集中在头部 1%——Top 1% 预计获取超过 80% 注意力和收入</p>
+                        <div class="metric green">$4,800 亿</div>
+                    </div>
+                    <div class="tl-card">
+                        <span class="card-tag tag-china">中国 AIGC</span>
+                        <h4>AIGC 产业达 7,202 亿</h4>
+                        <p>中国 AIGC 产业 2028 年预计达 7,202 亿元人民币，直奔万亿规模</p>
+                        <div class="metric orange">7,202 亿</div>
+                    </div>
+                    <div class="tl-card">
+                        <span class="card-tag tag-market">岗位</span>
+                        <h4>40% 内容岗位消失</h4>
+                        <p>智联招聘预测：内容行业全职招聘岗位未来消失 40%，750 万-1000 万自媒体岗位受显著影响（3-5 年窗口）</p>
+                        <div class="metric red">-40%</div>
+                    </div>
+                    <div class="tl-card">
+                        <span class="card-tag tag-creator">模式转型</span>
+                        <h4>从广告到订阅/社区</h4>
+                        <p>当免费内容无限供给，用户付费的对象从"内容本身"变为"策展的注意力"和"社区归属感"。变现重心迁移</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2029-2030 -->
+            <div class="tl-year">
+                <div class="tl-year-label far">30</div>
+                <div class="tl-year-title">2029-2030：新均衡 <span class="phase-tag equilibrium">均衡期</span></div>
+                <div class="tl-year-subtitle">沙漏结构成型，"意图经济"替代"注意力经济"</div>
+                <div class="tl-cards">
+                    <div class="tl-card">
+                        <span class="card-tag tag-market">规模</span>
+                        <h4>创作者经济 $6,000 亿</h4>
+                        <p>全球创作者经济达 $6,000 亿。虚拟网红市场从 $60 亿扩至 $459 亿。中国 AI 人才需求 600 万</p>
+                        <div class="metric green">$6,000 亿</div>
+                    </div>
+                    <div class="tl-card">
+                        <span class="card-tag tag-china">中国</span>
+                        <h4>AIGC 破万亿 + 数字人 250 亿</h4>
+                        <p>中国 AIGC 产业突破 1 万亿元。数字人市场达 250 亿元。内容生态全面 AI 化</p>
+                    </div>
+                    <div class="tl-card wide">
+                        <span class="card-tag tag-creator">范式转变</span>
+                        <h4>从"注意力经济"到"意图经济"</h4>
+                        <p>哈佛 Shorenstein Center 框架：从"注意力商人"转变为<strong>"意图建筑师"</strong>。未来最有价值的不是捕获注意力，而是赋能"有意图的参与"。最稀缺的前沿从"人类注意力"迁移到<strong>"人类好奇心"</strong>。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Accelerated Scenario -->
+    <div id="scenario-accelerated" class="scenario-panel">
+        <div class="quote-block" style="border-left-color: var(--red);">
+            <strong>加速情景假设：</strong>AGI 或准 AGI 能力在 2027 前实现，AI 视频生成质量达到真人水平，主要平台全面开放 AI 创作，监管跟不上技术速度。
+            <div class="quote-author">MrBeast: "When AI video is as good as normal video... I'd love to know what that means for the millions of creators. Scary times."</div>
+        </div>
+        <div class="timeline">
+            <div class="tl-year">
+                <div class="tl-year-label" style="background: var(--red);">26</div>
+                <div class="tl-year-title">2026：AI 视频达到真人水平</div>
+                <div class="tl-year-subtitle">内容生产与人类创作在质量上不可区分</div>
+                <div class="tl-cards">
+                    <div class="tl-card wide">
+                        <h4>全面替代加速</h4>
+                        <p>AI 视频、AI 播客、AI 虚拟主播在质量上达到人类水平。中间层创作者在 12-18 个月内被大规模替代，而非 3-5 年。平台 AI 内容占比从 90% 跃升至 98%+。写作/设计自由职业市场萎缩 60%+。"人类认证"标识成为硬需求。</p>
+                        <div class="metric red">98%+ AI 内容</div>
+                    </div>
+                </div>
+            </div>
+            <div class="tl-year">
+                <div class="tl-year-label" style="background: var(--red);">28</div>
+                <div class="tl-year-title">2028：极端沙漏</div>
+                <div class="tl-year-subtitle">创作者经济 K 型分化到极致</div>
+                <div class="tl-cards">
+                    <div class="tl-card">
+                        <h4>赢家通吃</h4>
+                        <p>Top 0.1% 创作者获取 90%+ 收入。中间层基本消失。内容岗位减少 60-70%</p>
+                        <div class="metric red">-70% 岗位</div>
+                    </div>
+                    <div class="tl-card">
+                        <h4>反弹：人类手工艺运动</h4>
+                        <p>类似工业革命后的"工艺美术运动"，"手工内容""人类原创"成为奢侈品品类。线下体验/活动经济爆发</p>
+                        <div class="metric green">人类手工艺复兴</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conservative Scenario -->
+    <div id="scenario-conservative" class="scenario-panel">
+        <div class="quote-block" style="border-left-color: var(--green);">
+            <strong>保守情景假设：</strong>AI 技术进步放缓（尤其视频/多模态），中国监管收紧形成有效制约，平台主动限制 AI 内容（如微信视频号禁止虚拟直播），AI 创造力天花板被证实。
+        </div>
+        <div class="timeline">
+            <div class="tl-year">
+                <div class="tl-year-label" style="background: var(--green);">27</div>
+                <div class="tl-year-title">2027：有序过渡</div>
+                <div class="tl-year-subtitle">监管和市场机制控制了冲击速度</div>
+                <div class="tl-cards">
+                    <div class="tl-card wide">
+                        <h4>渐进适应</h4>
+                        <p>AI 内容占比稳定在 60-70%（而非 90%+），因为平台算法主动降权低质 AI 内容。中间层创作者有 3-5 年转型窗口而非 1-2 年。AI 创造力研究证实：AI 产出稳定在人类 40-50 百分位，无法突破专家水平——"创造力天花板"被确认。</p>
+                    </div>
+                </div>
+            </div>
+            <div class="tl-year">
+                <div class="tl-year-label" style="background: var(--green);">30</div>
+                <div class="tl-year-title">2030："AI 辅助 + 人类主导"稳态</div>
+                <div class="tl-year-subtitle">AI 成为工具而非替代者</div>
+                <div class="tl-cards">
+                    <div class="tl-card">
+                        <h4>融合创作常态化</h4>
+                        <p>"AI 80% + 人类 20%"模式广泛落地。内容岗位减少 20-25%（而非 40%），但岗位要求升级。创作者收入中位数保持稳定</p>
+                        <div class="metric green">-25% 岗位</div>
+                    </div>
+                    <div class="tl-card">
+                        <h4>平台生态多元化</h4>
+                        <p>不同平台分化为"AI 友好"和"人类优先"两类。消费者根据需求场景自主选择。沙漏结构存在但不极端</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hourglass Structure -->
+    <p class="section-label" style="margin-top: 48px;">终局结构</p>
+    <h2 class="section-title">沙漏型行业新均衡</h2>
+    <p class="section-desc">无论哪种情景，行业最终都会走向某种形式的"沙漏结构"——差别只在挤压程度和过渡速度。</p>
+
+    <div class="hourglass">
+        <div class="hourglass-col">
+            <h3>AI 前的金字塔</h3>
+            <div class="hg-layer top">
+                <div class="hg-tag">顶层 · 少数头部</div>
+                <h4>明星创作者</h4>
+                <p>人格化 IP，强社区，高变现</p>
+            </div>
+            <div class="hg-layer mid" style="padding: 28px 16px;">
+                <div class="hg-tag">中间层 · 大量腰部</div>
+                <h4>专业/半专业创作者</h4>
+                <p>靠内容质量和勤奋获得中等收入</p>
+            </div>
+            <div class="hg-layer bot">
+                <div class="hg-tag">底层 · 海量长尾</div>
+                <h4>业余/兼职创作者</h4>
+                <p>偶发性内容，少量收入</p>
+            </div>
+        </div>
+        <div class="hourglass-col">
+            <h3>AI 后的沙漏</h3>
+            <div class="hg-layer top" style="padding: 28px 16px;">
+                <div class="hg-tag">放大层 · 极少数</div>
+                <h4>高价值人类创作者</h4>
+                <p>策展、社区、人格 = 核心资产。AI 是生产力基建，人类判断力是护城河</p>
+            </div>
+            <div class="hg-layer mid" style="padding: 8px 16px; opacity: 0.5;">
+                <div class="hg-tag">挤压层 · 消失中</div>
+                <h4 style="font-size: 0.85rem;">被上下夹击的中间层</h4>
+            </div>
+            <div class="hg-layer bot" style="padding: 28px 16px;">
+                <div class="hg-tag">替代层 · 海量</div>
+                <h4>AI 生成的免费内容</h4>
+                <p>模板化、标准化内容由 AI 以极低成本批量生产</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Value Shift -->
+    <p class="section-label">价值重心迁移</p>
+    <h2 class="section-title">什么在贬值，什么在升值</h2>
+    <p class="section-desc">自媒体的核心价值从"信息搬运"向"人格表达 + 社区运营 + 品味策展"三极迁移。</p>
+
+    <div class="shift-grid">
+        <div class="shift-card">
+            <div class="shift-label">信息搬运</div>
+            <div class="shift-arrow">
+                <span class="old-val">40%</span>
+                <span style="color: var(--text-dim);">→</span>
+                <span class="new-val" style="color: var(--red);">5%</span>
+            </div>
+            <div class="note">AI 全面替代</div>
+        </div>
+        <div class="shift-card">
+            <div class="shift-label">加工整理</div>
+            <div class="shift-arrow">
+                <span class="old-val">25%</span>
+                <span style="color: var(--text-dim);">→</span>
+                <span class="new-val" style="color: var(--orange);">10%</span>
+            </div>
+            <div class="note">AI 大部分替代</div>
+        </div>
+        <div class="shift-card">
+            <div class="shift-label">人格表达</div>
+            <div class="shift-arrow">
+                <span class="old-val">15%</span>
+                <span style="color: var(--text-dim);">→</span>
+                <span class="new-val" style="color: var(--green);">35%</span>
+            </div>
+            <div class="note">价值飙升 ↑133%</div>
+        </div>
+        <div class="shift-card">
+            <div class="shift-label">社群运营</div>
+            <div class="shift-arrow">
+                <span class="old-val">10%</span>
+                <span style="color: var(--text-dim);">→</span>
+                <span class="new-val" style="color: var(--green);">25%</span>
+            </div>
+            <div class="note">价值飙升 ↑150%</div>
+        </div>
+        <div class="shift-card">
+            <div class="shift-label">品味策展</div>
+            <div class="shift-arrow">
+                <span class="old-val">10%</span>
+                <span style="color: var(--text-dim);">→</span>
+                <span class="new-val" style="color: var(--green);">25%</span>
+            </div>
+            <div class="note">Simon 预言兑现</div>
+        </div>
+        <div class="shift-card" style="border-color: rgba(34,211,238,0.3);">
+            <div class="shift-label" style="color: var(--cyan);">AI 替代度</div>
+            <div class="shift-arrow">
+                <span class="old-val">0%</span>
+                <span style="color: var(--text-dim);">→</span>
+                <span class="new-val" style="color: var(--cyan);">40-50%</span>
+            </div>
+            <div class="note">娱乐消遣维度</div>
+        </div>
+    </div>
+
+    <!-- Creator Actions by Phase -->
+    <p class="section-label">各阶段创作者行动建议</p>
+    <h2 class="section-title">不同时间窗口做不同的事</h2>
+
+    <div class="action-grid">
+        <div class="action-card">
+            <div class="phase-label" style="color: var(--red);">2024-2025 · 冲击期</div>
+            <h4>立即掌握 AI 工具</h4>
+            <ul>
+                <li>将 AI 融入生产流程，降本提效</li>
+                <li>盘点自己的"不可替代性"资产</li>
+                <li>测试"AI 80% + 人类 20%"协作模式</li>
+                <li>建立直接触达受众的渠道（邮件、社群）</li>
+            </ul>
+        </div>
+        <div class="action-card">
+            <div class="phase-label" style="color: var(--yellow);">2026-2027 · 过渡期</div>
+            <h4>建立护城河</h4>
+            <ul>
+                <li>深耕人格化 IP，不可复制的"你"</li>
+                <li>从"内容生产"转向"社区运营"</li>
+                <li>探索订阅/会员制变现模式</li>
+                <li>合规标识 AI 使用，建立透明度信任</li>
+            </ul>
+        </div>
+        <div class="action-card">
+            <div class="phase-label" style="color: var(--orange);">2027-2028 · 重组期</div>
+            <h4>完成转型或退出</h4>
+            <ul>
+                <li>确认自己处于沙漏的哪一层</li>
+                <li>如在"挤压层"，向上突破或横向转型</li>
+                <li>多平台/多渠道分散风险</li>
+                <li>考虑 AI-native 新赛道（如 AI 播客、互动叙事）</li>
+            </ul>
+        </div>
+        <div class="action-card">
+            <div class="phase-label" style="color: var(--green);">2029-2030 · 均衡期</div>
+            <h4>在新范式中繁荣</h4>
+            <ul>
+                <li>成为"意图建筑师"而非"注意力商人"</li>
+                <li>经营"人类好奇心"这一终极稀缺资源</li>
+                <li>享受真实性溢价带来的定价权</li>
+                <li>利用 AI 做 10 倍杠杆的创作者</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Key Quotes -->
+    <p class="section-label">关键预言</p>
+
+    <div class="quote-block">
+        "在信息丰富的世界里，信息的丰富意味着其他东西的匮乏——<strong>接收者的注意力</strong>。"
+        <div class="quote-author">— Herbert Simon，诺贝尔经济学奖得主，1971</div>
+    </div>
+
+    <div class="quote-block" style="border-left-color: var(--orange);">
+        "一两年内，<strong>95% 的网络内容将由机器创建</strong>。"
+        <div class="quote-author">— Mark Schaefer，《Content Shock》作者</div>
+    </div>
+
+    <div class="quote-block" style="border-left-color: var(--green);">
+        出版商的出路是建立读者直接联系和社区；内容是社区围绕其形成的"<strong>文化制品</strong>"。AI 时代的新机会是"<strong>建设社区</strong>"。
+        <div class="quote-author">— Ben Thompson，Stratechery</div>
+    </div>
+
+    <div class="quote-block" style="border-left-color: var(--purple);">
+        从"<strong>注意力商人</strong>"到"<strong>意图建筑师</strong>"——未来不在于捕获注意力，而在于赋能有意图的参与。
+        <div class="quote-author">— 哈佛大学 Shorenstein Center</div>
+    </div>
+
+    <!-- CTA -->
+    <p class="section-label" style="margin-top: 48px;">下一步</p>
+    <a href="quiz.html" class="cta-banner">
+        <h3>测测你在哪一层？</h3>
+        <p>用 3 分钟完成 AI 准备度自测，看看你在沙漏结构中的位置。</p>
+        <span class="cta-link">开始自测</span>
+    </a>
+    <a href="guide.html" class="cta-banner" style="border-color: rgba(52,211,153,0.25); background: linear-gradient(135deg, rgba(52,211,153,0.08), rgba(34,211,238,0.04));">
+        <h3>获取行动指南</h3>
+        <p>按平台分类的实操策略，含 30 天启动计划。</p>
+        <span class="cta-link" style="color: var(--green);">查看指南</span>
+    </a>
+    <a href="cases.html" class="cta-banner" style="border-color: rgba(251,146,60,0.25); background: linear-gradient(135deg, rgba(251,146,60,0.06), rgba(251,191,36,0.03));">
+        <h3>参考成功案例</h3>
+        <p>Ben Thompson、MrBeast、京东数字人……7 个中国和全球转型案例。</p>
+        <span class="cta-link" style="color: var(--orange);">查看案例</span>
+    </a>
+
+</div>
+
+<footer class="footer">
+    <p>AI 重塑自媒体：2024-2030 趋势预测与未来情景</p>
+    <p style="margin-top: 6px;">数据来源：Goldman Sachs、Europol、Gartner、Deloitte、McKinsey、QuestMobile、智联招聘、EY、哈佛 Shorenstein Center</p>
+</footer>
+
+<script>
+function switchScenario(name) {
+    document.querySelectorAll('.scenario-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.scenario-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('scenario-' + name).classList.add('active');
+    const tabs = document.querySelectorAll('.scenario-tab');
+    tabs.forEach(t => {
+        if ((name === 'baseline' && t.textContent.includes('基准')) ||
+            (name === 'accelerated' && t.textContent.includes('加速')) ||
+            (name === 'conservative' && t.textContent.includes('保守'))) {
+            t.classList.add('active');
+        }
+    });
+}
+</script>
+
+</body>
+</html>

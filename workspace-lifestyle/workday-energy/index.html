@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>工作日精力管理 · Lifestyle Workspace</title>
+<style>
+  :root {
+    --bg: #faf9f6;
+    --text: #2d2d2d;
+    --accent: #5a7d64;
+    --accent-light: #e8f0eb;
+    --border: #e0ddd8;
+    --muted: #8a8580;
+    --energy-high: #d4813b;
+    --energy-mid: #c9a84c;
+    --energy-low: #7b8a9b;
+    --energy-high-bg: #fdf3e8;
+    --energy-mid-bg: #fdf6e3;
+    --energy-low-bg: #edf1f3;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Noto Sans SC", "Helvetica Neue", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.8;
+    padding: 3rem 1.5rem;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .breadcrumb { font-size: 0.85rem; color: var(--muted); margin-bottom: 2rem; }
+  header { margin-bottom: 2.5rem; }
+  header h1 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.3rem; }
+  header p { color: var(--muted); font-size: 0.9rem; }
+  .intro {
+    padding: 1.2rem 1.4rem;
+    background: linear-gradient(135deg, var(--energy-high-bg) 0%, var(--accent-light) 100%);
+    border-left: 3px solid var(--energy-high);
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 2.5rem;
+    font-size: 0.9rem;
+  }
+  .section {
+    margin-bottom: 2.5rem;
+    padding: 1.5rem;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .section h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--energy-high);
+  }
+  .section p, .section li { font-size: 0.9rem; }
+
+  /* Energy curve */
+  .curve-container {
+    position: relative;
+    height: 200px;
+    margin: 1rem 0;
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 49px, var(--border) 49px, var(--border) 50px);
+    border-bottom: 2px solid var(--border);
+    border-left: 2px solid var(--border);
+    overflow: visible;
+  }
+  .curve-svg {
+    width: 100%;
+    height: 100%;
+  }
+  .curve-label {
+    position: absolute;
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+  .time-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 0.3rem;
+    padding: 0 0.2rem;
+  }
+
+  /* Time blocks */
+  .block-row {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+  .block-row:last-child { border-bottom: none; }
+  .block-time {
+    flex-shrink: 0;
+    width: 90px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding-top: 0.1rem;
+  }
+  .block-time.high { color: var(--energy-high); }
+  .block-time.mid { color: var(--energy-mid); }
+  .block-time.low { color: var(--energy-low); }
+  .block-content { flex: 1; }
+  .block-content h4 { font-size: 0.92rem; font-weight: 600; margin-bottom: 0.2rem; }
+  .block-content p { font-size: 0.83rem; color: var(--muted); }
+  .energy-badge {
+    display: inline-block;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 0.3rem;
+  }
+  .badge-high { background: var(--energy-high-bg); color: var(--energy-high); }
+  .badge-mid { background: var(--energy-mid-bg); color: var(--energy-mid); }
+  .badge-low { background: var(--energy-low-bg); color: var(--energy-low); }
+
+  /* Grid cards */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    margin: 0.8rem 0;
+  }
+  .g-card {
+    padding: 1rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+  }
+  .g-card h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.4rem; }
+  .g-card ul { padding-left: 1rem; font-size: 0.82rem; }
+  .g-card li { margin-bottom: 0.2rem; }
+  .g-card.high-bg { background: var(--energy-high-bg); }
+  .g-card.high-bg h4 { color: var(--energy-high); }
+  .g-card.mid-bg { background: var(--energy-mid-bg); }
+  .g-card.mid-bg h4 { color: var(--energy-mid); }
+  .g-card.low-bg { background: var(--energy-low-bg); }
+  .g-card.low-bg h4 { color: var(--energy-low); }
+  .g-card.green-bg { background: var(--accent-light); }
+  .g-card.green-bg h4 { color: var(--accent); }
+
+  /* Crash protocol */
+  .crash-step {
+    display: flex;
+    gap: 0.8rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.88rem;
+    align-items: flex-start;
+  }
+  .crash-step:last-child { border-bottom: none; }
+  .crash-num {
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
+    background: var(--energy-high);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .tip-box {
+    padding: 0.8rem 1rem;
+    background: var(--accent-light);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    margin-top: 1rem;
+  }
+  .tip-box strong { color: var(--accent); }
+  .warn-box {
+    padding: 0.8rem 1rem;
+    background: var(--energy-high-bg);
+    border-left: 3px solid var(--energy-high);
+    border-radius: 0 6px 6px 0;
+    font-size: 0.85rem;
+    margin-top: 1rem;
+  }
+  footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  @media (max-width: 500px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    .block-row { flex-direction: column; gap: 0.2rem; }
+    .block-time { width: auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="breadcrumb"><a href="../index.html">Lifestyle Workspace</a> / 工作日精力管理</div>
+
+<header>
+  <h1>工作日精力管理</h1>
+  <p>管理精力，而不只是管理时间</p>
+</header>
+
+<div class="intro">
+  每个人每天都有 24 小时，但不是每个小时的你都一样清醒。精力管理的核心思想：<strong>在精力高峰做最难的事，在低谷做最简单的事</strong>。不是逼自己全天高效，而是顺应身体的节奏，把有限的好状态用在刀刃上。
+</div>
+
+<!-- 一天精力曲线 -->
+<div class="section">
+  <h2>你的一天：精力曲线</h2>
+  <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 0.5rem;">多数人的精力遵循类似模式（个体差异约 1-2 小时）：</p>
+
+  <div class="curve-container">
+    <svg class="curve-svg" viewBox="0 0 600 200" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="curveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#d4813b;stop-opacity:0.15"/>
+          <stop offset="50%" style="stop-color:#c9a84c;stop-opacity:0.1"/>
+          <stop offset="100%" style="stop-color:#7b8a9b;stop-opacity:0.1"/>
+        </linearGradient>
+      </defs>
+      <!-- Fill area -->
+      <path d="M0,180 C30,170 60,100 120,40 C180,20 210,30 240,50 C270,80 300,140 330,150 C360,155 370,145 390,130 C420,100 450,80 480,70 C510,90 540,130 570,150 L600,165 L600,200 L0,200 Z" fill="url(#curveGrad)"/>
+      <!-- Curve line -->
+      <path d="M0,180 C30,170 60,100 120,40 C180,20 210,30 240,50 C270,80 300,140 330,150 C360,155 370,145 390,130 C420,100 450,80 480,70 C510,90 540,130 570,150 L600,165" fill="none" stroke="#d4813b" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- Peak labels -->
+      <text x="140" y="25" font-size="11" fill="#d4813b" font-weight="600">上午高峰</text>
+      <text x="310" y="168" font-size="11" fill="#7b8a9b" font-weight="600">午后低谷</text>
+      <text x="450" y="58" font-size="11" fill="#c9a84c" font-weight="600">傍晚回升</text>
+    </svg>
+  </div>
+  <div class="time-labels">
+    <span>7:00</span><span>9:00</span><span>11:00</span><span>13:00</span><span>15:00</span><span>17:00</span><span>19:00</span>
+  </div>
+
+  <div class="tip-box">
+    <strong>找到你的高峰：</strong>连续 3 个工作日，每 2 小时给自己的精力状态打分（1-5）。你会发现一个稳定的模式。有人高峰在 8-10 点，有人在 10-12 点。没有"正确答案"，只有"你的答案"。
+  </div>
+</div>
+
+<!-- 时间块策略 -->
+<div class="section">
+  <h2>时间块策略：用精力匹配任务</h2>
+
+  <div class="block-row">
+    <div class="block-time high">9:00-11:30</div>
+    <div class="block-content">
+      <h4>深度工作 <span class="energy-badge badge-high">精力高峰</span></h4>
+      <p>最难的任务放这里：写方案、编程、创作、重要决策。关闭微信通知，手机静音朝下。这 2.5 小时的产出 = 下午 5 小时。不要用来开会或回邮件。</p>
+    </div>
+  </div>
+
+  <div class="block-row">
+    <div class="block-time mid">11:30-12:30</div>
+    <div class="block-content">
+      <h4>沟通协作 <span class="energy-badge badge-mid">精力中等</span></h4>
+      <p>回复消息、处理邮件、简短会议、和同事对齐。精力已经不是最佳，但社交互动能维持状态。把需要讨论的事集中在这个窗口。</p>
+    </div>
+  </div>
+
+  <div class="block-row">
+    <div class="block-time low">13:00-14:30</div>
+    <div class="block-content">
+      <h4>低能耗事务 <span class="energy-badge badge-low">精力低谷</span></h4>
+      <p>午饭后是全天最困的时段。做机械性工作：整理文件、填表、审阅简单文档。不要在这个时间做重要决策——你的判断力在低点。</p>
+    </div>
+  </div>
+
+  <div class="block-row">
+    <div class="block-time mid">14:30-16:00</div>
+    <div class="block-content">
+      <h4>第二波深度 <span class="energy-badge badge-mid">精力回升</span></h4>
+      <p>下午的精力小高峰。适合处理上午深度工作的"续集"——代码review、方案修改、中等难度任务。</p>
+    </div>
+  </div>
+
+  <div class="block-row">
+    <div class="block-time low">16:00-17:30</div>
+    <div class="block-content">
+      <h4>收尾 + 明日准备 <span class="energy-badge badge-low">精力下降</span></h4>
+      <p>整理今天的进度、更新任务列表、为明天的深度工作做准备（列出明天上午第一件要做的事）。带着"已完成"的感觉离开工位。</p>
+    </div>
+  </div>
+
+  <div class="warn-box">
+    <strong>致命陷阱：</strong>把上午黄金时间花在"先回完邮件再干正事"。邮件永远回不完，等你抬头已经 11 点了。规则：<strong>邮件/微信只在 11:30 和 16:00 集中处理</strong>，其他时间只看不回（急事除外）。
+  </div>
+</div>
+
+<!-- 午后崩溃应对 -->
+<div class="section">
+  <h2>午后崩溃急救方案</h2>
+  <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 0.8rem;">下午 1-3 点困到眼睛睁不开？按以下顺序尝试：</p>
+
+  <div class="crash-step">
+    <div class="crash-num">1</div>
+    <div>
+      <strong>站起来</strong><br>
+      <span style="font-size: 0.85rem; color: var(--muted);">走到窗边，看远处 30 秒。物理性地切换姿势是最快的唤醒方式。如果有楼梯，爬 2 层再下来。</span>
+    </div>
+  </div>
+  <div class="crash-step">
+    <div class="crash-num">2</div>
+    <div>
+      <strong>冷水洗脸/冷水冲手腕</strong><br>
+      <span style="font-size: 0.85rem; color: var(--muted);">冷刺激激活交感神经。没有洗手间的话，用凉水瓶贴后颈。</span>
+    </div>
+  </div>
+  <div class="crash-step">
+    <div class="crash-num">3</div>
+    <div>
+      <strong>10 分钟 Power Nap</strong><br>
+      <span style="font-size: 0.85rem; color: var(--muted);">如果条件允许，闭眼趴 10 分钟（设闹钟！）。不需要真的睡着，闭眼就有恢复效果。超过 20 分钟会更困。详见 <a href="../spring-sleep/index.html">春困与睡眠</a>。</span>
+    </div>
+  </div>
+  <div class="crash-step">
+    <div class="crash-num">4</div>
+    <div>
+      <strong>切换任务类型</strong><br>
+      <span style="font-size: 0.85rem; color: var(--muted);">困的时候做需要动手的事（整理桌面、画草图、手写笔记）比盯屏幕好。大脑疲劳时，换一种输出方式就是休息。</span>
+    </div>
+  </div>
+  <div class="crash-step">
+    <div class="crash-num">5</div>
+    <div>
+      <strong>午餐复盘</strong><br>
+      <span style="font-size: 0.85rem; color: var(--muted);">如果你天天下午崩溃，检查午餐：是不是太重了？高碳水（米饭、面条）+ 高油脂 = 血糖过山车。试试减少主食量，增加蛋白质和蔬菜。详见 <a href="../spring-food/index.html">初春时令食谱</a>。</span>
+    </div>
+  </div>
+</div>
+
+<!-- 精力四象限 -->
+<div class="section">
+  <h2>任务-精力匹配四象限</h2>
+  <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 0.8rem;">把你的任务按"需要的精力"和"紧急程度"分类，然后放进对应的时间块：</p>
+
+  <div class="grid-2">
+    <div class="g-card high-bg">
+      <h4>高精力 + 重要</h4>
+      <ul>
+        <li>写报告/方案/代码</li>
+        <li>战略性决策</li>
+        <li>学习新技能</li>
+        <li>创造性工作</li>
+      </ul>
+      <p style="margin-top: 0.5rem; font-weight: 600; color: var(--energy-high); font-size: 0.8rem;">→ 上午 9-11:30</p>
+    </div>
+    <div class="g-card mid-bg">
+      <h4>中精力 + 协作</h4>
+      <ul>
+        <li>开会/讨论</li>
+        <li>回复邮件/消息</li>
+        <li>代码 Review</li>
+        <li>1-on-1 沟通</li>
+      </ul>
+      <p style="margin-top: 0.5rem; font-weight: 600; color: var(--energy-mid); font-size: 0.8rem;">→ 11:30-12:30 / 14:30-16:00</p>
+    </div>
+    <div class="g-card low-bg">
+      <h4>低精力 + 机械</h4>
+      <ul>
+        <li>填表/报销/审批</li>
+        <li>整理文件/笔记</li>
+        <li>更新进度/日志</li>
+        <li>简单的复制粘贴</li>
+      </ul>
+      <p style="margin-top: 0.5rem; font-weight: 600; color: var(--energy-low); font-size: 0.8rem;">→ 13:00-14:30 / 16:30+</p>
+    </div>
+    <div class="g-card green-bg">
+      <h4>精力投资</h4>
+      <ul>
+        <li>5 分钟拉伸（<a href="../spring-exercise/index.html">动作</a>）</li>
+        <li>散步 10 分钟</li>
+        <li>闭眼深呼吸 3 分钟</li>
+        <li>和同事聊天（非工作）</li>
+      </ul>
+      <p style="margin-top: 0.5rem; font-weight: 600; color: var(--accent); font-size: 0.8rem;">→ 穿插在每个时间块之间</p>
+    </div>
+  </div>
+</div>
+
+<!-- 工位环境 -->
+<div class="section">
+  <h2>工位环境优化</h2>
+
+  <div class="grid-2">
+    <div class="g-card high-bg">
+      <h4>物理层</h4>
+      <ul>
+        <li>屏幕高度：上沿与眼平齐（笔记本用支架）</li>
+        <li>椅子：腰部有支撑，双脚踩实地面</li>
+        <li>每 50 分钟站起来活动 5 分钟</li>
+        <li>桌面只放当前任务相关的东西</li>
+      </ul>
+    </div>
+    <div class="g-card mid-bg">
+      <h4>感官层</h4>
+      <ul>
+        <li>照明：自然光最好，不行就用 5000K 白光</li>
+        <li>温度：20-22°C 是最佳工作温度</li>
+        <li>噪音：白噪音/降噪耳机胜过"安静的开放办公室"</li>
+        <li>绿植：视线范围内一盆绿植可降低压力</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>水杯规则：</strong>桌上永远有一杯水。轻度脱水（甚至不觉得渴时）就会导致注意力下降 10-15%。8 杯水太教条，但每次起身都喝几口是好习惯——还能制造"站起来"的理由。
+  </div>
+</div>
+
+<!-- 下班仪式 -->
+<div class="section">
+  <h2>下班切换仪式（5 分钟）</h2>
+  <p style="font-size: 0.88rem; margin-bottom: 0.8rem;">不是"关电脑走人"那么简单。你需要一个明确的信号告诉大脑：<strong>工作结束了</strong>。</p>
+
+  <ol style="padding-left: 1.2rem;">
+    <li style="margin-bottom: 0.6rem;"><strong>清空收件箱到零</strong> — 不是全回复，而是全处理：回了的存档、需要行动的标记、不相关的删。</li>
+    <li style="margin-bottom: 0.6rem;"><strong>写下明天早上第一件事</strong> — 只写一件。"明天 9:00 打开 XX 文档继续写第三章。"这让你明天不需要思考就能启动。</li>
+    <li style="margin-bottom: 0.6rem;"><strong>物理收拾</strong> — 合上笔记本、归位杂物、倒掉水杯剩水。仪式感帮助大脑切换模式。</li>
+    <li style="margin-bottom: 0.6rem;"><strong>出门时换一条路</strong> — 走不同的路回家、去不同的地铁口。微小的路线变化打破"工作→回家"的自动驾驶模式，帮助心理上断开。</li>
+  </ol>
+
+  <div class="tip-box">
+    <strong>下班后仍在想工作？</strong>试试"忧虑倾倒"：在笔记本上花 3 分钟写下所有还在脑子里转的工作想法。写出来 = 大脑卸载。本子合上，明天再看。详见 <a href="../weekend-reset/index.html">周末重启仪式</a> 中的反思方法。
+  </div>
+</div>
+
+<footer>
+  <p><a href="../index.html">&larr; 返回首页</a></p>
+  <p>更新：2026-03-02 08:00 GMT+8 · 自主推进生成</p>
+</footer>
+
+</body>
+</html>
