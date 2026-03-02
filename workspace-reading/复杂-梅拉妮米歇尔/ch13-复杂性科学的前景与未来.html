@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第十三章：复杂性科学的前景与未来 — 复杂</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; background: #0a0a0f; color: #e0e0e0; min-height: 100vh; }
+    .container { max-width: 780px; margin: 0 auto; padding: 48px 24px; }
+    .nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 48px; font-size: 13px; }
+    .nav a { color: #63b3ed; text-decoration: none; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+    .nav a:hover { color: #90cdf4; }
+    .nav .chapter-nav { display: flex; gap: 20px; }
+    .chapter-header { margin-bottom: 48px; }
+    .chapter-label { font-size: 12px; letter-spacing: 3px; color: #63b3ed; text-transform: uppercase; margin-bottom: 12px; }
+    .chapter-title { font-size: 36px; font-weight: 700; color: #fff; margin-bottom: 12px; }
+    .chapter-subtitle { font-size: 15px; color: #718096; }
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(99, 179, 237, 0.2), transparent); margin: 40px 0; }
+    .section-title { font-size: 18px; font-weight: 600; color: #fff; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+    .section-title::before { content: ''; width: 3px; height: 18px; background: #63b3ed; border-radius: 2px; }
+    .summary-text { font-size: 15px; line-height: 1.9; color: #a0aec0; margin-bottom: 20px; }
+    .summary-text strong { color: #e2e8f0; }
+    .concepts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0 32px; }
+    .concept-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 22px 18px; transition: all 0.25s; }
+    .concept-card:hover { background: rgba(99, 179, 237, 0.05); border-color: rgba(99, 179, 237, 0.15); transform: translateY(-2px); }
+    .concept-card h4 { font-size: 15px; color: #e2e8f0; margin-bottom: 8px; }
+    .concept-card p { font-size: 13px; color: #718096; line-height: 1.7; }
+    .concept-card .icon { font-size: 24px; margin-bottom: 10px; }
+    .highlight-box { background: rgba(99, 179, 237, 0.06); border: 1px solid rgba(99, 179, 237, 0.15); border-radius: 12px; padding: 24px; margin: 28px 0; }
+    .highlight-box .label { font-size: 11px; letter-spacing: 2px; color: #63b3ed; text-transform: uppercase; margin-bottom: 10px; }
+    .highlight-box p { font-size: 15px; line-height: 1.8; color: #cbd5e0; }
+    .highlight-box p + p { margin-top: 12px; }
+    .quote-block { border-left: 3px solid rgba(99, 179, 237, 0.3); padding: 16px 20px; margin: 24px 0; background: rgba(255,255,255,0.02); border-radius: 0 8px 8px 0; }
+    .quote-block p { font-size: 14px; line-height: 1.8; color: #a0aec0; font-style: italic; }
+    .quote-block .source { font-size: 12px; color: #718096; margin-top: 8px; font-style: normal; }
+    .formula { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 20px 24px; margin: 20px 0; font-family: "SF Mono", Monaco, Consolas, monospace; font-size: 14px; color: #90cdf4; text-align: center; line-height: 1.8; }
+
+    .timeline { margin: 28px 0; padding-left: 24px; border-left: 2px solid rgba(99, 179, 237, 0.15); }
+    .timeline-item { position: relative; padding: 0 0 28px 24px; }
+    .timeline-item:last-child { padding-bottom: 0; }
+    .timeline-item::before { content: ''; position: absolute; left: -29px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: #63b3ed; border: 2px solid #0a0a0f; }
+    .timeline-item .year { font-size: 12px; color: #63b3ed; font-family: monospace; margin-bottom: 4px; }
+    .timeline-item h4 { font-size: 14px; color: #e2e8f0; margin-bottom: 4px; }
+    .timeline-item p { font-size: 13px; color: #718096; line-height: 1.7; }
+
+    .question-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 22px 24px; margin-bottom: 14px; transition: all 0.25s; }
+    .question-card:hover { background: rgba(99, 179, 237, 0.04); border-color: rgba(99, 179, 237, 0.12); }
+    .question-card h4 { font-size: 16px; color: #e2e8f0; margin-bottom: 8px; }
+    .question-card p { font-size: 13px; color: #718096; line-height: 1.7; }
+    .question-card .q-tag { font-size: 11px; padding: 3px 10px; background: rgba(236, 201, 75, 0.12); border: 1px solid rgba(236, 201, 75, 0.25); border-radius: 12px; color: #ecc94b; margin-bottom: 10px; display: inline-block; }
+
+    .criticism-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 22px 20px; margin-bottom: 14px; }
+    .criticism-card h4 { font-size: 15px; color: #e2e8f0; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+    .criticism-card p { font-size: 13px; color: #718096; line-height: 1.7; }
+    .criticism-card .response { font-size: 13px; color: #a0aec0; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.04); line-height: 1.7; }
+    .criticism-card .response strong { color: #63b3ed; }
+
+    .pillar-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; }
+    .pillar-card { background: linear-gradient(135deg, rgba(99, 179, 237, 0.06), rgba(159, 122, 234, 0.04)); border: 1px solid rgba(99, 179, 237, 0.12); border-radius: 12px; padding: 24px 20px; text-align: center; transition: all 0.25s; }
+    .pillar-card:hover { border-color: rgba(99, 179, 237, 0.25); transform: translateY(-2px); }
+    .pillar-card .p-icon { font-size: 32px; margin-bottom: 10px; }
+    .pillar-card h4 { font-size: 15px; color: #e2e8f0; margin-bottom: 8px; }
+    .pillar-card p { font-size: 12px; color: #718096; line-height: 1.6; }
+
+    .cmp-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 13px; }
+    .cmp-table th { text-align: left; padding: 10px 14px; background: rgba(99, 179, 237, 0.08); color: #63b3ed; font-weight: 600; font-size: 12px; border-bottom: 1px solid rgba(99, 179, 237, 0.15); }
+    .cmp-table td { padding: 10px 14px; color: #a0aec0; border-bottom: 1px solid rgba(255,255,255,0.04); line-height: 1.6; }
+    .cmp-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .finale-box { background: linear-gradient(135deg, rgba(99, 179, 237, 0.08), rgba(159, 122, 234, 0.06)); border: 1px solid rgba(99, 179, 237, 0.2); border-radius: 16px; padding: 32px; margin: 32px 0; text-align: center; }
+    .finale-box .f-label { font-size: 11px; letter-spacing: 3px; color: #63b3ed; text-transform: uppercase; margin-bottom: 16px; }
+    .finale-box p { font-size: 16px; line-height: 1.8; color: #e2e8f0; }
+    .finale-box .author { font-size: 13px; color: #718096; margin-top: 12px; }
+
+    .discussion-placeholder { padding: 32px; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.08); border-radius: 12px; text-align: center; font-size: 14px; color: #4a5568; }
+    .footer-nav { display: flex; justify-content: space-between; margin-top: 48px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.06); }
+    .footer-nav a { color: #63b3ed; text-decoration: none; font-size: 14px; transition: color 0.2s; }
+    .footer-nav a:hover { color: #90cdf4; }
+    .prev-chapter::before { content: '\2190\00a0'; }
+
+    @media (max-width: 640px) {
+      .concepts { grid-template-columns: 1fr; }
+      .pillar-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Navigation -->
+    <nav class="nav">
+      <a href="index.html">&larr; 返回目录</a>
+      <div class="chapter-nav">
+        <a href="ch12-网络的度量与模型.html">上一章</a>
+      </div>
+    </nav>
+
+    <!-- Chapter Header -->
+    <header class="chapter-header">
+      <div class="chapter-label">第五部分 &middot; 尾声</div>
+      <h1 class="chapter-title">复杂性科学的前景与未来</h1>
+      <p class="chapter-subtitle">The Past and Future of the Sciences of Complexity — 回望来路，展望未竟之旅</p>
+    </header>
+
+    <div class="divider"></div>
+
+    <!-- Core Summary -->
+    <section>
+      <h2 class="section-title">本章核心</h2>
+      <p class="summary-text">
+        这是全书的终章。在带领读者走过混沌、信息、计算、进化和网络的旅程之后，米歇尔在这里停下来，回头审视这片她深爱的知识疆域：<strong>复杂性科学究竟是什么？它做到了什么？它还缺什么？它将走向何方？</strong>
+      </p>
+      <p class="summary-text">
+        米歇尔的回答坦诚得令人敬佩。她不讳言复杂性科学至今缺乏统一的定义和理论框架，但她同样坚信，<strong>这个领域的核心直觉是正确的</strong>——自然界和人类社会中确实存在跨越学科边界的共同模式，理解这些模式需要一种全新的科学思维方式。
+      </p>
+
+      <div class="highlight-box">
+        <div class="label">关键洞察</div>
+        <p>米歇尔刻意使用复数形式——<strong>"复杂性的诸科学"</strong>（the sciences of complexity）而非"复杂性科学"。这不是笔误，而是一个谨慎的判断：这个领域尚未凝聚成一门统一的科学，它更像是一族共享某些理念和方法的研究传统。统一之日也许会来——但也许永远不会来，而这未必是坏事。</p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Historical Roots -->
+    <section>
+      <h2 class="section-title">前世：复杂性思维的根源</h2>
+      <p class="summary-text">
+        复杂性科学并非凭空出世。它的思想根脉可以追溯到 20 世纪中叶几场野心勃勃的跨学科运动。
+      </p>
+
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="year">1940s-50s</div>
+          <h4>控制论 (Cybernetics)</h4>
+          <p><strong>诺伯特·维纳</strong>提出"控制论"——研究动物和机器中的通信与控制。这是第一次有人正式提出，不同领域（工程、生物、神经科学）的反馈机制可以用统一的数学语言描述。控制论孕育了许多后来的核心概念：反馈回路、自组织、信息处理。然而控制论最终衰落了，原因之一是野心太大而工具太少。</p>
+        </div>
+        <div class="timeline-item">
+          <div class="year">1950s-60s</div>
+          <h4>一般系统论 (General Systems Theory)</h4>
+          <p><strong>路德维希·冯·贝塔朗菲</strong>试图建立一个研究"系统"的通用科学——无论这个系统是细胞、社会还是生态系统。系统论强调整体大于部分之和，强调关系而非成分。但它也因为过于抽象而受到批评——"一切都是系统"等于什么都没说。</p>
+        </div>
+        <div class="timeline-item">
+          <div class="year">1960s-70s</div>
+          <h4>混沌理论与非线性动力学</h4>
+          <p>洛伦兹、约克、费根鲍姆等人揭示了确定性系统中的不可预测性。混沌理论是复杂性科学最坚实的数学支柱之一——它证明了"简单规则产生复杂行为"不是哲学口号，而是可以严格证明的数学事实。</p>
+        </div>
+        <div class="timeline-item">
+          <div class="year">1984</div>
+          <h4>圣塔菲研究所 (SFI) 成立</h4>
+          <p>物理学家默里·盖尔曼、菲利普·安德森等人创建了圣塔菲研究所，专门研究"复杂适应系统"。SFI 成为复杂性科学的大本营，它的核心理念是：<strong>打破学科壁垒，让物理学家、生物学家、经济学家、计算机科学家坐在一起</strong>，看看他们研究的系统是否共享某些深层模式。</p>
+        </div>
+        <div class="timeline-item">
+          <div class="year">1990s-今</div>
+          <h4>复杂性科学的成熟</h4>
+          <p>网络科学、遗传算法、元胞自动机、基于智能体的建模（ABM）、计算社会科学……复杂性思维渗透到了越来越多的学科。但统一理论仍然遥远。</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- What Complexity Science Has Achieved -->
+    <section>
+      <h2 class="section-title">成就：复杂性科学做对了什么</h2>
+      <p class="summary-text">
+        尽管尚未形成统一理论，复杂性科学已经深刻改变了我们看待世界的方式。米歇尔总结了几项不可否认的成就。
+      </p>
+
+      <div class="pillar-grid">
+        <div class="pillar-card">
+          <div class="p-icon">&#128300;</div>
+          <h4>新的观察方式</h4>
+          <p>教会我们关注<strong>关系</strong>而非孤立的个体，关注<strong>涌现</strong>而非还原，关注<strong>动态过程</strong>而非静态快照。</p>
+        </div>
+        <div class="pillar-card">
+          <div class="p-icon">&#128187;</div>
+          <h4>计算作为透镜</h4>
+          <p>用计算模拟取代纯数学推导，使我们能研究无法解析求解的系统。基于智能体的建模成为社会科学的新显微镜。</p>
+        </div>
+        <div class="pillar-card">
+          <div class="p-icon">&#128279;</div>
+          <h4>跨学科桥梁</h4>
+          <p>网络科学、幂律、自组织临界性等概念被物理学家、生物学家、社会学家、经济学家共同使用——前所未有的知识融合。</p>
+        </div>
+        <div class="pillar-card">
+          <div class="p-icon">&#128161;</div>
+          <h4>反直觉的洞察</h4>
+          <p>简单规则产生复杂行为、去中心化系统能完成复杂计算、弱联系比强联系更有传播力——这些洞察改变了工程、管理和政策思维。</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Criticisms -->
+    <section>
+      <h2 class="section-title">批评：复杂性科学的软肋</h2>
+      <p class="summary-text">
+        米歇尔对批评者的声音保持开放。复杂性科学面对的质疑不是无中生有——有些击中了要害。
+      </p>
+
+      <div class="criticism-card">
+        <h4>批评一：核心概念定义模糊</h4>
+        <p>"复杂性"本身就没有一个公认的定义。"涌现"、"自组织"、"混沌边缘"——这些词在不同作者笔下含义各异。一个连核心术语都无法精确定义的领域，如何称得上是"科学"？</p>
+        <div class="response"><strong>米歇尔的回应：</strong>这个批评是公正的。但年轻学科的概念模糊并不罕见——"基因"在分子生物学早期也没有精确定义。关键是这些概念是否指向真实的现象，答案是肯定的。</div>
+      </div>
+
+      <div class="criticism-card">
+        <h4>批评二：类比不是解释</h4>
+        <p>说"蚁群像大脑""经济像生态系统""互联网像生物体"很有启发性，但类比终究不是因果解释。如果两个系统只是表面相似而深层机制不同，那么"跨学科统一"就只是修辞技巧。</p>
+        <div class="response"><strong>米歇尔的回应：</strong>好的类比不只是修辞——它们可以成为理论发展的跳板。网络科学已经证明，不同领域的网络确实共享相同的数学结构，而非仅仅"看起来像"。</div>
+      </div>
+
+      <div class="criticism-card">
+        <h4>批评三：预测能力不足</h4>
+        <p>物理学能预测行星轨道精确到秒，复杂性科学能预测什么？如果不能做出可证伪的定量预测，它的科学地位就值得怀疑。</p>
+        <div class="response"><strong>米歇尔的回应：</strong>复杂系统的本质是不可精确预测的——这不是方法论的失败，而是研究对象的内禀属性。但复杂性科学可以做<strong>统计性</strong>预测（如幂律尾部的概率）和<strong>结构性</strong>预测（如网络的鲁棒性条件）。</div>
+      </div>
+
+      <div class="criticism-card">
+        <h4>批评四：过度热情与炒作</h4>
+        <p>一些复杂性科学的倡导者声称它将成为"21世纪的科学"，取代还原论成为新的范式。这种炒作损害了学科的信誉。</p>
+        <div class="response"><strong>米歇尔的回应：</strong>夸大其词确实存在，但不应因此否定整个领域。好的科学和坏的宣传可以共存。关键是看具体的研究成果，而非媒体标题。</div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Open Questions -->
+    <section>
+      <h2 class="section-title">未竟之问：等待一位"卡诺"</h2>
+      <p class="summary-text">
+        米歇尔用一个生动的类比总结了复杂性科学的现状：这个领域正在<strong>等待自己的"卡诺"</strong>。1824 年，萨迪·卡诺发表了关于热机效率的论文，奠定了热力学的理论基础——在那之前，人们已经使用蒸汽机几十年了，但缺乏统一的理论框架来理解它们为什么工作。
+      </p>
+      <p class="summary-text">
+        复杂性科学如今的处境类似：我们已经积累了大量的观察、模型和计算实验，但缺乏一个把它们统一在一起的理论框架。米歇尔列出了几个她认为最关键的未解问题：
+      </p>
+
+      <div class="question-card">
+        <span class="q-tag">定义问题</span>
+        <h4>如何精确定义"复杂性"？</h4>
+        <p>本书第一章就提到了几十种复杂性的度量——从科尔莫戈罗夫复杂性到逻辑深度，从有效复杂性到统计复杂性。至今没有一种度量能让所有人满意。我们需要一个既能区分"复杂"与"简单"，又能区分"复杂"与"随机"的精确定义。</p>
+      </div>
+
+      <div class="question-card">
+        <span class="q-tag">理论框架</span>
+        <h4>涌现和自组织能否形式化？</h4>
+        <p>"整体大于部分之和"听起来深刻，但它的数学含义是什么？在什么条件下，宏观层面的规律无法从微观层面"推导"出来？我们需要让"涌现"从哲学口号变成精确的数学概念。</p>
+      </div>
+
+      <div class="question-card">
+        <span class="q-tag">核心联系</span>
+        <h4>信息、计算、动力学、进化——它们的深层联系是什么？</h4>
+        <p>本书贯穿的四条线索——信息论、计算理论、动力系统、进化论——在复杂系统中反复交织。但我们尚未找到一个统一的理论框架来说明它们之间的精确关系。这也许是通向"复杂性的统一理论"的关键。</p>
+      </div>
+
+      <div class="question-card">
+        <span class="q-tag">终极之问</span>
+        <h4>生命和智能的本质是什么？</h4>
+        <p>生命是一种特殊的复杂性，智能是另一种。我们能否用复杂性科学的语言精确定义什么是"活的"、什么是"有意识的"？这也许是复杂性科学的终极问题——也是整个科学的终极问题之一。</p>
+      </div>
+
+      <div class="quote-block">
+        <p>"复杂性科学正在等待它的萨迪·卡诺——一位能将分散的洞察凝聚成统一理论框架的人。也许这个框架将以信息和计算为核心概念，也许它会以我们尚未想到的方式到来。"</p>
+        <div class="source">—— 梅拉妮·米歇尔 对本书的概括</div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Four Pillars Revisited -->
+    <section>
+      <h2 class="section-title">全书回顾：四条主线的交织</h2>
+      <p class="summary-text">
+        回望全书，米歇尔编织了四条贯穿始终的思想主线。它们在不同章节中反复出现、交叉、共鸣——而它们的交汇之处，正是复杂性科学的核心地带。
+      </p>
+
+      <table class="cmp-table">
+        <tr>
+          <th>主线</th>
+          <th>关键章节</th>
+          <th>核心问题</th>
+        </tr>
+        <tr>
+          <td><strong>动力学与混沌</strong></td>
+          <td>ch02 混沌, ch07 元胞自动机, ch12 标度律</td>
+          <td>确定性系统如何产生不可预测的行为？秩序与混沌的边界在哪里？</td>
+        </tr>
+        <tr>
+          <td><strong>信息与计算</strong></td>
+          <td>ch03 信息, ch04 计算, ch08 粒子计算, ch09 生命系统</td>
+          <td>自然界在"计算"吗？信息如何在没有中央控制的情况下被处理？</td>
+        </tr>
+        <tr>
+          <td><strong>进化与适应</strong></td>
+          <td>ch05 进化, ch06 遗传算法, ch11 布尔网络</td>
+          <td>进化不只是达尔文的自然选择——网络结构、自组织和中性漂移同样塑造了生命的面貌。</td>
+        </tr>
+        <tr>
+          <td><strong>网络与标度</strong></td>
+          <td>ch10 网络科学, ch11 真实网络, ch12 度量与模型</td>
+          <td>关系的拓扑结构如何决定系统的行为？为什么幂律无处不在？</td>
+        </tr>
+      </table>
+
+      <div class="highlight-box">
+        <div class="label">四线交汇</div>
+        <p>在最深的层面上，这四条主线指向同一个问题：<strong>简单的局部规则如何产生复杂的全局行为？</strong>混沌说：通过非线性放大。信息论说：通过信号的传递与整合。进化论说：通过变异与选择的迭代。网络科学说：通过拓扑结构的涌现。复杂性科学的终极抱负，是将这四个"通过"统一成一个"因为"。</p>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Mitchell's Personal Reflection -->
+    <section>
+      <h2 class="section-title">米歇尔的个人立场</h2>
+      <p class="summary-text">
+        在全书的最后，米歇尔脱下了科普作者的外衣，以一个深耕此领域数十年的研究者的身份表达了自己的信念。
+      </p>
+      <p class="summary-text">
+        她承认复杂性科学尚未成为像物理学那样的统一理论体系——也许永远不会。但她认为这<strong>不是失败</strong>。复杂性思维的价值不在于它能否产生一组漂亮的方程式，而在于它提供了一种<strong>看待世界的新方式</strong>：
+      </p>
+
+      <div class="concepts">
+        <div class="concept-card">
+          <div class="icon">&#128065;</div>
+          <h4>从还原到整体</h4>
+          <p>不再试图通过分解一切来理解一切。有些性质只存在于系统的整体层面——拆开就消失了。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">&#128260;</div>
+          <h4>从静态到动态</h4>
+          <p>关注过程而非状态，关注"成为"（becoming）而非"存在"（being）。复杂系统的本质在于它的动态演化。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">&#127760;</div>
+          <h4>从线性到非线性</h4>
+          <p>接受"小因可以有大果"、"预测有本质的局限"——这不是认知的失败，而是对现实复杂性的诚实承认。</p>
+        </div>
+        <div class="concept-card">
+          <div class="icon">&#129309;</div>
+          <h4>从学科到跨学科</h4>
+          <p>最深刻的理解往往出现在学科交叉的地方。蚁群行为启发了路由算法，遗传算法来自生物学，网络科学融合了物理学和社会学。</p>
+        </div>
+      </div>
+
+      <div class="finale-box">
+        <div class="f-label">全书终语</div>
+        <p>复杂性科学是一段未完成的旅程。它没有终点站——也许永远不会有。但这条路上的每一步都在拓宽我们的视野，教会我们用新的眼光看待这个由简单规则编织出的、惊人复杂的世界。</p>
+        <div class="author">—— 梅拉妮·米歇尔《复杂：一部引导之旅》</div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section>
+      <h2 class="section-title">读书讨论</h2>
+      <div class="discussion-placeholder">
+        全书阅读完毕 &middot; 来聊聊你对"复杂性科学"的总体感受？
+      </div>
+    </section>
+
+    <div class="footer-nav">
+      <a class="prev-chapter" href="ch12-网络的度量与模型.html">第十二章：网络的度量与模型</a>
+      <a href="index.html" style="color: #63b3ed; text-decoration: none; font-size: 14px;">返回目录 &rarr;</a>
+    </div>
+
+  </div>
+</body>
+</html>
