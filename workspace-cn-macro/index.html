@@ -453,6 +453,50 @@
     .blockages { grid-template-columns: 1fr; }
   }
 
+  /* Causal map */
+  .causal {
+    padding: 48px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .causal h2 {
+    text-align: center; font-size: 1.3em; font-weight: 600;
+    margin-bottom: 8px; color: var(--text2); letter-spacing: 0.08em;
+  }
+  .causal .sub {
+    text-align: center; color: var(--text2); font-size: 0.88em; margin-bottom: 28px;
+  }
+  .causal-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 28px; max-width: 780px; margin: 0 auto;
+    font-family: "SF Mono", "Fira Code", monospace; font-size: 0.82em;
+    line-height: 1.9; color: var(--text2); white-space: pre; overflow-x: auto;
+  }
+  .causal-box .hl { color: var(--accent); font-weight: 600; }
+  .causal-box .r { color: var(--red); font-weight: 600; }
+  .causal-box .g { color: var(--green); }
+  .causal-box .b { color: var(--blue); }
+  .causal-box .o { color: var(--orange); }
+  .chain-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 14px; margin-top: 24px;
+  }
+  .chain-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 20px;
+  }
+  .chain-card h4 {
+    font-size: 0.88em; font-weight: 600; color: var(--accent); margin-bottom: 8px;
+  }
+  .chain-card .chain-path {
+    font-size: 0.8em; color: var(--text2); line-height: 1.6;
+    font-family: "SF Mono", "Fira Code", monospace;
+  }
+  .chain-card .chain-path .dim-ref {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 4px; padding: 1px 6px; font-size: 0.9em; color: var(--accent);
+    white-space: nowrap;
+  }
+
   /* Footer */
   .footer {
     padding: 40px 0;
@@ -470,6 +514,8 @@
     .dim-grid { grid-template-columns: 1fr; }
     .dash-grid { grid-template-columns: repeat(2, 1fr); }
     .cycle-box { font-size: 0.75em; padding: 16px; }
+    .causal-box { font-size: 0.7em; padding: 16px; }
+    .chain-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -537,6 +583,69 @@
       <div class="judgment-item">
         <div class="judgment-num">5</div>
         <div class="judgment-text"><strong>外部环境已根本改变</strong> &mdash; 全球化红利期结束，中美博弈是长期结构性趋势。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cross-dimensional causal map -->
+  <section class="causal">
+    <h2>跨 维 度 因 果 关 联</h2>
+    <p class="sub">12 个维度不是独立并列的——它们构成三条因果主链和一个制度底座</p>
+    <div class="causal-box"><span class="hl">  ┌─────────────── 因果主链 A：增长放缓链 ───────────────┐</span>
+
+  <span class="b">⑤人口负增长</span> → 劳动力↓ → <span class="b">②TFP放缓</span> → 潜在增长率↓
+       │                              │
+       ↓                              ↓
+  <span class="b">⑧区域分化</span>加剧          <span class="b">⑦科技卡脖子</span> → 创新受阻
+                                      │
+                                      ↓
+                            <span class="b">⑥出口结构</span>承压 ← 中美博弈(<span class="b">⑩</span>)
+
+<span class="hl">  ┌─────────────── 因果主链 B：需求塌陷链 ───────────────┐</span>
+
+  <span class="o">④房地产崩塌</span> → 财富缩水 → <span class="o">⑪消费不足</span> → 通缩压力
+       │                              │
+       ↓                              ↓
+  <span class="o">③土地财政崩塌</span> → 地方债危机    <span class="o">⑫供需互锁</span>（六大错配）
+       │                              │
+       ↓                              ↓
+  财政空间收窄 → 社保缺口扩大 → 预防性储蓄↑ → 消费更弱
+
+<span class="hl">  ┌─────────────── 因果主链 C：信心崩塌链 ───────────────┐</span>
+
+  <span class="r">⑨制度不确定</span> → 民企信心↓ → 民间投资转负
+       │              │              │
+       ↓              ↓              ↓
+  外资撤退        "国进民退"     就业压力↑
+  (FDI -30%)      感受加强       (青年失业15-17%)
+       │                              │
+       └──────→ 预期恶化 ←────────────┘
+                   │
+                   ↓
+              <span class="r">合成谬误：每方"理性"行为 → 集体"非理性"结果</span>
+
+<span class="hl">  ┌─────────────── 制度底座 ─────────────────────────────┐</span>
+
+  <span class="hl">①总量与结构</span> ← 所有矛盾的起点
+  消费38%/投资42%的失衡 → 贯穿 A·B·C 三条链
+  <span class="g">修复条件：分配改革 + 制度改革 + 市场化 = 疏通传导管道</span></div>
+
+    <div class="chain-grid">
+      <div class="chain-card">
+        <h4>链A：增长放缓</h4>
+        <div class="chain-path"><span class="dim-ref">⑤人口</span> &rarr; <span class="dim-ref">②TFP</span> &rarr; <span class="dim-ref">⑦科技</span> &rarr; <span class="dim-ref">⑥贸易</span><br>人口红利消失 → 全要素生产率下降 → 科技卡脖子加剧 → 出口竞争力长期受制于创新能力</div>
+      </div>
+      <div class="chain-card">
+        <h4>链B：需求塌陷</h4>
+        <div class="chain-path"><span class="dim-ref">④房地产</span> &rarr; <span class="dim-ref">③财政</span> &rarr; <span class="dim-ref">⑪消费</span> &rarr; <span class="dim-ref">⑫互锁</span><br>房价下跌蒸发居民财富 → 土地财政崩塌 → 社保缺口扩大 → 消费不足与供给过剩互锁</div>
+      </div>
+      <div class="chain-card">
+        <h4>链C：信心崩塌</h4>
+        <div class="chain-path"><span class="dim-ref">⑨制度</span> &rarr; 民企信心 &rarr; 投资/就业 &rarr; <span class="dim-ref">⑩风险</span><br>产权保护不足 → 民企和外资撤退 → 就业压力 → 预期恶化形成负反馈循环</div>
+      </div>
+      <div class="chain-card">
+        <h4>底座：结构失衡</h4>
+        <div class="chain-path"><span class="dim-ref">①总量结构</span> &rarr; <span class="dim-ref">⑧区域</span> &rarr; 所有维度<br>消费/投资失衡是总根源，区域分化是空间表达。三条链共同指向：不改分配和制度，刺激政策只是止痛药。</div>
       </div>
     </div>
   </section>
