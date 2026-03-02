@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>分散化效应与收益收敛 — 美股均值回归研究</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root{--bg:#0a0e1a;--card:#141829;--border:#1e2540;--text:#e2e8f0;--muted:#94a3b8;--blue:#60a5fa;--purple:#a78bfa;--pink:#f472b6;--gold:#fbbf24;--red:#f87171;--green:#34d399;--orange:#f97316;--slate:#4a5568}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.7;display:flex;min-height:100vh}
+  aside{width:220px;position:fixed;top:0;left:0;height:100vh;background:var(--card);border-right:1px solid var(--border);padding:1.5rem 1rem;overflow-y:auto;z-index:10}
+  aside h2{font-size:.85rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:1rem}
+  aside a{display:block;padding:.45rem .7rem;margin-bottom:.2rem;color:var(--muted);text-decoration:none;border-radius:6px;font-size:.85rem;transition:all .2s}
+  aside a:hover{color:var(--text);background:rgba(96,165,250,.08)}
+  aside a.active{color:var(--blue);background:rgba(96,165,250,.12);font-weight:600}
+  aside .back{margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border)}
+  main{margin-left:220px;max-width:960px;padding:3rem 2.5rem}
+  h1{font-size:2rem;font-weight:700;margin-bottom:.5rem;background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .subtitle{color:var(--muted);font-size:.95rem;margin-bottom:2.5rem}
+  section{margin-bottom:3.5rem}
+  h2{font-size:1.35rem;font-weight:600;margin-bottom:.8rem;color:var(--text);padding-bottom:.4rem;border-bottom:1px solid var(--border)}
+  p{color:var(--muted);margin-bottom:1rem;font-size:.92rem}
+  .chart-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin:1.5rem 0}
+  canvas{max-height:420px}
+  .stat-row{display:flex;gap:1rem;flex-wrap:wrap;margin:1.2rem 0}
+  .stat{flex:1;min-width:140px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center}
+  .stat .num{font-size:1.6rem;font-weight:700;color:var(--blue)}
+  .stat .lbl{font-size:.78rem;color:var(--muted);margin-top:.3rem}
+  .insight{background:rgba(96,165,250,.06);border-left:3px solid var(--blue);padding:1rem 1.2rem;border-radius:0 8px 8px 0;margin:1.2rem 0;font-size:.88rem;color:var(--text)}
+  footer{margin-top:4rem;padding-top:1.5rem;border-top:1px solid var(--border);color:var(--muted);font-size:.8rem;text-align:center}
+  @media(max-width:800px){aside{display:none}main{margin-left:0;padding:1.5rem 1rem}}
+</style>
+</head>
+<body>
+
+<aside>
+  <h2>分散化效应</h2>
+  <a href="#fan">收益分布收敛</a>
+  <a href="#risk">风险指标递减</a>
+  <a href="#dispersion">离散度坍塌</a>
+  <a href="#reversion">均值回归强度</a>
+  <a href="#bessembinder">财富集中效应</a>
+  <a href="#implications">投资启示</a>
+  <div class="back">
+    <a href="index.html">← 主报告</a>
+    <a href="模拟/index.html">蒙特卡洛模拟</a>
+    <a href="../index.html">研究门户</a>
+  </div>
+</aside>
+
+<main>
+<h1>分散化效应与收益收敛</h1>
+<p class="subtitle">基于 1000 次蒙特卡洛模拟（1957–2024）· 组合规模 1–500 只 · CRSP/Compustat 全样本</p>
+
+<div class="stat-row">
+  <div class="stat"><div class="num">1,000</div><div class="lbl">模拟次数</div></div>
+  <div class="stat"><div class="num">10</div><div class="lbl">组合规模梯度</div></div>
+  <div class="stat"><div class="num">67 年</div><div class="lbl">样本区间</div></div>
+  <div class="stat"><div class="num">12.25%</div><div class="lbl">等权基准 CAGR</div></div>
+</div>
+
+<!-- Section 1: CAGR Distribution Fan -->
+<section id="fan">
+<h2>收益分布收敛：从混沌到确定</h2>
+<p>随着组合持股数量增加，年化收益率的分布急剧收窄。单只股票的 CAGR 跨度超过 12 个百分点（p5→p95），而 500 只股票的组合几乎完全收敛到等权基准。</p>
+<div class="chart-box"><canvas id="chartFan"></canvas></div>
+<div class="insight">核心发现：N=1 时 p5 仅 1.5%、p95 达 13.9%（跨度 12.4pp）；N=50 时跨度缩至 1.7pp；N=500 时仅 0.03pp — 分散化将"赌博"转化为可预期的长期回报。</div>
+</section>
+
+<!-- Section 2: Risk Metrics -->
+<section id="risk">
+<h2>风险指标随分散化递减</h2>
+<p>单只股票年化波动率高达 33%，最大回撤均值 84%。随着组合扩大，两项风险指标显著下降，但在 N≈50 后边际效益递减。</p>
+<div class="chart-box"><canvas id="chartRisk"></canvas></div>
+</section>
+
+<!-- Section 3: CAGR Dispersion -->
+<section id="dispersion">
+<h2>离散度坍塌：大数定律的力量</h2>
+<p>CAGR 标准差从 N=1 的 7.75% 指数级下降到 N=500 的 0.01%，降幅超过 750 倍。这是大数定律在股票市场的直接体现。</p>
+<div class="chart-box"><canvas id="chartDisp"></canvas></div>
+<div class="insight">N=20 时标准差已降至 0.83%，意味着 1000 次模拟的 95% 结果落在 ±1.66pp 区间内。对长期投资者而言，20 只股票即可获得大部分分散化收益。</div>
+</section>
+
+<!-- Section 4: Mean Reversion Strength -->
+<section id="reversion">
+<h2>均值回归强度随组合规模递增</h2>
+<p>均值回归的回归斜率（前 10 年 CAGR → 后 10 年 CAGR 变化）随组合规模单调递增。更大的组合更可靠地展现均值回归，因为个股噪声被平滑。</p>
+<div class="chart-box"><canvas id="chartMR"></canvas></div>
+<div class="insight">N=1 时回归斜率仅 −0.08（R²=0.7%），几乎无法预测；N=500 时斜率达 −0.30（R²=10.4%），均值回归作为统计规律明确浮现。个股层面的随机性在市场层面转化为可识别的趋势。</div>
+</section>
+
+<!-- Section 5: Bessembinder Wealth Concentration -->
+<section id="bessembinder">
+<h2>Bessembinder 效应：个股的极端不对称</h2>
+<p>在 10 只股票的随机组合中，财富创造高度集中于少数赢家。Top 1 股票平均贡献全部终端财富的 68%，Top 3 贡献 154%（超过 100% 意味着其他股票净亏损）。</p>
+<div class="chart-box"><canvas id="chartBess"></canvas></div>
+<div class="stat-row">
+  <div class="stat"><div class="num" style="color:var(--red)">18.3%</div><div class="lbl">个股跑输无风险利率</div></div>
+  <div class="stat"><div class="num" style="color:var(--red)">2.3%</div><div class="lbl">个股 CAGR 为负</div></div>
+  <div class="stat"><div class="num" style="color:var(--gold)">8.0%</div><div class="lbl">个股中位 CAGR</div></div>
+  <div class="stat"><div class="num" style="color:var(--green)">12.25%</div><div class="lbl">等权组合 CAGR</div></div>
+</div>
+<div class="insight">个股中位 CAGR（8.0%）远低于等权组合 CAGR（12.25%），差距 4.25pp 完全由右偏分布中少数超级赢家拉动。这解释了为什么"选股"如此困难 — 多数股票跑输市场，而收益集中在少数你很可能错过的股票。</div>
+</section>
+
+<!-- Implications -->
+<section id="implications">
+<h2>投资启示</h2>
+<p>1000 次蒙特卡洛模拟揭示了一个简洁的量化逻辑链：</p>
+<p><strong>右偏分布 → 个股选择高风险 → 分散化消除噪声 → 均值回归可预测 → 股权溢价可靠</strong></p>
+<p>分散化不仅降低风险，更是从"不可预测的个股博弈"到"可预期的股权溢价"的关键桥梁。N≈20–50 的组合已能捕获绝大部分效益，而全市场等权组合（N=500）则将 CAGR 离散度压缩到近乎零。</p>
+</section>
+
+<footer>
+  分散化效应与收益收敛 · 基于 CRSP/Compustat 1957–2024 · 1000 次蒙特卡洛模拟 · 2026 年 3 月
+</footer>
+</main>
+
+<script>
+// ===== DATA =====
+const SIZES = [1, 5, 10, 20, 30, 50, 100, 200, 300, 500];
+const LABELS = ['1', '5', '10', '20', '30', '50', '100', '200', '300', '500'];
+const MEAN_CAGR = [0.074745, 0.113577, 0.118754, 0.120428, 0.121329, 0.121864, 0.122166, 0.122388, 0.122374, 0.122469];
+const MEDIAN_CAGR = [0.080247, 0.114047, 0.118151, 0.120861, 0.121245, 0.121792, 0.122115, 0.122382, 0.122423, 0.122470];
+const P5  = [0.015227, 0.086642, 0.098776, 0.106376, 0.110296, 0.113233, 0.116540, 0.119012, 0.119872, 0.122295];
+const P25 = [0.053399, 0.101612, 0.111040, 0.114905, 0.116682, 0.118490, 0.120023, 0.120895, 0.121455, 0.122397];
+const P75 = [0.104880, 0.124603, 0.127568, 0.126126, 0.125812, 0.125336, 0.124408, 0.123808, 0.123377, 0.122539];
+const P95 = [0.139346, 0.142080, 0.138395, 0.133444, 0.132739, 0.129988, 0.127662, 0.125884, 0.124648, 0.122633];
+const STD_CAGR = [0.077498, 0.016999, 0.012113, 0.008324, 0.006704, 0.005063, 0.003332, 0.002075, 0.001409, 0.000102];
+const AVG_VOL = [0.330536, 0.210926, 0.190767, 0.180036, 0.176262, 0.173175, 0.170969, 0.169746, 0.169313, 0.169015];
+const AVG_MAXDD = [0.835077, 0.612702, 0.576593, 0.559868, 0.557305, 0.553517, 0.554580, 0.554219, 0.554674, 0.554754];
+
+const MR_SLOPE = [-0.084151, -0.161262, -0.207078, -0.250867, -0.260167, -0.276069, -0.286908, -0.295417, -0.296530, -0.297994];
+const MR_R2 = [0.007059, 0.027621, 0.047080, 0.071008, 0.077412, 0.088238, 0.096196, 0.102288, 0.103152, 0.104257];
+
+const VW_CAGR = 0.107387;
+const EW_CAGR = 0.12247;
+
+const MICRO = [
+  {id:1, cagr:0.110229, vol:0.191544, skew:0.1851, top1:59.39, top3:122.25, delist:26},
+  {id:2, cagr:0.107739, vol:0.190091, skew:0.4622, top1:78.99, top3:156.98, delist:18},
+  {id:3, cagr:0.116432, vol:0.188517, skew:0.4188, top1:73.99, top3:142.82, delist:17},
+  {id:4, cagr:0.123634, vol:0.196092, skew:0.8059, top1:47.65, top3:97.48, delist:21},
+  {id:5, cagr:0.132401, vol:0.191966, skew:0.1937, top1:88.60, top3:188.17, delist:18},
+  {id:6, cagr:0.112543, vol:0.193231, skew:2.6172, top1:94.13, top3:170.80, delist:12},
+  {id:7, cagr:0.120649, vol:0.192029, skew:0.4359, top1:85.87, top3:171.49, delist:21},
+  {id:8, cagr:0.111488, vol:0.198064, skew:0.5298, top1:128.77, top3:240.58, delist:11},
+  {id:9, cagr:0.115599, vol:0.187514, skew:0.5318, top1:59.38, top3:119.63, delist:14},
+  {id:10, cagr:0.103226, vol:0.189712, skew:0.4690, top1:965.12, top3:1425.40, delist:15},
+];
+
+const pct = v => (v * 100).toFixed(2) + '%';
+const gridColor = 'rgba(148,163,184,0.1)';
+const tickColor = '#94a3b8';
+
+// ===== Chart 1: CAGR Distribution Fan =====
+(function() {
+  new Chart(document.getElementById('chartFan'), {
+    type: 'line',
+    data: {
+      labels: LABELS,
+      datasets: [
+        { label: 'p95', data: P95.map(v=>v*100), borderColor: 'rgba(244,114,182,0.6)', backgroundColor: 'transparent', borderWidth: 1.5, pointRadius: 3, order: 1 },
+        { label: 'p75', data: P75.map(v=>v*100), borderColor: 'rgba(167,139,250,0.6)', backgroundColor: 'transparent', borderWidth: 1.5, pointRadius: 3, order: 2 },
+        { label: '中位数', data: MEDIAN_CAGR.map(v=>v*100), borderColor: '#60a5fa', backgroundColor: 'transparent', borderWidth: 2.5, pointRadius: 4, order: 3 },
+        { label: 'p25', data: P25.map(v=>v*100), borderColor: 'rgba(167,139,250,0.6)', backgroundColor: 'transparent', borderWidth: 1.5, pointRadius: 3, order: 4 },
+        { label: 'p5', data: P5.map(v=>v*100), borderColor: 'rgba(244,114,182,0.6)', backgroundColor: 'transparent', borderWidth: 1.5, pointRadius: 3, order: 5 },
+        // fill band p25-p75
+        { label: '25-75%', data: P75.map(v=>v*100), fill: { target: '+1', above: 'rgba(167,139,250,0.15)' }, borderWidth: 0, pointRadius: 0, order: 6 },
+        { label: '_p25f', data: P25.map(v=>v*100), borderWidth: 0, pointRadius: 0, order: 7 },
+        // fill band p5-p95
+        { label: '5-95%', data: P95.map(v=>v*100), fill: { target: '+1', above: 'rgba(244,114,182,0.08)' }, borderWidth: 0, pointRadius: 0, order: 8 },
+        { label: '_p5f', data: P5.map(v=>v*100), borderWidth: 0, pointRadius: 0, order: 9 },
+        // EW benchmark
+        { label: '等权基准', data: Array(10).fill(EW_CAGR*100), borderColor: 'rgba(251,191,36,0.6)', borderDash: [6,4], borderWidth: 1.5, pointRadius: 0, order: 0 },
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: { display: true, text: 'CAGR 分布随组合规模收敛（1000 次模拟）', color: tickColor, font: { size: 14 } },
+        legend: {
+          labels: {
+            color: tickColor,
+            filter: item => !item.text.startsWith('_') && !['25-75%','5-95%'].includes(item.text)
+          }
+        },
+        tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(2) + '%' } }
+      },
+      scales: {
+        x: { title: { display: true, text: '组合持股数 (N)', color: tickColor }, ticks: { color: tickColor }, grid: { color: gridColor } },
+        y: { title: { display: true, text: 'CAGR (%)', color: tickColor }, ticks: { color: tickColor }, grid: { color: gridColor }, min: 0 }
+      }
+    }
+  });
+})();
+
+// ===== Chart 2: Risk Metrics =====
+(function() {
+  new Chart(document.getElementById('chartRisk'), {
+    type: 'bar',
+    data: {
+      labels: LABELS,
+      datasets: [
+        { label: '年化波动率', data: AVG_VOL.map(v=>v*100), backgroundColor: 'rgba(96,165,250,0.7)', borderRadius: 4, yAxisID: 'y' },
+        { label: '平均最大回撤', data: AVG_MAXDD.map(v=>v*100), type: 'line', borderColor: '#f87171', backgroundColor: 'transparent', borderWidth: 2, pointRadius: 4, pointBackgroundColor: '#f87171', yAxisID: 'y2' }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: { display: true, text: '风险指标随组合规模递减', color: tickColor, font: { size: 14 } },
+        legend: { labels: { color: tickColor } },
+        tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(1) + '%' } }
+      },
+      scales: {
+        x: { title: { display: true, text: '组合持股数 (N)', color: tickColor }, ticks: { color: tickColor }, grid: { color: gridColor } },
+        y: { title: { display: true, text: '年化波动率 (%)', color: tickColor }, ticks: { color: tickColor }, grid: { color: gridColor }, position: 'left', min: 10, max: 40 },
+        y2: { title: { display: true, text: '最大回撤 (%)', color: '#f87171' }, ticks: { color: '#f87171' }, grid: { display: false }, position: 'right', min: 50, max: 90 }
+      }
+    }
+  });
+})();
+
+// ===== Chart 3: CAGR Dispersion Collapse =====
+(function() {
+  const colors = STD_CAGR.map(v => {
+    if (v > 0.05) return 'rgba(248,113,113,0.8)';
+    if (v > 0.01) return 'rgba(251,191,36,0.8)';
+    if (v > 0.003) return 'rgba(96,165,250,0.8)';
+    return 'rgba(52,211,153,0.8)';
+  });
+  new Chart(document.getElementById('chartDisp'), {
+    type: 'bar',
+    data: {
+      labels: LABELS,
+      datasets: [{
+        label: 'CAGR 标准差',
+        data: STD_CAGR.map(v=>v*100),
+        backgroundColor: colors,
+        borderRadius: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: { display: true, text: 'CAGR 标准差随组合规模指数级坍塌', color: tickColor, font: { size: 14 } },
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => 'σ(CAGR): ' + ctx.parsed.y.toFixed(3) + '%' } }
+      },
+      scales: {
+        x: { title: { display: true, text: '组合持股数 (N)', color: tickColor }, ticks: { color: tickColor }, grid: { color: gridColor } },
+        y: { title: { display: true, text: 'CAGR 标准差 (%)', color: tickColor }, ticks: { color: tickColor }, grid: { color: gridColor } }
+      }
+    }
+  });
+})();
+
+// ===== Chart 4: Mean Reversion Strength =====
+(function() {
+  new Chart(document.getElementById('chartMR'), {
+    type: 'bar',
+    data: {
+      labels: LABELS,
+      datasets: [
+        { label: '回归斜率 |β|', data: MR_SLOPE.map(v=>Math.abs(v)), backgroundColor: 'rgba(167,139,250,0.7)', borderRadius: 4, yAxisID: 'y' },
+        { label: 'R²', data: MR_R2.map(v=>v*100), type: 'line', borderColor: '#fbbf24', backgroundColor: 'transparent', borderWidth: 2, pointRadius: 4, pointBackgroundColor: '#fbbf24', yAxisID: 'y2' }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: { display: true, text: '均值回归强度随组合规模递增', color: tickColor, font: { size: 14 } },
+        legend: { labels: { color: tickColor } },
+        tooltip: { callbacks: { label: ctx => {
+          if (ctx.datasetIndex === 0) return '|β|: ' + ctx.parsed.y.toFixed(3);
+          return 'R²: ' + ctx.parsed.y.toFixed(2) + '%';
+        }}}
+      },
+      scales: {
+        x: { title: { display: true, text: '组合持股数 (N)', color: tickColor }, ticks: { color: tickColor }, grid: { color: gridColor } },
+        y: { title: { display: true, text: '回归斜率绝对值', color: tickColor }, ticks: { color: tickColor }, grid: { color: gridColor }, position: 'left', min: 0, max: 0.35 },
+        y2: { title: { display: true, text: 'R² (%)', color: '#fbbf24' }, ticks: { color: '#fbbf24' }, grid: { display: false }, position: 'right', min: 0, max: 12 }
+      }
+    }
+  });
+})();
+
+// ===== Chart 5: Bessembinder Wealth Concentration =====
+(function() {
+  // Exclude portfolio 10 as outlier (top1=965%, single extreme winner)
+  const portfolios = MICRO.filter(p => p.id !== 10);
+  const labels = portfolios.map(p => '组合 #' + p.id);
+  new Chart(document.getElementById('chartBess'), {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        { label: 'Top 1 股票贡献 (%)', data: portfolios.map(p=>p.top1), backgroundColor: 'rgba(248,113,113,0.7)', borderRadius: 4 },
+        { label: 'Top 3 股票贡献 (%)', data: portfolios.map(p=>p.top3), backgroundColor: 'rgba(251,191,36,0.5)', borderRadius: 4 }
+      ]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: {
+        title: { display: true, text: '10 股组合中的财富集中度（Top 1 / Top 3 贡献占比）', color: tickColor, font: { size: 14 } },
+        legend: { labels: { color: tickColor } },
+        tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.x.toFixed(1) + '%' } },
+        annotation: undefined
+      },
+      scales: {
+        x: { title: { display: true, text: '终端财富贡献 (%)', color: tickColor }, ticks: { color: tickColor }, grid: { color: gridColor } },
+        y: { ticks: { color: tickColor }, grid: { color: gridColor } }
+      }
+    }
+  });
+})();
+
+// ===== Sidebar scroll tracking =====
+(function() {
+  const links = document.querySelectorAll('aside a[href^="#"]');
+  const sections = [...links].map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(a => a.classList.remove('active'));
+        const target = [...links].find(a => a.getAttribute('href') === '#' + e.target.id);
+        if (target) target.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+})();
+</script>
+</body>
+</html>
