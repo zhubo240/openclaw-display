@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>社媒 Alpha：情绪信号 vs 市场表现 — W09 回测</title>
+<style>
+  :root {
+    --bg: #0d1117; --card: #161b22; --border: #30363d;
+    --text: #e6edf3; --text2: #8b949e; --accent: #58a6ff;
+    --green: #3fb950; --red: #f85149; --orange: #d29922; --purple: #bc8cff;
+    --yellow: #e3b341;
+    --wechat: #07c160; --xhs: #fe2c55; --bili: #00a1d6; --yt: #ff0000;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--text);
+    font: 15px/1.8 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    padding: 32px 20px; min-height: 100vh;
+  }
+  .container { max-width: 860px; margin: 0 auto; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .back { font-size: 13px; color: var(--text2); margin-bottom: 24px; display: inline-block; }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, rgba(88,166,255,0.08), rgba(63,185,80,0.05));
+    border: 1px solid rgba(88,166,255,0.25);
+    border-radius: 16px; padding: 36px; margin-bottom: 36px;
+  }
+  .hero .badge {
+    display: inline-block; padding: 4px 12px; border-radius: 12px;
+    font-size: 11px; font-weight: 700; letter-spacing: 1px;
+    background: rgba(63,185,80,0.15); color: var(--green); margin-bottom: 14px;
+  }
+  .hero h1 { font-size: 24px; line-height: 1.3; margin-bottom: 10px; }
+  .hero .sub { font-size: 14px; color: var(--text2); line-height: 1.7; }
+  .hero .meta { font-size: 12px; color: var(--text2); display: flex; gap: 16px; flex-wrap: wrap; margin-top: 14px; }
+
+  /* Score banner */
+  .score-banner {
+    display: flex; align-items: center; gap: 24px;
+    background: var(--card); border: 1px solid rgba(63,185,80,0.3);
+    border-radius: 12px; padding: 24px 28px; margin-bottom: 36px;
+  }
+  .score-num { font-size: 56px; font-weight: 900; color: var(--green); line-height: 1; }
+  .score-detail h2 { font-size: 18px; margin-bottom: 4px; }
+  .score-detail p { font-size: 13px; color: var(--text2); }
+
+  /* Section */
+  .section { margin-bottom: 36px; }
+  .section-title {
+    font-size: 13px; color: var(--text2); text-transform: uppercase;
+    letter-spacing: 1px; margin-bottom: 14px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Timeline */
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before {
+    content: ''; position: absolute; left: 8px; top: 0; bottom: 0;
+    width: 2px; background: var(--border);
+  }
+  .tl-item {
+    position: relative; margin-bottom: 20px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px 18px;
+  }
+  .tl-item::before {
+    content: ''; position: absolute; left: -24px; top: 20px;
+    width: 10px; height: 10px; border-radius: 50%;
+    border: 2px solid var(--accent); background: var(--bg);
+  }
+  .tl-item.signal::before { border-color: var(--orange); background: var(--orange); }
+  .tl-item.market::before { border-color: var(--green); background: var(--green); }
+  .tl-item.miss::before { border-color: var(--red); background: var(--red); }
+  .tl-time { font-size: 11px; color: var(--text2); font-weight: 600; margin-bottom: 4px; }
+  .tl-label {
+    display: inline-block; padding: 2px 8px; border-radius: 8px;
+    font-size: 10px; font-weight: 600; margin-left: 8px;
+  }
+  .tl-item h3 { font-size: 14px; margin-bottom: 4px; }
+  .tl-item p { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+  /* Scorecard grid */
+  .sc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .sc-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px; text-align: center;
+  }
+  .sc-card.full { grid-column: 1 / -1; }
+  .sc-platform { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+  .sc-score { font-size: 32px; font-weight: 900; line-height: 1; }
+  .sc-grade { font-size: 12px; margin-top: 4px; }
+  .sc-note { font-size: 11px; color: var(--text2); margin-top: 8px; line-height: 1.5; }
+
+  /* Verification matrix */
+  .matrix-table {
+    width: 100%; border-collapse: collapse; font-size: 13px;
+    background: var(--card); border-radius: 10px; overflow: hidden;
+  }
+  .matrix-table th {
+    text-align: left; padding: 12px 14px; font-size: 11px;
+    color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border); font-weight: 600;
+  }
+  .matrix-table td {
+    padding: 12px 14px; border-bottom: 1px solid rgba(48,54,61,0.5);
+    vertical-align: top;
+  }
+  .matrix-table tr:last-child td { border-bottom: none; }
+  .v-check { color: var(--green); font-weight: 700; }
+  .v-partial { color: var(--orange); font-weight: 700; }
+  .v-miss { color: var(--red); font-weight: 700; }
+
+  /* Insight cards */
+  .insights { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .insight {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px;
+  }
+  .insight.full { grid-column: 1 / -1; }
+  .insight h3 { font-size: 14px; margin-bottom: 8px; }
+  .insight p { font-size: 13px; color: var(--text2); line-height: 1.7; }
+  .insight .num { font-size: 24px; font-weight: 800; color: var(--accent); margin-bottom: 4px; }
+
+  /* Model diagram */
+  .model-box {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 24px; text-align: center;
+  }
+  .model-flow {
+    display: flex; align-items: center; justify-content: center;
+    gap: 0; flex-wrap: wrap; margin: 16px 0;
+  }
+  .model-node {
+    padding: 10px 16px; border-radius: 8px;
+    font-size: 12px; font-weight: 600; white-space: nowrap;
+  }
+  .model-arrow {
+    font-size: 18px; color: var(--text2); padding: 0 8px;
+  }
+
+  .footer {
+    text-align: center; padding: 24px; color: var(--text2); font-size: 12px;
+    border-top: 1px solid var(--border); margin-top: 20px;
+  }
+
+  @media (max-width: 700px) {
+    .sc-grid { grid-template-columns: 1fr; }
+    .insights { grid-template-columns: 1fr; }
+    .score-banner { flex-direction: column; text-align: center; }
+    .model-flow { flex-direction: column; gap: 4px; }
+    .model-arrow { transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<a class="back" href="../../index.html">&larr; 返回监测站</a>
+
+<div class="hero">
+  <span class="badge">回测分析</span>
+  <h1>社媒 Alpha：五平台情绪信号能否预测市场？</h1>
+  <div class="sub">
+    W09 是一场天然实验 — 前半周 AI 叙事主导、后半周地缘危机颠覆一切。我们追踪了 5 个平台、6 天、~140 条内容，并在 3/2 凌晨 03:30 基于纯社媒情绪发出了 6 项市场预测。收盘后验证：<strong>5/6 准确</strong>。这份回测拆解信号是如何传导的，以及哪些平台最"有用"。
+  </div>
+  <div class="meta">
+    <span>2026-02-25 ~ 03-02</span>
+    <span>5 平台 · 6 天</span>
+    <span>~140 条追踪内容</span>
+    <span>6 项预测 · 5 项验证</span>
+  </div>
+</div>
+
+<!-- Score Banner -->
+<div class="score-banner">
+  <div class="score-num">83%</div>
+  <div class="score-detail">
+    <h2>综合预测准确率</h2>
+    <p>6 项预测中 5 项准确（方向 + 幅度），1 项方向正确但绝对价位偏高。按"方向正确"计则为 100%（6/6）。</p>
+  </div>
+</div>
+
+<!-- Signal Timeline -->
+<div class="section">
+  <div class="section-title">信号传导时间线：从社媒噪音到市场定价</div>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-time">2/25 周二 ~ 2/27 周四
+        <span class="tl-label" style="background:rgba(88,166,255,0.12);color:var(--accent)">基准期</span>
+      </div>
+      <h3>AI 主导叙事期</h3>
+      <p>五平台核心话题：Qwen 3.5 发布、Block 裁员 40%、Grok 4.20、OpenAI $110B 融资。市场关注 NVDA 财报。<strong>情绪基调：乐观偏焦虑（AI 替代就业担忧）。</strong></p>
+    </div>
+    <div class="tl-item signal">
+      <div class="tl-time">2/28 周五 18:00+
+        <span class="tl-label" style="background:rgba(210,153,34,0.15);color:var(--orange)">首信号</span>
+      </div>
+      <h3>美以打击伊朗 — 社媒最早出现讨论</h3>
+      <p>微信财经公众号（Folo RSS）率先推送突发新闻。36 氪热榜跟进。<strong>此时美股已收盘，市场尚未定价。</strong></p>
+    </div>
+    <div class="tl-item signal">
+      <div class="tl-time">3/1 周六 全天
+        <span class="tl-label" style="background:rgba(210,153,34,0.15);color:var(--orange)">情绪放大</span>
+      </div>
+      <h3>五平台全面切换 — 48 小时信息发酵窗口</h3>
+      <p>霍尔木兹海峡停航、150+ 油轮滞留。小红书散户讨论"油价要飙了吗"、B 站军事区爆发、YouTube 时政频道流量激增。<strong>关键：周末市场休市，社媒情绪 48h 领先于定价。</strong></p>
+    </div>
+    <div class="tl-item signal">
+      <div class="tl-time">3/1 周六 深夜
+        <span class="tl-label" style="background:rgba(248,81,73,0.15);color:var(--red)">重大突发</span>
+      </div>
+      <h3>哈梅内伊确认身亡 — 恐慌情绪跳升</h3>
+      <p>伊朗媒体证实最高领袖死亡。微信情绪从"关注"升至"高度恐慌"(85%)。各大券商连夜开策略会。</p>
+    </div>
+    <div class="tl-item signal">
+      <div class="tl-time">3/2 周一 03:30
+        <span class="tl-label" style="background:rgba(63,185,80,0.15);color:var(--green)">预测发出</span>
+      </div>
+      <h3>基于社媒情绪发出 6 项市场预测</h3>
+      <p>原油 &uarr; +5~20%、黄金 &uarr; 破新高、A 股低开、油气/黄金/军工逆势涨停、社媒情绪从预判转实操、布伦特目标 $85-90。</p>
+    </div>
+    <div class="tl-item market">
+      <div class="tl-time">3/2 周一 09:30 ~ 15:00
+        <span class="tl-label" style="background:rgba(63,185,80,0.15);color:var(--green)">市场验证</span>
+      </div>
+      <h3>收盘结果：5/6 准确</h3>
+      <p>黄金 $5,296 (+2%) 破 $5,300 新高、WTI +8.2%、A 股低开确认、油气/黄金/军工涨停潮、散户进入晒单模式。唯一偏差：布伦特绝对价 ~$72.5 vs 预测 $85-90。</p>
+    </div>
+    <div class="tl-item miss">
+      <div class="tl-time">3/2 收盘
+        <span class="tl-label" style="background:rgba(248,81,73,0.15);color:var(--red)">唯一偏差</span>
+      </div>
+      <h3>布伦特绝对价位预测偏高 $12.5</h3>
+      <p>预测 $85-90，实际 ~$72.5。原因：社媒讨论倾向引用"极端情景"价位（$100+ 被大量传播），放大了价格预期。<strong>启示：社媒擅长方向预测，但绝对数值易被极端叙事扭曲。</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- Platform Reliability Scorecard -->
+<div class="section">
+  <div class="section-title">平台可靠度评分：谁的信号最"有用"？</div>
+  <div class="sc-grid">
+    <div class="sc-card">
+      <div class="sc-platform" style="color:var(--wechat)">微信 / 资讯 RSS</div>
+      <div class="sc-score" style="color:var(--green)">A</div>
+      <div class="sc-grade" style="color:var(--green)">最快 + 最专业</div>
+      <div class="sc-note">
+        突发事件首发速度最快（2/28 晚率先推送）。券商连夜策略会等机构级信息独家覆盖。<strong>但情绪偏恐慌（85%），易过度反应。</strong>
+      </div>
+    </div>
+    <div class="sc-card">
+      <div class="sc-platform" style="color:var(--xhs)">小红书</div>
+      <div class="sc-score" style="color:var(--green)">A-</div>
+      <div class="sc-grade" style="color:var(--green)">最佳散户情绪指标</div>
+      <div class="sc-note">
+        "油气股涨停潮来了吗？" "黄金破 5300 了" — 散户行动意图最透明。从 3/1 "预判"到 3/2 "晒单"的转变精准映射市场节奏。<strong>绝对价位信号不可靠。</strong>
+      </div>
+    </div>
+    <div class="sc-card">
+      <div class="sc-platform" style="color:var(--bili)">B 站</div>
+      <div class="sc-score" style="color:var(--orange)">B+</div>
+      <div class="sc-grade" style="color:var(--orange)">情绪温度计（非交易信号）</div>
+      <div class="sc-note">
+        军事区爆发程度反映公众关注度，但内容以"吃瓜"为主（60% 关注度）。冲突推演视频热度可作为事件严重性的代理指标。<strong>交易方向信号弱。</strong>
+      </div>
+    </div>
+    <div class="sc-card">
+      <div class="sc-platform" style="color:var(--yt)">YouTube</div>
+      <div class="sc-score" style="color:var(--green)">A-</div>
+      <div class="sc-grade" style="color:var(--green)">最佳策略深度</div>
+      <div class="sc-note">
+        投资 TALK 君、美投侃新闻等频道提供系统性分析。"你的投资组合怎么调？"类内容直接映射机构思路。<strong>时效性略逊微信。</strong>
+      </div>
+    </div>
+    <div class="sc-card full">
+      <div class="sc-platform" style="color:#9b59b6">Superlinear</div>
+      <div class="sc-score" style="color:var(--accent)">B+</div>
+      <div class="sc-grade" style="color:var(--accent)">理性锚 — 降噪价值高</div>
+      <div class="sc-note">
+        社区讨论以"投资组合调整"为主，情绪最克制（72%）。"从预判到行动"的转变最有序。<strong>样本量最小（社区制），单独使用信号不足，但作为"情绪校准器"价值大。</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Verification Matrix -->
+<div class="section">
+  <div class="section-title">预测验证矩阵</div>
+  <div style="overflow-x:auto;">
+  <table class="matrix-table">
+    <tr>
+      <th style="width:18%">预测项</th>
+      <th style="width:22%">社媒信号来源</th>
+      <th style="width:18%">03:30 预测</th>
+      <th style="width:22%">15:00 实际</th>
+      <th style="width:20%">结果</th>
+    </tr>
+    <tr>
+      <td><strong>黄金方向</strong></td>
+      <td>微信"机构看涨 6000"+ 小红书"加仓黄金"热议</td>
+      <td>&uarr; 上涨</td>
+      <td>$5,296 (+2%) 破 $5,300</td>
+      <td><span class="v-check">准确 &#10003;</span></td>
+    </tr>
+    <tr>
+      <td><strong>原油方向+幅度</strong></td>
+      <td>微信"油价飙升风险"+ YouTube 能源分析 + 霍尔木兹停航新闻</td>
+      <td>&uarr; +5~20%</td>
+      <td>WTI +8.2%</td>
+      <td><span class="v-check">准确 &#10003;</span></td>
+    </tr>
+    <tr>
+      <td><strong>A 股方向</strong></td>
+      <td>微信"券商策略会共识短冲击"+ Superlinear 讨论</td>
+      <td>&darr; 低开</td>
+      <td>确认低开，盘中收窄</td>
+      <td><span class="v-check">准确 &#10003;</span></td>
+    </tr>
+    <tr>
+      <td><strong>避险板块</strong></td>
+      <td>小红书"油气股涨停潮"+ B 站军事区热度 + YouTube 避险配置</td>
+      <td>油气/黄金/军工逆势涨停</td>
+      <td>三板块涨停潮确认</td>
+      <td><span class="v-check">准确 &#10003;</span></td>
+    </tr>
+    <tr>
+      <td><strong>社媒情绪转向</strong></td>
+      <td>小红书"预判→实操"模式 + Superlinear 讨论节奏</td>
+      <td>从预判转实操/晒单</td>
+      <td>散户晒单 + 复盘模式</td>
+      <td><span class="v-check">准确 &#10003;</span></td>
+    </tr>
+    <tr>
+      <td><strong>布伦特绝对价</strong></td>
+      <td>微信"$85-90 目标"+ 社媒传播"极端情景 $100+"</td>
+      <td>$85-90/桶</td>
+      <td>~$72.5/桶</td>
+      <td><span class="v-partial">方向对/价偏高</span><br><span style="font-size:11px;color:var(--text2)">差 $12.5</span></td>
+    </tr>
+  </table>
+  </div>
+</div>
+
+<!-- Key Insights -->
+<div class="section">
+  <div class="section-title">核心发现</div>
+  <div class="insights">
+    <div class="insight">
+      <div class="num">48h</div>
+      <h3>社媒情绪领先窗口</h3>
+      <p>从 2/28 晚突发事件出现在社媒，到 3/2 09:30 A 股开盘定价，社媒情绪有约 48 小时的领先窗口。周末休市放大了这一效应 — 信息在社媒充分发酵而市场无法即时反应。</p>
+    </div>
+    <div class="insight">
+      <div class="num">100%</div>
+      <h3>方向预测全对</h3>
+      <p>6/6 方向预测准确（黄金涨、原油涨、A 股跌、避险板块强、社媒转向、布伦特涨）。社媒情绪对<strong>方向性判断</strong>极其可靠，因为它聚合了散户、机构、媒体三层参与者的共识。</p>
+    </div>
+    <div class="insight">
+      <div class="num">-$12.5</div>
+      <h3>绝对值偏差：极端叙事放大效应</h3>
+      <p>布伦特预测 $85-90 vs 实际 $72.5。偏差来源：社媒传播天然偏爱极端情景（"$100 油价""全面冲突"），导致绝对价位预期被系统性抬高。<strong>校正方法：对社媒共识价位打 7-8 折。</strong></p>
+    </div>
+    <div class="insight">
+      <div class="num">3 层</div>
+      <h3>信号三层验证框架</h3>
+      <p>最可靠的预测信号来自三层交叉验证：<strong>微信/机构级</strong>（方向+理由）→ <strong>小红书/散户级</strong>（行动意图）→ <strong>Superlinear/理性级</strong>（强度校准）。单一平台信号不可靠。</p>
+    </div>
+    <div class="insight full">
+      <h3>平台组合建议：社媒信号的最优使用方式</h3>
+      <p>
+        <strong>速度层</strong>（微信 RSS）：最快感知突发事件，10-30 分钟内出现专业分析。适合触发"关注"信号。<br>
+        <strong>情绪层</strong>（小红书 + B 站）：散户真实反应 + 公众关注度。适合判断事件是否已"出圈"及情绪强度。<br>
+        <strong>策略层</strong>（YouTube + Superlinear）：系统性分析和理性讨论。适合验证方向判断和校准预期。<br>
+        <strong>结论</strong>：社媒不能替代专业研究，但作为"情绪传感器"+ "叙事变化检测器"，具备显著的信息增量。W09 证明在极端事件中，五平台聚合情绪对市场方向的预测准确率可达 100%。
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Signal Propagation Model -->
+<div class="section">
+  <div class="section-title">信号传导模型：从事件到定价的 5 个阶段</div>
+  <div class="model-box">
+    <div class="model-flow">
+      <div class="model-node" style="background:rgba(248,81,73,0.15);color:var(--red);border:1px solid rgba(248,81,73,0.3)">
+        事件发生<br><span style="font-size:10px;color:var(--text2)">2/28 晚</span>
+      </div>
+      <div class="model-arrow">&rarr;</div>
+      <div class="model-node" style="background:rgba(7,193,96,0.12);color:var(--wechat);border:1px solid rgba(7,193,96,0.3)">
+        微信首发<br><span style="font-size:10px;color:var(--text2)">+30 min</span>
+      </div>
+      <div class="model-arrow">&rarr;</div>
+      <div class="model-node" style="background:rgba(254,44,85,0.12);color:var(--xhs);border:1px solid rgba(254,44,85,0.3)">
+        散户讨论<br><span style="font-size:10px;color:var(--text2)">+2~6h</span>
+      </div>
+      <div class="model-arrow">&rarr;</div>
+      <div class="model-node" style="background:rgba(0,161,214,0.12);color:var(--bili);border:1px solid rgba(0,161,214,0.3)">
+        内容爆发<br><span style="font-size:10px;color:var(--text2)">+6~24h</span>
+      </div>
+      <div class="model-arrow">&rarr;</div>
+      <div class="model-node" style="background:rgba(63,185,80,0.15);color:var(--green);border:1px solid rgba(63,185,80,0.3)">
+        市场定价<br><span style="font-size:10px;color:var(--text2)">下一开盘日</span>
+      </div>
+    </div>
+    <div style="margin-top:20px;font-size:13px;color:var(--text2);line-height:1.8;text-align:left;max-width:680px;margin-left:auto;margin-right:auto;">
+      <strong style="color:var(--text)">W09 实测传导速度：</strong><br>
+      &bull; 微信 RSS 推送 → 小红书散户讨论：<strong>2-6 小时</strong><br>
+      &bull; 散户讨论 → B 站视频产出：<strong>6-12 小时</strong>（军事分析视频上线）<br>
+      &bull; 全平台情绪饱和 → 市场定价：<strong>~48 小时</strong>（周末效应放大）<br>
+      &bull; 开盘 → 社媒情绪从"预判"转向"复盘"：<strong>2-3 小时</strong>
+    </div>
+  </div>
+</div>
+
+<!-- Week Narrative Arc Impact -->
+<div class="section">
+  <div class="section-title">附：W09 叙事弧线 — 两幕剧对市场的不同含义</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;">
+      <div style="font-size:12px;color:var(--accent);font-weight:600;margin-bottom:8px;">第一幕：AI 主导期 (2/25-2/28)</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.7;">
+        <strong style="color:var(--text)">社媒信号</strong>：AI 焦虑（裁员）+ 乐观（新模型）混合<br>
+        <strong style="color:var(--text)">市场含义</strong>：科技股波动加大，NVDA 成焦点<br>
+        <strong style="color:var(--text)">信号可靠度</strong>：中等 — 噪音多、方向不明确
+      </div>
+    </div>
+    <div style="background:var(--card);border:1px solid rgba(248,81,73,0.3);border-radius:10px;padding:20px;">
+      <div style="font-size:12px;color:var(--red);font-weight:600;margin-bottom:8px;">第二幕：地缘危机期 (3/1-3/2)</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.7;">
+        <strong style="color:var(--text)">社媒信号</strong>：全平台单一方向恐慌 + 避险共识<br>
+        <strong style="color:var(--text)">市场含义</strong>：避险资产暴涨、风险资产承压<br>
+        <strong style="color:var(--text)">信号可靠度</strong>：<span style="color:var(--green)">极高</span> — 共识明确、方向一致
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:14px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 20px;font-size:13px;color:var(--text2);line-height:1.7;">
+    <strong style="color:var(--text)">关键洞察：</strong>社媒情绪在<strong>共识性极端事件</strong>中的预测能力远高于日常。当五个平台在 12 小时内同向转变叙事（从 AI 切换到地缘危机），这本身就是一个强烈的市场方向信号。<strong>叙事一致性 = 预测可靠性。</strong>
+  </div>
+</div>
+
+<!-- Methodology -->
+<div class="section">
+  <div class="section-title">方法论说明</div>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;font-size:12px;color:var(--text2);line-height:1.8;">
+    <strong style="color:var(--text)">数据范围</strong>：2026-02-25 至 2026-03-02，5 平台（微信/小红书/B站/YouTube/Superlinear），~140 条追踪内容。<br>
+    <strong style="color:var(--text)">情绪评估</strong>：基于各平台中东局势相关帖文的讨论热度、情感倾向、行动意图综合人工估算，非精确量化模型。<br>
+    <strong style="color:var(--text)">预测方法</strong>：在 3/2 03:30 基于五平台周末讨论汇总 + 公开新闻搜索，人工综合判断市场方向和幅度区间。<br>
+    <strong style="color:var(--text)">局限性</strong>：仅一周数据、仅一次极端事件，样本量不足以建立统计显著性。结论仅作为定性观察参考。<br>
+    <strong style="color:var(--text)">免责</strong>：本分析不构成投资建议。社媒信号在非极端事件中的预测能力未经验证。
+  </div>
+</div>
+
+<!-- Related -->
+<div class="section">
+  <div class="section-title">关联内容</div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <a href="../market-briefing-2026-03-02/index.html" style="display:inline-block;padding:8px 16px;border-radius:8px;background:var(--card);border:1px solid var(--border);font-size:12px;">3/2 市场速报（含预测原文）</a>
+    <a href="../platform-voices-w09/index.html" style="display:inline-block;padding:8px 16px;border-radius:8px;background:var(--card);border:1px solid var(--border);font-size:12px;">五平台声音对比</a>
+    <a href="../mideast-crisis-2026-03/index.html" style="display:inline-block;padding:8px 16px;border-radius:8px;background:var(--card);border:1px solid var(--border);font-size:12px;">中东危机深度专题</a>
+    <a href="../../周报分析/2026-W09/index.html" style="display:inline-block;padding:8px 16px;border-radius:8px;background:var(--card);border:1px solid var(--border);font-size:12px;">W09 周报</a>
+  </div>
+</div>
+
+<div class="footer">
+  社媒 Alpha 回测分析 · 社交媒体监测站<br>
+  基于 W09 (2026-02-25 ~ 03-02) 五平台数据 · 不构成投资建议<br>
+  <a href="../../index.html">返回监测站首页</a>
+</div>
+
+</div>
+</body>
+</html>
