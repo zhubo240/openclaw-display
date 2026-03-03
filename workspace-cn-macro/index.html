@@ -602,6 +602,68 @@
   .path-card .path-steps .ps-arrow { color: var(--text2); }
   .path-card .path-why { font-size: 0.78em; color: var(--text2); margin-top: 10px; line-height: 1.5; }
 
+  /* Historical precedents */
+  .precedents {
+    padding: 48px 0; border-bottom: 1px solid var(--border);
+  }
+  .precedents h2 {
+    text-align: center; font-size: 1.3em; font-weight: 600;
+    margin-bottom: 8px; color: var(--text2); letter-spacing: 0.08em;
+  }
+  .precedents .sub {
+    text-align: center; color: var(--text2); font-size: 0.88em; margin-bottom: 28px;
+  }
+  .prec-table {
+    width: 100%; border-collapse: collapse; font-size: 0.82em;
+  }
+  .prec-table th, .prec-table td {
+    padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border);
+  }
+  .prec-table th {
+    color: var(--accent); font-weight: 600; font-size: 0.78em; background: var(--surface);
+  }
+  .prec-table th:first-child { border-radius: 6px 0 0 0; }
+  .prec-table th:last-child { border-radius: 0 6px 0 0; }
+  .prec-table tr:hover td { background: var(--surface); }
+  .prec-table .stars { color: var(--accent); letter-spacing: 1px; }
+  .prec-table .dim-ref {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 3px; padding: 1px 5px; font-size: 0.88em; color: var(--accent);
+    white-space: nowrap;
+  }
+  .prec-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 24px 28px; max-width: 780px; margin: 28px auto 0;
+    font-family: "SF Mono", "Fira Code", monospace; font-size: 0.82em;
+    line-height: 1.9; color: var(--text2); white-space: pre; overflow-x: auto;
+  }
+  .prec-box .hl { color: var(--accent); font-weight: 600; }
+  .prec-box .r { color: var(--red); font-weight: 600; }
+  .prec-box .g { color: var(--green); font-weight: 600; }
+  .prec-box .b { color: var(--blue); }
+  .lesson-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+    margin-top: 28px; max-width: 800px; margin-left: auto; margin-right: auto;
+  }
+  .lesson-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 20px;
+  }
+  .lesson-card h4 {
+    font-size: 0.9em; font-weight: 600; margin-bottom: 8px;
+  }
+  .lesson-card .lesson-verdict {
+    font-size: 0.82em; font-weight: 600; margin-bottom: 8px;
+  }
+  .lesson-card p {
+    font-size: 0.78em; color: var(--text2); line-height: 1.5;
+  }
+  @media (max-width: 600px) {
+    .lesson-grid { grid-template-columns: 1fr; }
+    .prec-table { font-size: 0.72em; }
+    .prec-box { font-size: 0.7em; padding: 16px; }
+  }
+
   /* Footer */
   .footer {
     padding: 40px 0;
@@ -642,6 +704,7 @@
   <a href="#circulation" title="供需循环">循</a>
   <a href="#mismatches" title="六大错配">错</a>
   <a href="#scenarios" title="情景推演">景</a>
+  <a href="#precedents" title="历史镜鉴">鉴</a>
 </nav>
 
 <div class="container">
@@ -1160,6 +1223,107 @@
         </tr>
       </tbody>
     </table>
+  </section>
+
+  <!-- Historical Precedents -->
+  <section class="precedents" id="precedents">
+    <h2>历 史 镜 鉴 ：中 国 与 三 大 先 例</h2>
+    <p class="sub">散落在 <span class="dim-ref">Q37</span> <span class="dim-ref">Q40</span> <span class="dim-ref">Q43</span> 中的国际比较，汇聚为一张全景对照</p>
+
+    <table class="prec-table">
+      <thead>
+        <tr>
+          <th>比较维度</th>
+          <th>日本 1990s</th>
+          <th>韩国 1997-2010</th>
+          <th>拉美（巴西/阿根廷）</th>
+          <th>中国 2020s</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>发展阶段</strong></td>
+          <td>人均$25,000<br>已入高收入</td>
+          <td>人均$10,000-20,000<br>门槛跨越期</td>
+          <td>人均$5,000-10,000<br>长期卡在中等</td>
+          <td>人均~$13,000<br>门槛附近</td>
+        </tr>
+        <tr>
+          <td><strong>触发危机</strong></td>
+          <td>股市+房地产<br>同时崩盘</td>
+          <td>亚洲金融危机<br>外债+外汇危机</td>
+          <td>债务违约/恶性通胀<br>反复发作</td>
+          <td>房地产泡沫破裂<br>（股市未大涨过）</td>
+        </tr>
+        <tr>
+          <td><strong>人口形势</strong></td>
+          <td>1990年人口仍增长<br>老龄化刚启动</td>
+          <td>人口红利充裕<br>生育率尚可</td>
+          <td>年轻人口多<br>不缺劳动力</td>
+          <td>2022年人口负增长<br>老龄化速度全球最快</td>
+        </tr>
+        <tr>
+          <td><strong>制造业基础</strong></td>
+          <td>全球顶尖<br>技术前沿</td>
+          <td>三星/现代崛起<br>快速追赶</td>
+          <td>薄弱<br>资源依赖</td>
+          <td>全产业链覆盖<br>部分领域领先</td>
+        </tr>
+        <tr>
+          <td><strong>改革意愿</strong></td>
+          <td>犹豫拖延<br>"失去的二十年"</td>
+          <td>危机倒逼<br>深度结构改革</td>
+          <td>民粹循环<br>改革不可持续</td>
+          <td>渐进温和<br>深水区推进慢</td>
+        </tr>
+        <tr>
+          <td><strong>外部环境</strong></td>
+          <td>冷战结束<br>全球化上升期</td>
+          <td>全球化黄金期<br>市场开放</td>
+          <td>时好时坏<br>依赖大宗商品</td>
+          <td>逆全球化<br>技术封锁+贸易壁垒</td>
+        </tr>
+        <tr>
+          <td><strong>与中国相似度</strong></td>
+          <td class="stars">&#9733;&#9733;&#9733;&#9733;&#9734;</td>
+          <td class="stars">&#9733;&#9733;&#9733;&#9734;&#9734;</td>
+          <td class="stars">&#9733;&#9734;&#9734;&#9734;&#9734;</td>
+          <td>&mdash;</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="prec-box"><span class="hl">中国面临的独特挑战组合 — 历史上从未有过</span>
+
+<span class="r">日本式问题</span>              <span class="r">拉美式风险</span>           <span class="r">冷战式约束</span>
+├─ 房地产泡沫破裂       ├─ 中等收入门槛        ├─ 技术封锁
+├─ 资产负债表衰退       ├─ 收入分配不平等      ├─ 贸易壁垒
+├─ 通缩压力             └─ 改革推进难          └─ 地缘对抗
+├─ 人口老龄化
+└─ 货币政策失效                              <span class="g">独有优势</span>
+                                             ├─ 14亿人内需市场
+   <span class="b">但人均收入远低于当时日本</span>               ├─ 全产业链制造业
+   <span class="b">→ "还没富就开始老"</span>                   ├─ 新能源/AI技术积累
+   <span class="b">→ "还没富就开始缩表"</span>                 ├─ 政府动员能力
+                                             └─ 日本前车之鉴</div>
+
+    <div class="lesson-grid">
+      <div class="lesson-card" style="border-left:3px solid var(--red);">
+        <h4 style="color:var(--red);">日本教训</h4>
+        <div class="lesson-verdict" style="color:var(--red);">不要拖 — 越晚干预越贵</div>
+        <p>日本1990年代犹豫不决、刺激力度不够，"失去的十年"变成了"失去的三十年"。辜朝明诊断：中国正在进入资产负债表衰退早期，需要GDP的5-8%规模额外财政刺激。当前力度"有但不够大"。</p>
+      </div>
+      <div class="lesson-card" style="border-left:3px solid var(--green);">
+        <h4 style="color:var(--green);">韩国启示</h4>
+        <div class="lesson-verdict" style="color:var(--green);">危机是改革的最佳窗口</div>
+        <p>韩国1997年危机后深度改革金融体系、企业治理、劳动力市场，用5年完成结构转型，成功跨越中等收入陷阱。关键问题：中国是否愿意进行类似的"危机倒逼式改革"？</p>
+      </div>
+      <div class="lesson-card" style="border-left:3px solid var(--orange);">
+        <h4 style="color:var(--orange);">拉美警示</h4>
+        <div class="lesson-verdict" style="color:var(--orange);">制度僵化 = 永远困在原地</div>
+        <p>中国的制造业、人力资本、治理能力远优于拉美，不太可能走"资源诅咒+治理失败"路径。但如果改革停滞、制度僵化，也可能出现"中国特色的中等收入陷阱"——有能力但无法释放。</p>
+      </div>
+    </div>
   </section>
 
   <!-- Footer -->
