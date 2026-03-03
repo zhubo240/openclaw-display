@@ -1,0 +1,1571 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>专题二：因子体系 | A股研究知识库</title>
+<style>
+  :root {
+    --bg: #0a0a0f; --surface: #111118; --surface2: #1a1a24;
+    --border: #252535; --text: #e0e0e8; --text2: #8888a0;
+    --accent: #e05050; --gold: #f0c040; --green: #40c080;
+    --blue: #5080e0; --orange: #e08040; --purple: #a070e0; --cyan: #40b8d0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.8;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+  /* Breadcrumb */
+  .breadcrumb { padding: 16px 0; font-size: 0.85em; color: var(--text2); }
+  .breadcrumb a { color: var(--blue); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+
+  /* Header */
+  .page-header {
+    padding: 48px 0 36px;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-header h1 { font-size: 2.2em; font-weight: 700; letter-spacing: 0.04em; margin-bottom: 8px; }
+  .page-header h1 .hl { color: var(--purple); }
+  .page-header .meta { font-size: 0.9em; color: var(--text2); }
+
+  /* TOC */
+  .toc { padding: 32px 0; border-bottom: 1px solid var(--border); }
+  .toc h2 { font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text2); margin-bottom: 12px; }
+  .toc ol { list-style: none; counter-reset: toc; }
+  .toc ol li { counter-increment: toc; margin-bottom: 6px; }
+  .toc ol li::before { content: counter(toc) "."; color: var(--purple); font-weight: 600; margin-right: 8px; }
+  .toc a { color: var(--blue); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+
+  /* Section */
+  .section { padding: 48px 0; border-bottom: 1px solid var(--border); }
+  .section:last-of-type { border-bottom: none; }
+  .section h2 {
+    font-size: 1.5em; font-weight: 700; margin-bottom: 24px;
+    padding-bottom: 10px; border-bottom: 2px solid var(--purple); display: inline-block;
+  }
+  .section h3 { font-size: 1.15em; font-weight: 600; margin: 28px 0 12px; color: var(--gold); }
+  .section h4 { font-size: 1.0em; font-weight: 600; margin: 20px 0 10px; color: var(--cyan); }
+  .section p { margin-bottom: 14px; color: var(--text); font-size: 0.95em; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0 24px; font-size: 0.9em; }
+  th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+  th { background: var(--surface2); color: var(--text2); font-weight: 600; font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.05em; }
+  td { background: var(--surface); }
+  tr:hover td { background: var(--surface2); }
+
+  /* Code blocks */
+  pre {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 18px 20px; margin: 16px 0 24px; overflow-x: auto;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+    font-size: 0.88em; line-height: 1.6; color: var(--text);
+  }
+  code {
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+    font-size: 0.9em; background: var(--surface2); padding: 2px 6px; border-radius: 4px; color: var(--green);
+  }
+  pre code { background: none; padding: 0; color: inherit; }
+  .code-comment { color: var(--text2); }
+  .code-keyword { color: var(--purple); }
+  .code-string { color: var(--green); }
+  .code-highlight { color: var(--gold); }
+
+  /* Callout boxes */
+  .callout {
+    background: var(--surface); border-left: 4px solid var(--purple);
+    border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 20px 0; font-size: 0.92em;
+  }
+  .callout.insight { border-left-color: var(--gold); }
+  .callout.gap { border-left-color: var(--accent); }
+  .callout.ok { border-left-color: var(--green); }
+  .callout.warn { border-left-color: var(--orange); }
+  .callout strong { display: block; margin-bottom: 4px; }
+
+  /* Metric cards */
+  .metric-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin: 20px 0; }
+  .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px; text-align: center; }
+  .metric-card .mc-value { font-size: 1.8em; font-weight: 700; margin-bottom: 4px; }
+  .metric-card .mc-label { font-size: 0.82em; color: var(--text2); }
+  .metric-card .mc-sub { font-size: 0.75em; color: var(--text2); margin-top: 4px; }
+
+  /* Factor chip */
+  .factor-chip {
+    display: inline-block; font-size: 0.78em; padding: 3px 10px; border-radius: 20px;
+    background: var(--surface2); color: var(--text2); border: 1px solid var(--border); margin: 2px 3px;
+  }
+  .factor-chip.strong { border-color: var(--green); color: var(--green); }
+  .factor-chip.new { border-color: var(--purple); color: var(--purple); }
+  .factor-chip.warn { border-color: var(--orange); color: var(--orange); }
+
+  /* Lists */
+  ul, ol { margin: 10px 0 18px 20px; font-size: 0.93em; }
+  li { margin-bottom: 6px; }
+
+  /* Footer */
+  .footer { padding: 40px 0; text-align: center; color: var(--text2); font-size: 0.85em; border-top: 1px solid var(--border); }
+  .footer a { color: var(--blue); text-decoration: none; }
+
+  /* Formula block */
+  .formula {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px 20px; margin: 12px 0 20px; font-family: "SF Mono", "Fira Code", monospace;
+    font-size: 0.9em; color: var(--cyan); text-align: center; letter-spacing: 0.02em;
+  }
+
+  /* Pipeline steps */
+  .pipeline { display: flex; gap: 0; margin: 24px 0; flex-wrap: wrap; }
+  .pipeline-step {
+    flex: 1; min-width: 140px; background: var(--surface); border: 1px solid var(--border);
+    padding: 14px 16px; text-align: center; position: relative; font-size: 0.88em;
+  }
+  .pipeline-step:first-child { border-radius: 10px 0 0 10px; }
+  .pipeline-step:last-child { border-radius: 0 10px 10px 0; }
+  .pipeline-step .ps-label { font-size: 0.75em; color: var(--text2); text-transform: uppercase; letter-spacing: 0.06em; }
+  .pipeline-step .ps-value { font-weight: 600; margin-top: 4px; }
+  .pipeline-step::after {
+    content: "\2192"; position: absolute; right: -8px; top: 50%; transform: translateY(-50%);
+    color: var(--purple); font-size: 1.1em; z-index: 1;
+  }
+  .pipeline-step:last-child::after { content: none; }
+
+  @media (max-width: 768px) {
+    .page-header h1 { font-size: 1.6em; }
+    .metric-grid { grid-template-columns: 1fr 1fr; }
+    .pipeline { flex-direction: column; }
+    .pipeline-step { border-radius: 0 !important; }
+    .pipeline-step:first-child { border-radius: 10px 10px 0 0 !important; }
+    .pipeline-step:last-child { border-radius: 0 0 10px 10px !important; }
+    .pipeline-step::after { content: "\2193"; right: 50%; top: auto; bottom: -8px; transform: translateX(50%); }
+    pre { font-size: 0.82em; padding: 14px; }
+    table { font-size: 0.82em; }
+    th, td { padding: 8px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <nav class="breadcrumb">
+    <a href="../../index.html">A股研究知识库</a> &rsaquo;
+    <a href="../index.html">量化因子研究</a> &rsaquo;
+    <a href="../research-hub.html">研究计划</a> &rsaquo;
+    专题二：因子体系
+  </nav>
+</div>
+
+<!-- Header -->
+<header class="page-header">
+  <div class="container">
+    <h1>专题二：<span class="hl">因子体系</span></h1>
+    <p class="meta">5 个核心问题（Q4-Q8） &middot; 因子有效性、构造、衰减与中性化 &middot; 2026-03-03</p>
+  </div>
+</header>
+
+<!-- TOC -->
+<nav class="toc">
+  <div class="container">
+    <h2>目录</h2>
+    <ol>
+      <li><a href="#q4">Q4：A股哪些因子有持续超额收益？</a></li>
+      <li><a href="#q5">Q5：Alpha158 具体有哪些弱点，如何改造？</a></li>
+      <li><a href="#q6">Q6：怎么构造 A 股特有因子？</a></li>
+      <li><a href="#q7">Q7：因子衰减速度有多快？</a></li>
+      <li><a href="#q8">Q8：如何做因子中性化？</a></li>
+    </ol>
+  </div>
+</nav>
+
+<!-- ============================================================ -->
+<!-- Q4: A股哪些因子有持续超额收益？ -->
+<!-- ============================================================ -->
+<section class="section" id="q4">
+  <div class="container">
+    <h2>Q4：A股哪些因子有持续超额收益？</h2>
+
+    <p>A股市场的因子结构与美股有本质差异。散户交易占比约 60%、T+1 制度、涨跌停限制等微观结构特征，使得部分在美股失效的因子在 A 股持续有效，而美股经典的动量因子在 A 股反而失效。以下逐一分析 A 股最具 alpha 的因子。</p>
+
+    <!-- 1. 反转因子 -->
+    <h3>1. 反转因子 (Reversal) &mdash; A股最强 alpha 来源</h3>
+
+    <div class="metric-grid">
+      <div class="metric-card">
+        <div class="mc-value" style="color: var(--green);">1.0-1.5%</div>
+        <div class="mc-label">月度多空价差</div>
+        <div class="mc-sub">短期反转 5/10/20日</div>
+      </div>
+      <div class="metric-card">
+        <div class="mc-value" style="color: var(--green);">5-8%</div>
+        <div class="mc-label">RankIC 均值</div>
+        <div class="mc-sub">截面预测能力</div>
+      </div>
+      <div class="metric-card">
+        <div class="mc-value" style="color: var(--gold);">0.5-1.0</div>
+        <div class="mc-label">ICIR</div>
+        <div class="mc-sub">信号稳定性</div>
+      </div>
+      <div class="metric-card">
+        <div class="mc-value" style="color: var(--accent);">~60%</div>
+        <div class="mc-label">A股散户交易占比</div>
+        <div class="mc-sub">过度反应的根源</div>
+      </div>
+    </div>
+
+    <p><strong>为什么 A 股反转而非动量？</strong> 美股 2-12 月动量因子（Jegadeesh &amp; Titman 1993）是最经典的异象之一，但 A 股恰好相反：短期过去收益率与未来收益率负相关。根本原因是散户占比高导致过度反应，随后均值回归。</p>
+
+    <ul>
+      <li><strong>短期反转（5日/10日/20日）</strong>：过去 N 日收益率越低，未来收益率越高。月度多空价差 1.0-1.5%</li>
+      <li><strong>与美股对比</strong>：美股 2-12 月动量显著（月度溢价约 1%），A 股恰好相反，动量因子在 A 股几乎无效甚至为负</li>
+      <li><strong>相关论文</strong>：Dania &amp; Spillan 2019, Liu-Zhou-Zhu CH-4 模型中的 trend factor</li>
+    </ul>
+
+    <div class="callout warn">
+      <strong>风险警示：2024年量化踩踏中反转因子短期失效</strong>
+      2024年初微盘股踩踏期间，反转因子经历了罕见的失效。当市场出现系统性流动性危机时，均值回归逻辑不再成立，反而出现价格持续下跌的动量效应。这提醒我们即使最稳定的因子也需要风控机制。
+    </div>
+
+    <!-- 2. 特质波动率 -->
+    <h3>2. 特质波动率 (Idiosyncratic Volatility) &mdash; 低波异象</h3>
+
+    <div class="metric-grid">
+      <div class="metric-card">
+        <div class="mc-value" style="color: var(--green);">-8.92%</div>
+        <div class="mc-label">RankIC 均值</div>
+        <div class="mc-sub">来自 PKU 研究</div>
+      </div>
+      <div class="metric-card">
+        <div class="mc-value" style="color: var(--green);">-5.04</div>
+        <div class="mc-label">ICIR</div>
+        <div class="mc-sub">信号极其稳定</div>
+      </div>
+      <div class="metric-card">
+        <div class="mc-value" style="color: var(--green);">92%</div>
+        <div class="mc-label">月度胜率</div>
+        <div class="mc-sub">几乎每月有效</div>
+      </div>
+    </div>
+
+    <p>高特质波动率的股票未来收益显著更低。这与 CAPM 的预测相矛盾（高风险应获得高回报），被称为"低波异象"（low volatility anomaly）。</p>
+
+    <ul>
+      <li>特质波动率通过对 Fama-French 三因子模型回归取残差的标准差计算</li>
+      <li>可分解为"好"IVol（由正面消息驱动的波动）和"坏"IVol（由负面消息驱动的波动），坏 IVol 驱动负收益</li>
+      <li>与低波因子协同但捕获不同维度：低波因子关注总波动率，IVol 关注剔除系统性风险后的残余波动</li>
+      <li>IC 为负值表示做空高 IVol + 做多低 IVol 获利，实际使用时需取负号</li>
+    </ul>
+
+    <!-- 3. 换手率因子 -->
+    <h3>3. 换手率因子 (Turnover) &mdash; A股独有的稳定因子</h3>
+
+    <div class="metric-grid">
+      <div class="metric-card">
+        <div class="mc-value" style="color: var(--green);">1.89%</div>
+        <div class="mc-label">月度多空价差</div>
+        <div class="mc-sub">低换手跑赢高换手</div>
+      </div>
+      <div class="metric-card">
+        <div class="mc-value" style="color: var(--green);">74%</div>
+        <div class="mc-label">月度胜率</div>
+        <div class="mc-sub">稳定有效</div>
+      </div>
+    </div>
+
+    <p>低换手率股票持续跑赢高换手率股票。在 A 股市场中，高换手率往往反映投机行为而非信息驱动的交易。</p>
+
+    <ul>
+      <li>换手率 = 成交量 / 流通股本。A 股流动性充裕但分布极不均匀</li>
+      <li>换手率波动率（turnover volatility）也有独立预测效果：换手率不稳定的股票未来表现更差</li>
+      <li>高换手率往往伴随散户资金的大量进出，是投机情绪的直接代理变量</li>
+      <li><strong>数据需求</strong>：需要流通股本（float_share）数据做归一化，Alpha158 只有 volume 无 turnover</li>
+    </ul>
+
+    <!-- 4. 价值因子 -->
+    <h3>4. 价值因子 (Value) &mdash; 长期有效但周期性强</h3>
+
+    <p>A 股价值因子有几个独特特征：</p>
+
+    <ul>
+      <li><strong>EP 优于 BP</strong>：CH-3 模型（Liu-Stambaugh-Yuan 2019）使用 EP（earnings-price ratio）作为 value proxy，效果优于传统的 BP（book-to-price）</li>
+      <li><strong>年化溢价约 4-6%</strong>，但周期性极强：2017-2020"核心资产"期间严重失效（大盘成长风格碾压价值）</li>
+      <li><strong>2021 年后强势回归</strong>：红利/价值风格重新受到市场追捧，叠加利率下行环境</li>
+      <li><strong>需要行业中性化处理</strong>：银行 PE 约 5，科技 PE 约 50，不同行业估值中枢差异巨大</li>
+    </ul>
+
+    <div class="callout insight">
+      <strong>价值因子的周期性</strong>
+      价值因子的周期性意味着它不适合作为单一策略使用。最佳实践是与质量因子组合：价值负责进攻（在价值回归期获取超额），质量负责防守（在价值失效期控制回撤）。
+    </div>
+
+    <!-- 5. 质量因子 -->
+    <h3>5. 质量因子 (Quality) &mdash; 最稳定的防御性因子</h3>
+
+    <ul>
+      <li><strong>核心指标</strong>：ROE、毛利率、盈利稳定性（earnings volatility 的倒数）</li>
+      <li><strong>稳定性最好</strong>：各种市场环境下都不差，但爆发力不强</li>
+      <li><strong>月均溢价 0.4-0.5%</strong>，年化约 5-6%</li>
+      <li><strong>与价值因子互补</strong>：质量因子在成长股行情中也能提供正超额（好公司总是被追捧），而价值因子在此环境下会失效</li>
+    </ul>
+
+    <!-- 6. 规模因子 -->
+    <h3>6. 规模因子 (Size) &mdash; 高回报高风险</h3>
+
+    <div class="metric-grid">
+      <div class="metric-card">
+        <div class="mc-value" style="color: var(--green);">0.61%</div>
+        <div class="mc-label">SMB 月度溢价</div>
+        <div class="mc-sub">Hu et al. 2019</div>
+      </div>
+      <div class="metric-card">
+        <div class="mc-value" style="color: var(--accent);">-20%+</div>
+        <div class="mc-label">微盘股指数周跌幅</div>
+        <div class="mc-sub">2024 量化踩踏</div>
+      </div>
+    </div>
+
+    <p>SMB（Small Minus Big）是 A 股最显著的因子之一。小市值股票长期跑赢大市值股票，溢价来源包括壳价值、信息不对称、散户偏好等。</p>
+
+    <div class="callout gap">
+      <strong>微盘股风险：2024 年踩踏教训</strong>
+      2024 年初微盘股指数一周暴跌超过 20%。微盘股（市值 &lt; 30 亿）流动性极差，一旦出现集中卖出，价格可以连续跌停。建议保留小盘暴露但严格剔除微盘股。注册制 + 退市常态化正在削弱传统的壳价值溢价。
+    </div>
+
+    <!-- 7. 涨跌停因子 -->
+    <h3>7. 涨跌停因子 (Price Limit) &mdash; A股特有</h3>
+
+    <ul>
+      <li>频繁触涨停的股票未来收益显著更低（月度约 -0.76%），体现投资者过度反应</li>
+      <li>涨停板制度（&plusmn;10%/20%）创造了强制隔夜持有，放大了投资者的过度反应</li>
+      <li>可以作为反转因子的增强维度：近期涨停次数越多，反转信号越强</li>
+      <li>这是纯粹由 A 股制度造成的因子，在没有涨跌停限制的市场中不存在</li>
+    </ul>
+
+    <!-- 综合对比表 -->
+    <h3>8. 综合对比</h3>
+
+    <table>
+      <tr>
+        <th>因子</th>
+        <th>月度超额</th>
+        <th>RankIC</th>
+        <th>ICIR</th>
+        <th>月度胜率</th>
+        <th>A股 vs 美股</th>
+        <th>适用环境</th>
+      </tr>
+      <tr>
+        <td><span class="factor-chip strong">反转</span></td>
+        <td style="color: var(--green);">1.0-1.5%</td>
+        <td>5-8%</td>
+        <td>0.5-1.0</td>
+        <td>~70%</td>
+        <td>A股显著，美股为动量</td>
+        <td>震荡市最佳</td>
+      </tr>
+      <tr>
+        <td><span class="factor-chip strong">特质波动率</span></td>
+        <td style="color: var(--green);">0.8-1.2%</td>
+        <td>-8.92%</td>
+        <td>-5.04</td>
+        <td>92%</td>
+        <td>两市均有效，A股更强</td>
+        <td>全天候</td>
+      </tr>
+      <tr>
+        <td><span class="factor-chip strong">换手率</span></td>
+        <td style="color: var(--green);">1.89%</td>
+        <td>4-6%</td>
+        <td>0.6-0.9</td>
+        <td>74%</td>
+        <td>A股独有</td>
+        <td>全天候</td>
+      </tr>
+      <tr>
+        <td><span class="factor-chip">价值(EP)</span></td>
+        <td>0.3-0.5%</td>
+        <td>3-5%</td>
+        <td>0.3-0.5</td>
+        <td>~60%</td>
+        <td>两市均有效，A股用EP</td>
+        <td>利率上行/价值回归期</td>
+      </tr>
+      <tr>
+        <td><span class="factor-chip">质量</span></td>
+        <td>0.4-0.5%</td>
+        <td>3-4%</td>
+        <td>0.4-0.6</td>
+        <td>~65%</td>
+        <td>两市均有效</td>
+        <td>全天候（防御性）</td>
+      </tr>
+      <tr>
+        <td><span class="factor-chip warn">规模(SMB)</span></td>
+        <td style="color: var(--green);">0.61%</td>
+        <td>5-8%</td>
+        <td>0.4-0.7</td>
+        <td>~62%</td>
+        <td>A股更强，但风险更高</td>
+        <td>牛市/流动性宽松</td>
+      </tr>
+      <tr>
+        <td><span class="factor-chip new">涨跌停</span></td>
+        <td style="color: var(--accent);">-0.76%</td>
+        <td>3-5%</td>
+        <td>0.3-0.5</td>
+        <td>~63%</td>
+        <td>A股特有</td>
+        <td>高波动市</td>
+      </tr>
+    </table>
+
+    <div class="callout ok">
+      <strong>实用建议：多因子组合是最优解</strong>
+      单一因子都有失效期。推荐核心组合：反转 + 换手率 + 质量 + 低波 作为基础，再叠加价值和规模因子做增强。目标是在任何市场环境下都有至少 2-3 个因子在工作。
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- Q5: Alpha158具体有哪些弱点，如何改造？ -->
+<!-- ============================================================ -->
+<section class="section" id="q5">
+  <div class="container">
+    <h2>Q5：Alpha158 具体有哪些弱点，如何改造？</h2>
+
+    <p>Alpha158 是 Qlib 内置的因子集，包含 158 个基于 OHLCV（开高低收量）数据的技术因子。它是一个通用起点，但针对 A 股市场存在明显的结构性缺陷。</p>
+
+    <!-- 158个因子结构 -->
+    <h3>1. Alpha158 的 158 个因子结构</h3>
+
+    <table>
+      <tr><th>类别</th><th>因子数量</th><th>说明</th><th>A股有效性</th></tr>
+      <tr>
+        <td><strong>KBAR</strong></td>
+        <td>9</td>
+        <td>开高低收关系：(close-open)/open, (high-low)/open 等</td>
+        <td style="color: var(--gold);">中等</td>
+      </tr>
+      <tr>
+        <td><strong>PRICE</strong></td>
+        <td>5</td>
+        <td>归一化价格，5/10/20/30/60日 lookback</td>
+        <td style="color: var(--gold);">中等</td>
+      </tr>
+      <tr>
+        <td><strong>VOLUME</strong></td>
+        <td>5</td>
+        <td>归一化成交量，5/10/20/30/60日 lookback</td>
+        <td style="color: var(--gold);">中等</td>
+      </tr>
+      <tr>
+        <td><strong>ROLLING</strong></td>
+        <td>~139</td>
+        <td>27+ 基础因子 &times; 5 个滚动窗口（5/10/20/30/60日）</td>
+        <td style="color: var(--orange);">参差不齐</td>
+      </tr>
+    </table>
+
+    <div class="callout gap">
+      <strong>核心问题：全部基于 OHLCV，无基本面数据</strong>
+      Alpha158 的 158 个因子完全基于价格和成交量数据，没有任何基本面因子（ROE、PE、营收增速等），也没有 A 股特有的市场微观结构因子（换手率、涨跌停、北向资金等）。
+    </div>
+
+    <!-- 逐类别诊断 -->
+    <h3>2. 逐类别诊断</h3>
+
+    <h4>KBAR 因子（9个）</h4>
+    <p>捕获日内价格形态（如上影线、下影线、实体大小）。在 A 股中效果中等，因为日内形态受涨跌停限制影响较大。部分因子（如 KMID、KLEN）有微弱的预测力，但 IC 通常在 0.02-0.03 之间。</p>
+
+    <h4>PRICE 因子（5个）</h4>
+    <p>本质上是对不同窗口价格动量/反转的间接捕获。窗口固定（5/10/20/30/60日）是其局限，缺少超短期（1-3日）和中期（90/120日）窗口。在 A 股中，5日和10日窗口的反转效果最强。</p>
+
+    <h4>VOLUME 因子（5个）</h4>
+    <p>归一化成交量有一定效果，但关键缺陷是：有 volume 但无 turnover。成交量受股本大小影响，不同股票之间不可比。需要用流通股本做归一化才能得到真正的换手率因子。</p>
+
+    <h4>ROLLING 因子（~139个）</h4>
+    <p>覆盖面广（std、mean、max、min、correlation、regression 等），但很多因子的 IC 接近 0。这些噪声因子会干扰模型学习，尤其对树模型的特征选择产生误导。</p>
+
+    <!-- 缺失的关键因子 -->
+    <h3>3. 缺失的关键因子类别</h3>
+
+    <table>
+      <tr><th>缺失类别</th><th>重要性</th><th>代表因子</th><th>预期IC提升</th></tr>
+      <tr>
+        <td>A股微观结构</td>
+        <td style="color: var(--accent);">极高</td>
+        <td>换手率、涨跌停、T+1隔夜收益</td>
+        <td style="color: var(--green);">+2-4%</td>
+      </tr>
+      <tr>
+        <td>短期反转增强</td>
+        <td style="color: var(--accent);">极高</td>
+        <td>1-3日超短期反转、残差反转</td>
+        <td style="color: var(--green);">+1-3%</td>
+      </tr>
+      <tr>
+        <td>资金流因子</td>
+        <td style="color: var(--orange);">高</td>
+        <td>北向资金持仓变化、大单比例</td>
+        <td style="color: var(--green);">+1-2%</td>
+      </tr>
+      <tr>
+        <td>基本面因子</td>
+        <td style="color: var(--gold);">中高</td>
+        <td>ROE、EP、营收增速、分析师预期</td>
+        <td>+1-2%</td>
+      </tr>
+      <tr>
+        <td>截面相对特征</td>
+        <td style="color: var(--gold);">中</td>
+        <td>行业内排名、市值分位数</td>
+        <td>+0.5-1%</td>
+      </tr>
+      <tr>
+        <td>高频日内聚合</td>
+        <td style="color: var(--gold);">中</td>
+        <td>波峰因子、高量每笔成交、VWAP偏离</td>
+        <td style="color: var(--green);">+2-4%</td>
+      </tr>
+    </table>
+
+    <!-- 改造方案 -->
+    <h3>4. 改造方案</h3>
+
+    <h4>Step 1：因子筛选 &mdash; 用 alphalens 做逐因子 IC 检验</h4>
+<pre><code><span class="code-comment"># Step 1: 使用 alphalens 逐因子诊断</span>
+<span class="code-keyword">import</span> alphalens
+<span class="code-keyword">import</span> pandas <span class="code-keyword">as</span> pd
+
+<span class="code-comment"># 加载因子数据和收益率数据</span>
+factor_data = alphalens.utils.get_clean_factor_and_forward_returns(
+    factor=factor_values,
+    prices=prices,
+    quantiles=<span class="code-highlight">5</span>,
+    periods=(<span class="code-highlight">1, 5, 10</span>)
+)
+
+<span class="code-comment"># 计算 IC</span>
+ic = alphalens.performance.factor_information_coefficient(factor_data)
+
+<span class="code-comment"># 筛选标准：保留 |IC| > 0.02 的因子</span>
+valid_factors = ic.abs().mean() > <span class="code-highlight">0.02</span>
+<span class="code-keyword">print</span>(f<span class="code-string">"有效因子数量: {valid_factors.sum()} / 158"</span>)</code></pre>
+
+    <h4>Step 2：加入 5-8 个 A 股特有因子</h4>
+    <div class="factor-chip new">短期反转(5日)</div>
+    <div class="factor-chip new">换手率(20日)</div>
+    <div class="factor-chip new">换手率波动率</div>
+    <div class="factor-chip new">涨停次数(20日)</div>
+    <div class="factor-chip new">距涨跌停距离</div>
+    <div class="factor-chip new">北向资金持仓比变化</div>
+    <div class="factor-chip new">特质波动率</div>
+    <div class="factor-chip new">量价背离</div>
+
+    <h4>Step 3：补充缺失的时间窗口</h4>
+    <p>Alpha158 使用 5/10/20/30/60 日窗口，缺少超短期和中期窗口：</p>
+    <ul>
+      <li>加入 <strong>1-3日</strong> 超短期窗口：捕获日级别的反转和隔夜效应</li>
+      <li>加入 <strong>90/120日</strong> 中期窗口：捕获季度级别的趋势和均值回归</li>
+    </ul>
+
+    <h4>Step 4：用 DeepSeek/LLM 优化因子表达式</h4>
+    <p>信达金工 2025 年研报显示，使用 DeepSeek 优化因子表达式可以使 75% 的因子 IC 得到提升。例如将简单波动率替换为 ATR 加权 + 成交量调整 + EMA 平滑的复合波动率。</p>
+
+    <!-- Qlib 配置代码 -->
+    <h3>5. Qlib 自定义因子配置示例</h3>
+
+<pre><code><span class="code-comment"># qlib_custom_factors.py</span>
+<span class="code-comment"># 在 Qlib DataHandler 中添加自定义 A 股因子</span>
+
+<span class="code-keyword">from</span> qlib.data.dataset.handler <span class="code-keyword">import</span> DataHandlerLP
+
+<span class="code-highlight">custom_fields</span> = [
+    <span class="code-comment"># === A股特有因子 ===</span>
+
+    <span class="code-comment"># 短期反转 (5日/10日)</span>
+    (<span class="code-string">"Ref($close, 5) / $close - 1"</span>, <span class="code-string">"REV_5"</span>),
+    (<span class="code-string">"Ref($close, 10) / $close - 1"</span>, <span class="code-string">"REV_10"</span>),
+    (<span class="code-string">"Ref($close, 20) / $close - 1"</span>, <span class="code-string">"REV_20"</span>),
+
+    <span class="code-comment"># 换手率因子 (需要 float_share 字段)</span>
+    (<span class="code-string">"Mean($volume / $float_share, 20)"</span>, <span class="code-string">"TURN_20"</span>),
+    (<span class="code-string">"Std($volume / $float_share, 20)"</span>, <span class="code-string">"TURN_VOL"</span>),
+
+    <span class="code-comment"># 涨跌停因子</span>
+    (<span class="code-string">"Sum(If($close >= $high_limit, 1, 0), 20)"</span>, <span class="code-string">"LIMIT_HIT_UP_20"</span>),
+    (<span class="code-string">"($high_limit - $close) / $close"</span>, <span class="code-string">"DIST_TO_LIMIT"</span>),
+
+    <span class="code-comment"># 量价背离</span>
+    (<span class="code-string">"Corr($close, $volume, 10)"</span>, <span class="code-string">"VP_DIVERGE_10"</span>),
+
+    <span class="code-comment"># === 补充窗口 ===</span>
+    <span class="code-comment"># 超短期 (1-3日)</span>
+    (<span class="code-string">"Ref($close, 1) / $close - 1"</span>, <span class="code-string">"REV_1"</span>),
+    (<span class="code-string">"Ref($close, 3) / $close - 1"</span>, <span class="code-string">"REV_3"</span>),
+
+    <span class="code-comment"># 中期 (90/120日)</span>
+    (<span class="code-string">"Mean($close, 90) / $close"</span>, <span class="code-string">"MA_RATIO_90"</span>),
+    (<span class="code-string">"Std($close, 120) / Mean($close, 120)"</span>, <span class="code-string">"CV_120"</span>),
+]
+
+<span class="code-comment"># 合并到 Alpha158</span>
+<span class="code-keyword">from</span> qlib.contrib.data.handler <span class="code-keyword">import</span> Alpha158
+<span class="code-keyword">class</span> <span class="code-highlight">Alpha158Plus</span>(Alpha158):
+    <span class="code-keyword">def</span> get_feature_config(self):
+        fields, names = <span class="code-keyword">super</span>().get_feature_config()
+        <span class="code-keyword">for</span> expr, name <span class="code-keyword">in</span> custom_fields:
+            fields.append(expr)
+            names.append(name)
+        <span class="code-keyword">return</span> fields, names</code></pre>
+
+    <div class="callout ok">
+      <strong>预期效果</strong>
+      通过筛选无效因子 + 新增 A 股特有因子 + 补充时间窗口，预计整体 RankIC 可从 0.019 提升到 0.04-0.05（约 2 倍提升），逼近 Qlib 官方基线水平。
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- Q6: 怎么构造A股特有因子？ -->
+<!-- ============================================================ -->
+<section class="section" id="q6">
+  <div class="container">
+    <h2>Q6：怎么构造 A 股特有因子？</h2>
+
+    <p>以下为每个 A 股特有因子提供具体计算公式、Qlib 表达式、Python 实现代码和预期 IC 范围。</p>
+
+    <!-- 1. 短期反转因子 -->
+    <h3>1. 短期反转因子</h3>
+
+    <div class="formula">
+      REV_N = -1 &times; (P<sub>t</sub> / P<sub>t-N</sub> - 1) = Ref($close, N) / $close - 1
+    </div>
+
+    <table>
+      <tr><th>因子</th><th>Qlib 表达式</th><th>预期 RankIC</th><th>说明</th></tr>
+      <tr>
+        <td><code>REV_5</code></td>
+        <td><code>Ref($close, 5) / $close - 1</code></td>
+        <td style="color: var(--green);">5-8%</td>
+        <td>5日反转，最经典的 A 股 alpha</td>
+      </tr>
+      <tr>
+        <td><code>REV_10</code></td>
+        <td><code>Ref($close, 10) / $close - 1</code></td>
+        <td style="color: var(--green);">4-7%</td>
+        <td>10日反转</td>
+      </tr>
+      <tr>
+        <td><code>REV_20</code></td>
+        <td><code>Ref($close, 20) / $close - 1</code></td>
+        <td>3-5%</td>
+        <td>20日反转（月度）</td>
+      </tr>
+    </table>
+
+    <p><strong>注意</strong>：公式中 Ref($close, N) 取的是 N 日前的收盘价。当过去收益为负时，因子值为正，表示预期反转上涨。无需额外乘以 -1，因为公式本身已包含反转逻辑。</p>
+
+    <!-- 2. 换手率因子 -->
+    <h3>2. 换手率因子</h3>
+
+    <div class="formula">
+      TURN = Volume / Float_Share &nbsp;&nbsp;&nbsp;&nbsp; TURN_N = Mean(TURN, N)
+    </div>
+
+<pre><code><span class="code-comment"># 换手率因子 - Python 实现</span>
+<span class="code-keyword">import</span> pandas <span class="code-keyword">as</span> pd
+<span class="code-keyword">import</span> numpy <span class="code-keyword">as</span> np
+
+<span class="code-comment"># 数据源: Tushare daily_basic 字段 float_share (万股)</span>
+<span class="code-keyword">def</span> <span class="code-highlight">calc_turnover_factors</span>(df):
+    <span class="code-string">"""
+    df 需要包含: volume (手), float_share (万股)
+    """</span>
+    <span class="code-comment"># 日换手率 = 成交量(手) / 流通股本(手)</span>
+    df[<span class="code-string">'turnover'</span>] = df[<span class="code-string">'volume'</span>] / (df[<span class="code-string">'float_share'</span>] * <span class="code-highlight">10000</span>)
+
+    <span class="code-comment"># 20日平均换手率</span>
+    df[<span class="code-string">'TURN_20'</span>] = df.groupby(<span class="code-string">'stock_id'</span>)[<span class="code-string">'turnover'</span>].transform(
+        <span class="code-keyword">lambda</span> x: x.rolling(<span class="code-highlight">20</span>).mean()
+    )
+
+    <span class="code-comment"># 换手率波动率 (独立效果)</span>
+    df[<span class="code-string">'TURN_VOL'</span>] = df.groupby(<span class="code-string">'stock_id'</span>)[<span class="code-string">'turnover'</span>].transform(
+        <span class="code-keyword">lambda</span> x: x.rolling(<span class="code-highlight">20</span>).std()
+    )
+
+    <span class="code-comment"># 异常换手率 = 短期 / 长期 - 1</span>
+    turn_5 = df.groupby(<span class="code-string">'stock_id'</span>)[<span class="code-string">'turnover'</span>].transform(
+        <span class="code-keyword">lambda</span> x: x.rolling(<span class="code-highlight">5</span>).mean()
+    )
+    turn_60 = df.groupby(<span class="code-string">'stock_id'</span>)[<span class="code-string">'turnover'</span>].transform(
+        <span class="code-keyword">lambda</span> x: x.rolling(<span class="code-highlight">60</span>).mean()
+    )
+    df[<span class="code-string">'TURN_ABNORMAL'</span>] = turn_5 / turn_60 - <span class="code-highlight">1</span>
+
+    <span class="code-keyword">return</span> df</code></pre>
+
+    <table>
+      <tr><th>因子</th><th>Qlib 表达式</th><th>数据源</th><th>预期 RankIC</th></tr>
+      <tr>
+        <td><code>TURN_20</code></td>
+        <td><code>Mean($volume/$float_share, 20)</code></td>
+        <td>Tushare <code>daily_basic.float_share</code></td>
+        <td style="color: var(--green);">4-6%</td>
+      </tr>
+      <tr>
+        <td><code>TURN_VOL</code></td>
+        <td><code>Std($volume/$float_share, 20)</code></td>
+        <td>同上</td>
+        <td>3-5%</td>
+      </tr>
+      <tr>
+        <td><code>TURN_ABNORMAL</code></td>
+        <td><code>Mean($vol/$fs, 5)/Mean($vol/$fs, 60)-1</code></td>
+        <td>同上</td>
+        <td>2-4%</td>
+      </tr>
+    </table>
+
+    <!-- 3. 涨跌停因子 -->
+    <h3>3. 涨跌停因子</h3>
+
+    <div class="formula">
+      LIMIT_HIT_UP_N = &Sigma;<sub>i=1..N</sub> I(close<sub>i</sub> &ge; high_limit<sub>i</sub>)
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      DIST_TO_LIMIT = (high_limit - close) / close
+    </div>
+
+<pre><code><span class="code-comment"># 涨跌停因子 - Python 实现</span>
+<span class="code-keyword">def</span> <span class="code-highlight">calc_limit_factors</span>(df):
+    <span class="code-string">"""
+    df 需要包含: close, high_limit, low_limit
+    数据源: Tushare stk_limit (每日涨跌停价格)
+    """</span>
+    <span class="code-comment"># 是否触及涨停</span>
+    df[<span class="code-string">'hit_up'</span>] = (df[<span class="code-string">'close'</span>] >= df[<span class="code-string">'high_limit'</span>] * <span class="code-highlight">0.998</span>).astype(<span class="code-keyword">int</span>)
+
+    <span class="code-comment"># 近20日涨停次数</span>
+    df[<span class="code-string">'LIMIT_HIT_UP_20'</span>] = df.groupby(<span class="code-string">'stock_id'</span>)[<span class="code-string">'hit_up'</span>].transform(
+        <span class="code-keyword">lambda</span> x: x.rolling(<span class="code-highlight">20</span>).sum()
+    )
+
+    <span class="code-comment"># 距涨停距离 (越近越"热")</span>
+    df[<span class="code-string">'DIST_TO_LIMIT'</span>] = (df[<span class="code-string">'high_limit'</span>] - df[<span class="code-string">'close'</span>]) / df[<span class="code-string">'close'</span>]
+
+    <span class="code-comment"># 是否触及跌停</span>
+    df[<span class="code-string">'hit_down'</span>] = (df[<span class="code-string">'close'</span>] <= df[<span class="code-string">'low_limit'</span>] * <span class="code-highlight">1.002</span>).astype(<span class="code-keyword">int</span>)
+    df[<span class="code-string">'LIMIT_HIT_DOWN_20'</span>] = df.groupby(<span class="code-string">'stock_id'</span>)[<span class="code-string">'hit_down'</span>].transform(
+        <span class="code-keyword">lambda</span> x: x.rolling(<span class="code-highlight">20</span>).sum()
+    )
+
+    <span class="code-keyword">return</span> df</code></pre>
+
+    <table>
+      <tr><th>因子</th><th>Qlib 表达式</th><th>数据源</th><th>预期 RankIC</th></tr>
+      <tr>
+        <td><code>LIMIT_HIT_UP_20</code></td>
+        <td><code>Sum(If($close>=$high_limit,1,0), 20)</code></td>
+        <td>Tushare <code>stk_limit</code></td>
+        <td>3-5%</td>
+      </tr>
+      <tr>
+        <td><code>DIST_TO_LIMIT</code></td>
+        <td><code>($high_limit - $close) / $close</code></td>
+        <td>同上</td>
+        <td>2-4%</td>
+      </tr>
+    </table>
+
+    <!-- 4. 北向资金因子 -->
+    <h3>4. 北向资金因子</h3>
+
+    <div class="formula">
+      NORTH_RATIO = north_holding / float_share
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      NORTH_CHG_N = north_holding<sub>t</sub> - north_holding<sub>t-N</sub>
+    </div>
+
+<pre><code><span class="code-comment"># 北向资金因子 - Python 实现</span>
+<span class="code-keyword">import</span> akshare <span class="code-keyword">as</span> ak
+
+<span class="code-keyword">def</span> <span class="code-highlight">get_north_holding</span>():
+    <span class="code-string">"""
+    数据源选项:
+    1. Tushare: hsgt_top10 (十大活跃股) 或 ggt_monthly (月度持仓)
+    2. AkShare: ak.stock_hsgt_hold_stock_em() (每日持仓)
+    """</span>
+    <span class="code-comment"># AkShare 方式 (免费)</span>
+    north_df = ak.stock_hsgt_hold_stock_em(market=<span class="code-string">"北向"</span>)
+    <span class="code-keyword">return</span> north_df
+
+<span class="code-keyword">def</span> <span class="code-highlight">calc_north_factors</span>(df, north_df):
+    <span class="code-comment"># 合并北向持仓数据</span>
+    df = df.merge(north_df[[<span class="code-string">'date'</span>, <span class="code-string">'stock_id'</span>, <span class="code-string">'north_holding'</span>]],
+                  on=[<span class="code-string">'date'</span>, <span class="code-string">'stock_id'</span>], how=<span class="code-string">'left'</span>)
+
+    <span class="code-comment"># 北向持仓比例</span>
+    df[<span class="code-string">'NORTH_RATIO'</span>] = df[<span class="code-string">'north_holding'</span>] / df[<span class="code-string">'float_share'</span>]
+
+    <span class="code-comment"># 5日北向资金变化</span>
+    df[<span class="code-string">'NORTH_CHANGE_5'</span>] = df.groupby(<span class="code-string">'stock_id'</span>)[<span class="code-string">'north_holding'</span>].transform(
+        <span class="code-keyword">lambda</span> x: x - x.shift(<span class="code-highlight">5</span>)
+    )
+
+    <span class="code-comment"># 20日北向资金动量</span>
+    df[<span class="code-string">'NORTH_MOM_20'</span>] = df.groupby(<span class="code-string">'stock_id'</span>)[<span class="code-string">'north_holding'</span>].transform(
+        <span class="code-keyword">lambda</span> x: x.rolling(<span class="code-highlight">20</span>).apply(
+            <span class="code-keyword">lambda</span> s: (s.iloc[-<span class="code-highlight">1</span>] - s.iloc[<span class="code-highlight">0</span>]) / (s.iloc[<span class="code-highlight">0</span>] + <span class="code-highlight">1e-8</span>)
+        )
+    )
+    <span class="code-keyword">return</span> df</code></pre>
+
+    <table>
+      <tr><th>因子</th><th>数据源</th><th>覆盖范围</th><th>预期 RankIC</th></tr>
+      <tr>
+        <td><code>NORTH_RATIO</code></td>
+        <td>AkShare / Tushare</td>
+        <td>沪深港通标的 (~2000只)</td>
+        <td>2-4%</td>
+      </tr>
+      <tr>
+        <td><code>NORTH_CHANGE_5</code></td>
+        <td>同上</td>
+        <td>同上</td>
+        <td>2-3%</td>
+      </tr>
+      <tr>
+        <td><code>NORTH_MOM_20</code></td>
+        <td>同上</td>
+        <td>同上</td>
+        <td>2-4%</td>
+      </tr>
+    </table>
+
+    <div class="callout insight">
+      <strong>北向资金因子的局限</strong>
+      北向资金因子仅覆盖沪深港通标的（约 2000 只），无法覆盖全市场。在 CSI300/CSI500 宇宙中效果较好，在 CSI1000 及更小市值宇宙中覆盖度不足。此外，2024年后部分北向资金数据不再实时披露，信号延迟增大。
+    </div>
+
+    <!-- 5. 特质波动率 -->
+    <h3>5. 特质波动率因子</h3>
+
+    <div class="formula">
+      r<sub>i,t</sub> = &alpha; + &beta; &times; r<sub>market,t</sub> + &epsilon;<sub>i,t</sub>
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      IVOL = Std(&epsilon;, 20)
+    </div>
+
+<pre><code><span class="code-comment"># 特质波动率 - Python 实现</span>
+<span class="code-keyword">import</span> statsmodels.api <span class="code-keyword">as</span> sm
+
+<span class="code-keyword">def</span> <span class="code-highlight">calc_ivol</span>(df, market_ret, window=<span class="code-highlight">20</span>):
+    <span class="code-string">"""
+    计算特质波动率 (Idiosyncratic Volatility)
+    df: 包含 stock_id, date, return 的 DataFrame
+    market_ret: 市场收益率 Series (如沪深300日收益率)
+    """</span>
+    results = []
+
+    <span class="code-keyword">for</span> stock_id, group <span class="code-keyword">in</span> df.groupby(<span class="code-string">'stock_id'</span>):
+        group = group.sort_values(<span class="code-string">'date'</span>)
+        residuals = []
+
+        <span class="code-keyword">for</span> i <span class="code-keyword">in</span> range(window, len(group)):
+            sub = group.iloc[i - window:i]
+            y = sub[<span class="code-string">'return'</span>].values
+            X = sm.add_constant(market_ret.loc[sub[<span class="code-string">'date'</span>]].values)
+
+            <span class="code-keyword">try</span>:
+                model = sm.OLS(y, X).fit()
+                residuals.append(model.resid.std())
+            <span class="code-keyword">except</span>:
+                residuals.append(np.nan)
+
+        group = group.iloc[window:]
+        group[<span class="code-string">'IVOL'</span>] = residuals
+        results.append(group)
+
+    <span class="code-keyword">return</span> pd.concat(results)</code></pre>
+
+    <table>
+      <tr><th>因子</th><th>计算方式</th><th>数据需求</th><th>预期 RankIC</th></tr>
+      <tr>
+        <td><code>IVOL_20</code></td>
+        <td>20日窗口回归残差标准差</td>
+        <td>个股收益率 + 市场收益率</td>
+        <td style="color: var(--green);">-8 ~ -9%</td>
+      </tr>
+      <tr>
+        <td><code>IVOL_60</code></td>
+        <td>60日窗口回归残差标准差</td>
+        <td>同上</td>
+        <td style="color: var(--green);">-6 ~ -8%</td>
+      </tr>
+    </table>
+
+    <div class="callout warn">
+      <strong>注意 IC 符号</strong>
+      特质波动率的 IC 为负值，表示高 IVOL 股票未来收益更低。使用时需要取负号（做空高 IVOL + 做多低 IVOL），或在模型中让树模型自动学习方向。
+    </div>
+
+    <!-- 6. 量价背离因子 -->
+    <h3>6. 量价背离因子</h3>
+
+    <div class="formula">
+      VP_DIVERGE_N = Corr(close, volume, N)
+      &nbsp;&nbsp;&nbsp;&nbsp; 负相关 = 量价背离
+    </div>
+
+<pre><code><span class="code-comment"># 量价背离因子 - 简洁实现</span>
+<span class="code-keyword">def</span> <span class="code-highlight">calc_vp_diverge</span>(df, window=<span class="code-highlight">10</span>):
+    <span class="code-string">"""
+    量价背离：价格上涨但成交量下降 (或反之)
+    负相关 = 背离，通常预示趋势反转
+    """</span>
+    df[<span class="code-string">'VP_DIVERGE'</span>] = df.groupby(<span class="code-string">'stock_id'</span>).apply(
+        <span class="code-keyword">lambda</span> g: g[<span class="code-string">'close'</span>].rolling(window).corr(g[<span class="code-string">'volume'</span>])
+    ).reset_index(level=<span class="code-highlight">0</span>, drop=<span class="code-keyword">True</span>)
+    <span class="code-keyword">return</span> df
+
+<span class="code-comment"># Qlib 表达式</span>
+<span class="code-comment"># VP_DIVERGE_10: Corr($close, $volume, 10)</span>
+<span class="code-comment"># VP_DIVERGE_20: Corr($close, $volume, 20)</span></code></pre>
+
+    <table>
+      <tr><th>因子</th><th>Qlib 表达式</th><th>数据需求</th><th>预期 RankIC</th></tr>
+      <tr>
+        <td><code>VP_DIVERGE_10</code></td>
+        <td><code>Corr($close, $volume, 10)</code></td>
+        <td>OHLCV（已有）</td>
+        <td>2-4%</td>
+      </tr>
+      <tr>
+        <td><code>VP_DIVERGE_20</code></td>
+        <td><code>Corr($close, $volume, 20)</code></td>
+        <td>OHLCV（已有）</td>
+        <td>2-3%</td>
+      </tr>
+    </table>
+
+    <!-- 因子汇总 -->
+    <h3>7. 全部自定义因子汇总</h3>
+
+    <table>
+      <tr><th>因子名</th><th>类别</th><th>公式/表达式</th><th>额外数据</th><th>预期IC</th></tr>
+      <tr>
+        <td><code>REV_5/10/20</code></td>
+        <td><span class="factor-chip strong">反转</span></td>
+        <td><code>Ref($close,N)/$close-1</code></td>
+        <td>无</td>
+        <td style="color: var(--green);">3-8%</td>
+      </tr>
+      <tr>
+        <td><code>TURN_20</code></td>
+        <td><span class="factor-chip new">换手率</span></td>
+        <td><code>Mean($vol/$fs, 20)</code></td>
+        <td>float_share</td>
+        <td style="color: var(--green);">4-6%</td>
+      </tr>
+      <tr>
+        <td><code>TURN_VOL</code></td>
+        <td><span class="factor-chip new">换手率</span></td>
+        <td><code>Std($vol/$fs, 20)</code></td>
+        <td>float_share</td>
+        <td>3-5%</td>
+      </tr>
+      <tr>
+        <td><code>LIMIT_HIT_UP_20</code></td>
+        <td><span class="factor-chip new">涨跌停</span></td>
+        <td><code>Sum(If(...))</code></td>
+        <td>high_limit</td>
+        <td>3-5%</td>
+      </tr>
+      <tr>
+        <td><code>DIST_TO_LIMIT</code></td>
+        <td><span class="factor-chip new">涨跌停</span></td>
+        <td><code>($hl-$c)/$c</code></td>
+        <td>high_limit</td>
+        <td>2-4%</td>
+      </tr>
+      <tr>
+        <td><code>NORTH_RATIO</code></td>
+        <td><span class="factor-chip new">资金流</span></td>
+        <td><code>$nh/$fs</code></td>
+        <td>north_holding</td>
+        <td>2-4%</td>
+      </tr>
+      <tr>
+        <td><code>NORTH_CHANGE_5</code></td>
+        <td><span class="factor-chip new">资金流</span></td>
+        <td><code>$nh-Ref($nh,5)</code></td>
+        <td>north_holding</td>
+        <td>2-3%</td>
+      </tr>
+      <tr>
+        <td><code>IVOL_20</code></td>
+        <td><span class="factor-chip strong">波动率</span></td>
+        <td>回归残差 Std</td>
+        <td>市场收益率</td>
+        <td style="color: var(--green);">8-9%</td>
+      </tr>
+      <tr>
+        <td><code>VP_DIVERGE_10</code></td>
+        <td><span class="factor-chip">量价</span></td>
+        <td><code>Corr($c,$v, 10)</code></td>
+        <td>无</td>
+        <td>2-4%</td>
+      </tr>
+    </table>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- Q7: 因子衰减速度有多快？ -->
+<!-- ============================================================ -->
+<section class="section" id="q7">
+  <div class="container">
+    <h2>Q7：因子衰减速度有多快？</h2>
+
+    <p>因子衰减（alpha decay）是指因子的预测能力随时间逐渐减弱的现象。理解衰减速度对因子组合管理和研发资源分配至关重要。</p>
+
+    <!-- 理论框架 -->
+    <h3>1. 因子衰减的理论框架</h3>
+
+    <div class="formula">
+      &alpha;(t) = K / (1 + &lambda;t) &nbsp;&nbsp;&nbsp;&nbsp; 双曲线衰减模型（Lee 2025）
+    </div>
+
+    <p>Lee 2025 论文提出了因子衰减的双曲线模型，将因子分为两类：</p>
+
+    <table>
+      <tr><th>因子类型</th><th>定义</th><th>衰减模式</th><th>拟合度 R&sup2;</th><th>代表因子</th></tr>
+      <tr>
+        <td><strong>机械因子</strong></td>
+        <td>基于价格/量的统计规律</td>
+        <td>符合双曲线衰减</td>
+        <td style="color: var(--green);">~0.65</td>
+        <td>动量、反转、波动率</td>
+      </tr>
+      <tr>
+        <td><strong>判断型因子</strong></td>
+        <td>基于基本面/经济逻辑</td>
+        <td>不符合模型 &mdash; 持续有效</td>
+        <td style="color: var(--accent);">低</td>
+        <td>价值、质量、盈利能力</td>
+      </tr>
+    </table>
+
+    <div class="callout insight">
+      <strong>核心洞察：机械因子需要不断更新，判断型因子可以长期持有</strong>
+      机械因子（如反转、动量）的 alpha 来源是市场微观结构缺陷，随着越来越多的交易者利用这些缺陷，alpha 会被逐渐套利掉。而判断型因子（如价值、质量）的 alpha 来源是人类行为偏差（如锚定效应、损失厌恶），这些偏差几乎不会消失。
+    </div>
+
+    <!-- 各因子实际衰减速度 -->
+    <h3>2. 各因子的实际衰减速度</h3>
+
+    <table>
+      <tr><th>因子</th><th>半衰期</th><th>衰减类型</th><th>维护需求</th><th>说明</th></tr>
+      <tr>
+        <td><span class="factor-chip strong">短期反转</span></td>
+        <td style="color: var(--orange);">6-12 个月</td>
+        <td>双曲线</td>
+        <td style="color: var(--accent);">高</td>
+        <td>需要持续重算和调整窗口参数</td>
+      </tr>
+      <tr>
+        <td><span class="factor-chip">动量/趋势</span></td>
+        <td style="color: var(--accent);">3-6 个月</td>
+        <td>双曲线</td>
+        <td style="color: var(--accent);">高</td>
+        <td>高频交易和量化策略同质化加速衰减</td>
+      </tr>
+      <tr>
+        <td><span class="factor-chip strong">价值因子</span></td>
+        <td style="color: var(--green);">30+ 年</td>
+        <td>几乎不衰减</td>
+        <td style="color: var(--green);">低</td>
+        <td>有周期性但长期持续有效</td>
+      </tr>
+      <tr>
+        <td><span class="factor-chip strong">质量因子</span></td>
+        <td style="color: var(--green);">30+ 年</td>
+        <td>不衰减</td>
+        <td style="color: var(--green);">低</td>
+        <td>溢价幅度有波动但方向不变</td>
+      </tr>
+      <tr>
+        <td><span class="factor-chip new">换手率</span></td>
+        <td style="color: var(--gold);">12-24 个月</td>
+        <td>缓慢衰减</td>
+        <td style="color: var(--gold);">中</td>
+        <td>较稳定，与市场结构变化相关</td>
+      </tr>
+      <tr>
+        <td><span class="factor-chip warn">ML挖掘因子</span></td>
+        <td style="color: var(--accent);">1-3 个月</td>
+        <td>快速衰减</td>
+        <td style="color: var(--accent);">极高</td>
+        <td>容易被反向工程，需要持续挖掘新因子</td>
+      </tr>
+    </table>
+
+    <div class="callout gap">
+      <strong>ML挖掘因子的衰减陷阱</strong>
+      通过数据挖掘（如遗传算法、LLM因子挖掘）发现的因子衰减最快，半衰期可能只有 1-3 个月。原因是这些因子往往是对市场噪声的过拟合，或者很快被其他量化团队发现并套利。需要持续保持"因子研发"带宽。
+    </div>
+
+    <!-- 因子拥挤度指标 -->
+    <h3>3. 因子拥挤度指标</h3>
+
+    <p>因子拥挤（factor crowding）是因子衰减的主要驱动力。当过多资金追逐同一因子时，因子溢价被压缩，甚至可能出现崩溃。以下指标可以监控拥挤度：</p>
+
+    <table>
+      <tr><th>指标</th><th>计算方式</th><th>警戒阈值</th><th>说明</th></tr>
+      <tr>
+        <td><strong>因子估值价差</strong></td>
+        <td>多头组与空头组的估值差距</td>
+        <td>历史最高 10%</td>
+        <td>价差越窄 = 越拥挤</td>
+      </tr>
+      <tr>
+        <td><strong>因子动量</strong></td>
+        <td>因子近期表现 (短期预测长期)</td>
+        <td>连续 3 月正收益</td>
+        <td>表现太好反而是危险信号</td>
+      </tr>
+      <tr>
+        <td><strong>策略持仓相似度</strong></td>
+        <td>相关系数 with factor ETF AUM</td>
+        <td>&rho; = -0.63</td>
+        <td>资金涌入后因子表现反向</td>
+      </tr>
+      <tr>
+        <td><strong>因子波动率</strong></td>
+        <td>因子收益的滚动标准差</td>
+        <td>高于历史均值 2&sigma;</td>
+        <td>波动率上升 = 拥挤解除的前兆</td>
+      </tr>
+    </table>
+
+    <div class="callout warn">
+      <strong>拥挤的反转因子崩溃概率高 1.7-1.8 倍</strong>
+      当反转因子出现拥挤信号时（因子动量强 + 策略持仓集中），崩溃概率比正常时期高 1.7-1.8 倍。2024年初的量化踩踏就是一个典型案例：大量量化策略同时做多小盘/反转因子，在流动性收缩时集体平仓。
+    </div>
+
+    <!-- 应对策略 -->
+    <h3>4. 应对策略</h3>
+
+    <h4>策略一：多因子混合</h4>
+    <p>组合不同衰减周期的因子，降低单因子衰减风险。将快衰减因子（反转、ML因子）和慢衰减因子（价值、质量）混合使用。</p>
+
+    <h4>策略二：定期重新验证</h4>
+<pre><code><span class="code-comment"># 季度/半年度因子有效性检验</span>
+<span class="code-keyword">def</span> <span class="code-highlight">validate_factor</span>(factor_ic_series, min_ic=<span class="code-highlight">0.02</span>, min_ir=<span class="code-highlight">0.3</span>):
+    <span class="code-string">"""
+    每季度检查因子是否仍然有效
+    """</span>
+    recent_ic = factor_ic_series.tail(<span class="code-highlight">60</span>)  <span class="code-comment"># 近60个交易日</span>
+    ic_mean = recent_ic.mean()
+    ic_std = recent_ic.std()
+    ir = ic_mean / (ic_std + <span class="code-highlight">1e-8</span>)
+
+    status = <span class="code-string">"ACTIVE"</span>
+    <span class="code-keyword">if</span> abs(ic_mean) < min_ic:
+        status = <span class="code-string">"DEGRADED"</span>  <span class="code-comment"># IC 过低，考虑降权</span>
+    <span class="code-keyword">if</span> abs(ir) < min_ir:
+        status = <span class="code-string">"UNSTABLE"</span>  <span class="code-comment"># IR 过低，信号不稳定</span>
+
+    <span class="code-keyword">return</span> {
+        <span class="code-string">"ic_mean"</span>: ic_mean,
+        <span class="code-string">"ir"</span>: ir,
+        <span class="code-string">"status"</span>: status
+    }</code></pre>
+
+    <h4>策略三：监控 IC 滚动均值和标准差</h4>
+    <ul>
+      <li>滚动 IC 均值持续下降 &rarr; 因子正在衰减</li>
+      <li>滚动 IC 标准差上升 &rarr; 因子变得不稳定</li>
+      <li>IC 符号反转 &rarr; 因子已失效，需立即移除</li>
+    </ul>
+
+    <h4>策略四：预留因子研发带宽</h4>
+    <p>建议将 20-30% 的研发时间用于新因子探索，而非仅仅维护现有因子。特别关注：</p>
+    <ul>
+      <li>另类数据因子（新闻情绪、卫星数据、供应链数据）</li>
+      <li>高频日内聚合因子（波峰因子、VWAP偏离等）</li>
+      <li>LLM辅助的因子表达式优化</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- Q8: 如何做因子中性化？ -->
+<!-- ============================================================ -->
+<section class="section" id="q8">
+  <div class="container">
+    <h2>Q8：如何做因子中性化？</h2>
+
+    <p>因子中性化是将因子值中与某些已知风险源（行业、市值等）相关的部分剥离，只保留纯粹的 alpha 信号。这是从因子研究到实盘策略的关键步骤。</p>
+
+    <!-- 为什么需要中性化 -->
+    <h3>1. 为什么需要中性化</h3>
+
+    <table>
+      <tr><th>问题</th><th>举例</th><th>不中性化的后果</th></tr>
+      <tr>
+        <td>行业估值差异</td>
+        <td>银行 PE=5，科技 PE=50</td>
+        <td>PE 因子会永远做多银行做空科技</td>
+      </tr>
+      <tr>
+        <td>市值干扰</td>
+        <td>小市值天然 PE 低、波动高、换手率高</td>
+        <td>多个因子实际上都在做多小盘股</td>
+      </tr>
+      <tr>
+        <td>风险集中</td>
+        <td>组合集中在某些行业/市值区间</td>
+        <td>非因子驱动的系统性风险暴露</td>
+      </tr>
+    </table>
+
+    <div class="callout gap">
+      <strong>不中性化 = 伪 alpha</strong>
+      如果一个因子与市值相关系数高达 0.7，那么它的"alpha"本质上是小盘股溢价。一旦小盘股风格反转（如 2024 年踩踏），所有"alpha"会同时消失。中性化让你确认：因子的预测能力是否独立于已知风险因素。
+    </div>
+
+    <!-- 行业中性化 -->
+    <h3>2. 行业中性化 (Industry Neutralization)</h3>
+
+    <p>方法：在每个行业内分别做 Z-score 标准化，使因子值在行业内可比。</p>
+
+    <div class="formula">
+      factor_neutral<sub>i</sub> = (factor<sub>i</sub> - mean<sub>industry</sub>) / std<sub>industry</sub>
+    </div>
+
+<pre><code><span class="code-comment"># 行业中性化 - Python 实现</span>
+<span class="code-keyword">def</span> <span class="code-highlight">industry_neutralize</span>(df, factor_col, industry_col=<span class="code-string">'sw_industry_1'</span>):
+    <span class="code-string">"""
+    在每个交易日的每个行业内做 Z-score 标准化
+    行业分类: 申万一级 (31个行业) 最常用
+    """</span>
+    df[f<span class="code-string">'{factor_col}_ind_neutral'</span>] = df.groupby(
+        [<span class="code-string">'date'</span>, industry_col]
+    )[factor_col].transform(
+        <span class="code-keyword">lambda</span> x: (x - x.mean()) / (x.std() + <span class="code-highlight">1e-8</span>)
+    )
+    <span class="code-keyword">return</span> df
+
+<span class="code-comment"># 使用示例</span>
+df = industry_neutralize(df, <span class="code-string">'EP'</span>)
+<span class="code-comment"># 现在 EP_ind_neutral 在行业内可比</span>
+<span class="code-comment"># 银行股之间比EP有意义，银行和科技之间比EP无意义</span></code></pre>
+
+    <p><strong>Qlib 实现</strong>：Qlib 的 <code>CSRankNorm</code> 处理器可以做截面排名标准化，虽然不是严格的行业中性化，但效果类似。若需严格行业中性化，需自定义 DataHandler。</p>
+
+    <!-- 市值中性化 -->
+    <h3>3. 市值中性化 (Size Neutralization)</h3>
+
+    <p>方法：对 ln(市值) 做截面回归，取残差作为中性化后的因子值。</p>
+
+    <div class="formula">
+      factor<sub>i</sub> = &alpha; + &beta; &times; ln(mcap<sub>i</sub>) + &epsilon;<sub>i</sub>
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      factor_neutral<sub>i</sub> = &epsilon;<sub>i</sub>
+    </div>
+
+<pre><code><span class="code-comment"># 市值中性化 - Python 实现</span>
+<span class="code-keyword">import</span> numpy <span class="code-keyword">as</span> np
+<span class="code-keyword">from</span> sklearn.linear_model <span class="code-keyword">import</span> LinearRegression
+
+<span class="code-keyword">def</span> <span class="code-highlight">size_neutralize</span>(df, factor_col, mcap_col=<span class="code-string">'market_cap'</span>):
+    <span class="code-string">"""
+    对每个交易日做截面回归，剥离市值影响
+    很多因子与市值高度相关:
+    - 小市值天然低PE、高换手率、高波动
+    - 不中性化 = 多个因子都在赌小盘
+    """</span>
+    <span class="code-keyword">def</span> _neutralize(group):
+        ln_mcap = np.log(group[mcap_col].values).reshape(-<span class="code-highlight">1</span>, <span class="code-highlight">1</span>)
+        factor = group[factor_col].values
+
+        <span class="code-comment"># 剔除 NaN</span>
+        mask = ~(np.isnan(ln_mcap.ravel()) | np.isnan(factor))
+        <span class="code-keyword">if</span> mask.sum() < <span class="code-highlight">10</span>:
+            <span class="code-keyword">return</span> pd.Series(np.nan, index=group.index)
+
+        reg = LinearRegression()
+        reg.fit(ln_mcap[mask], factor[mask])
+        residual = factor - reg.predict(ln_mcap)
+        <span class="code-keyword">return</span> pd.Series(residual, index=group.index)
+
+    df[f<span class="code-string">'{factor_col}_size_neutral'</span>] = df.groupby(<span class="code-string">'date'</span>).apply(
+        _neutralize
+    ).reset_index(level=<span class="code-highlight">0</span>, drop=<span class="code-keyword">True</span>)
+    <span class="code-keyword">return</span> df</code></pre>
+
+    <!-- 联合中性化 -->
+    <h3>4. 联合中性化（行业 + 市值）</h3>
+
+    <div class="formula">
+      factor = &alpha; + &Sigma;(&beta;<sub>i</sub> &times; Industry<sub>i</sub>) + &gamma; &times; ln(mcap) + &epsilon;
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      &epsilon; = 中性化后因子值
+    </div>
+
+<pre><code><span class="code-comment"># 联合中性化 (行业 + 市值) - 最完整版本</span>
+<span class="code-keyword">import</span> pandas <span class="code-keyword">as</span> pd
+<span class="code-keyword">import</span> numpy <span class="code-keyword">as</span> np
+<span class="code-keyword">from</span> sklearn.linear_model <span class="code-keyword">import</span> LinearRegression
+
+<span class="code-keyword">def</span> <span class="code-highlight">joint_neutralize</span>(df, factor_col, industry_col=<span class="code-string">'sw_industry_1'</span>,
+                      mcap_col=<span class="code-string">'market_cap'</span>):
+    <span class="code-string">"""
+    行业哑变量 + ln(市值) 做截面回归, 取残差
+    这是最标准的因子中性化方法
+    """</span>
+    <span class="code-keyword">def</span> _neutralize(group):
+        <span class="code-comment"># 构建行业哑变量</span>
+        dummies = pd.get_dummies(group[industry_col], drop_first=<span class="code-keyword">True</span>)
+
+        <span class="code-comment"># 构建回归矩阵: [行业哑变量, ln(市值)]</span>
+        X = pd.concat([
+            dummies,
+            np.log(group[mcap_col])
+        ], axis=<span class="code-highlight">1</span>)
+
+        y = group[factor_col]
+
+        <span class="code-comment"># 剔除 NaN</span>
+        mask = ~(X.isna().any(axis=<span class="code-highlight">1</span>) | y.isna())
+        <span class="code-keyword">if</span> mask.sum() < <span class="code-highlight">30</span>:
+            <span class="code-keyword">return</span> pd.Series(np.nan, index=group.index)
+
+        reg = LinearRegression()
+        reg.fit(X[mask], y[mask])
+        residual = y - reg.predict(X)
+        <span class="code-keyword">return</span> pd.Series(residual.values, index=group.index)
+
+    df[f<span class="code-string">'{factor_col}_neutral'</span>] = df.groupby(<span class="code-string">'date'</span>).apply(
+        _neutralize
+    ).reset_index(level=<span class="code-highlight">0</span>, drop=<span class="code-keyword">True</span>)
+    <span class="code-keyword">return</span> df</code></pre>
+
+    <!-- RobustZScore vs ZScore -->
+    <h3>5. RobustZScoreNorm vs ZScoreNorm</h3>
+
+    <table>
+      <tr><th>方法</th><th>公式</th><th>优点</th><th>缺点</th><th>适用场景</th></tr>
+      <tr>
+        <td><strong>ZScoreNorm</strong></td>
+        <td><code>(x - mean) / std</code></td>
+        <td>简单直观</td>
+        <td style="color: var(--accent);">受极端值影响大</td>
+        <td>数据分布接近正态时</td>
+      </tr>
+      <tr>
+        <td><strong>RobustZScoreNorm</strong></td>
+        <td><code>(x - median) / MAD</code></td>
+        <td style="color: var(--green);">抗极端值</td>
+        <td>计算略慢</td>
+        <td>金融数据（厚尾分布）</td>
+      </tr>
+      <tr>
+        <td><strong>CSRankNorm</strong></td>
+        <td>截面排名 &rarr; [0, 1]</td>
+        <td style="color: var(--green);">完全消除极端值</td>
+        <td>损失绝对水平信息</td>
+        <td>树模型 / 非线性模型</td>
+      </tr>
+    </table>
+
+    <p>其中 MAD = Median Absolute Deviation = median(|x - median(x)|)。Qlib 默认使用 <code>RobustZScoreNorm</code>，这是金融数据处理的最佳实践。</p>
+
+    <div class="callout ok">
+      <strong>Qlib 推荐：RobustZScoreNorm + CSRankNorm 双层标准化</strong>
+      先用 RobustZScoreNorm 做初步标准化（去极端值），再用 CSRankNorm 做截面排名。这样既保留了因子的序数信息，又完全消除了分布形状的影响。树模型（如 LightGBM）尤其受益于排名标准化。
+    </div>
+
+    <!-- 截面排名标准化 -->
+    <h3>6. 截面排名标准化 (CSRankNorm)</h3>
+
+<pre><code><span class="code-comment"># CSRankNorm 实现</span>
+<span class="code-keyword">def</span> <span class="code-highlight">cs_rank_norm</span>(df, factor_col):
+    <span class="code-string">"""
+    截面排名标准化: 将因子值转化为截面排名的百分位 [0, 1]
+    - 消除极端值影响
+    - 使分布均匀 (uniform distribution)
+    - 不同因子之间变得可比
+    """</span>
+    df[f<span class="code-string">'{factor_col}_rank'</span>] = df.groupby(<span class="code-string">'date'</span>)[factor_col].transform(
+        <span class="code-keyword">lambda</span> x: x.rank(pct=<span class="code-keyword">True</span>)
+    )
+    <span class="code-keyword">return</span> df
+
+<span class="code-comment"># Qlib 内置的 CSRankNorm processor</span>
+<span class="code-comment"># 在 DataHandler 配置中使用:</span>
+<span class="code-comment"># learn_processors=[CSRankNorm()]</span></code></pre>
+
+    <!-- 实施顺序 -->
+    <h3>7. 实施顺序（完整 Pipeline）</h3>
+
+    <div class="pipeline">
+      <div class="pipeline-step">
+        <div class="ps-label">Step 1</div>
+        <div class="ps-value">原始因子</div>
+      </div>
+      <div class="pipeline-step">
+        <div class="ps-label">Step 2</div>
+        <div class="ps-value" style="color: var(--orange);">去极值</div>
+      </div>
+      <div class="pipeline-step">
+        <div class="ps-label">Step 3</div>
+        <div class="ps-value" style="color: var(--purple);">行业+市值中性化</div>
+      </div>
+      <div class="pipeline-step">
+        <div class="ps-label">Step 4</div>
+        <div class="ps-value" style="color: var(--green);">标准化</div>
+      </div>
+    </div>
+
+    <h4>Step 1: 原始因子值</h4>
+    <p>直接计算得到的因子原始值，可能包含极端值、行业偏差、市值偏差。</p>
+
+    <h4>Step 2: 去极值 (Winsorize)</h4>
+<pre><code><span class="code-comment"># 去极值: 3&sigma; 法 或 MAD 法</span>
+<span class="code-keyword">def</span> <span class="code-highlight">winsorize_mad</span>(series, n_mad=<span class="code-highlight">5</span>):
+    <span class="code-string">"""MAD 方法去极值 (更稳健)"""</span>
+    median = series.median()
+    mad = (series - median).abs().median()
+    upper = median + n_mad * mad
+    lower = median - n_mad * mad
+    <span class="code-keyword">return</span> series.clip(lower, upper)
+
+<span class="code-keyword">def</span> <span class="code-highlight">winsorize_sigma</span>(series, n_sigma=<span class="code-highlight">3</span>):
+    <span class="code-string">"""3&sigma; 方法去极值 (传统方法)"""</span>
+    mean = series.mean()
+    std = series.std()
+    upper = mean + n_sigma * std
+    lower = mean - n_sigma * std
+    <span class="code-keyword">return</span> series.clip(lower, upper)
+
+<span class="code-comment"># 对每个交易日截面去极值</span>
+df[<span class="code-string">'factor_win'</span>] = df.groupby(<span class="code-string">'date'</span>)[<span class="code-string">'factor'</span>].transform(winsorize_mad)</code></pre>
+
+    <h4>Step 3: 行业 + 市值中性化</h4>
+    <p>使用前文的 <code>joint_neutralize()</code> 函数。</p>
+
+    <h4>Step 4: 标准化</h4>
+    <p>使用 RobustZScoreNorm 或 CSRankNorm（推荐树模型使用后者）。</p>
+
+    <!-- Qlib DataHandler Pipeline -->
+    <h3>8. Qlib DataHandler 自动化 Pipeline</h3>
+
+<pre><code><span class="code-comment"># Qlib 标准的因子处理 Pipeline 配置</span>
+<span class="code-keyword">from</span> qlib.contrib.data.handler <span class="code-keyword">import</span> Alpha158
+<span class="code-keyword">from</span> qlib.data.dataset.processor <span class="code-keyword">import</span> (
+    RobustZScoreNorm,
+    CSRankNorm,
+    Fillna,
+    DropnaLabel,
+)
+
+data_handler_config = {
+    <span class="code-string">"start_time"</span>: <span class="code-string">"2010-01-01"</span>,
+    <span class="code-string">"end_time"</span>: <span class="code-string">"2025-12-31"</span>,
+    <span class="code-string">"fit_start_time"</span>: <span class="code-string">"2010-01-01"</span>,
+    <span class="code-string">"fit_end_time"</span>: <span class="code-string">"2020-12-31"</span>,
+    <span class="code-string">"instruments"</span>: <span class="code-string">"csi500"</span>,
+
+    <span class="code-comment"># 因子处理 Pipeline (顺序执行)</span>
+    <span class="code-highlight">"infer_processors"</span>: [
+        RobustZScoreNorm(
+            fields_group=<span class="code-string">"feature"</span>,
+            clip_outlier=<span class="code-keyword">True</span>,   <span class="code-comment"># Step 2: 去极值</span>
+        ),
+        Fillna(
+            fields_group=<span class="code-string">"feature"</span>,
+            fill_value=<span class="code-highlight">0</span>,         <span class="code-comment"># 缺失值填0</span>
+        ),
+    ],
+    <span class="code-highlight">"learn_processors"</span>: [
+        DropnaLabel(),                   <span class="code-comment"># 去掉无标签样本</span>
+        CSRankNorm(                      <span class="code-comment"># Step 4: 截面排名</span>
+            fields_group=<span class="code-string">"feature"</span>,
+        ),
+    ],
+}
+
+<span class="code-comment"># 注意: Qlib 内置 pipeline 不含行业中性化 (Step 3)</span>
+<span class="code-comment"># 如需行业中性化, 需自定义 Processor:</span>
+<span class="code-keyword">class</span> <span class="code-highlight">IndustryNeutralizeProcessor</span>:
+    <span class="code-keyword">def</span> __call__(self, df):
+        <span class="code-comment"># 在 RobustZScoreNorm 之后、CSRankNorm 之前插入</span>
+        <span class="code-keyword">for</span> col <span class="code-keyword">in</span> df.columns:
+            df[col] = df.groupby([<span class="code-string">'datetime'</span>, <span class="code-string">'industry'</span>])[col].transform(
+                <span class="code-keyword">lambda</span> x: (x - x.mean()) / (x.std() + <span class="code-highlight">1e-8</span>)
+            )
+        <span class="code-keyword">return</span> df</code></pre>
+
+    <div class="callout insight">
+      <strong>中性化的权衡</strong>
+      中性化不是免费的。过度中性化（同时中性化行业 + 市值 + 波动率 + ...）会剥离掉有价值的信号。实践中推荐仅做行业 + 市值联合中性化，保留其他维度的暴露让模型自行学习。树模型（LightGBM）对因子分布不敏感，CSRankNorm 后通常不需要额外的行业中性化。
+    </div>
+
+    <!-- 实践建议总结 -->
+    <h3>9. 实践建议总结</h3>
+
+    <table>
+      <tr><th>场景</th><th>推荐 Pipeline</th><th>原因</th></tr>
+      <tr>
+        <td>树模型 (LightGBM)</td>
+        <td><code>Winsorize &rarr; CSRankNorm</code></td>
+        <td>树模型只看排名，不需要严格中性化</td>
+      </tr>
+      <tr>
+        <td>线性模型</td>
+        <td><code>Winsorize &rarr; 行业+市值中性化 &rarr; ZScore</code></td>
+        <td>线性模型对多重共线性敏感，需要中性化</td>
+      </tr>
+      <tr>
+        <td>深度学习模型</td>
+        <td><code>Winsorize &rarr; RobustZScore &rarr; CSRankNorm</code></td>
+        <td>神经网络需要标准化输入，排名有助于稳定训练</td>
+      </tr>
+      <tr>
+        <td>因子研究/IC 检验</td>
+        <td><code>Winsorize &rarr; 行业+市值中性化 &rarr; ZScore</code></td>
+        <td>确认纯 alpha 信号，排除行业/市值混淆</td>
+      </tr>
+    </table>
+
+    <div class="callout ok">
+      <strong>最终建议</strong>
+      对于 Qlib + LightGBM 的典型场景，使用 Qlib 默认的 <code>RobustZScoreNorm + Fillna + CSRankNorm</code> pipeline 即可满足大部分需求。只有在因子研究阶段（用 alphalens 做 IC 检验）才需要额外的行业 + 市值联合中性化，以确认因子的独立 alpha 贡献。
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <p>专题二：因子体系 &middot; Q4-Q8 &middot; 5 个核心问题 &middot; 2026-03-03</p>
+    <p style="margin-top: 6px; font-size: 0.8em;">参考文献：Liu-Zhou-Zhu CH-4, Dania &amp; Spillan 2019, Hu et al. 2019, Lee 2025, 信达金工 DeepSeek 研报</p>
+    <p style="margin-top: 8px;">
+      <a href="../research-hub.html">&larr; 返回研究计划</a> &middot;
+      <a href="../index.html">量化因子研究首页</a> &middot;
+      <a href="../../index.html">知识库首页</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>论文与研报库 | 量化因子研究</title>
+<style>
+  :root {
+    --bg: #0a0a0f; --surface: #111118; --surface2: #1a1a24;
+    --border: #252535; --text: #e0e0e8; --text2: #8888a0;
+    --accent: #e05050; --gold: #f0c040; --green: #40c080;
+    --blue: #5080e0; --orange: #e08040; --purple: #a070e0; --cyan: #40b8d0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); line-height: 1.8; -webkit-font-smoothing: antialiased; }
+  .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+  .breadcrumb { padding: 16px 0; font-size: 0.85em; color: var(--text2); }
+  .breadcrumb a { color: var(--blue); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .page-header { padding: 48px 0 36px; border-bottom: 1px solid var(--border); }
+  .page-header h1 { font-size: 2.2em; font-weight: 700; letter-spacing: 0.04em; margin-bottom: 8px; }
+  .page-header h1 .hl { color: var(--purple); }
+  .page-header .meta { font-size: 0.9em; color: var(--text2); }
+
+  .section { padding: 40px 0; border-bottom: 1px solid var(--border); }
+  .section:last-of-type { border-bottom: none; }
+  .section h2 { font-size: 1.4em; font-weight: 700; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid var(--purple); display: inline-block; }
+
+  .paper {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    transition: border-color 0.15s;
+  }
+  .paper:hover { border-color: var(--purple); }
+  .paper .p-title { font-weight: 600; font-size: 0.95em; margin-bottom: 4px; }
+  .paper .p-title a { color: var(--blue); text-decoration: none; }
+  .paper .p-title a:hover { text-decoration: underline; }
+  .paper .p-meta { font-size: 0.82em; color: var(--text2); margin-bottom: 6px; }
+  .paper .p-finding { font-size: 0.88em; color: var(--text); line-height: 1.6; }
+  .paper .p-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .p-tag {
+    font-size: 0.72em; padding: 2px 8px; border-radius: 12px;
+    background: var(--surface2); color: var(--text2); border: 1px solid var(--border);
+  }
+  .p-tag.key { border-color: var(--green); color: var(--green); }
+  .p-tag.method { border-color: var(--purple); color: var(--purple); }
+  .p-tag.cn { border-color: var(--gold); color: var(--gold); }
+
+  .footer { padding: 40px 0; text-align: center; color: var(--text2); font-size: 0.85em; border-top: 1px solid var(--border); }
+  .footer a { color: var(--blue); text-decoration: none; }
+
+  @media (max-width: 768px) {
+    .page-header h1 { font-size: 1.6em; }
+    .paper { padding: 12px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <nav class="breadcrumb">
+    <a href="../index.html">A股研究知识库</a> &rsaquo; <a href="index.html">量化因子研究</a> &rsaquo; <a href="research-hub.html">研究计划</a> &rsaquo; 论文库
+  </nav>
+</div>
+
+<header class="page-header">
+  <div class="container">
+    <h1><span class="hl">论文与研报</span>参考库</h1>
+    <p class="meta">42+ 篇学术论文和券商研报 &middot; 按主题分类 &middot; 持续更新</p>
+  </div>
+</header>
+
+<!-- 1. China Factor Models -->
+<section class="section">
+  <div class="container">
+    <h2>1. A 股因子模型</h2>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3108175" target="_blank">Size and Value in China</a></div>
+      <div class="p-meta">Liu, Stambaugh, Yuan &middot; 2019 &middot; <em>Journal of Financial Economics</em></div>
+      <div class="p-finding">构建 CH-3 模型：用 EP 替代 BM 作为价值因子，剔除壳价值小盘股。CH-3 显著优于 FF3 在 A 股的朴素复制，能解释大部分已知异象。</div>
+      <div class="p-tags"><span class="p-tag key">CH-3 模型</span><span class="p-tag cn">A 股</span><span class="p-tag">壳价值</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3402038" target="_blank">Trend Factor in China: The Role of Large Individual Trading</a></div>
+      <div class="p-meta">Liu, Zhou, Zhu &middot; 2024 &middot; <em>Review of Asset Pricing Studies</em></div>
+      <div class="p-finding">提出趋势因子（含量价信息），月度夏普 0.48。加入 CH-3 构成 CH-4 模型，可解释 60 个代表性异象。</div>
+      <div class="p-tags"><span class="p-tag key">CH-4 模型</span><span class="p-tag">趋势因子</span><span class="p-tag cn">夏普 0.48</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://www.sciencedirect.com/science/article/abs/pii/S0927539824000823" target="_blank">A Comparison of Factor Models in China</a></div>
+      <div class="p-meta">Wang, Zhu &middot; 2024 &middot; <em>Journal of Empirical Finance</em></div>
+      <div class="p-finding">用 105 个异象横评 FF3/FF5/CH-3/CH-4/q-factor 等模型。q5 表现最佳，CH-4 第二。最全面的 A 股因子模型赛马。</div>
+      <div class="p-tags"><span class="p-tag key">模型比较</span><span class="p-tag">105 个异象</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title"><a href="http://web.mit.edu/wangj/www/pap/HuChenShaoWang19.pdf" target="_blank">Fama-French in China: Size and Value Factors</a></div>
+      <div class="p-meta">Hu, Chen, Shao, Wang &middot; 2019 &middot; <em>International Review of Finance</em></div>
+      <div class="p-finding">1995-2016 最长样本，SMB 显著（0.61%/月），HML 不显著 — 规模是 A 股截面第一因子。</div>
+      <div class="p-tags"><span class="p-tag key">规模因子</span><span class="p-tag">SMB 0.61%/月</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. Anomalies -->
+<section class="section">
+  <div class="container">
+    <h2>2. A 股异象与因子实证</h2>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://pubsonline.informs.org/doi/10.1287/mnsc.2023.4904" target="_blank">Replicating and Digesting Anomalies in the Chinese A-Share Market</a></div>
+      <div class="p-meta">Li, Liu, Liu, Wei &middot; 2024 &middot; <em>Management Science</em></div>
+      <div class="p-finding">复制 469 个异象，83.4% 不显著。等权全 A 测试严重高估因子效果，需用主板断点+市值加权。</div>
+      <div class="p-tags"><span class="p-tag key">469 个异象</span><span class="p-tag">83% 不显著</span><span class="p-tag cn">方法论</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://www.sciencedirect.com/science/article/pii/S0927538X21001141" target="_blank">Anomalies in the China A-share Market</a></div>
+      <div class="p-meta">Jansen, Swinkels, Zhou &middot; 2021 &middot; <em>Pacific-Basin Finance Journal</em></div>
+      <div class="p-finding">32 个异象检验：价值和交易类因子有效，规模和质量弱。首次记录 A 股残差反转和收益率季节性。</div>
+      <div class="p-tags"><span class="p-tag">32 个异象</span><span class="p-tag">残差反转</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://www.sciencedirect.com/science/article/abs/pii/S0275531918302046" target="_blank">Momentum Effects in China: A Review</a></div>
+      <div class="p-meta">Dania, Spillan &middot; 2019 &middot; <em>Research in International Business and Finance</em></div>
+      <div class="p-finding">A 股无传统动量；短期（1-6月）和长期（3年）反转显著。动量仅在市场状态持续时出现。</div>
+      <div class="p-tags"><span class="p-tag key">反转效应</span><span class="p-tag cn">A 股无动量</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://onlinelibrary.wiley.com/doi/10.1111/j.1540-6261.2006.00836.x" target="_blank">The Cross-Section of Volatility and Expected Returns</a></div>
+      <div class="p-meta">Ang, Hodrick, Xing, Zhang &middot; 2006 &middot; <em>Journal of Finance</em></div>
+      <div class="p-finding">奠基论文：高特质波动率 → 低未来收益（IVol puzzle）。跨 23 个市场成立。</div>
+      <div class="p-tags"><span class="p-tag key">特质波动率</span><span class="p-tag">奠基论文</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://www.sciencedirect.com/science/article/abs/pii/S1544612323011753" target="_blank">Price Limits Hitting Effect and Cross-Sectional Returns: China</a></div>
+      <div class="p-meta">Zeng, Wang, Tang &middot; 2024 &middot; <em>Finance Research Letters</em></div>
+      <div class="p-finding">频繁触涨停 → 未来收益显著更低（-0.76%/月）。投资者过度反应驱动，微盘股和牛市中更强。</div>
+      <div class="p-tags"><span class="p-tag key">涨跌停因子</span><span class="p-tag cn">A 股特有</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://wxiong.mycpanel.princeton.edu/papers/PriceLimit.pdf" target="_blank">Daily Price Limits and Destructive Market Behavior</a></div>
+      <div class="p-meta">Xiong et al. &middot; 2020 &middot; <em>Journal of Econometrics</em></div>
+      <div class="p-finding">触涨停后次日开盘继续上涨，长期反转。涨跌停制度创造独特的延续-反转模式。</div>
+      <div class="p-tags"><span class="p-tag">价格限制</span><span class="p-tag">过度反应</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://www.sciencedirect.com/science/article/abs/pii/S0927538X19305323" target="_blank">Signed Momentum in the Chinese Stock Market</a></div>
+      <div class="p-meta">2020 &middot; <em>Pacific-Basin Finance Journal</em></div>
+      <div class="p-finding">将动量分解为正/负收益成分，签名动量在传统动量失效的 A 股市场能产生显著收益。</div>
+      <div class="p-tags"><span class="p-tag">签名动量</span><span class="p-tag cn">A 股</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://caia.org/sites/default/files/factor_investing_in_the_china_a-share_market.pdf" target="_blank">Factor Investing in the China A-Share Market</a></div>
+      <div class="p-meta">Shrivastava, Lee, Mussalli (PanAgora) &middot; 2018 &middot; <em>CAIA Review</em></div>
+      <div class="p-finding">估值因子有效（因成长股过度拥挤），纯价格动量无效（集体主义投资行为），质量因子效果温和。</div>
+      <div class="p-tags"><span class="p-tag">行业综述</span><span class="p-tag">PanAgora</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://www.sciencedirect.com/science/article/abs/pii/S0264999325003657" target="_blank">Disciplining the Factor Zoo: Pricing Factors in Chinese Stocks</a></div>
+      <div class="p-meta">2025 &middot; <em>Economic Modelling</em></div>
+      <div class="p-finding">用现代模型选择技术精简 A 股"因子动物园"，识别真正定价相关的因子子集。</div>
+      <div class="p-tags"><span class="p-tag key">因子精简</span><span class="p-tag">2025</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. ML -->
+<section class="section">
+  <div class="container">
+    <h2>3. 机器学习因子选股</h2>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://academic.oup.com/rfs/article/33/5/2223/5758276" target="_blank">Empirical Asset Pricing via Machine Learning</a></div>
+      <div class="p-meta">Gu, Kelly, Xiu &middot; 2020 &middot; <em>Review of Financial Studies</em></div>
+      <div class="p-finding">ML 资产定价奠基论文。树模型和神经网络表现最佳，捕获非线性交互。主导信号是动量、流动性、波动率。</div>
+      <div class="p-tags"><span class="p-tag key">奠基论文</span><span class="p-tag method">ML</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://www.preprints.org/manuscript/202501.0303/v1" target="_blank">Application of LightGBM in the Chinese Stock Market</a></div>
+      <div class="p-meta">2025 &middot; Preprint</div>
+      <div class="p-finding">A 股月度 OOS R&sup2;=2.13%（vs OLS 0.95%），多空策略月收益 2.63%，夏普 1.77。</div>
+      <div class="p-tags"><span class="p-tag method">LightGBM</span><span class="p-tag cn">A 股</span><span class="p-tag key">夏普 1.77</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0306094" target="_blank">Factor-GAN: Enhancing Stock Price Prediction with GANs</a></div>
+      <div class="p-meta">2024 &middot; <em>PLOS One</em></div>
+      <div class="p-finding">GAN 做 70 个因子选择，多空年化 23.52%。国企向非国企转型期，基本面因子让位于流动性和波动率。</div>
+      <div class="p-tags"><span class="p-tag method">GAN</span><span class="p-tag cn">A 股</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://arxiv.org/abs/2402.06656" target="_blank">DiffsFormer: Diffusion Transformer on Stock Factor Augmentation</a></div>
+      <div class="p-meta">Gao, Chen et al. (Alibaba) &middot; 2024 &middot; arXiv</div>
+      <div class="p-finding">扩散模型做因子数据增强，CSI300 年化 +7.2%，CSI800 +27.8%。解决低信噪比训练数据不足问题。</div>
+      <div class="p-tags"><span class="p-tag method">Diffusion</span><span class="p-tag">数据增强</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. Factor Decay -->
+<section class="section">
+  <div class="container">
+    <h2>4. 因子衰减与拥挤</h2>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://arxiv.org/abs/2512.11913" target="_blank">Not All Factors Crowd Equally: Modeling Alpha Decay</a></div>
+      <div class="p-meta">Lee &middot; 2025 &middot; arXiv</div>
+      <div class="p-finding">推导双曲线 alpha 衰减模型。机械因子（动量、反转）衰减 R&sup2;=0.65；判断型因子（价值、质量）不衰减。拥挤反转因子崩溃概率高 1.7-1.8x。</div>
+      <div class="p-tags"><span class="p-tag key">Alpha 衰减</span><span class="p-tag">拥挤度</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://www.aqr.com/-/media/AQR/Documents/Journal-Articles/AQRJPMQuant23FactFictionandFactorInvesting.pdf" target="_blank">Fact, Fiction, and Factor Investing</a></div>
+      <div class="p-meta">AQR (Ilmanen, Israel et al.) &middot; 2023 &middot; <em>Journal of Portfolio Management</em></div>
+      <div class="p-finding">回应因子投资的常见误解。因子拥挤不自动导致收益下降，因子溢价在长期内具有显著持续性。</div>
+      <div class="p-tags"><span class="p-tag key">AQR 综述</span><span class="p-tag">因子持续性</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. LLM Factor Mining -->
+<section class="section">
+  <div class="container">
+    <h2>5. LLM 因子挖掘（2024-2025）</h2>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://arxiv.org/abs/2505.15155" target="_blank">R&amp;D-Agent-Quant: Multi-Agent for Factor-Model Joint Optimization</a></div>
+      <div class="p-meta">Li, Yang et al. (Microsoft Research) &middot; 2025 &middot; NeurIPS 2025</div>
+      <div class="p-finding">多 Agent 协同优化因子+模型。用 70% 更少因子达到 2x 年化收益。单次优化成本 &lt;$10。</div>
+      <div class="p-tags"><span class="p-tag key">SOTA</span><span class="p-tag method">Multi-Agent</span><span class="p-tag">NeurIPS</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://arxiv.org/abs/2502.16789" target="_blank">AlphaAgent: LLM-Driven Alpha Mining with Regularized Exploration</a></div>
+      <div class="p-meta">Tang et al. &middot; 2025 &middot; KDD 2025</div>
+      <div class="p-finding">DeepSeek-R1 驱动 alpha 挖掘，AST 相似度去重 + 假设-因子对齐。CSI500 年化超额 11.0%，IR=1.5。</div>
+      <div class="p-tags"><span class="p-tag method">DeepSeek-R1</span><span class="p-tag key">IR 1.5</span><span class="p-tag">KDD</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://arxiv.org/abs/2602.07085" target="_blank">QuantaAlpha: Evolutionary Framework for LLM-Driven Alpha Mining</a></div>
+      <div class="p-meta">2025 &middot; arXiv</div>
+      <div class="p-finding">轨迹级变异+交叉的进化框架。IC=0.15，年化 27.75%，最大回撤 7.98%。跨市场可迁移（CSI300→S&amp;P500）。</div>
+      <div class="p-tags"><span class="p-tag method">进化算法+LLM</span><span class="p-tag key">IC 0.15</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://arxiv.org/abs/2512.23515" target="_blank">Alpha-R1: Alpha Screening with LLM Reasoning via RL</a></div>
+      <div class="p-meta">FinStep-AI &middot; 2025 &middot; arXiv</div>
+      <div class="p-finding">8B 推理模型通过 RL 训练做因子激活/停用。CSI300 年化 27.59%，夏普 1.62，最大回撤 6.76%。</div>
+      <div class="p-tags"><span class="p-tag method">RL + LLM</span><span class="p-tag key">夏普 1.62</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://arxiv.org/abs/2406.18394" target="_blank">AlphaForge: Mine and Dynamically Combine Formulaic Alpha Factors</a></div>
+      <div class="p-meta">2025 &middot; AAAI 2025</div>
+      <div class="p-finding">生成式神经网络 → Factor Zoo → 动态重加权形成 Mega-Alpha。优于 RL 固定权重方法。</div>
+      <div class="p-tags"><span class="p-tag method">生成式</span><span class="p-tag">AAAI</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://dl.acm.org/doi/10.1145/3768292.3770377" target="_blank">FactorMAD: Multi-Agent Debate for Alpha Factor Mining</a></div>
+      <div class="p-meta">2024 &middot; ICAIF 2024</div>
+      <div class="p-finding">多 Agent 辩论机制生成可解释因子。辩论产生的因子质量和鲁棒性优于单 Agent。</div>
+      <div class="p-tags"><span class="p-tag method">Multi-Agent Debate</span><span class="p-tag">可解释性</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://aclanthology.org/2025.findings-emnlp.1005/" target="_blank">Automate Strategy Finding with LLM in Quant Investment</a></div>
+      <div class="p-meta">Kou, Yu, Luo et al. &middot; 2025 &middot; EMNLP 2025</div>
+      <div class="p-finding">LLM 三阶段框架（生成→评估→优化），SSE50 累计收益 53.17%。</div>
+      <div class="p-tags"><span class="p-tag method">LLM Pipeline</span><span class="p-tag">EMNLP</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://arxiv.org/abs/2412.00896" target="_blank">Alpha Mining via Warm Start Genetic Programming</a></div>
+      <div class="p-meta">2024 &middot; arXiv</div>
+      <div class="p-finding">热启动遗传编程，用已知有效因子结构初始化种群，收敛速度大幅提升。</div>
+      <div class="p-tags"><span class="p-tag method">遗传编程</span><span class="p-tag">热启动</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. Qlib Ecosystem -->
+<section class="section">
+  <div class="container">
+    <h2>6. Qlib 生态论文</h2>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://arxiv.org/abs/2009.11189" target="_blank">Qlib: An AI-oriented Quantitative Investment Platform</a></div>
+      <div class="p-meta">Yang, Liu, Zhou, Bian, Liu &middot; 2020 &middot; Microsoft Research</div>
+      <div class="p-finding">Qlib 平台架构论文，覆盖数据处理、模型训练、回测、alpha 挖掘、风险建模全流程。</div>
+      <div class="p-tags"><span class="p-tag key">平台论文</span><span class="p-tag">Microsoft</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://arxiv.org/abs/2010.01265" target="_blank">DoubleEnsemble: Sample Reweighting and Feature Selection for Finance</a></div>
+      <div class="p-meta">Zhang, Li et al. &middot; 2020 &middot; IEEE ICDM 2020</div>
+      <div class="p-finding">学习轨迹驱动的样本重加权 + 打乱特征选择。IC 比 LightGBM +16%。</div>
+      <div class="p-tags"><span class="p-tag key">IC +16%</span><span class="p-tag method">Ensemble</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://www.microsoft.com/en-us/research/publication/learning-multiple-stock-trading-patterns-with-temporal-routing-adaptor-and-optimal-transport/" target="_blank">TRA: Temporal Routing Adaptor with Optimal Transport</a></div>
+      <div class="p-meta">Lin, Zhou, Liu, Bian &middot; 2021 &middot; KDD 2021</div>
+      <div class="p-finding">多预测器 + 路由器 + 最优传输，处理异质交易模式。Rank IC=0.054（Alpha158 最佳）。</div>
+      <div class="p-tags"><span class="p-tag method">路由+OT</span><span class="p-tag">KDD</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://arxiv.org/abs/2110.13716" target="_blank">HIST: Graph-based Framework via Concept-Oriented Shared Information</a></div>
+      <div class="p-meta">Xu, Liu et al. &middot; 2022 &middot; AAAI 2022</div>
+      <div class="p-finding">图网络挖掘概念共享信息，Alpha360 上 Rank IC=0.067，IC=0.052。</div>
+      <div class="p-tags"><span class="p-tag method">图网络</span><span class="p-tag key">Rank IC 0.067</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://dl.acm.org/doi/10.1145/3580305.3599315" target="_blank">DoubleAdapt: Meta-learning for Incremental Learning</a></div>
+      <div class="p-meta">SJTU-DMTai, Microsoft &middot; 2023 &middot; KDD 2023</div>
+      <div class="p-finding">端到端增量学习，同时适配数据分布（data adapter）和模型参数（model adapter），处理概念漂移。</div>
+      <div class="p-tags"><span class="p-tag method">增量学习</span><span class="p-tag">KDD</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://ojs.aaai.org/index.php/AAAI/article/view/27767" target="_blank">MASTER: Market-Guided Stock Transformer</a></div>
+      <div class="p-meta">Li et al. (SJTU-DMTai) &middot; 2024 &middot; AAAI 2024</div>
+      <div class="p-finding">市场引导的门控 Transformer，组合指标在 A 股上 +47%。注意力图揭示股票间的即时和跨时相关性。</div>
+      <div class="p-tags"><span class="p-tag method">Transformer</span><span class="p-tag key">+47%</span><span class="p-tag">AAAI</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://dl.acm.org/doi/10.1145/3459637.3482315" target="_blank">AdaRNN: Adaptive Learning and Forecasting of Time Series</a></div>
+      <div class="p-meta">Du et al. &middot; 2021 &middot; CIKM 2021</div>
+      <div class="p-finding">域适应处理时间序列协变量漂移，匹配不同时间段的分布以缓解概念漂移。</div>
+      <div class="p-tags"><span class="p-tag method">域适应</span><span class="p-tag">非平稳</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. Broker Reports -->
+<section class="section">
+  <div class="container">
+    <h2>7. 券商金工研报系列</h2>
+
+    <div class="paper">
+      <div class="p-title">华泰证券 — 人工智能选股系列（68+ 篇）</div>
+      <div class="p-meta">林晓明团队 &middot; 2017-2025</div>
+      <div class="p-finding">代表成果：AlphaNet 因子挖掘神经网络（#14）、遗传编程因子挖掘（#54）、图神经网络选股（#55）、AI 价量因子年化超额 20.94%。</div>
+      <div class="p-tags"><span class="p-tag cn">华泰</span><span class="p-tag key">AlphaNet</span><span class="p-tag">68+ 篇</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title"><a href="https://arxiv.org/abs/2411.04409" target="_blank">AlphaNetV4: Alpha Mining Model</a></div>
+      <div class="p-meta">Wu (基于华泰 AlphaNet 谱系) &middot; 2024 &middot; arXiv</div>
+      <div class="p-finding">第四代 AlphaNet：增加序列长度、Spearman dropout、Bi-LSTM/Transformer。年化超额比 V3 高 7-10%。</div>
+      <div class="p-tags"><span class="p-tag method">AlphaNet V4</span><span class="p-tag">+7-10%</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title">海通证券 — 选股因子系列研究（87+ 篇）</div>
+      <div class="p-meta">海通金融工程团队 &middot; 2016-2023</div>
+      <div class="p-finding">代表成果：高频已实现波动率分解（#25）、ROE 因子改进 IC +50%（#73）、深度学习高频因子（#86）、因子正交化方法。</div>
+      <div class="p-tags"><span class="p-tag cn">海通</span><span class="p-tag key">87+ 篇</span><span class="p-tag">ROE 改进</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title">天风证券 — 因子择时与拥挤度研究</div>
+      <div class="p-meta">吴先兴团队 &middot; 2020-2024</div>
+      <div class="p-finding">构建趋势型/补充型/跨行业拥挤度因子。用货币-信用周期做因子择时，探索"因子的因子"（因子动量、估值价差、因子离散度）。</div>
+      <div class="p-tags"><span class="p-tag cn">天风</span><span class="p-tag key">因子择时</span><span class="p-tag">拥挤度</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title">国盛证券 — 多因子系列</div>
+      <div class="p-meta">2019-2022</div>
+      <div class="p-finding">多因子选股框架、因子空头端优化、行业内选股模型（全市场 alpha 难挖时转向行业内相对选股）。</div>
+      <div class="p-tags"><span class="p-tag cn">国盛</span><span class="p-tag">行业内选股</span></div>
+    </div>
+
+    <div class="paper">
+      <div class="p-title">信达证券 — DeepSeek 优化 Alpha158 因子</div>
+      <div class="p-meta">信达金工 &middot; 2025-03</div>
+      <div class="p-finding">用 DeepSeek 优化因子表达式，75% 因子 RankIC 提升，ICIR 0.31→0.55。生成 5 个 ICIR&gt;0.8 新因子。</div>
+      <div class="p-tags"><span class="p-tag cn">信达</span><span class="p-tag method">DeepSeek</span><span class="p-tag key">ICIR +77%</span></div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <p>论文与研报参考库 &middot; 42+ 篇 &middot; 2026-03-03</p>
+    <p style="margin-top: 8px;"><a href="research-hub.html">&larr; 返回研究计划</a> &middot; <a href="../index.html">知识库首页</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>量化因子系统研究计划 | A股研究知识库</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --border: #252535;
+    --text: #e0e0e8;
+    --text2: #8888a0;
+    --accent: #e05050;
+    --gold: #f0c040;
+    --green: #40c080;
+    --blue: #5080e0;
+    --orange: #e08040;
+    --purple: #a070e0;
+    --cyan: #40b8d0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.8;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+  .breadcrumb { padding: 16px 0; font-size: 0.85em; color: var(--text2); }
+  .breadcrumb a { color: var(--blue); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+
+  .page-header {
+    padding: 48px 0 36px;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+  }
+  .page-header h1 { font-size: 2.2em; font-weight: 700; letter-spacing: 0.04em; margin-bottom: 8px; }
+  .page-header h1 .hl { color: var(--purple); }
+  .page-header .meta { font-size: 0.9em; color: var(--text2); }
+  .page-header .goal {
+    margin-top: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 24px;
+    font-size: 0.95em;
+    text-align: left;
+    display: inline-block;
+    max-width: 700px;
+  }
+  .page-header .goal strong { color: var(--gold); }
+
+  /* Topic group */
+  .topic-group {
+    padding: 40px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .topic-group:last-of-type { border-bottom: none; }
+  .tg-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .tg-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2em; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .tg-title { font-size: 1.3em; font-weight: 700; }
+  .tg-desc { font-size: 0.88em; color: var(--text2); margin-bottom: 16px; }
+
+  /* Question cards */
+  .q-list { display: flex; flex-direction: column; gap: 10px; }
+  .q-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    transition: all 0.15s ease;
+    text-decoration: none;
+    color: inherit;
+  }
+  .q-card:hover {
+    border-color: var(--purple);
+    transform: translateX(4px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  }
+  .q-num {
+    font-size: 0.82em;
+    font-weight: 700;
+    color: var(--purple);
+    background: var(--surface2);
+    border-radius: 6px;
+    width: 32px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .q-body { flex: 1; }
+  .q-title { font-weight: 600; font-size: 0.95em; margin-bottom: 4px; }
+  .q-sub { font-size: 0.82em; color: var(--text2); line-height: 1.5; }
+  .q-status {
+    font-size: 0.72em;
+    padding: 2px 8px;
+    border-radius: 12px;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+  .q-status.done { background: rgba(64,192,128,0.15); color: var(--green); border: 1px solid rgba(64,192,128,0.3); }
+  .q-status.wip { background: rgba(240,192,64,0.15); color: var(--gold); border: 1px solid rgba(240,192,64,0.3); }
+  .q-status.todo { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
+
+  /* Resources bar */
+  .resources {
+    padding: 32px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .res-link {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 18px;
+    text-decoration: none;
+    color: var(--text);
+    font-size: 0.9em;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .res-link:hover { border-color: var(--blue); transform: translateY(-2px); }
+  .res-link .ri { font-size: 1.1em; }
+
+  .footer {
+    padding: 40px 0;
+    text-align: center;
+    color: var(--text2);
+    font-size: 0.85em;
+    border-top: 1px solid var(--border);
+  }
+  .footer a { color: var(--blue); text-decoration: none; }
+
+  @media (max-width: 768px) {
+    .page-header h1 { font-size: 1.6em; }
+    .tg-title { font-size: 1.1em; }
+    .q-card { padding: 12px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <nav class="breadcrumb">
+    <a href="../index.html">A股研究知识库</a> &rsaquo; <a href="index.html">量化因子研究</a> &rsaquo; 系统研究计划
+  </nav>
+</div>
+
+<header class="page-header">
+  <div class="container">
+    <h1><span class="hl">量化因子系统</span>研究计划</h1>
+    <p class="meta">22 个核心问题 &middot; 6 个专题 &middot; 42+ 篇参考文献</p>
+    <div class="goal">
+      <strong>目标：</strong>系统研究 A 股因子分析各个方面，最终产出一个高质量、行业优秀水平的量化投资策略，可以实盘运行。覆盖从数据基础到实盘部署的全链条。
+    </div>
+  </div>
+</header>
+
+<!-- Resources -->
+<div class="container">
+  <div class="resources">
+    <a class="res-link" href="papers.html">
+      <span class="ri">&#128218;</span> 论文库（42+ 篇）
+    </a>
+    <a class="res-link" href="04-因子系统优化深度研究.html">
+      <span class="ri">&#128269;</span> Alpha158 优化深度研究
+    </a>
+    <a class="res-link" href="index.html">
+      <span class="ri">&#128202;</span> 因子研究首页
+    </a>
+  </div>
+</div>
+
+<!-- Topic 1: Data Foundation -->
+<section class="topic-group">
+  <div class="container">
+    <div class="tg-header">
+      <div class="tg-icon" style="background: #152530; color: var(--cyan);">I</div>
+      <div class="tg-title">专题一：数据基础</div>
+    </div>
+    <p class="tg-desc">因子研究的根基 — 数据源、清洗陷阱、历史长度要求</p>
+    <div class="q-list">
+      <a class="q-card" href="topics/01-data-foundation.html#q1">
+        <div class="q-num">Q1</div>
+        <div class="q-body">
+          <div class="q-title">A 股因子数据源有哪些？</div>
+          <div class="q-sub">Qlib bin / tushare / Wind / 聚宽 / AkShare 各自覆盖范围和质量如何？</div>
+        </div>
+        <div class="q-status done">&#10003; 已完成</div>
+      </a>
+      <a class="q-card" href="topics/01-data-foundation.html#q2">
+        <div class="q-num">Q2</div>
+        <div class="q-body">
+          <div class="q-title">数据清洗的关键陷阱是什么？</div>
+          <div class="q-sub">生存偏差、前视偏差、复权方式、财报发布滞后如何处理？</div>
+        </div>
+        <div class="q-status done">&#10003; 已完成</div>
+      </a>
+      <a class="q-card" href="topics/01-data-foundation.html#q3">
+        <div class="q-num">Q3</div>
+        <div class="q-body">
+          <div class="q-title">需要多长的历史数据做回测？</div>
+          <div class="q-sub">不同因子对数据长度的敏感度？最短可行回测窗口？</div>
+        </div>
+        <div class="q-status done">&#10003; 已完成</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Topic 2: Factor System -->
+<section class="topic-group">
+  <div class="container">
+    <div class="tg-header">
+      <div class="tg-icon" style="background: #1a1a28; color: var(--purple);">II</div>
+      <div class="tg-title">专题二：因子体系</div>
+    </div>
+    <p class="tg-desc">哪些因子有效、怎么构造、多快衰减、如何中性化</p>
+    <div class="q-list">
+      <a class="q-card" href="topics/02-factor-system.html#q4">
+        <div class="q-num">Q4</div>
+        <div class="q-body">
+          <div class="q-title">A 股哪些因子有持续超额收益？</div>
+          <div class="q-sub">反转、换手率、特质波动率 vs 美股的动量、价值差异何在？</div>
+        </div>
+        <div class="q-status done">&#10003; 已完成</div>
+      </a>
+      <a class="q-card" href="topics/02-factor-system.html#q5">
+        <div class="q-num">Q5</div>
+        <div class="q-body">
+          <div class="q-title">Alpha158 具体有哪些弱点，应该如何改造？</div>
+          <div class="q-sub">逐因子层面的诊断与优化建议</div>
+        </div>
+        <div class="q-status done">&#10003; 已完成</div>
+      </a>
+      <a class="q-card" href="topics/02-factor-system.html#q6">
+        <div class="q-num">Q6</div>
+        <div class="q-body">
+          <div class="q-title">怎么构造 A 股特有因子？</div>
+          <div class="q-sub">涨跌停、T+1、北向资金、散户情绪代理的具体计算公式</div>
+        </div>
+        <div class="q-status done">&#10003; 已完成</div>
+      </a>
+      <a class="q-card" href="topics/02-factor-system.html#q7">
+        <div class="q-num">Q7</div>
+        <div class="q-body">
+          <div class="q-title">因子衰减速度有多快？</div>
+          <div class="q-sub">不同因子的半衰期，何时需要重新挖掘？</div>
+        </div>
+        <div class="q-status done">&#10003; 已完成</div>
+      </a>
+      <a class="q-card" href="topics/02-factor-system.html#q8">
+        <div class="q-num">Q8</div>
+        <div class="q-body">
+          <div class="q-title">如何做因子中性化？</div>
+          <div class="q-sub">行业中性、市值中性的具体实现方式</div>
+        </div>
+        <div class="q-status done">&#10003; 已完成</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Topic 3: Model Selection -->
+<section class="topic-group">
+  <div class="container">
+    <div class="tg-header">
+      <div class="tg-icon" style="background: #1a2520; color: var(--green);">III</div>
+      <div class="tg-title">专题三：模型选择</div>
+    </div>
+    <p class="tg-desc">树模型 vs 深度学习、滚动训练、Ensemble 策略</p>
+    <div class="q-list">
+      <a class="q-card" href="topics/03-model-selection.html#q9">
+        <div class="q-num">Q9</div>
+        <div class="q-body">
+          <div class="q-title">LightGBM vs 深度学习在 A 股因子选股上哪个更好？</div>
+          <div class="q-sub">什么场景用树模型，什么场景用时序模型？</div>
+        </div>
+        <div class="q-status done">&#10003; 已完成</div>
+      </a>
+      <a class="q-card" href="topics/03-model-selection.html#q10">
+        <div class="q-num">Q10</div>
+        <div class="q-body">
+          <div class="q-title">怎么做滚动训练避免过拟合？</div>
+          <div class="q-sub">训练窗口、验证窗口、重训频率的最佳实践</div>
+        </div>
+        <div class="q-status done">&#10003; 已完成</div>
+      </a>
+      <a class="q-card" href="topics/03-model-selection.html#q11">
+        <div class="q-num">Q11</div>
+        <div class="q-body">
+          <div class="q-title">Ensemble 怎么做效果最好？</div>
+          <div class="q-sub">简单加权 vs stacking vs DoubleEnsemble</div>
+        </div>
+        <div class="q-status done">&#10003; 已完成</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Topic 4: Portfolio & Risk -->
+<section class="topic-group">
+  <div class="container">
+    <div class="tg-header">
+      <div class="tg-icon" style="background: #2a2015; color: var(--gold);">IV</div>
+      <div class="tg-title">专题四：组合构建与风控</div>
+    </div>
+    <p class="tg-desc">从模型预测到实际持仓 — 组合优化、行业暴露、交易成本、仓位管理</p>
+    <div class="q-list">
+      <a class="q-card" href="topics/04-portfolio-risk.html#q12">
+        <div class="q-num">Q12</div>
+        <div class="q-body">
+          <div class="q-title">如何从模型预测到实际持仓？</div>
+          <div class="q-sub">TopkDropout / 优化器 / 等权 / 风险平价各自适用场景</div>
+        </div>
+        <div class="q-status done">&#10003; 已完成</div>
+      </a>
+      <a class="q-card" href="topics/04-portfolio-risk.html#q13">
+        <div class="q-num">Q13</div>
+        <div class="q-body">
+          <div class="q-title">行业暴露和风格暴露怎么控制？</div>
+          <div class="q-sub">Barra 风险模型在个人量化中是否可行？</div>
+        </div>
+        <div class="q-status done">&#10003; 已完成</div>
+      </a>
+      <a class="q-card" href="topics/04-portfolio-risk.html#q14">
+        <div class="q-num">Q14</div>
+        <div class="q-body">
+          <div class="q-title">换手率和交易成本怎么建模？</div>
+          <div class="q-sub">冲击成本的经验公式？如何平衡信号衰减和交易成本？</div>
+        </div>
+        <div class="q-status done">&#10003; 已完成</div>
+      </a>
+      <a class="q-card" href="topics/04-portfolio-risk.html#q15">
+        <div class="q-num">Q15</div>
+        <div class="q-body">
+          <div class="q-title">仓位管理和止损规则怎么设？</div>
+          <div class="q-sub">个股上限、总仓位控制、尾部风险对冲</div>
+        </div>
+        <div class="q-status done">&#10003; 已完成</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Topic 5: Live Deployment -->
+<section class="topic-group">
+  <div class="container">
+    <div class="tg-header">
+      <div class="tg-icon" style="background: #2a1520; color: var(--accent);">V</div>
+      <div class="tg-title">专题五：实盘落地</div>
+    </div>
+    <p class="tg-desc">回测衰减、容量约束、自动化架构、策略监控</p>
+    <div class="q-list">
+      <a class="q-card" href="topics/05-live-deployment.html#q16">
+        <div class="q-num">Q16</div>
+        <div class="q-body">
+          <div class="q-title">回测到实盘的衰减有多大？</div>
+          <div class="q-sub">如何在回测中模拟真实摩擦？</div>
+        </div>
+        <div class="q-status done">&#10003; 已完成</div>
+      </a>
+      <a class="q-card" href="topics/05-live-deployment.html#q17">
+        <div class="q-num">Q17</div>
+        <div class="q-body">
+          <div class="q-title">百万级资金的容量约束在哪里？</div>
+          <div class="q-sub">CSI500 vs CSI1000 的流动性差异？</div>
+        </div>
+        <div class="q-status done">&#10003; 已完成</div>
+      </a>
+      <a class="q-card" href="topics/05-live-deployment.html#q18">
+        <div class="q-num">Q18</div>
+        <div class="q-body">
+          <div class="q-title">每日自动化交易流程怎么搭？</div>
+          <div class="q-sub">数据更新 → 预测 → 下单 → 核对的技术架构</div>
+        </div>
+        <div class="q-status done">&#10003; 已完成</div>
+      </a>
+      <a class="q-card" href="topics/05-live-deployment.html#q19">
+        <div class="q-num">Q19</div>
+        <div class="q-body">
+          <div class="q-title">怎么监控策略是否失效？</div>
+          <div class="q-sub">IC 滚动跟踪、因子拥挤度指标</div>
+        </div>
+        <div class="q-status done">&#10003; 已完成</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Topic 6: Advanced -->
+<section class="topic-group">
+  <div class="container">
+    <div class="tg-header">
+      <div class="tg-icon" style="background: #25201a; color: var(--orange);">VI</div>
+      <div class="tg-title">专题六：进阶方向</div>
+    </div>
+    <p class="tg-desc">LLM 因子挖掘、高频日内聚合、多周期组合</p>
+    <div class="q-list">
+      <a class="q-card" href="topics/06-advanced.html#q20">
+        <div class="q-num">Q20</div>
+        <div class="q-body">
+          <div class="q-title">LLM 因子挖掘实际效果如何？</div>
+          <div class="q-sub">R&D-Agent / DeepSeek 优化 / AlphaAgent 的可复现性</div>
+        </div>
+        <div class="q-status done">&#10003; 已完成</div>
+      </a>
+      <a class="q-card" href="topics/06-advanced.html#q21">
+        <div class="q-num">Q21</div>
+        <div class="q-body">
+          <div class="q-title">高频日内因子聚合到日频有多大提升？</div>
+          <div class="q-sub">需要什么数据？典型因子和 IC 水平</div>
+        </div>
+        <div class="q-status done">&#10003; 已完成</div>
+      </a>
+      <a class="q-card" href="topics/06-advanced.html#q22">
+        <div class="q-num">Q22</div>
+        <div class="q-body">
+          <div class="q-title">多周期策略怎么组合？</div>
+          <div class="q-sub">周频选股 + 日频择时的框架</div>
+        </div>
+        <div class="q-status done">&#10003; 已完成</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <p>量化因子系统研究计划 &middot; 22 问 &times; 6 专题 &middot; 2026-03-03</p>
+    <p style="margin-top: 8px;"><a href="index.html">&larr; 返回量化因子研究</a> &middot; <a href="../index.html">知识库首页</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
