@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>概念术语表与人物图谱 — 复杂</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; background: #0a0a0f; color: #e0e0e0; min-height: 100vh; }
+    .container { max-width: 820px; margin: 0 auto; padding: 48px 24px; }
+    .nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 48px; font-size: 13px; }
+    .nav a { color: #63b3ed; text-decoration: none; transition: color 0.2s; }
+    .nav a:hover { color: #90cdf4; }
+    .page-header { margin-bottom: 48px; }
+    .page-label { font-size: 12px; letter-spacing: 3px; color: #63b3ed; text-transform: uppercase; margin-bottom: 12px; }
+    .page-title { font-size: 34px; font-weight: 700; color: #fff; margin-bottom: 10px; }
+    .page-subtitle { font-size: 15px; color: #718096; }
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(99, 179, 237, 0.2), transparent); margin: 40px 0; }
+    .section-title { font-size: 18px; font-weight: 600; color: #fff; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+    .section-title::before { content: ''; width: 3px; height: 18px; background: #63b3ed; border-radius: 2px; }
+    .intro-text { font-size: 15px; line-height: 1.9; color: #a0aec0; margin-bottom: 24px; }
+
+    /* Filter tabs */
+    .filter-bar { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+    .filter-btn { padding: 6px 16px; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; background: transparent; color: #a0aec0; font-size: 12px; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+    .filter-btn:hover, .filter-btn.active { background: rgba(99, 179, 237, 0.12); border-color: rgba(99, 179, 237, 0.3); color: #63b3ed; }
+
+    /* Glossary entries */
+    .glossary-grid { display: grid; gap: 12px; margin-bottom: 32px; }
+    .glossary-entry { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 18px 20px; transition: all 0.2s; }
+    .glossary-entry:hover { background: rgba(99, 179, 237, 0.04); border-color: rgba(99, 179, 237, 0.12); }
+    .glossary-entry .term-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+    .glossary-entry .term { font-size: 15px; font-weight: 600; color: #e2e8f0; }
+    .glossary-entry .term-en { font-size: 12px; color: #718096; font-weight: 400; margin-left: 8px; }
+    .glossary-entry .ch-refs { display: flex; gap: 4px; flex-wrap: wrap; flex-shrink: 0; }
+    .glossary-entry .ch-ref { font-size: 10px; padding: 2px 7px; background: rgba(99, 179, 237, 0.1); border: 1px solid rgba(99, 179, 237, 0.2); border-radius: 8px; color: #90cdf4; white-space: nowrap; }
+    .glossary-entry .def { font-size: 13px; color: #a0aec0; line-height: 1.7; }
+    .glossary-entry .category-tag { font-size: 10px; padding: 2px 8px; border-radius: 8px; margin-right: 6px; display: inline-block; margin-bottom: 4px; }
+    .cat-dynamics { background: rgba(236, 201, 75, 0.1); border: 1px solid rgba(236, 201, 75, 0.2); color: #ecc94b; }
+    .cat-info { background: rgba(99, 179, 237, 0.1); border: 1px solid rgba(99, 179, 237, 0.2); color: #63b3ed; }
+    .cat-evolution { background: rgba(72, 187, 120, 0.1); border: 1px solid rgba(72, 187, 120, 0.2); color: #68d391; }
+    .cat-network { background: rgba(159, 122, 234, 0.1); border: 1px solid rgba(159, 122, 234, 0.2); color: #b794f4; }
+    .cat-general { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #a0aec0; }
+
+    /* People section */
+    .people-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 32px; }
+    .person-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 18px; transition: all 0.2s; }
+    .person-card:hover { background: rgba(99, 179, 237, 0.04); border-color: rgba(99, 179, 237, 0.12); }
+    .person-card .person-name { font-size: 15px; font-weight: 600; color: #e2e8f0; margin-bottom: 2px; }
+    .person-card .person-en { font-size: 12px; color: #718096; margin-bottom: 8px; }
+    .person-card .person-desc { font-size: 12px; color: #a0aec0; line-height: 1.6; margin-bottom: 8px; }
+    .person-card .ch-refs { display: flex; gap: 4px; flex-wrap: wrap; }
+    .person-card .ch-ref { font-size: 10px; padding: 2px 7px; background: rgba(99, 179, 237, 0.1); border: 1px solid rgba(99, 179, 237, 0.2); border-radius: 8px; color: #90cdf4; }
+
+    .footer { text-align: center; padding: 48px 0 24px; font-size: 12px; color: #4a5568; }
+
+    @media (max-width: 640px) {
+      .people-grid { grid-template-columns: 1fr; }
+      .glossary-entry .term-row { flex-direction: column; gap: 6px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <nav class="nav">
+      <a href="index.html">&larr; 返回目录</a>
+    </nav>
+
+    <header class="page-header">
+      <div class="page-label">附录</div>
+      <h1 class="page-title">概念术语表与人物图谱</h1>
+      <p class="page-subtitle">Glossary &amp; Key Figures — 全书核心概念速查 &amp; 关键人物一览</p>
+    </header>
+
+    <div class="divider"></div>
+
+    <!-- ===== GLOSSARY ===== -->
+    <section>
+      <h2 class="section-title">核心概念术语表</h2>
+      <p class="intro-text">按主线分类，涵盖全书最重要的概念。每个条目标注了相关章节，方便跨章回顾。</p>
+
+      <div class="filter-bar">
+        <button class="filter-btn active" onclick="filterTerms('all')">全部</button>
+        <button class="filter-btn" onclick="filterTerms('dynamics')">动力学与混沌</button>
+        <button class="filter-btn" onclick="filterTerms('info')">信息与计算</button>
+        <button class="filter-btn" onclick="filterTerms('evolution')">进化与适应</button>
+        <button class="filter-btn" onclick="filterTerms('network')">网络与标度</button>
+        <button class="filter-btn" onclick="filterTerms('general')">复杂性总论</button>
+      </div>
+
+      <div class="glossary-grid" id="glossaryGrid">
+
+        <!-- General -->
+        <div class="glossary-entry" data-cat="general">
+          <div class="term-row">
+            <span class="term"><span class="category-tag cat-general">总论</span>复杂适应系统<span class="term-en">Complex Adaptive System, CAS</span></span>
+            <div class="ch-refs"><span class="ch-ref">ch01</span><span class="ch-ref">ch13</span></div>
+          </div>
+          <p class="def">由大量简单个体组成的系统，个体之间通过局部交互产生全局的、自适应的涌现行为。没有中央控制，整体行为无法从单个个体的行为中简单推导。蚁群、免疫系统、经济体都是典型例子。</p>
+        </div>
+
+        <div class="glossary-entry" data-cat="general">
+          <div class="term-row">
+            <span class="term"><span class="category-tag cat-general">总论</span>涌现<span class="term-en">Emergence</span></span>
+            <div class="ch-refs"><span class="ch-ref">ch01</span><span class="ch-ref">ch07</span><span class="ch-ref">ch09</span><span class="ch-ref">ch13</span></div>
+          </div>
+          <p class="def">系统整体层面出现的性质或行为模式，无法从个体成分的性质中直接推导出来。经典例子：单个神经元没有"意识"，但神经元网络产生了意识。涌现是复杂性科学最核心也最难精确定义的概念。</p>
+        </div>
+
+        <div class="glossary-entry" data-cat="general">
+          <div class="term-row">
+            <span class="term"><span class="category-tag cat-general">总论</span>自组织<span class="term-en">Self-Organization</span></span>
+            <div class="ch-refs"><span class="ch-ref">ch01</span><span class="ch-ref">ch09</span><span class="ch-ref">ch12</span><span class="ch-ref">ch13</span></div>
+          </div>
+          <p class="def">系统在没有外部指令或中央控制的情况下，仅通过内部个体之间的局部交互，自发地形成有序结构或模式的过程。</p>
+        </div>
+
+        <div class="glossary-entry" data-cat="general">
+          <div class="term-row">
+            <span class="term"><span class="category-tag cat-general">总论</span>反馈回路<span class="term-en">Feedback Loop</span></span>
+            <div class="ch-refs"><span class="ch-ref">ch01</span><span class="ch-ref">ch09</span><span class="ch-ref">ch13</span></div>
+          </div>
+          <p class="def">系统输出影响自身输入的环路。正反馈放大变化（如偏好依附），负反馈稳定系统（如恒温器）。复杂系统中正负反馈的相互作用是涌现行为的核心机制。</p>
+        </div>
+
+        <!-- Dynamics -->
+        <div class="glossary-entry" data-cat="dynamics">
+          <div class="term-row">
+            <span class="term"><span class="category-tag cat-dynamics">动力学</span>混沌<span class="term-en">Chaos</span></span>
+            <div class="ch-refs"><span class="ch-ref">ch02</span></div>
+          </div>
+          <p class="def">确定性系统对初始条件极度敏感的行为：微小的初始差异随时间指数放大，导致长期行为不可预测。系统是确定性的（无随机性），但行为看起来随机。</p>
+        </div>
+
+        <div class="glossary-entry" data-cat="dynamics">
+          <div class="term-row">
+            <span class="term"><span class="category-tag cat-dynamics">动力学</span>蝴蝶效应<span class="term-en">Butterfly Effect</span></span>
+            <div class="ch-refs"><span class="ch-ref">ch02</span></div>
+          </div>
+          <p class="def">爱德华·洛伦兹发现的现象：气象系统中微小的扰动（一只蝴蝶扇翅）可以在数周后引发截然不同的天气模式。混沌敏感依赖性的形象化表述。</p>
+        </div>
+
+        <div class="glossary-entry" data-cat="dynamics">
+          <div class="term-row">
+            <span class="term"><span class="category-tag cat-dynamics">动力学</span>奇异吸引子<span class="term-en">Strange Attractor</span></span>
+            <div class="ch-refs"><span class="ch-ref">ch02</span><span class="ch-ref">ch12</span></div>
+          </div>
+          <p class="def">混沌系统在相空间中的轨迹收敛到的分形几何结构。系统永远不会重复同一轨迹，但始终被"吸引"在这个分形集合上。洛伦兹吸引子是最著名的例子。</p>
+        </div>
+
+        <div class="glossary-entry" data-cat="dynamics">
+          <div class="term-row">
+            <span class="term"><span class="category-tag cat-dynamics">动力学</span>混沌边缘<span class="term-en">Edge of Chaos</span></span>
+            <div class="ch-refs"><span class="ch-ref">ch07</span><span class="ch-ref">ch11</span><span class="ch-ref">ch13</span></div>
+          </div>
+          <p class="def">有序与混沌之间的临界区域。在这个区域，系统既有足够的稳定性维持结构，又有足够的灵活性适应变化。被认为是复杂计算和生命蓬勃发展的最佳区域。</p>
+        </div>
+
+        <div class="glossary-entry" data-cat="dynamics">
+          <div class="term-row">
+            <span class="term"><span class="category-tag cat-dynamics">动力学</span>逻辑斯蒂映射<span class="term-en">Logistic Map</span></span>
+            <div class="ch-refs"><span class="ch-ref">ch02</span></div>
+          </div>
+          <p class="def">x(n+1) = r·x(n)·(1-x(n))。一个极简的迭代方程，却能产生从稳定点到周期倍增再到完全混沌的全部行为。是展示"简单规则产生复杂行为"的教科书例子。</p>
+        </div>
+
+        <!-- Information & Computation -->
+        <div class="glossary-entry" data-cat="info">
+          <div class="term-row">
+            <span class="term"><span class="category-tag cat-info">信息</span>熵<span class="term-en">Entropy (Shannon)</span></span>
+            <div class="ch-refs"><span class="ch-ref">ch03</span></div>
+          </div>
+          <p class="def">衡量信息源不确定性的度量。H = -&Sigma; p(x) log p(x)。均匀分布时熵最大（最不确定），完全确定时熵为零。热力学熵和信息熵有深刻的数学联系。</p>
+        </div>
+
+        <div class="glossary-entry" data-cat="info">
+          <div class="term-row">
+            <span class="term"><span class="category-tag cat-info">信息</span>图灵机<span class="term-en">Turing Machine</span></span>
+            <div class="ch-refs"><span class="ch-ref">ch04</span></div>
+          </div>
+          <p class="def">阿兰·图灵提出的抽象计算模型：一条无限长的纸带、一个读写头、一组有限状态转换规则。虽然极度简单，却能模拟任何可计算的过程。可计算性理论的基石。</p>
+        </div>
+
+        <div class="glossary-entry" data-cat="info">
+          <div class="term-row">
+            <span class="term"><span class="category-tag cat-info">信息</span>哥德尔不完备定理<span class="term-en">Gödel's Incompleteness</span></span>
+            <div class="ch-refs"><span class="ch-ref">ch04</span></div>
+          </div>
+          <p class="def">任何足够强大的一致形式系统都包含无法在系统内部证明的真命题。对数学基础的终极打击——也是计算理论中"停机问题不可判定"的思想源泉。</p>
+        </div>
+
+        <div class="glossary-entry" data-cat="info">
+          <div class="term-row">
+            <span class="term"><span class="category-tag cat-info">信息</span>粒子计算<span class="term-en">Particle Computation</span></span>
+            <div class="ch-refs"><span class="ch-ref">ch08</span></div>
+          </div>
+          <p class="def">元胞自动机中不同规则区域的边界形成"粒子"，粒子之间的碰撞和湮灭实现信息传递和计算。是理解分布式系统如何在没有中央控制的情况下完成全局计算的关键概念。</p>
+        </div>
+
+        <div class="glossary-entry" data-cat="info">
+          <div class="term-row">
+            <span class="term"><span class="category-tag cat-info">信息</span>科尔莫戈罗夫复杂性<span class="term-en">Kolmogorov Complexity</span></span>
+            <div class="ch-refs"><span class="ch-ref">ch03</span><span class="ch-ref">ch13</span></div>
+          </div>
+          <p class="def">描述一个对象（字符串）所需的最短程序的长度。随机序列的科尔莫戈罗夫复杂性最高（无法压缩），但有规律的序列可以被短程序生成。是"复杂性"的一种精确度量。</p>
+        </div>
+
+        <!-- Evolution -->
+        <div class="glossary-entry" data-cat="evolution">
+          <div class="term-row">
+            <span class="term"><span class="category-tag cat-evolution">进化</span>自然选择<span class="term-en">Natural Selection</span></span>
+            <div class="ch-refs"><span class="ch-ref">ch05</span></div>
+          </div>
+          <p class="def">达尔文进化论的核心机制：个体间存在可遗传的变异，环境对变异施加选择压力，适应度高的个体更可能繁殖，从而改变种群的基因组成。</p>
+        </div>
+
+        <div class="glossary-entry" data-cat="evolution">
+          <div class="term-row">
+            <span class="term"><span class="category-tag cat-evolution">进化</span>遗传算法<span class="term-en">Genetic Algorithm, GA</span></span>
+            <div class="ch-refs"><span class="ch-ref">ch06</span></div>
+          </div>
+          <p class="def">受生物进化启发的优化算法。维护一个"种群"的候选方案，通过选择、交叉和变异操作迭代进化，逐步逼近最优解。由约翰·霍兰德提出。</p>
+        </div>
+
+        <div class="glossary-entry" data-cat="evolution">
+          <div class="term-row">
+            <span class="term"><span class="category-tag cat-evolution">进化</span>适应度景观<span class="term-en">Fitness Landscape</span></span>
+            <div class="ch-refs"><span class="ch-ref">ch05</span><span class="ch-ref">ch06</span></div>
+          </div>
+          <p class="def">将所有可能的基因型（或解方案）映射到适应度值上形成的"地形"。进化就是在这个景观上的搜索过程——攀登适应度峰。景观越崎岖，搜索越困难。</p>
+        </div>
+
+        <div class="glossary-entry" data-cat="evolution">
+          <div class="term-row">
+            <span class="term"><span class="category-tag cat-evolution">进化</span>随机布尔网络<span class="term-en">Random Boolean Network, RBN</span></span>
+            <div class="ch-refs"><span class="ch-ref">ch11</span></div>
+          </div>
+          <p class="def">考夫曼的模型：每个节点（"基因"）状态为 0 或 1，由随机布尔函数决定。K=2 时网络处于混沌边缘，吸引子数量 &approx; &radic;N，与人体细胞类型数惊人吻合。</p>
+        </div>
+
+        <!-- Network -->
+        <div class="glossary-entry" data-cat="network">
+          <div class="term-row">
+            <span class="term"><span class="category-tag cat-network">网络</span>小世界网络<span class="term-en">Small-World Network</span></span>
+            <div class="ch-refs"><span class="ch-ref">ch10</span><span class="ch-ref">ch11</span></div>
+          </div>
+          <p class="def">同时具有高聚类系数和短平均路径长度的网络。Watts-Strogatz 模型：在规则网络中随机重连少量边即可产生。解释了"六度分隔"现象。</p>
+        </div>
+
+        <div class="glossary-entry" data-cat="network">
+          <div class="term-row">
+            <span class="term"><span class="category-tag cat-network">网络</span>无标度网络<span class="term-en">Scale-Free Network</span></span>
+            <div class="ch-refs"><span class="ch-ref">ch10</span><span class="ch-ref">ch11</span><span class="ch-ref">ch12</span></div>
+          </div>
+          <p class="def">度分布服从幂律 P(k) ~ k<sup>-&gamma;</sup> 的网络。少数枢纽节点拥有大量连接，大多数节点连接很少。由偏好依附（"富者愈富"）机制产生。对随机故障鲁棒，对定向攻击脆弱。</p>
+        </div>
+
+        <div class="glossary-entry" data-cat="network">
+          <div class="term-row">
+            <span class="term"><span class="category-tag cat-network">网络</span>幂律分布<span class="term-en">Power Law Distribution</span></span>
+            <div class="ch-refs"><span class="ch-ref">ch10</span><span class="ch-ref">ch12</span></div>
+          </div>
+          <p class="def">P(x) ~ x<sup>-&gamma;</sup>。无"典型值"，极端事件出现的概率远高于正态分布的预测。在对数-对数坐标上呈直线。出现在网络度分布、地震强度、城市人口、财富分配等众多领域。</p>
+        </div>
+
+        <div class="glossary-entry" data-cat="network">
+          <div class="term-row">
+            <span class="term"><span class="category-tag cat-network">网络</span>偏好依附<span class="term-en">Preferential Attachment</span></span>
+            <div class="ch-refs"><span class="ch-ref">ch10</span><span class="ch-ref">ch12</span></div>
+          </div>
+          <p class="def">新节点更倾向于连接到已有大量连接的节点——"富者愈富"。是 Barabási-Albert 无标度模型的核心机制。产生幂律度分布。</p>
+        </div>
+
+        <div class="glossary-entry" data-cat="network">
+          <div class="term-row">
+            <span class="term"><span class="category-tag cat-network">网络</span>自组织临界性<span class="term-en">Self-Organized Criticality, SOC</span></span>
+            <div class="ch-refs"><span class="ch-ref">ch12</span></div>
+          </div>
+          <p class="def">巴克的沙堆模型：系统自发演化到临界状态，在该状态下微小扰动可引发任意规模的"雪崩"，雪崩规模服从幂律。无需外部调参——系统自己找到了临界点。</p>
+        </div>
+
+        <div class="glossary-entry" data-cat="network">
+          <div class="term-row">
+            <span class="term"><span class="category-tag cat-network">网络</span>弱联系的力量<span class="term-en">Strength of Weak Ties</span></span>
+            <div class="ch-refs"><span class="ch-ref">ch11</span></div>
+          </div>
+          <p class="def">格兰诺维特的发现：泛泛之交（弱联系）比亲密朋友（强联系）在传播新信息方面更有效，因为弱联系连接了不同的社交圈，充当了跨社区的"桥梁"。</p>
+        </div>
+
+        <!-- Computation models -->
+        <div class="glossary-entry" data-cat="info">
+          <div class="term-row">
+            <span class="term"><span class="category-tag cat-info">信息</span>元胞自动机<span class="term-en">Cellular Automaton, CA</span></span>
+            <div class="ch-refs"><span class="ch-ref">ch07</span><span class="ch-ref">ch08</span></div>
+          </div>
+          <p class="def">离散空间上的网格，每个细胞有有限状态，按简单局部规则同步更新。Wolfram 的分类：第一类（均匀）、第二类（周期）、第三类（混沌）、第四类（复杂/混沌边缘）。生命游戏是最著名的二维 CA。</p>
+        </div>
+
+        <div class="glossary-entry" data-cat="dynamics">
+          <div class="term-row">
+            <span class="term"><span class="category-tag cat-dynamics">动力学</span>分形<span class="term-en">Fractal</span></span>
+            <div class="ch-refs"><span class="ch-ref">ch02</span><span class="ch-ref">ch12</span></div>
+          </div>
+          <p class="def">在不同尺度上呈现自相似结构的几何对象。曼德博集合、海岸线、血管网络都是分形。分形维度可以是非整数（如 1.26 维的科赫曲线）。网络也可以具有分形结构。</p>
+        </div>
+
+        <div class="glossary-entry" data-cat="general">
+          <div class="term-row">
+            <span class="term"><span class="category-tag cat-general">总论</span>标度律<span class="term-en">Scaling Law</span></span>
+            <div class="ch-refs"><span class="ch-ref">ch12</span></div>
+          </div>
+          <p class="def">两个量之间的幂次关系：Y = aX<sup>b</sup>。克莱伯定律（代谢率 ~ 体重<sup>3/4</sup>）和韦斯特的城市标度律是最著名的例子。指数 b 揭示了系统的深层组织原理。</p>
+        </div>
+
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ===== KEY FIGURES ===== -->
+    <section>
+      <h2 class="section-title">关键人物图谱</h2>
+      <p class="intro-text">本书提及的重要科学家，按其主要贡献领域排列。</p>
+
+      <div class="people-grid">
+        <div class="person-card">
+          <div class="person-name">爱德华·洛伦兹</div>
+          <div class="person-en">Edward Lorenz</div>
+          <p class="person-desc">气象学家。发现混沌现象和"蝴蝶效应"，证明了确定性系统可以产生不可预测的行为。</p>
+          <div class="ch-refs"><span class="ch-ref">ch02</span></div>
+        </div>
+
+        <div class="person-card">
+          <div class="person-name">克劳德·香农</div>
+          <div class="person-en">Claude Shannon</div>
+          <p class="person-desc">信息论之父。定义了信息的数学度量（熵），奠定了整个数字通信时代的理论基础。</p>
+          <div class="ch-refs"><span class="ch-ref">ch03</span></div>
+        </div>
+
+        <div class="person-card">
+          <div class="person-name">阿兰·图灵</div>
+          <div class="person-en">Alan Turing</div>
+          <p class="person-desc">计算机科学之父。提出图灵机模型，证明了停机问题的不可判定性，定义了"可计算"的边界。</p>
+          <div class="ch-refs"><span class="ch-ref">ch04</span></div>
+        </div>
+
+        <div class="person-card">
+          <div class="person-name">库尔特·哥德尔</div>
+          <div class="person-en">Kurt Gödel</div>
+          <p class="person-desc">逻辑学家。不完备定理证明了数学公理系统的根本局限性，深刻影响了计算理论和数学哲学。</p>
+          <div class="ch-refs"><span class="ch-ref">ch04</span></div>
+        </div>
+
+        <div class="person-card">
+          <div class="person-name">查尔斯·达尔文</div>
+          <div class="person-en">Charles Darwin</div>
+          <p class="person-desc">自然选择理论的创始人。进化论是理解生物复杂性的基石，也是遗传算法的思想源泉。</p>
+          <div class="ch-refs"><span class="ch-ref">ch05</span></div>
+        </div>
+
+        <div class="person-card">
+          <div class="person-name">约翰·霍兰德</div>
+          <div class="person-en">John Holland</div>
+          <p class="person-desc">遗传算法的发明者，"复杂适应系统"概念的先驱。圣塔菲研究所核心成员。</p>
+          <div class="ch-refs"><span class="ch-ref">ch06</span></div>
+        </div>
+
+        <div class="person-card">
+          <div class="person-name">斯蒂芬·沃尔夫勒姆</div>
+          <div class="person-en">Stephen Wolfram</div>
+          <p class="person-desc">物理学家、数学家。系统分类了元胞自动机，提出"计算等价原理"和"一种新科学"纲领。</p>
+          <div class="ch-refs"><span class="ch-ref">ch07</span></div>
+        </div>
+
+        <div class="person-card">
+          <div class="person-name">斯坦利·米尔格拉姆</div>
+          <div class="person-en">Stanley Milgram</div>
+          <p class="person-desc">社会心理学家。"六度分隔"实验的设计者，用实证方法揭示了社交网络的小世界特性。</p>
+          <div class="ch-refs"><span class="ch-ref">ch10</span></div>
+        </div>
+
+        <div class="person-card">
+          <div class="person-name">巴拉巴西</div>
+          <div class="person-en">Albert-László Barabási</div>
+          <p class="person-desc">网络科学先驱。发现万维网的无标度特性，提出偏好依附模型，著有《链接》。</p>
+          <div class="ch-refs"><span class="ch-ref">ch10</span><span class="ch-ref">ch12</span></div>
+        </div>
+
+        <div class="person-card">
+          <div class="person-name">邓肯·瓦茨</div>
+          <div class="person-en">Duncan Watts</div>
+          <p class="person-desc">与斯特罗加茨共同提出小世界网络模型，用数学解释了"六度分隔"背后的网络结构。</p>
+          <div class="ch-refs"><span class="ch-ref">ch10</span></div>
+        </div>
+
+        <div class="person-card">
+          <div class="person-name">马克·格兰诺维特</div>
+          <div class="person-en">Mark Granovetter</div>
+          <p class="person-desc">社会学家。"弱联系的力量"理论的提出者，揭示了社交网络中跨社区桥梁的关键作用。</p>
+          <div class="ch-refs"><span class="ch-ref">ch11</span></div>
+        </div>
+
+        <div class="person-card">
+          <div class="person-name">斯图尔特·考夫曼</div>
+          <div class="person-en">Stuart Kauffman</div>
+          <p class="person-desc">理论生物学家。随机布尔网络模型、"混沌边缘的秩序"理论的提出者。认为自组织是与自然选择并列的进化力量。</p>
+          <div class="ch-refs"><span class="ch-ref">ch11</span></div>
+        </div>
+
+        <div class="person-card">
+          <div class="person-name">杰弗里·韦斯特</div>
+          <div class="person-en">Geoffrey West</div>
+          <p class="person-desc">理论物理学家。解释了克莱伯生物标度律的分形网络起源，将标度律方法推广到城市科学。</p>
+          <div class="ch-refs"><span class="ch-ref">ch12</span></div>
+        </div>
+
+        <div class="person-card">
+          <div class="person-name">佩尔·巴克</div>
+          <div class="person-en">Per Bak</div>
+          <p class="person-desc">物理学家。自组织临界性（SOC）理论和沙堆模型的提出者，解释了为什么幂律在自然界无处不在。</p>
+          <div class="ch-refs"><span class="ch-ref">ch12</span></div>
+        </div>
+
+        <div class="person-card">
+          <div class="person-name">梅拉妮·米歇尔</div>
+          <div class="person-en">Melanie Mitchell</div>
+          <p class="person-desc">本书作者。波特兰州立大学教授、SFI 外聘教授。师从侯世达，研究复杂系统、遗传算法和类比推理。</p>
+          <div class="ch-refs"><span class="ch-ref">全书</span></div>
+        </div>
+
+        <div class="person-card">
+          <div class="person-name">诺伯特·维纳</div>
+          <div class="person-en">Norbert Wiener</div>
+          <p class="person-desc">数学家。控制论的创始人，提出用统一框架研究动物和机器中的通信与控制，是复杂性思维的先驱。</p>
+          <div class="ch-refs"><span class="ch-ref">ch13</span></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      <p>OpenClaw Reading · 复杂 · 概念术语表 · 2026</p>
+    </div>
+  </div>
+
+  <script>
+    function filterTerms(cat) {
+      const entries = document.querySelectorAll('.glossary-entry');
+      const btns = document.querySelectorAll('.filter-btn');
+      btns.forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      entries.forEach(e => {
+        if (cat === 'all' || e.dataset.cat === cat) {
+          e.style.display = '';
+        } else {
+          e.style.display = 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>
