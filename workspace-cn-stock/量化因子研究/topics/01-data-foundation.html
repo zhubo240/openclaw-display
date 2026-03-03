@@ -5,17 +5,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>专题一：数据基础 | 量化因子研究</title>
 <style>
-  :root { --bg: #0a0a0f; --surface: #111118; --surface2: #1a1a24; --border: #252535; --text: #e0e0e8; --text2: #8888a0; --accent: #e05050; --gold: #f0c040; --green: #40c080; --blue: #5080e0; --orange: #e08040; --purple: #a070e0; --cyan: #40b8d0; }
+  :root {
+    --bg: #0a0a0f; --surface: #111118; --surface2: #1a1a24;
+    --border: #252535; --text: #e0e0e8; --text2: #8888a0;
+    --accent: #e05050; --gold: #f0c040; --green: #40c080;
+    --blue: #5080e0; --orange: #e08040; --purple: #a070e0; --cyan: #40b8d0;
+  }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; background: var(--bg); color: var(--text); line-height: 1.8; -webkit-font-smoothing: antialiased; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.8;
+    -webkit-font-smoothing: antialiased;
+  }
   .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
   .breadcrumb { padding: 16px 0; font-size: 0.85em; color: var(--text2); }
   .breadcrumb a { color: var(--blue); text-decoration: none; }
   .breadcrumb a:hover { text-decoration: underline; }
+
   .page-header { padding: 48px 0 36px; border-bottom: 1px solid var(--border); }
   .page-header h1 { font-size: 2.2em; font-weight: 700; letter-spacing: 0.04em; margin-bottom: 8px; }
   .page-header h1 .hl { color: var(--purple); }
   .page-header .meta { font-size: 0.9em; color: var(--text2); }
+
   .toc { padding: 32px 0; border-bottom: 1px solid var(--border); }
   .toc h2 { font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text2); margin-bottom: 12px; }
   .toc ol { list-style: none; counter-reset: toc; }
@@ -23,26 +35,39 @@
   .toc ol li::before { content: "Q" counter(toc) "."; color: var(--purple); font-weight: 600; margin-right: 8px; }
   .toc a { color: var(--blue); text-decoration: none; }
   .toc a:hover { text-decoration: underline; }
+
   .section { padding: 48px 0; border-bottom: 1px solid var(--border); }
   .section:last-of-type { border-bottom: none; }
   .section h2 { font-size: 1.5em; font-weight: 700; margin-bottom: 24px; padding-bottom: 10px; border-bottom: 2px solid var(--purple); display: inline-block; }
   .section h3 { font-size: 1.15em; font-weight: 600; margin: 28px 0 12px; color: var(--gold); }
   .section h4 { font-size: 1.0em; font-weight: 600; margin: 20px 0 10px; color: var(--cyan); }
   .section p { margin-bottom: 14px; color: var(--text); font-size: 0.95em; }
+
   table { width: 100%; border-collapse: collapse; margin: 16px 0 24px; font-size: 0.88em; }
   th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
   th { background: var(--surface2); color: var(--text2); font-weight: 600; font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.05em; }
   td { background: var(--surface); }
   tr:hover td { background: var(--surface2); }
+
   pre { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 18px 20px; margin: 16px 0 24px; overflow-x: auto; font-family: "SF Mono", "Fira Code", monospace; font-size: 0.88em; line-height: 1.6; color: var(--text); }
   code { font-family: "SF Mono", "Fira Code", monospace; font-size: 0.9em; background: var(--surface2); padding: 2px 6px; border-radius: 4px; color: var(--green); }
   pre code { background: none; padding: 0; color: inherit; }
-  .code-comment { color: var(--text2); } .code-keyword { color: var(--purple); } .code-string { color: var(--green); } .code-highlight { color: var(--gold); }
+  .code-comment { color: var(--text2); }
+  .code-keyword { color: var(--purple); }
+  .code-string { color: var(--green); }
+  .code-highlight { color: var(--gold); }
+
   .callout { background: var(--surface); border-left: 4px solid var(--purple); border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 20px 0; font-size: 0.92em; }
-  .callout.insight { border-left-color: var(--gold); } .callout.gap { border-left-color: var(--accent); } .callout.ok { border-left-color: var(--green); } .callout.warn { border-left-color: var(--orange); } .callout.info { border-left-color: var(--blue); }
+  .callout.insight { border-left-color: var(--gold); }
+  .callout.gap { border-left-color: var(--accent); }
+  .callout.ok { border-left-color: var(--green); }
+  .callout.warn { border-left-color: var(--orange); }
+  .callout.info { border-left-color: var(--blue); }
   .callout strong { display: block; margin-bottom: 4px; }
+
   ul, ol { margin: 10px 0 18px 20px; font-size: 0.93em; }
   li { margin-bottom: 6px; }
+
   .timeline { margin: 24px 0; overflow-x: auto; }
   .timeline-row { display: flex; align-items: center; margin-bottom: 6px; min-width: 700px; }
   .timeline-label { width: 140px; flex-shrink: 0; font-size: 0.82em; color: var(--text2); text-align: right; padding-right: 12px; }
@@ -51,27 +76,45 @@
   .timeline-axis { display: flex; margin-top: 8px; min-width: 700px; }
   .timeline-axis-label { width: 140px; flex-shrink: 0; }
   .timeline-axis-ticks { flex: 1; display: flex; justify-content: space-between; font-size: 0.72em; color: var(--text2); }
+
   .regime-row { display: flex; gap: 0; margin: 16px 0; flex-wrap: wrap; }
   .regime-block { flex: 1; min-width: 100px; padding: 12px 10px; text-align: center; border: 1px solid var(--border); }
-  .regime-block:first-child { border-radius: 8px 0 0 8px; } .regime-block:last-child { border-radius: 0 8px 8px 0; }
+  .regime-block:first-child { border-radius: 8px 0 0 8px; }
+  .regime-block:last-child { border-radius: 0 8px 8px 0; }
   .regime-block .rb-year { font-size: 0.72em; color: var(--text2); margin-bottom: 2px; }
   .regime-block .rb-name { font-size: 0.82em; font-weight: 600; }
   .regime-block .rb-desc { font-size: 0.72em; color: var(--text2); margin-top: 2px; }
+
   .metric-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin: 20px 0; }
   .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px; text-align: center; }
   .metric-card .mc-value { font-size: 1.8em; font-weight: 700; margin-bottom: 4px; }
   .metric-card .mc-label { font-size: 0.82em; color: var(--text2); }
   .metric-card .mc-sub { font-size: 0.75em; color: var(--text2); margin-top: 4px; }
+
   .footer { padding: 40px 0; text-align: center; color: var(--text2); font-size: 0.85em; border-top: 1px solid var(--border); }
   .footer a { color: var(--blue); text-decoration: none; }
-  @media (max-width: 768px) { .page-header h1 { font-size: 1.6em; } .metric-grid { grid-template-columns: 1fr 1fr; } pre { font-size: 0.82em; padding: 14px; } table { font-size: 0.82em; } th, td { padding: 8px 10px; } .regime-row { flex-direction: column; } .regime-block { border-radius: 0 !important; } .regime-block:first-child { border-radius: 8px 8px 0 0 !important; } .regime-block:last-child { border-radius: 0 0 8px 8px !important; } }
+
+  @media (max-width: 768px) {
+    .page-header h1 { font-size: 1.6em; }
+    .metric-grid { grid-template-columns: 1fr 1fr; }
+    pre { font-size: 0.82em; padding: 14px; }
+    table { font-size: 0.82em; }
+    th, td { padding: 8px 10px; }
+    .regime-row { flex-direction: column; }
+    .regime-block { border-radius: 0 !important; }
+    .regime-block:first-child { border-radius: 8px 8px 0 0 !important; }
+    .regime-block:last-child { border-radius: 0 0 8px 8px !important; }
+  }
 </style>
 </head>
 <body>
 
 <div class="container">
   <nav class="breadcrumb">
-    <a href="../../index.html">A股研究知识库</a> &rsaquo; <a href="../index.html">量化因子研究</a> &rsaquo; <a href="../research-hub.html">研究计划</a> &rsaquo; 专题一：数据基础
+    <a href="../../index.html">A股研究知识库</a> &rsaquo;
+    <a href="../index.html">量化因子研究</a> &rsaquo;
+    <a href="../research-hub.html">研究计划</a> &rsaquo;
+    专题一：数据基础
   </nav>
 </div>
 
@@ -93,56 +136,119 @@
   </div>
 </nav>
 
-<!-- ======================== Q1 ======================== -->
+<!-- ======================== Q1: Data Sources ======================== -->
 <section class="section" id="q1">
   <div class="container">
     <h2>Q1. A股因子数据源有哪些？</h2>
-    <p>A股量化因子研究的数据源选择直接决定策略可行性和研究效率。以下是 8 个主流数据源的全面比较。</p>
+    <p>数据源选择直接决定策略可行性和研究效率。以下是 8 个主流数据源的全面比较。</p>
 
     <h3>1. Qlib bin format (chenditc/investment_data)</h3>
-    <p>GitHub 免费数据集，每日自动更新。覆盖全 A 股（含已退市）2005+ 年 OHLCV，Qlib 原生 binary 格式，零成本直接集成。局限：仅日频，无北向资金/融资融券/详细财务报表，数据质量依赖上游。</p>
+    <p>GitHub 免费数据集，每日 GitHub Actions 自动更新。覆盖全 A 股（含已退市）2005+ 年 OHLCV，Qlib 原生 binary 格式，零成本零转换直接用于因子计算和模型训练。</p>
+    <ul>
+      <li><strong>优势：</strong>免费，Qlib 原生集成，含退市股票（避免生存偏差），社区活跃维护</li>
+      <li><strong>局限：</strong>仅日频（无分钟/Tick），缺少北向资金/融资融券等特色数据，无详细财务报表</li>
+    </ul>
 
     <h3>2. Tushare Pro</h3>
-    <p>国内最流行的量化数据 API。免费层提供日频 OHLCV，Pro 层（200 元/年）解锁完整三大报表（10 年+）、分析师预期、融资融券、北向资金（个股级）、指数成分股历史变动、公司事件等。API 文档完善，社区活跃，支持 PIT 查询。局限：免费层频率限制（200 次/分），无分钟级数据。</p>
+    <p>国内最流行的量化数据 API。免费层提供基础日频 OHLCV；Pro 层（200 元/年）解锁完整三大报表（10 年+）、分析师预期、融资融券、沪深港通北向资金（个股级）、指数成分股历史变动、公司事件。支持 Point-in-Time 查询。</p>
+    <ul>
+      <li><strong>优势：</strong>覆盖面最广的低成本方案，文档完善，社区活跃，财务数据质量高</li>
+      <li><strong>局限：</strong>免费层频率限制（200 次/分），无分钟级数据（需另购），偶有限流</li>
+    </ul>
 
     <h3>3. AkShare</h3>
-    <p>开源 Python 库，爬取新浪/东方财富/同花顺等公开网站。免费无注册，覆盖日频 OHLCV、PE/PB、北向资金、融资融券。适合快速取数和实时行情。局限：爬取方式导致接口不稳定（网站改版即失效），批量下载慢易触发反爬，数据质量无保证，不适合生产级管道。</p>
+    <p>开源 Python 库，爬取新浪/东方财富/同花顺等公开网站。无需注册，覆盖日频 OHLCV、PE/PB、北向资金、融资融券等。适合快速取数和实时行情获取。</p>
+    <ul>
+      <li><strong>优势：</strong>免费无注册，接口丰富，实时行情方便</li>
+      <li><strong>局限：</strong>爬取方式不稳定（网站改版即失效），批量下载慢易触发反爬，数据质量无保证</li>
+    </ul>
 
     <h3>4. Wind (万得)</h3>
-    <p>机构级金融数据"黄金标准"。覆盖 Tick 级行情、全部财务数据、分析师一致预期、ESG、宏观等。数据质量最高，几乎所有券商研报的数据基准。局限：个人版 30,000-100,000+ 元/年，API 需绑定终端，对个人研究者性价比极低。</p>
+    <p>机构级数据"黄金标准"。Tick 级行情、全部财务数据、分析师一致预期、ESG、宏观经济 -- 覆盖最全。几乎所有券商研报的数据基准。</p>
+    <ul>
+      <li><strong>优势：</strong>数据质量最高、覆盖最全、更新最及时，支持多语言 API</li>
+      <li><strong>局限：</strong>个人版 30,000-100,000+ 元/年，API 需绑定终端，个人量化性价比极低</li>
+    </ul>
 
     <h3>5. JoinQuant (聚宽)</h3>
-    <p>量化研究平台，免费在线 Notebook + 数据 API。覆盖日/分钟级 OHLCV、财务数据、行业分类、指数权重。局限：数据锁定在平台内（大规模导出困难），API 调用量限制，不支持本地批量数据管道。</p>
+    <p>量化研究平台，免费在线 Notebook 环境。覆盖日/分钟级 OHLCV、财务数据、行业分类（申万/中信）、指数权重。适合快速原型开发。</p>
+    <ul>
+      <li><strong>优势：</strong>在线免费，分钟级数据可用，教程丰富</li>
+      <li><strong>局限：</strong>数据锁定在平台内（大规模导出困难），API 调用量限制</li>
+    </ul>
 
     <h3>6. RiceQuant (米筐 / RQData)</h3>
-    <p>类似聚宽，额外提供 RQData 本地数据包（付费）。本地版支持分钟/Tick 级、PIT 财务数据，质量口碑好。局限：本地版数千元/年，免费版有平台锁定。</p>
+    <p>类似聚宽，额外提供 RQData 本地数据包（付费，数千元/年）。本地版支持分钟/Tick 级、PIT 财务查询，数据质量口碑好。免费版有平台锁定问题。</p>
 
     <h3>7. CSMAR (国泰安)</h3>
-    <p>学术研究"黄金标准"，绝大多数中文金融论文的数据来源。最大优势：完整历史覆盖含全部已退市股票（消除生存偏差），可回溯至 1990 年代，变量定义与国际标准对齐。局限：价格昂贵（通常通过大学订阅），更新有滞后，不适合生产环境。</p>
+    <p>学术研究"黄金标准"，绝大多数中文金融论文的数据来源。最大优势是完整历史含全部已退市股票（消除生存偏差），可回溯至 1990 年代。价格昂贵，通常通过大学订阅获取。</p>
 
     <h3>8. baostock</h3>
-    <p>免费开源数据接口，API 稳定（非爬取方式）。覆盖日/周/月频 OHLCV、基础财务、行业分类。使用极简单（3 行代码）。局限：功能集有限，无北向资金/融资融券，无分钟级数据。</p>
+    <p>免费开源，API 稳定（非爬取）。日/周/月频 OHLCV + 基础财务 + 行业分类，使用门槛极低。功能集有限，无北向资金等特色数据。</p>
 
     <h3>综合对比表</h3>
     <div style="overflow-x: auto;">
     <table>
-      <tr><th>数据源</th><th>成本</th><th>覆盖范围</th><th>频率</th><th>财务数据</th><th>特色数据</th><th>Qlib 兼容</th><th>最适用场景</th></tr>
-      <tr><td><strong>Qlib bin</strong></td><td style="color: var(--green);">免费</td><td>全A(含退市) 2005+</td><td>日频</td><td style="color: var(--orange);">基础</td><td style="color: var(--accent);">无</td><td style="color: var(--green);">原生</td><td>Qlib 日常研究</td></tr>
-      <tr><td><strong>Tushare Pro</strong></td><td style="color: var(--green);">200元/年</td><td>全A 2000+</td><td>日频</td><td style="color: var(--green);">完整三大报表</td><td style="color: var(--green);">北向/融资/事件</td><td>需转换</td><td>基本面+特色因子</td></tr>
-      <tr><td><strong>AkShare</strong></td><td style="color: var(--green);">免费</td><td>全A(部分不全)</td><td>日频+实时</td><td style="color: var(--gold);">部分</td><td style="color: var(--gold);">北向/融资</td><td>需转换</td><td>快速取数/实时</td></tr>
-      <tr><td><strong>Wind</strong></td><td style="color: var(--accent);">3-10万+/年</td><td>全市场全品种</td><td>Tick级</td><td style="color: var(--green);">最全面</td><td style="color: var(--green);">预期/ESG/宏观</td><td>需转换</td><td>机构级研究</td></tr>
-      <tr><td><strong>JoinQuant</strong></td><td style="color: var(--green);">免费(平台内)</td><td>全A</td><td>日频+分钟</td><td style="color: var(--green);">较全面</td><td style="color: var(--gold);">行业/指数</td><td>需转换</td><td>原型开发</td></tr>
-      <tr><td><strong>RiceQuant</strong></td><td style="color: var(--gold);">数千元/年</td><td>全A</td><td>日+分+Tick</td><td style="color: var(--green);">较全(PIT)</td><td style="color: var(--gold);">行业/指数</td><td>需转换</td><td>本地高质量</td></tr>
-      <tr><td><strong>CSMAR</strong></td><td style="color: var(--accent);">昂贵(大学)</td><td>全历史含退市 1990+</td><td>日频</td><td style="color: var(--green);">学术标准</td><td style="color: var(--green);">治理/并购</td><td>需转换</td><td>学术/论文</td></tr>
-      <tr><td><strong>baostock</strong></td><td style="color: var(--green);">免费</td><td>全A</td><td>日/周/月</td><td style="color: var(--orange);">基础</td><td style="color: var(--accent);">极少</td><td>需转换</td><td>入门/备份</td></tr>
+      <tr>
+        <th>数据源</th><th>成本</th><th>覆盖范围</th><th>频率</th>
+        <th>财务数据</th><th>特色数据</th><th>Qlib 兼容</th><th>最适场景</th>
+      </tr>
+      <tr>
+        <td><strong>Qlib bin</strong></td><td style="color: var(--green);">免费</td>
+        <td>全A(含退市) 2005+</td><td>日频</td>
+        <td style="color: var(--orange);">基础</td><td style="color: var(--accent);">无</td>
+        <td style="color: var(--green);">原生</td><td>Qlib 日常研究</td>
+      </tr>
+      <tr>
+        <td><strong>Tushare Pro</strong></td><td style="color: var(--green);">200元/年</td>
+        <td>全A 2000+</td><td>日频</td>
+        <td style="color: var(--green);">完整三大报表</td><td style="color: var(--green);">北向/融资/事件</td>
+        <td>需转换</td><td>基本面+特色因子</td>
+      </tr>
+      <tr>
+        <td><strong>AkShare</strong></td><td style="color: var(--green);">免费</td>
+        <td>全A(部分不全)</td><td>日频+实时</td>
+        <td style="color: var(--gold);">部分</td><td style="color: var(--gold);">北向/融资</td>
+        <td>需转换</td><td>快速取数/实时</td>
+      </tr>
+      <tr>
+        <td><strong>Wind</strong></td><td style="color: var(--accent);">3-10万+/年</td>
+        <td>全市场全品种</td><td>Tick级</td>
+        <td style="color: var(--green);">最全面</td><td style="color: var(--green);">预期/ESG/宏观</td>
+        <td>需转换</td><td>机构级研究</td>
+      </tr>
+      <tr>
+        <td><strong>JoinQuant</strong></td><td style="color: var(--green);">免费(平台内)</td>
+        <td>全A</td><td>日频+分钟</td>
+        <td style="color: var(--green);">较全面</td><td style="color: var(--gold);">行业/指数</td>
+        <td>需转换</td><td>原型开发</td>
+      </tr>
+      <tr>
+        <td><strong>RiceQuant</strong></td><td style="color: var(--gold);">数千元/年</td>
+        <td>全A</td><td>日+分+Tick</td>
+        <td style="color: var(--green);">较全(PIT)</td><td style="color: var(--gold);">行业/指数</td>
+        <td>需转换</td><td>本地高质量</td>
+      </tr>
+      <tr>
+        <td><strong>CSMAR</strong></td><td style="color: var(--accent);">昂贵(大学)</td>
+        <td>全历史含退市 1990+</td><td>日频</td>
+        <td style="color: var(--green);">学术标准</td><td style="color: var(--green);">治理/并购</td>
+        <td>需转换</td><td>学术/论文</td>
+      </tr>
+      <tr>
+        <td><strong>baostock</strong></td><td style="color: var(--green);">免费</td>
+        <td>全A</td><td>日/周/月</td>
+        <td style="color: var(--orange);">基础</td><td style="color: var(--accent);">极少</td>
+        <td>需转换</td><td>入门/备份</td>
+      </tr>
     </table>
     </div>
 
     <div class="callout ok">
       <strong>推荐方案：个人量化研究者的实用数据栈</strong>
-      <p style="margin-bottom: 8px;"><strong style="color: var(--green); display: inline;">主力层：</strong>Qlib bin 作为日频 OHLCV 基础 + Tushare Pro (200 元/年) 获取财报、北向资金、指数成分股变动。覆盖 90%+ 日常因子研究需求。</p>
-      <p style="margin-bottom: 8px;"><strong style="color: var(--gold); display: inline;">补充层：</strong>AkShare 实时行情和快速查询，baostock 交叉验证和备份。</p>
-      <p><strong style="color: var(--blue); display: inline;">学术验证层：</strong>CSMAR（通过大学获取）用于最终的生存偏差检验和学术级验证。</p>
+      <p style="margin-bottom: 8px;"><strong style="color: var(--green); display: inline;">主力层：</strong>Qlib bin (chenditc/investment_data) 作为日频 OHLCV 基础 + Tushare Pro (200 元/年) 获取财报、北向资金、指数成分变动。覆盖 90%+ 日常因子研究需求，年成本仅 200 元。</p>
+      <p style="margin-bottom: 8px;"><strong style="color: var(--gold); display: inline;">补充层：</strong>AkShare 获取实时行情和快速查询，baostock 做数据交叉验证和备份。</p>
+      <p><strong style="color: var(--blue); display: inline;">学术验证层：</strong>CSMAR（如可通过大学获取）用于生存偏差检验和学术级验证。</p>
     </div>
 
     <div class="callout info">
@@ -163,19 +269,19 @@ df = ak.stock_zh_a_spot_em()</code></pre>
   </div>
 </section>
 
-<!-- ======================== Q2 ======================== -->
+<!-- ======================== Q2: Data Cleaning ======================== -->
 <section class="section" id="q2">
   <div class="container">
     <h2>Q2. 数据清洗的关键陷阱是什么？</h2>
-    <p>A 股数据清洗是因子研究中最易被忽视、却对结果影响最大的环节。以下 7 个关键陷阱均配有 A 股特有的具体案例和解决方案。</p>
+    <p>A 股数据清洗是因子研究中最易被忽视、却对结果影响最大的环节。以下 7 个关键陷阱配有 A 股特有案例和解决方案。</p>
 
     <h3>1. 生存偏差 (Survivorship Bias)</h3>
-    <p>仅分析当前存续股票，人为排除已退市的"失败者"，系统性高估策略收益。</p>
+    <p>仅分析当前存续股票，排除已退市"失败者"，系统性高估策略收益。</p>
     <div class="callout gap">
-      <strong>A 股情况：200+ 只已退市，2023-2024 年年均退市超 40 只</strong>
-      <p>用当前 A 股列表回测 2015 年策略，等于默认你提前"知道"哪些股票未来会退市。生存偏差可使年化收益虚增 1-3%，对小盘股策略影响尤甚。</p>
+      <strong>A 股：200+ 只退市，2023-2024 年年均退市超 40 只</strong>
+      <p>用当前股票列表回测 2015 年策略 = 默认你提前"知道"哪些股票未来会退市。生存偏差可使年化收益虚增 1-3%，小盘策略影响尤甚（退市股多为小市值）。</p>
     </div>
-    <p><strong>解决方案：</strong>使用含退市股票的数据集（Qlib bin 默认包含），Tushare 用 <code>pro.stock_basic(list_status='D')</code> 查询退市股票，回测按每日实际上市列表构建股票池。</p>
+    <p><strong>方案：</strong>使用含退市股票的数据集（Qlib bin 默认包含）；Tushare 用 <code>pro.stock_basic(list_status='D')</code> 查询退市股票；回测按每日实际上市列表构建股票池。</p>
 
     <h3>2. 前视偏差 (Look-Ahead Bias)</h3>
     <p>使用了决策时点尚不可得的数据 -- 最隐蔽也最危险的偏差。</p>
@@ -188,55 +294,72 @@ df = ak.stock_zh_a_spot_em()</code></pre>
       <tr><td>一季报</td><td>1-3 月</td><td>4 月 30 日</td><td style="color: var(--gold);">5 月 1 日起</td></tr>
       <tr><td>三季报</td><td>1-9 月</td><td>10 月 31 日</td><td style="color: var(--gold);">11 月 1 日起</td></tr>
     </table>
+    <div class="callout warn">
+      <strong>常见错误</strong>
+      <p>用 Q1 季报数据（报告期 3 月 31 日）在 4 月 1 日就使用 -- 实际多数公司到 4 月中下旬才公布。正确做法：使用 6 个月滞后（保守），或只在实际公告日之后使用（精确但需公告日数据）。</p>
+    </div>
 
     <h4>2.2 指数成分股变动</h4>
-    <p>沪深 300/中证 500 每半年调整成分股。用当前成分股回测历史是典型前视偏差 -- 被调出的往往表现差，被调入的表现好。</p>
+    <p>沪深 300/中证 500 每半年调整成分股。用当前成分股回测历史是典型前视偏差 -- 调出者往往表现差，调入者表现好。</p>
 
     <h4>2.3 前复权的未来信息</h4>
-    <p>前复权使用未来分红送转信息调整历史价格，每次新事件都改变所有历史价格，本身就是前视偏差。</p>
+    <p>前复权使用未来分红送转信息调整历史价格，每次新事件改变所有历史价格，本身即是前视偏差。</p>
 
-    <p><strong>解决方案：</strong>建立 PIT 数据库；Qlib 用 <code>D(feature, lag)</code> 指定滞后；标签用 <code>Ref($close, -2)/Ref($close, -1) - 1</code>；指数成分股用 Tushare <code>index_weight()</code> 获取历史版本。</p>
+    <p><strong>方案：</strong>建立 PIT 数据库；Qlib 用 <code>D(feature, lag)</code> 指定滞后；标签构造用 <code>Ref($close, -2)/Ref($close, -1) - 1</code>（次日收益）；指数成分股用 Tushare <code>index_weight()</code> 获取历史版本。</p>
 
     <h3>3. 复权方式 (Price Adjustment)</h3>
     <table>
       <tr><th>复权方式</th><th>原理</th><th>缺点</th><th>适用场景</th></tr>
-      <tr><td><strong>前复权</strong></td><td>最新价基准，向前调整</td><td style="color: var(--accent);">历史价格每天都变，不可复现</td><td>K 线图展示</td></tr>
-      <tr><td><strong>后复权</strong></td><td>IPO 首日基准，向后调整</td><td>当前价 != 市场价</td><td style="color: var(--green);">因子计算、回测</td></tr>
-      <tr><td><strong>不复权</strong></td><td>原始交易价</td><td>分红除权造成虚假跳跃</td><td>限价单模拟</td></tr>
+      <tr>
+        <td><strong>前复权</strong></td><td>最新价基准，向前调整</td>
+        <td style="color: var(--accent);">历史价格每天变，不可复现</td><td>K 线图展示</td>
+      </tr>
+      <tr>
+        <td><strong>后复权</strong></td><td>IPO 首日基准，向后调整</td>
+        <td>当前价 != 市场价</td><td style="color: var(--green);">因子计算、回测</td>
+      </tr>
+      <tr>
+        <td><strong>不复权</strong></td><td>原始交易价</td>
+        <td>除权造成虚假价格跳跃</td><td>限价单模拟</td>
+      </tr>
     </table>
     <div class="callout ok">
       <strong>正确做法：统一使用后复权价格</strong>
-      <p>Qlib 默认使用后复权收盘价，这是正确的。计算收益率后立即转为百分比/对数收益率。分红除权示例：100 元股票 10 送 10，除权后 50 元 -- 不复权会看到 -50% 的虚假"收益率"。</p>
+      <p>Qlib 默认后复权收盘价，这是正确的。计算收益率后立即转为百分比/对数收益率。示例：100 元股票 10 送 10，除权后 50 元 -- 不复权会看到 -50% "收益率"，实际股东权益未变。</p>
     </div>
 
     <h3>4. 涨跌停处理</h3>
     <table>
       <tr><th>板块</th><th>涨跌幅限制</th><th>特殊情况</th></tr>
-      <tr><td>主板 (沪深)</td><td>&plusmn;10%</td><td>ST 股票 &plusmn;5%</td></tr>
+      <tr><td>主板 (沪深)</td><td>&plusmn;10%</td><td>ST 股 &plusmn;5%</td></tr>
       <tr><td>创业板 (ChiNext)</td><td>&plusmn;20%</td><td>2020年8月起</td></tr>
       <tr><td>科创板 (STAR)</td><td>&plusmn;20%</td><td>前5日无限制</td></tr>
       <tr><td>北交所</td><td>&plusmn;30%</td><td>首日无限制</td></tr>
     </table>
     <div class="callout gap">
       <strong>致命错误：涨停时模拟买入</strong>
-      <p>涨停封板时无卖单，实际无法买入。不检查涨跌停的回测会严重高估收益。方案：添加 <code>is_tradeable</code> 过滤器，检查 <code>close >= round(prev_close * 1.1, 2)</code>，或使用 Tushare 的涨跌停标志字段。</p>
+      <p>涨停封板时无卖单、实际无法买入。不检查涨跌停的回测严重高估收益。方案：添加 <code>is_tradeable</code> 过滤，检查 <code>close >= round(prev_close * 1.1, 2)</code>（主板），或使用 Tushare 涨跌停标志字段。一字涨停和盘中触及后打开需区别对待。</p>
     </div>
 
     <h3>5. ST / 退市整理期处理</h3>
-    <p>ST 股票涨跌幅收窄至 &plusmn;5%，通常市值极小、波动极端、流动性差。不剔除会导致小盘策略被问题股票主导。</p>
-    <p><strong>方案：</strong>每日检查股票名称是否含 "ST"/"*ST"/"退" 字样并剔除。Qlib 默认不过滤 ST，必须手动添加。</p>
+    <p>ST 股票涨跌幅收窄至 &plusmn;5%，通常市值极小、波动极端、流动性差。不剔除则小盘策略被问题股主导 -- 这些股票在因子排名中常出现极端值（极低 PE、极高波动率等），收益被少数问题股驱动，无实际交易意义。</p>
+    <p><strong>方案：</strong>每日检查股票名称是否含 "ST"/"*ST"/"退" 字样并剔除。Qlib 默认不过滤 ST，须在数据预处理阶段手动添加。</p>
 
     <h3>6. 缺失值处理</h3>
     <h4>新股上市 (IPO)</h4>
-    <p>前 N 天时序因子均为 NaN，且存在"连板"效应。方案：剔除上市后前 20 个交易日。</p>
+    <p>前 N 天时序因子均为 NaN，且 A 股新股有"连板"效应和超高换手率。<strong>方案：</strong>剔除上市后前 20 个交易日。</p>
     <h4>停牌</h4>
-    <p>短期停牌（&lt;5 日）用前值填充；长期停牌从股票池剔除，复牌后重新纳入。停牌期收益率设为 0（资金被锁定）。</p>
+    <ul>
+      <li>短期停牌（&lt;5 日）：前值填充（Forward Fill），保持因子连续性</li>
+      <li>长期停牌（&ge;5 日）：从股票池暂时剔除，复牌后重新纳入</li>
+      <li>停牌期收益率设为 0（非缺失），因为资金被锁定</li>
+    </ul>
     <h4>财务数据缺失</h4>
-    <p>用最近一期可得报告值填充，不做插值（财务数据是离散的）。</p>
+    <p>用最近一期可得报告值填充，不做插值（财务数据是离散的，插值无意义）。</p>
 
     <h3>7. 数据频率对齐</h3>
     <table>
-      <tr><th>数据类型</th><th>频率</th><th>对齐方式</th></tr>
+      <tr><th>数据类型</th><th>原始频率</th><th>对齐方式</th></tr>
       <tr><td>股价 / 成交量</td><td>日频</td><td>以交易日为基准</td></tr>
       <tr><td>财务报表</td><td>季频</td><td style="color: var(--gold);">按公告日（非报告期末日）</td></tr>
       <tr><td>北向资金</td><td>日频</td><td>直接对齐交易日</td></tr>
@@ -245,7 +368,7 @@ df = ak.stock_zh_a_spot_em()</code></pre>
     </table>
     <div class="callout insight">
       <strong>核心原则：按公告日对齐，而非报告期末日</strong>
-      <p>某公司 2025 年年报在 2026-04-20 发布，ROE 因子应从 4 月 20 日起使用，而非 2025-12-31。将财务数据映射到报告期末日是前视偏差的经典来源。</p>
+      <p>某公司 2025 年年报在 2026-04-20 发布。ROE 因子应从 4 月 20 日起使用，非 2025-12-31。映射到报告期末日是前视偏差的经典来源。</p>
     </div>
 
     <h3>数据清洗检查清单</h3>
@@ -264,35 +387,82 @@ df = ak.stock_zh_a_spot_em()</code></pre>
   </div>
 </section>
 
-<!-- ======================== Q3 ======================== -->
+<!-- ======================== Q3: Backtest Length ======================== -->
 <section class="section" id="q3">
   <div class="container">
     <h2>Q3. 需要多长的历史数据做回测？</h2>
-    <p>不同类型的因子和模型对数据长度有不同的敏感度，且 A 股市场的结构性变化意味着过于久远的数据可能已不具参考价值。</p>
+    <p>不同因子和模型对数据长度有不同敏感度，且 A 股结构性变化意味着过于久远的数据可能已不具参考价值。</p>
 
     <h3>1. 不同因子类型的最短回测窗口</h3>
     <table>
       <tr><th>因子类型</th><th>代表因子</th><th>最短</th><th>推荐</th><th>理由</th></tr>
-      <tr><td><strong>价量因子</strong></td><td>动量、反转、波动率</td><td>5 年</td><td style="color: var(--green);">10 年</td><td>需覆盖至少一轮完整牛熊</td></tr>
-      <tr><td><strong>价值因子</strong></td><td>PE、PB、EP、股息率</td><td>8 年</td><td style="color: var(--green);">10-12 年</td><td>需跨越 2017 "核心资产"风格断点</td></tr>
-      <tr><td><strong>质量因子</strong></td><td>ROE、毛利率、营收增速</td><td>10 年</td><td style="color: var(--green);">12-15 年</td><td>需覆盖多个盈利周期</td></tr>
-      <tr><td><strong>ML 模型</strong></td><td>LightGBM + Alpha158</td><td>5 年</td><td style="color: var(--green);">8 年</td><td>训练3-5年 + 验证1年 + 测试1-2年</td></tr>
-      <tr><td><strong>深度学习</strong></td><td>LSTM、Transformer</td><td>5 年</td><td style="color: var(--green);">6-8 年</td><td>数据量大但对远期不敏感</td></tr>
+      <tr>
+        <td><strong>价量因子</strong></td><td>动量、反转、波动率、换手率</td>
+        <td>5 年</td><td style="color: var(--green);">10 年</td><td>需覆盖至少一轮完整牛熊</td>
+      </tr>
+      <tr>
+        <td><strong>价值因子</strong></td><td>PE、PB、EP、股息率</td>
+        <td>8 年</td><td style="color: var(--green);">10-12 年</td><td>2017 后"核心资产"风格剧变</td>
+      </tr>
+      <tr>
+        <td><strong>质量因子</strong></td><td>ROE、毛利率、营收增速</td>
+        <td>10 年</td><td style="color: var(--green);">12-15 年</td><td>需覆盖多个盈利周期</td>
+      </tr>
+      <tr>
+        <td><strong>ML 模型</strong></td><td>LightGBM + Alpha158</td>
+        <td>5 年(总)</td><td style="color: var(--green);">8 年(总)</td><td>训练3-5年+验证1年+测试1-2年</td>
+      </tr>
+      <tr>
+        <td><strong>深度学习</strong></td><td>LSTM、Transformer</td>
+        <td>5 年(总)</td><td style="color: var(--green);">6-8 年(总)</td><td>数据量大但对远期不敏感</td>
+      </tr>
     </table>
 
     <h3>2. A 股市场行情阶段 (2005-2025)</h3>
-    <p>A 股风格轮动远比成熟市场剧烈，健壮的因子策略必须在多种市场环境下生存：</p>
+    <p>A 股风格轮动远比成熟市场剧烈。健壮的因子策略须在多种截然不同的环境下生存：</p>
     <div class="regime-row">
-      <div class="regime-block" style="background: rgba(64,192,128,0.1);"><div class="rb-year">2005-2007</div><div class="rb-name" style="color: var(--green);">大牛市</div><div class="rb-desc">股改+流动性</div></div>
-      <div class="regime-block" style="background: rgba(224,80,80,0.1);"><div class="rb-year">2008-2009</div><div class="rb-name" style="color: var(--accent);">金融危机</div><div class="rb-desc">全球危机+4万亿</div></div>
-      <div class="regime-block" style="background: rgba(136,136,160,0.1);"><div class="rb-year">2010-2013</div><div class="rb-name" style="color: var(--text2);">震荡市</div><div class="rb-desc">区间波动</div></div>
-      <div class="regime-block" style="background: rgba(240,192,64,0.1);"><div class="rb-year">2013-2015</div><div class="rb-name" style="color: var(--gold);">创业板牛</div><div class="rb-desc">杠杆牛+股灾</div></div>
+      <div class="regime-block" style="background: rgba(64,192,128,0.1);">
+        <div class="rb-year">2005-2007</div>
+        <div class="rb-name" style="color: var(--green);">大牛市</div>
+        <div class="rb-desc">股权分置改革+流动性</div>
+      </div>
+      <div class="regime-block" style="background: rgba(224,80,80,0.1);">
+        <div class="rb-year">2008-2009</div>
+        <div class="rb-name" style="color: var(--accent);">金融危机</div>
+        <div class="rb-desc">全球危机+4万亿刺激</div>
+      </div>
+      <div class="regime-block" style="background: rgba(136,136,160,0.1);">
+        <div class="rb-year">2010-2013</div>
+        <div class="rb-name" style="color: var(--text2);">震荡市</div>
+        <div class="rb-desc">区间波动，结构性行情</div>
+      </div>
+      <div class="regime-block" style="background: rgba(240,192,64,0.1);">
+        <div class="rb-year">2013-2015</div>
+        <div class="rb-name" style="color: var(--gold);">创业板牛</div>
+        <div class="rb-desc">杠杆牛市+2015股灾</div>
+      </div>
     </div>
     <div class="regime-row">
-      <div class="regime-block" style="background: rgba(80,128,224,0.1);"><div class="rb-year">2016-2017</div><div class="rb-name" style="color: var(--blue);">蓝筹修复</div><div class="rb-desc">供给侧改革</div></div>
-      <div class="regime-block" style="background: rgba(160,112,224,0.1);"><div class="rb-year">2017-2021</div><div class="rb-name" style="color: var(--purple);">核心资产</div><div class="rb-desc">茅指数/外资定价</div></div>
-      <div class="regime-block" style="background: rgba(224,128,64,0.1);"><div class="rb-year">2021-2024</div><div class="rb-name" style="color: var(--orange);">红利轮动</div><div class="rb-desc">量化地震</div></div>
-      <div class="regime-block" style="background: rgba(64,184,208,0.1);"><div class="rb-year">2024-2025</div><div class="rb-name" style="color: var(--cyan);">反弹修复</div><div class="rb-desc">AI主题</div></div>
+      <div class="regime-block" style="background: rgba(80,128,224,0.1);">
+        <div class="rb-year">2016-2017</div>
+        <div class="rb-name" style="color: var(--blue);">蓝筹修复</div>
+        <div class="rb-desc">供给侧改革，白马行情</div>
+      </div>
+      <div class="regime-block" style="background: rgba(160,112,224,0.1);">
+        <div class="rb-year">2017-2021</div>
+        <div class="rb-name" style="color: var(--purple);">核心资产</div>
+        <div class="rb-desc">茅指数/外资定价权提升</div>
+      </div>
+      <div class="regime-block" style="background: rgba(224,128,64,0.1);">
+        <div class="rb-year">2021-2024</div>
+        <div class="rb-name" style="color: var(--orange);">红利轮动</div>
+        <div class="rb-desc">核心资产退潮/量化地震</div>
+      </div>
+      <div class="regime-block" style="background: rgba(64,184,208,0.1);">
+        <div class="rb-year">2024-2025</div>
+        <div class="rb-name" style="color: var(--cyan);">反弹修复</div>
+        <div class="rb-desc">AI主题/量化恢复</div>
+      </div>
     </div>
     <div class="callout insight">
       <strong>健壮性原则：回测须跨越至少 2-3 个不同行情阶段</strong>
@@ -300,17 +470,36 @@ df = ak.stock_zh_a_spot_em()</code></pre>
     </div>
 
     <h3>3. Qlib 官方基准数据划分</h3>
+    <p>所有 Qlib 模型横向比较的基准：</p>
     <table>
       <tr><th>阶段</th><th>时间范围</th><th>长度</th><th>用途</th><th>覆盖行情</th></tr>
-      <tr><td style="color: var(--blue);"><strong>训练集</strong></td><td>2008-01-01 ~ 2014-12-31</td><td>7 年</td><td>模型参数学习</td><td>危机+震荡+创业板牛</td></tr>
-      <tr><td style="color: var(--gold);"><strong>验证集</strong></td><td>2015-01-01 ~ 2016-12-31</td><td>2 年</td><td>超参调优+早停</td><td>股灾+熔断+蓝筹修复</td></tr>
-      <tr><td style="color: var(--green);"><strong>测试集</strong></td><td>2017-01-01 ~ 2020-12-31</td><td>4 年</td><td>最终评估</td><td>核心资产时代</td></tr>
+      <tr>
+        <td style="color: var(--blue);"><strong>训练集</strong></td>
+        <td>2008-01-01 ~ 2014-12-31</td><td>7 年</td>
+        <td>模型参数学习</td><td>危机+震荡+创业板牛初期</td>
+      </tr>
+      <tr>
+        <td style="color: var(--gold);"><strong>验证集</strong></td>
+        <td>2015-01-01 ~ 2016-12-31</td><td>2 年</td>
+        <td>超参调优+早停</td><td>股灾+熔断+蓝筹修复</td>
+      </tr>
+      <tr>
+        <td style="color: var(--green);"><strong>测试集</strong></td>
+        <td>2017-01-01 ~ 2020-12-31</td><td>4 年</td>
+        <td>最终评估（禁止调参）</td><td>核心资产时代</td>
+      </tr>
     </table>
+    <div class="callout info">
+      <strong>为什么合理</strong>
+      <p>训练集覆盖截然不同的环境（危机、震荡、结构牛），迫使模型学习泛化特征。验证集含极端事件（股灾），测试鲁棒性。测试集是独立市场风格期，检验风格切换适应力。</p>
+    </div>
     <p>延伸至近期的扩展方案：</p>
 <pre><code><span class="code-comment"># 扩展版 Qlib 数据划分 (推荐)</span>
-train:  <span class="code-string">2008-01-01</span> ~ <span class="code-string">2018-12-31</span>  <span class="code-comment"># 11 年</span>
-valid:  <span class="code-string">2019-01-01</span> ~ <span class="code-string">2020-12-31</span>  <span class="code-comment"># 2 年</span>
-test:   <span class="code-string">2021-01-01</span> ~ <span class="code-string">2024-12-31</span>  <span class="code-comment"># 4 年 (含量化地震)</span></code></pre>
+train:  <span class="code-string">2008-01-01</span> ~ <span class="code-string">2018-12-31</span>   <span class="code-comment"># 11 年</span>
+valid:  <span class="code-string">2019-01-01</span> ~ <span class="code-string">2020-12-31</span>   <span class="code-comment"># 2 年</span>
+test:   <span class="code-string">2021-01-01</span> ~ <span class="code-string">2024-12-31</span>   <span class="code-comment"># 4 年 (含量化地震)</span>
+
+<span class="code-comment"># 与官方基准对比时保留原始划分做一次对照实验</span></code></pre>
 
     <h3>4. 滚动训练窗口设计</h3>
     <table>
@@ -322,46 +511,107 @@ test:   <span class="code-string">2021-01-01</span> ~ <span class="code-string">
     </table>
     <div class="callout warn">
       <strong>滚动窗口的额外数据需求</strong>
-      <p>训练窗口 2010-2014、验证 2015 年，首个预测点为 2016 年初。但 2010 年之前还需额外数据来计算回溯特征（如 60 日均线需多留约 3 个月原始数据）。A 股首选 Rolling（固定窗口），风格切换频繁，5 年前的模式可能已失效。</p>
+      <p>训练窗口 2010-2014、验证 2015，首个预测点为 2016 初。但 2010 年前还需额外数据计算回溯特征（60 日均线需多留约 3 个月原始数据）。A 股首选 Rolling（固定窗口），风格切换频繁，5 年前的模式可能已失效。</p>
     </div>
 
     <h3>5. 各数据源的时间起点</h3>
     <div class="timeline">
-      <div class="timeline-row"><div class="timeline-label">Qlib bin 数据</div><div class="timeline-track"><div class="timeline-bar" style="left: 25%; width: 75%; background: var(--green);">2005 ~ 至今 (日频全A股)</div></div></div>
-      <div class="timeline-row"><div class="timeline-label">Tushare 行情</div><div class="timeline-track"><div class="timeline-bar" style="left: 0%; width: 100%; background: var(--blue);">~2000 ~ 至今 (日频全A股)</div></div></div>
-      <div class="timeline-row"><div class="timeline-label">北向资金</div><div class="timeline-track"><div class="timeline-bar" style="left: 70%; width: 30%; background: var(--gold);">2014.11 (沪港通) ~ 至今</div></div></div>
-      <div class="timeline-row"><div class="timeline-label">融资融券</div><div class="timeline-track"><div class="timeline-bar" style="left: 50%; width: 50%; background: var(--orange);">2010.03 ~ 至今</div></div></div>
-      <div class="timeline-row"><div class="timeline-label">创业板股票</div><div class="timeline-track"><div class="timeline-bar" style="left: 45%; width: 55%; background: var(--purple);">2009.10 ~ 至今</div></div></div>
-      <div class="timeline-row"><div class="timeline-label">科创板股票</div><div class="timeline-track"><div class="timeline-bar" style="left: 95%; width: 5%; background: var(--cyan);">2019.07 ~</div></div></div>
-      <div class="timeline-row"><div class="timeline-label">CSMAR 覆盖</div><div class="timeline-track"><div class="timeline-bar" style="left: 0%; width: 100%; background: var(--accent); opacity: 0.8;">~1990 ~ 至今 (学术全覆盖)</div></div></div>
-      <div class="timeline-axis"><div class="timeline-axis-label"></div><div class="timeline-axis-ticks"><span>2000</span><span>2005</span><span>2010</span><span>2015</span><span>2020</span><span>2025</span></div></div>
+      <div class="timeline-row">
+        <div class="timeline-label">Qlib bin 数据</div>
+        <div class="timeline-track">
+          <div class="timeline-bar" style="left: 25%; width: 75%; background: var(--green);">2005 ~ 至今 (日频全A股)</div>
+        </div>
+      </div>
+      <div class="timeline-row">
+        <div class="timeline-label">Tushare 行情</div>
+        <div class="timeline-track">
+          <div class="timeline-bar" style="left: 0%; width: 100%; background: var(--blue);">~2000 ~ 至今 (日频全A股)</div>
+        </div>
+      </div>
+      <div class="timeline-row">
+        <div class="timeline-label">北向资金</div>
+        <div class="timeline-track">
+          <div class="timeline-bar" style="left: 70%; width: 30%; background: var(--gold);">2014.11 (沪港通) ~ 至今</div>
+        </div>
+      </div>
+      <div class="timeline-row">
+        <div class="timeline-label">融资融券</div>
+        <div class="timeline-track">
+          <div class="timeline-bar" style="left: 50%; width: 50%; background: var(--orange);">2010.03 ~ 至今</div>
+        </div>
+      </div>
+      <div class="timeline-row">
+        <div class="timeline-label">创业板股票</div>
+        <div class="timeline-track">
+          <div class="timeline-bar" style="left: 45%; width: 55%; background: var(--purple);">2009.10 ~ 至今</div>
+        </div>
+      </div>
+      <div class="timeline-row">
+        <div class="timeline-label">科创板股票</div>
+        <div class="timeline-track">
+          <div class="timeline-bar" style="left: 95%; width: 5%; background: var(--cyan);">2019.07 ~</div>
+        </div>
+      </div>
+      <div class="timeline-row">
+        <div class="timeline-label">CSMAR 覆盖</div>
+        <div class="timeline-track">
+          <div class="timeline-bar" style="left: 0%; width: 100%; background: var(--accent); opacity: 0.8;">~1990 ~ 至今 (学术全覆盖)</div>
+        </div>
+      </div>
+      <div class="timeline-axis">
+        <div class="timeline-axis-label"></div>
+        <div class="timeline-axis-ticks">
+          <span>2000</span><span>2005</span><span>2010</span><span>2015</span><span>2020</span><span>2025</span>
+        </div>
+      </div>
     </div>
+
+    <h4>关键约束</h4>
     <ul>
-      <li><strong>北向资金</strong>仅从 2014.11 (沪港通) 开始，2016.12 深港通后覆盖深市。回测起点不应早于 2015 年。</li>
-      <li><strong>融资融券</strong>从 2010.03 开始，初期仅 90 只标的，早期数据代表性有限。</li>
-      <li><strong>创业板</strong>从 2009.10 开始（首批 28 只），科创板从 2019.07 开始（前 5 日无涨跌幅限制需单独处理）。</li>
+      <li><strong>北向资金</strong>仅从 2014.11（沪港通）开始，2016.12 深港通后覆盖深市。回测起点不应早于 2015。</li>
+      <li><strong>融资融券</strong>从 2010.03 开始，初期仅 90 只标的，后扩容至 2200+。早期代表性有限。</li>
+      <li><strong>创业板</strong>从 2009.10 开始（首批 28 只）；<strong>科创板</strong>从 2019.07 开始（前 5 日无涨跌幅限制需单独处理）。</li>
+      <li><strong>Qlib bin</strong> 主体从 2005 年开始，2005 年前数据质量和覆盖度较差。</li>
     </ul>
 
     <h3>6. 实用建议总结</h3>
     <div class="metric-grid">
-      <div class="metric-card"><div class="mc-value" style="color: var(--green);">10+</div><div class="mc-label">年 -- 价量因子推荐回测</div><div class="mc-sub">覆盖 2-3 轮牛熊周期</div></div>
-      <div class="metric-card"><div class="mc-value" style="color: var(--gold);">8+</div><div class="mc-label">年 -- 价值因子最短窗口</div><div class="mc-sub">需跨越 2017 风格断点</div></div>
-      <div class="metric-card"><div class="mc-value" style="color: var(--blue);">3-5</div><div class="mc-label">年 -- 滚动训练窗口</div><div class="mc-sub">树模型推荐值</div></div>
-      <div class="metric-card"><div class="mc-value" style="color: var(--purple);">13</div><div class="mc-label">年 -- Qlib 标准总跨度</div><div class="mc-sub">2008-2020 训练+验证+测试</div></div>
+      <div class="metric-card">
+        <div class="mc-value" style="color: var(--green);">10+</div>
+        <div class="mc-label">年 -- 价量因子推荐回测</div>
+        <div class="mc-sub">覆盖 2-3 轮牛熊周期</div>
+      </div>
+      <div class="metric-card">
+        <div class="mc-value" style="color: var(--gold);">8+</div>
+        <div class="mc-label">年 -- 价值因子最短窗口</div>
+        <div class="mc-sub">需跨越 2017 风格断点</div>
+      </div>
+      <div class="metric-card">
+        <div class="mc-value" style="color: var(--blue);">3-5</div>
+        <div class="mc-label">年 -- 滚动训练窗口</div>
+        <div class="mc-sub">树模型推荐值</div>
+      </div>
+      <div class="metric-card">
+        <div class="mc-value" style="color: var(--purple);">13</div>
+        <div class="mc-label">年 -- Qlib 标准总跨度</div>
+        <div class="mc-sub">2008-2020 训练+验证+测试</div>
+      </div>
     </div>
+
     <div class="callout ok">
       <strong>决策框架</strong>
       <ol>
-        <li><strong>纯价量因子</strong>：Qlib bin 数据起点 2008 年，总跨度 15+ 年，覆盖多种市场环境。</li>
-        <li><strong>含基本面因子</strong>：加入 Tushare Pro，起点 2008 年（财报完整），需注意 PIT 处理。</li>
-        <li><strong>含北向资金等特色因子</strong>：回测起点 2015 年。建议分两轮：纯价量 2008-2024 全样本 + 含特色因子 2015-2024 子样本。</li>
-        <li><strong>ML 模型</strong>：首选 Qlib 官方划分 (2008-2020) 做基准对比，再用扩展划分 (2008-2024) 做生产版。</li>
-        <li><strong>滚动实盘</strong>：月度重训，训练 5 年 + 验证 1 年，首个预测点取决于数据起点 + 窗口长度。</li>
+        <li><strong>纯价量因子</strong>：Qlib bin 起点 2008，总跨度 15+ 年，足够覆盖多种环境。</li>
+        <li><strong>含基本面因子</strong>：加入 Tushare Pro，起点 2008（财报完整），注意 PIT 处理。</li>
+        <li><strong>含北向资金等特色因子</strong>：回测起点 2015。建议分两轮：纯价量 2008-2024 全样本 + 含特色因子 2015-2024 子样本。</li>
+        <li><strong>ML 模型</strong>：首选 Qlib 官方划分 (2008-2020) 做基准，再用扩展划分 (2008-2024) 做生产版。</li>
+        <li><strong>滚动实盘</strong>：月度重训，训练 5 年 + 验证 1 年。首个预测点 = 数据起点 + 窗口长度。</li>
       </ol>
     </div>
+
     <div class="callout gap">
       <strong>警惕"短回测陷阱"</strong>
-      <p>仅用 2020-2024 年数据回测（4 年），易受近期风格影响而过拟合。4 年优异但 10 年不显著的因子更可能是特定行情产物；10+ 年持续有效的因子即使近期平淡也更值得信赖。</p>
+      <p>仅用 2020-2024（4 年）回测，易受近期风格影响过拟合。4 年优异但 10 年不显著的因子更可能是特定行情产物；10+ 年持续有效的因子即使近期平淡也更值得信赖。</p>
     </div>
   </div>
 </section>
@@ -369,7 +619,11 @@ test:   <span class="code-string">2021-01-01</span> ~ <span class="code-string">
 <footer class="footer">
   <div class="container">
     <p>专题一：数据基础 &middot; 3 个核心问题 &middot; 2026-03-03</p>
-    <p style="margin-top: 8px;"><a href="../research-hub.html">&larr; 返回研究计划</a> &middot; <a href="../index.html">量化因子研究</a> &middot; <a href="../../index.html">知识库首页</a></p>
+    <p style="margin-top: 8px;">
+      <a href="../research-hub.html">&larr; 返回研究计划</a> &middot;
+      <a href="../index.html">量化因子研究</a> &middot;
+      <a href="../../index.html">知识库首页</a>
+    </p>
   </div>
 </footer>
 

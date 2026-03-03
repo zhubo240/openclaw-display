@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>专题五：实盘落地 | A股研究知识库</title>
+<style>
+  :root { --bg: #0a0a0f; --surface: #111118; --surface2: #1a1a24; --border: #252535; --text: #e0e0e8; --text2: #8888a0; --accent: #e05050; --gold: #f0c040; --green: #40c080; --blue: #5080e0; --orange: #e08040; --purple: #a070e0; --cyan: #40b8d0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; background: var(--bg); color: var(--text); line-height: 1.8; -webkit-font-smoothing: antialiased; }
+  .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+  .breadcrumb { padding: 16px 0; font-size: 0.85em; color: var(--text2); }
+  .breadcrumb a { color: var(--blue); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .page-header { padding: 48px 0 36px; border-bottom: 1px solid var(--border); }
+  .page-header h1 { font-size: 2.2em; font-weight: 700; letter-spacing: 0.04em; margin-bottom: 8px; }
+  .page-header h1 .hl { color: var(--accent); }
+  .page-header .meta { font-size: 0.9em; color: var(--text2); }
+  .toc { padding: 32px 0; border-bottom: 1px solid var(--border); }
+  .toc h2 { font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text2); margin-bottom: 12px; }
+  .toc ol { list-style: none; counter-reset: toc; }
+  .toc ol li { counter-increment: toc; margin-bottom: 6px; }
+  .toc ol li::before { content: counter(toc) "."; color: var(--accent); font-weight: 600; margin-right: 8px; }
+  .toc a { color: var(--blue); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  .section { padding: 48px 0; border-bottom: 1px solid var(--border); }
+  .section:last-of-type { border-bottom: none; }
+  .section h2 { font-size: 1.5em; font-weight: 700; margin-bottom: 24px; padding-bottom: 10px; border-bottom: 2px solid var(--accent); display: inline-block; }
+  .section h3 { font-size: 1.15em; font-weight: 600; margin: 28px 0 12px; color: var(--gold); }
+  .section h4 { font-size: 1.0em; font-weight: 600; margin: 20px 0 10px; color: var(--cyan); }
+  .section p { margin-bottom: 14px; color: var(--text); font-size: 0.95em; }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0 24px; font-size: 0.9em; }
+  th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+  th { background: var(--surface2); color: var(--text2); font-weight: 600; font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.05em; }
+  td { background: var(--surface); }
+  tr:hover td { background: var(--surface2); }
+  pre { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 18px 20px; margin: 16px 0 24px; overflow-x: auto; font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace; font-size: 0.88em; line-height: 1.6; color: var(--text); }
+  code { font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace; font-size: 0.9em; background: var(--surface2); padding: 2px 6px; border-radius: 4px; color: var(--green); }
+  pre code { background: none; padding: 0; color: inherit; }
+  .code-comment { color: var(--text2); } .code-keyword { color: var(--purple); } .code-string { color: var(--green); } .code-highlight { color: var(--gold); }
+  .callout { background: var(--surface); border-left: 4px solid var(--purple); border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 20px 0; font-size: 0.92em; }
+  .callout.insight { border-left-color: var(--gold); } .callout.gap { border-left-color: var(--accent); } .callout.ok { border-left-color: var(--green); } .callout.warn { border-left-color: var(--orange); }
+  .callout strong { display: block; margin-bottom: 4px; }
+  .metric-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin: 20px 0; }
+  .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px; text-align: center; }
+  .metric-card .mc-value { font-size: 1.8em; font-weight: 700; margin-bottom: 4px; }
+  .metric-card .mc-label { font-size: 0.82em; color: var(--text2); }
+  .metric-card .mc-sub { font-size: 0.75em; color: var(--text2); margin-top: 4px; }
+  .pipeline { display: flex; gap: 0; margin: 24px 0; flex-wrap: wrap; }
+  .pipeline-step { flex: 1; min-width: 120px; background: var(--surface); border: 1px solid var(--border); padding: 14px 10px; text-align: center; position: relative; font-size: 0.85em; }
+  .pipeline-step:first-child { border-radius: 10px 0 0 10px; } .pipeline-step:last-child { border-radius: 0 10px 10px 0; }
+  .pipeline-step .ps-label { font-size: 0.72em; color: var(--text2); text-transform: uppercase; letter-spacing: 0.06em; }
+  .pipeline-step .ps-value { font-weight: 600; margin-top: 4px; }
+  .pipeline-step::after { content: "\2192"; position: absolute; right: -8px; top: 50%; transform: translateY(-50%); color: var(--accent); font-size: 1.1em; z-index: 1; }
+  .pipeline-step:last-child::after { content: none; }
+  ul, ol { margin: 10px 0 18px 20px; font-size: 0.93em; } li { margin-bottom: 6px; }
+  .footer { padding: 40px 0; text-align: center; color: var(--text2); font-size: 0.85em; border-top: 1px solid var(--border); }
+  .footer a { color: var(--blue); text-decoration: none; }
+  .formula { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 20px; margin: 12px 0 20px; font-family: "SF Mono", "Fira Code", monospace; font-size: 0.9em; color: var(--cyan); text-align: center; letter-spacing: 0.02em; }
+  .flow { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; margin: 20px 0; font-size: 0.85em; }
+  .flow-node { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 8px 14px; white-space: nowrap; }
+  .flow-arrow { color: var(--accent); font-weight: 700; }
+  .arch-diagram { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px 24px; margin: 20px 0; font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace; font-size: 0.82em; line-height: 1.5; color: var(--cyan); overflow-x: auto; white-space: pre; }
+  .timeline { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px 24px; margin: 20px 0; font-family: "SF Mono", "Fira Code", monospace; font-size: 0.84em; line-height: 1.7; }
+  .timeline .t-time { color: var(--gold); font-weight: 600; } .timeline .t-action { color: var(--text); } .timeline .t-sep { color: var(--accent); }
+  .status-green { color: var(--green); font-weight: 600; }
+  .status-yellow { color: var(--gold); font-weight: 600; }
+  .status-red { color: var(--accent); font-weight: 600; }
+  @media (max-width: 768px) {
+    .page-header h1 { font-size: 1.6em; } .metric-grid { grid-template-columns: 1fr 1fr; }
+    .pipeline { flex-direction: column; } .pipeline-step { border-radius: 0 !important; }
+    .pipeline-step:first-child { border-radius: 10px 10px 0 0 !important; } .pipeline-step:last-child { border-radius: 0 0 10px 10px !important; }
+    .pipeline-step::after { content: "\2193"; right: 50%; top: auto; bottom: -8px; transform: translateX(50%); }
+    pre { font-size: 0.82em; padding: 14px; } table { font-size: 0.82em; } th, td { padding: 8px 10px; }
+    .flow { flex-direction: column; align-items: flex-start; }
+    .arch-diagram { font-size: 0.72em; padding: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <nav class="breadcrumb">
+    <a href="../../index.html">A股研究知识库</a> &rsaquo;
+    <a href="../index.html">量化因子研究</a> &rsaquo;
+    <a href="../research-hub.html">研究计划</a> &rsaquo;
+    专题五：实盘落地
+  </nav>
+</div>
+
+<header class="page-header">
+  <div class="container">
+    <h1>专题五：<span class="hl">实盘落地</span></h1>
+    <p class="meta">Q16 ~ Q19 | 从回测到真金白银的最后一公里 | 衰减评估、容量分析、自动化流程、策略监控</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="toc">
+    <h2>本专题内容</h2>
+    <ol>
+      <li><a href="#q16">Q16: 回测到实盘的衰减有多大？</a></li>
+      <li><a href="#q17">Q17: 百万级资金的容量约束在哪里？</a></li>
+      <li><a href="#q18">Q18: 每日自动化交易流程怎么搭？</a></li>
+      <li><a href="#q19">Q19: 怎么监控策略是否失效？</a></li>
+    </ol>
+  </nav>
+</div>
+
+<!-- ==================== Q16 ==================== -->
+<div class="container">
+<section class="section" id="q16">
+  <h2>Q16: 回测到实盘的衰减有多大？</h2>
+  <p>回测表现永远比实盘好。理解衰减的来源和幅度，是设定合理盈利预期的前提。如果回测就勉强跑赢基准，那实盘大概率亏钱。</p>
+
+  <h3>1. 衰减幅度的行业经验</h3>
+  <div class="formula">实盘表现 &asymp; 回测表现 &times; 0.4 ~ 0.7</div>
+  <p>这个衰减系数因团队基础设施水平而异：</p>
+
+  <div class="metric-grid">
+    <div class="metric-card">
+      <div class="mc-value" style="color:var(--green)">0.6-0.7</div>
+      <div class="mc-label">百亿私募衰减系数</div>
+      <div class="mc-sub">基础设施好、执行成本低</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-value" style="color:var(--gold)">0.4-0.6</div>
+      <div class="mc-label">个人量化衰减系数</div>
+      <div class="mc-sub">执行差、成本高、数据质量低</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-value" style="color:var(--accent)">6-10%</div>
+      <div class="mc-label">回测15% &rarr; 实盘预期</div>
+      <div class="mc-sub">个人量化预期范围</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-value" style="color:var(--accent)">2-5%</div>
+      <div class="mc-label">回测8% &rarr; 实盘预期</div>
+      <div class="mc-sub">可能不如买指数基金</div>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <strong>核心判断标准</strong>
+    如果回测年化低于 15%，个人量化实盘后很可能跑不赢沪深300。回测年化 8% 的策略，扣除衰减后实盘只剩 2-5%，还不如买余额宝。
+  </div>
+
+  <h3>2. 衰减来源分解</h3>
+  <p>衰减不是一个黑箱，可以拆解为几个可量化的来源：</p>
+  <table>
+    <thead><tr><th>来源</th><th>占衰减比例</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>交易成本低估</td><td style="color:var(--accent)">30-40%</td><td>冲击成本、滑点在回测中难以精确模拟</td></tr>
+      <tr><td>信号延迟</td><td style="color:var(--orange)">15-20%</td><td>回测假设收盘价下单，实盘有执行延迟</td></tr>
+      <tr><td>过拟合</td><td style="color:var(--accent)">20-30%</td><td>模型学到了历史噪声，未来无法重现</td></tr>
+      <tr><td>数据质量差异</td><td style="color:var(--gold)">10-15%</td><td>回测用清洗后数据，实盘数据有毛刺</td></tr>
+      <tr><td>市场冲击</td><td style="color:var(--green)">5-10%</td><td>自身交易影响价格（百万级可忽略）</td></tr>
+    </tbody>
+  </table>
+
+  <h3>3. 如何在回测中减少衰减</h3>
+  <p>在回测阶段就做好保守假设，可以大幅缩小回测与实盘的差距：</p>
+
+  <h4>3.1 交易成本设置</h4>
+  <pre><code><span class="code-comment"># 保守的交易成本模型</span>
+cost_config = {
+    <span class="code-string">"commission"</span>: 0.0003,     <span class="code-comment"># 佣金 0.03%（双边）</span>
+    <span class="code-string">"stamp_tax"</span>: 0.0005,      <span class="code-comment"># 印花税 0.05%（卖出单边）</span>
+    <span class="code-string">"slippage"</span>: 0.001,        <span class="code-comment"># 滑点 0.1%</span>
+    <span class="code-string">"impact"</span>: 0.001,          <span class="code-comment"># 冲击成本 0.1%（百万级可低些）</span>
+}
+<span class="code-comment"># 单次交易总成本 &asymp; 0.25-0.35%</span>
+<span class="code-comment"># 月换手 30% &rarr; 月交易成本 &asymp; 0.15-0.21%</span></code></pre>
+
+  <h4>3.2 下单假设</h4>
+  <ul>
+    <li>不要用当日收盘价下单 &mdash; 实盘中收盘价出来时已经收盘了</li>
+    <li>推荐：用<strong>次日开盘价</strong>或<strong>次日 VWAP</strong> 作为成交价假设</li>
+    <li>Qlib 中设置 <code>trade_start_time="09:30"</code>，<code>trade_end_time="15:00"</code></li>
+  </ul>
+
+  <h4>3.3 可交易性过滤</h4>
+  <pre><code><span class="code-keyword">def</span> <span class="code-highlight">filter_tradable</span>(df):
+    <span class="code-string">"""剔除不可交易的股票"""</span>
+    mask = (
+        (df[<span class="code-string">"$close"</span>] != df[<span class="code-string">"$limit_up"</span>]) &amp;   <span class="code-comment"># 非涨停</span>
+        (df[<span class="code-string">"$close"</span>] != df[<span class="code-string">"$limit_down"</span>]) &amp; <span class="code-comment"># 非跌停</span>
+        (~df[<span class="code-string">"$suspended"</span>]) &amp;                  <span class="code-comment"># 非停牌</span>
+        (df[<span class="code-string">"$turnover"</span>] > 5_000_000)           <span class="code-comment"># 日均成交额>500万</span>
+    )
+    <span class="code-keyword">return</span> df[mask]</code></pre>
+
+  <h4>3.4 多段验证与样本外测试</h4>
+  <ul>
+    <li><strong>多段验证</strong>：将历史数据分成 3-5 段，每段都要正收益才算通过</li>
+    <li><strong>样本外保留</strong>：最近 6-12 个月数据完全不用于训练和调参</li>
+    <li><strong>跨市场验证</strong>：如果在沪深300上有效，在中证500上也应该有效（方向一致）</li>
+  </ul>
+
+  <h3>4. Paper Trading（模拟盘）的重要性</h3>
+
+  <div class="pipeline">
+    <div class="pipeline-step"><div class="ps-label">Phase 1</div><div class="ps-value">回测通过</div></div>
+    <div class="pipeline-step"><div class="ps-label">Phase 2</div><div class="ps-value">模拟盘 3-6 月</div></div>
+    <div class="pipeline-step"><div class="ps-label">Phase 3</div><div class="ps-value">小资金实盘</div></div>
+    <div class="pipeline-step"><div class="ps-label">Phase 4</div><div class="ps-value">逐步加仓</div></div>
+  </div>
+
+  <p>实盘前必须跑 3-6 个月模拟盘，用真实数据做每日预测并记录虚拟交易：</p>
+  <pre><code><span class="code-comment"># 模拟盘每日记录</span>
+<span class="code-keyword">import</span> pandas <span class="code-keyword">as</span> pd
+<span class="code-keyword">from</span> datetime <span class="code-keyword">import</span> date
+
+paper_log = {
+    <span class="code-string">"date"</span>: date.today(),
+    <span class="code-string">"predicted_top10"</span>: [<span class="code-string">"000001"</span>, <span class="code-string">"600036"</span>, ...],
+    <span class="code-string">"actual_buy"</span>: [<span class="code-string">"000001"</span>, <span class="code-string">"600036"</span>, ...],
+    <span class="code-string">"paper_pnl"</span>: 0.0082,       <span class="code-comment"># 当日模拟盘收益</span>
+    <span class="code-string">"backtest_expected"</span>: 0.012, <span class="code-comment"># 回测同期预期</span>
+    <span class="code-string">"decay_ratio"</span>: 0.0082 / 0.012  <span class="code-comment"># = 0.68</span>
+}
+<span class="code-comment"># 持续跟踪 decay_ratio 的分布</span></code></pre>
+
+  <div class="callout gap">
+    <strong>何时放弃策略</strong>
+    模拟盘跑满 3 个月后，如果衰减比 &gt; 60%（即 decay_ratio &lt; 0.4），策略大概率存在严重过拟合，不建议投入实盘资金。
+  </div>
+</section>
+</div>
+
+<!-- ==================== Q17 ==================== -->
+<div class="container">
+<section class="section" id="q17">
+  <h2>Q17: 百万级资金的容量约束在哪里？</h2>
+  <p>策略容量是指在不显著影响市场价格的前提下，能管理的最大资金量。好消息是：对百万级个人资金来说，几乎不存在容量问题。</p>
+
+  <h3>1. 容量的定义</h3>
+  <div class="formula">策略容量 = 持仓只数 &times; 单只股票可交易额 &times; (1 / 换手频率)</div>
+  <p>关键规则：单只股票的每日交易量不超过其日均成交额的 1%（1% ADV rule），以避免对价格造成显著冲击。</p>
+
+  <h3>2. A股各板块流动性</h3>
+  <table>
+    <thead><tr><th>股票池</th><th>日均成交额（中位数）</th><th>1% ADV 上限</th><th>10只组合月容量</th></tr></thead>
+    <tbody>
+      <tr><td>沪深300</td><td>~15亿</td><td>~1500万</td><td style="color:var(--green)">~3亿</td></tr>
+      <tr><td>中证500</td><td>~5亿</td><td>~500万</td><td style="color:var(--green)">~1亿</td></tr>
+      <tr><td>中证1000</td><td>~2亿</td><td>~200万</td><td style="color:var(--gold)">~4000万</td></tr>
+      <tr><td>全A小盘</td><td>~5000万</td><td>~50万</td><td style="color:var(--accent)">~1000万</td></tr>
+    </tbody>
+  </table>
+
+  <h3>3. 百万级资金的分析</h3>
+  <p>以 100 万资金、持仓 15 只股票为例：</p>
+
+  <div class="metric-grid">
+    <div class="metric-card">
+      <div class="mc-value" style="color:var(--blue)">6.7万</div>
+      <div class="mc-label">每只股票持仓</div>
+      <div class="mc-sub">100万 / 15 只</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-value" style="color:var(--green)">0.003%</div>
+      <div class="mc-label">占中证1000 ADV</div>
+      <div class="mc-sub">6.7万 / 2亿</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-value" style="color:var(--green)">0.013%</div>
+      <div class="mc-label">占小盘股 ADV</div>
+      <div class="mc-sub">6.7万 / 5000万</div>
+    </div>
+  </div>
+
+  <div class="callout ok">
+    <strong>百万级资金结论</strong>
+    即使在全A最小盘的股票中，百万级资金的单笔交易只占日均成交额的 0.01% 量级，完全可以忽略市场冲击。百万级资金在中证500、中证1000甚至小盘股中都没有容量约束。真正的约束在千万级以上才开始出现。
+  </div>
+
+  <h3>4. 不同资金规模的推荐策略</h3>
+  <table>
+    <thead><tr><th>资金规模</th><th>推荐股票池</th><th>topk</th><th>换手策略</th><th>容量约束</th></tr></thead>
+    <tbody>
+      <tr><td>&lt;500万</td><td>全A（含小盘）</td><td>10-15</td><td>自由</td><td class="status-green">几乎无</td></tr>
+      <tr><td>500万-5000万</td><td>中证1000+</td><td>15-30</td><td>注意冲击</td><td class="status-yellow">微弱</td></tr>
+      <tr><td>5000万-5亿</td><td>中证500+</td><td>30-50</td><td>控制成本</td><td class="status-yellow">中等</td></tr>
+      <tr><td>&gt;5亿</td><td>沪深300</td><td>50-100</td><td>VWAP执行</td><td class="status-red">显著</td></tr>
+    </tbody>
+  </table>
+
+  <h3>5. 容量约束的实际影响模型</h3>
+  <pre><code><span class="code-keyword">def</span> <span class="code-highlight">estimate_impact_cost</span>(trade_amount, adv, sigma_daily=0.02):
+    <span class="code-string">"""
+    估算市场冲击成本（Square-Root Model）
+    trade_amount: 交易金额
+    adv: 日均成交额
+    sigma_daily: 日波动率
+    """</span>
+    participation_rate = trade_amount / adv
+    impact = sigma_daily * (participation_rate ** 0.5)
+    <span class="code-keyword">return</span> impact
+
+<span class="code-comment"># 百万级: impact = 0.02 * (67000/200000000)^0.5 = 0.0004 (0.04%) 可忽略</span>
+<span class="code-comment"># 千万级: impact = 0.02 * (670000/200000000)^0.5 = 0.0012 (0.12%) 需关注</span>
+<span class="code-comment"># 亿级:   impact = 0.02 * (6700000/200000000)^0.5 = 0.0037 (0.37%) 显著</span></code></pre>
+
+  <div class="callout insight">
+    <strong>个人量化的真正优势</strong>
+    百万级资金反而是优势 &mdash; 你可以在小盘股中挖掘 alpha，这些股票大资金根本进不去。很多 alpha 信号在小盘股中更强，因为机构覆盖不足、定价效率低。不要急于做大规模，先跑通策略逻辑再说。
+  </div>
+</section>
+</div>
+
+<!-- ==================== Q18 ==================== -->
+<div class="container">
+<section class="section" id="q18">
+  <h2>Q18: 每日自动化交易流程怎么搭？</h2>
+  <p>从"有一个能跑的模型"到"每天自动生成交易指令"，需要搭建一套数据更新 &rarr; 预测 &rarr; 下单的自动化流水线。</p>
+
+  <h3>1. 完整的日级自动化时间线</h3>
+  <div class="timeline">
+    <span class="t-time">15:30</span> <span class="t-sep">&rarr;</span> <span class="t-action">收盘，等待数据源更新（约15分钟）</span><br>
+    <span class="t-time">15:45</span> <span class="t-sep">&rarr;</span> <span class="t-action">数据增量更新：行情 + 财务（约15分钟）</span><br>
+    <span class="t-time">16:00</span> <span class="t-sep">&rarr;</span> <span class="t-action">因子计算 + 模型预测（约10分钟）</span><br>
+    <span class="t-time">16:10</span> <span class="t-sep">&rarr;</span> <span class="t-action">组合优化 + 生成交易指令CSV（约5分钟）</span><br>
+    <span class="t-time">16:15</span> <span class="t-sep">&rarr;</span> <span class="t-action">人工审核指令列表（可选）</span><br>
+    <span class="t-time" style="color:var(--text2)">────────</span> <span class="t-sep" style="color:var(--text2)">隔夜</span> <span class="t-time" style="color:var(--text2)">────────</span><br>
+    <span class="t-time">09:15</span> <span class="t-sep">&rarr;</span> <span class="t-action">集合竞价挂单（如果走全自动路线）</span><br>
+    <span class="t-time">09:30</span> <span class="t-sep">&rarr;</span> <span class="t-action">开盘后手动/半自动执行交易指令</span><br>
+    <span class="t-time">15:30</span> <span class="t-sep">&rarr;</span> <span class="t-action">核对成交记录 + 更新持仓表</span><br>
+  </div>
+
+  <h3>2. 技术架构</h3>
+  <div class="arch-diagram">
+&#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;     &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;     &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
+&#9474; Data Layer   &#9474;     &#9474; Model Layer  &#9474;     &#9474; Execution    &#9474;
+&#9474;             &#9474;     &#9474;              &#9474;     &#9474;              &#9474;
+&#9474; Qlib bin    &#9474;&#9472;&#9472;&#9472;&#9472;&#9658;&#9474; LightGBM     &#9474;&#9472;&#9472;&#9472;&#9472;&#9658;&#9474; Target       &#9474;
+&#9474; Tushare API &#9474;     &#9474; Ensemble     &#9474;     &#9474; Holdings     &#9474;
+&#9474; AkShare     &#9474;     &#9474; Rolling      &#9474;     &#9474; vs Current   &#9474;
+&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;     &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;     &#9474; &rarr; Orders    &#9474;
+                                            &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9516;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;
+                                                   &#9474;
+                                            &#9484;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9524;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;
+                                            &#9474; Broker API   &#9474;
+                                            &#9474; (manual/API) &#9474;
+                                            &#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9496;</div>
+
+  <h3>3. 数据更新脚本</h3>
+  <p>核心要点：Qlib bin 数据用官方工具更新，Tushare 做增量拉取，每次更新后做数据校验。</p>
+  <pre><code><span class="code-comment"># Qlib 数据更新（官方工具）</span>
+<span class="code-comment"># python -m qlib.contrib.data.handler_cn --qlib_data_1d_dir ~/.qlib/qlib_data/cn_data</span>
+<span class="code-comment"># 或用 chenditc: pip install qlib-data && python -m qlib_data update</span>
+
+<span class="code-keyword">def</span> <span class="code-highlight">update_tushare_incremental</span>(trade_date):
+    <span class="code-string">"""Tushare 增量更新 + 校验"""</span>
+    <span class="code-keyword">import</span> tushare <span class="code-keyword">as</span> ts
+    df = ts.pro_api().daily(trade_date=trade_date)
+    <span class="code-keyword">assert</span> len(df) > 3000, f<span class="code-string">"数据量异常: {len(df)}"</span>
+    <span class="code-keyword">assert</span> df[<span class="code-string">"close"</span>].between(0.1, 10000).all(), <span class="code-string">"价格范围异常"</span>
+    <span class="code-keyword">assert</span> df[<span class="code-string">"close"</span>].isna().sum() == 0, <span class="code-string">"存在缺失值"</span>
+    <span class="code-keyword">return</span> df</code></pre>
+
+  <h3>4. 预测 + 组合指令生成</h3>
+  <pre><code><span class="code-comment"># daily_predict.py -- 加载模型 &rarr; 预测 &rarr; TopkDropout &rarr; CSV</span>
+<span class="code-keyword">import</span> pandas <span class="code-keyword">as</span> pd, joblib, qlib
+<span class="code-keyword">from</span> qlib.data <span class="code-keyword">import</span> D
+
+qlib.init(provider_uri=<span class="code-string">"~/.qlib/qlib_data/cn_data"</span>)
+model = joblib.load(<span class="code-string">"models/lgbm_ensemble_latest.pkl"</span>)
+today = pd.Timestamp.now().strftime(<span class="code-string">"%Y-%m-%d"</span>)
+
+<span class="code-comment"># Step 1-2: 取特征 + 预测</span>
+features = D.features(D.instruments(<span class="code-string">"csi500"</span>),
+    fields=[<span class="code-string">"$close/$close[5]-1"</span>, <span class="code-string">"$volume/$volume[20]"</span>, ...],
+    start_time=today, end_time=today)
+scores = pd.Series(model.predict(features), index=features.index).sort_values(ascending=<span class="code-keyword">False</span>)
+
+<span class="code-comment"># Step 3: TopkDropout -- 剔除持仓中得分最差的n_drop只，补入新的top</span>
+TOPK, N_DROP = 15, 3
+current = set(pd.read_csv(<span class="code-string">"state/holdings.csv"</span>)[<span class="code-string">"code"</span>])
+drop = scores[scores.index.isin(current)].tail(N_DROP).index.tolist()
+keep = current - set(drop)
+new_buys = scores[~scores.index.isin(keep)].head(TOPK - len(keep)).index.tolist()
+
+<span class="code-comment"># Step 4: 输出交易指令CSV</span>
+orders = ([{<span class="code-string">"code"</span>: c, <span class="code-string">"action"</span>: <span class="code-string">"SELL"</span>} <span class="code-keyword">for</span> c <span class="code-keyword">in</span> drop]
+        + [{<span class="code-string">"code"</span>: c, <span class="code-string">"action"</span>: <span class="code-string">"BUY"</span>}  <span class="code-keyword">for</span> c <span class="code-keyword">in</span> new_buys])
+pd.DataFrame(orders).to_csv(f<span class="code-string">"orders/orders_{today}.csv"</span>, index=<span class="code-keyword">False</span>)</code></pre>
+
+  <h3>5. 执行方式对比</h3>
+  <table>
+    <thead><tr><th>方式</th><th>工具</th><th>复杂度</th><th>适合谁</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>手动执行</td><td>券商 APP/PC</td><td style="color:var(--green)">极低</td><td>个人起步</td><td>看CSV列表逐条下单，每日10-15分钟</td></tr>
+      <tr><td>半自动</td><td>QMT / PTrade</td><td style="color:var(--gold)">中等</td><td>进阶个人</td><td>迅投QMT或恒生PTrade的策略接口</td></tr>
+      <tr><td>全自动</td><td>CTP / 自建</td><td style="color:var(--accent)">高</td><td>团队/资深</td><td>A股全自动门槛较高，需要券商API支持</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout ok">
+    <strong>推荐起步方案</strong>
+    每日生成指令 CSV + 手动执行。15 只股票、每天换 2-3 只，手动操作只需 10-15 分钟。等策略验证稳定后再投入时间搭建半自动或全自动系统。不要在策略还不确定时花太多时间在工程上。
+  </div>
+
+  <h3>6. cron / 定时任务配置</h3>
+
+  <h4>6.1 定时任务配置</h4>
+  <pre><code><span class="code-comment"># Linux crontab: 每个交易日 16:00 运行（周一到周五）</span>
+0 16 * * 1-5 /usr/bin/python3 /path/to/daily_pipeline.py >> /var/log/quant.log 2>&1
+
+<span class="code-comment"># macOS: 创建 ~/Library/LaunchAgents/com.quant.daily.plist</span>
+<span class="code-comment"># 设置 StartCalendarInterval Hour=16, Minute=0</span>
+
+<span class="code-comment"># 注意：cron只过滤周末，节假日需在脚本内判断</span>
+<span class="code-keyword">import</span> exchange_calendars <span class="code-keyword">as</span> xcals
+cal = xcals.get_calendar(<span class="code-string">"XSHG"</span>)  <span class="code-comment"># 上交所日历</span>
+<span class="code-keyword">if</span> <span class="code-keyword">not</span> cal.is_session(pd.Timestamp.today()):
+    sys.exit(0)  <span class="code-comment"># 非交易日直接退出</span></code></pre>
+
+  <h3>7. 完整 Pipeline 编排</h3>
+  <div class="arch-diagram">
+daily_pipeline.py
+&#9474;
+&#9500;&#9472;&#9472; 1. check_trade_day()       &#9472;&#9472; 非交易日直接退出
+&#9474;
+&#9500;&#9472;&#9472; 2. update_data()           &#9472;&#9472; Qlib + Tushare 增量更新
+&#9474;   &#9500;&#9472;&#9472; validate_data()        &#9472;&#9472; 数据校验（缺失值、价格范围）
+&#9474;   &#9492;&#9472;&#9472; retry(max=3)           &#9472;&#9472; 失败重试3次
+&#9474;
+&#9500;&#9472;&#9472; 3. compute_features()      &#9472;&#9472; 因子计算
+&#9474;
+&#9500;&#9472;&#9472; 4. predict_scores()        &#9472;&#9472; 模型预测
+&#9474;
+&#9500;&#9472;&#9472; 5. generate_orders()       &#9472;&#9472; TopkDropout + 输出CSV
+&#9474;
+&#9500;&#9472;&#9472; 6. send_notification()     &#9472;&#9472; 微信/邮件通知指令摘要
+&#9474;
+&#9492;&#9472;&#9472; 7. log_paper_trade()       &#9472;&#9472; 记录模拟盘（如果还在验证期）</div>
+</section>
+</div>
+
+<!-- ==================== Q19 ==================== -->
+<div class="container">
+<section class="section" id="q19">
+  <h2>Q19: 怎么监控策略是否失效？</h2>
+  <p>策略上线不是终点，而是另一个起点。市场在变化，因子在衰减，任何策略都有生命周期。建立有效的监控体系，才能在策略失效前及时发现问题。</p>
+
+  <h3>1. IC 滚动跟踪</h3>
+  <p>IC（Information Coefficient）是策略预测能力的核心度量。实盘中需要持续跟踪滚动IC的变化趋势：</p>
+
+  <table>
+    <thead><tr><th>监控窗口</th><th>用途</th><th>预警阈值</th></tr></thead>
+    <tbody>
+      <tr><td>20日滚动IC</td><td>短期信号质量</td><td>&lt; 0.01 &rarr; <span class="status-yellow">橙色预警</span></td></tr>
+      <tr><td>60日滚动IC</td><td>中期趋势判断</td><td>&lt; 0 &rarr; <span class="status-red">红色预警，考虑暂停</span></td></tr>
+      <tr><td>120日滚动IC</td><td>长期基准对比</td><td>&lt; 历史均值 - 2&sigma; &rarr; <span class="status-red">策略可能失效</span></td></tr>
+    </tbody>
+  </table>
+
+  <pre><code><span class="code-keyword">def</span> <span class="code-highlight">rolling_ic</span>(pred, ret, windows=[20, 60, 120]):
+    <span class="code-string">"""计算滚动 Rank IC 和 ICIR"""</span>
+    daily_ic = pred.groupby(level=0).apply(
+        <span class="code-keyword">lambda</span> x: x.corr(ret.loc[x.index], method=<span class="code-string">"spearman"</span>)
+    )
+    result = {}
+    <span class="code-keyword">for</span> w <span class="code-keyword">in</span> windows:
+        result[f<span class="code-string">"IC_{w}d"</span>] = daily_ic.rolling(w).mean()
+        result[f<span class="code-string">"ICIR_{w}d"</span>] = daily_ic.rolling(w).mean() / daily_ic.rolling(w).std()
+    <span class="code-keyword">return</span> pd.DataFrame(result)
+
+<span class="code-keyword">def</span> <span class="code-highlight">check_ic_alerts</span>(ic_df, hist_mean, hist_std):
+    <span class="code-string">"""IC 预警: 橙=短期弱, 红=中期归零/长期偏离"""</span>
+    alerts, L = [], ic_df.iloc[-1]
+    <span class="code-keyword">if</span> L[<span class="code-string">"IC_20d"</span>] < 0.01:  alerts.append((<span class="code-string">"ORANGE"</span>, <span class="code-string">"20日IC&lt;0.01"</span>))
+    <span class="code-keyword">if</span> L[<span class="code-string">"IC_60d"</span>] < 0:     alerts.append((<span class="code-string">"RED"</span>, <span class="code-string">"60日IC归零!"</span>))
+    <span class="code-keyword">if</span> L[<span class="code-string">"IC_120d"</span>] < hist_mean - 2*hist_std:
+        alerts.append((<span class="code-string">"RED"</span>, <span class="code-string">"120日IC低于历史-2&sigma;!"</span>))
+    <span class="code-keyword">return</span> alerts</code></pre>
+
+  <h3>2. 因子拥挤度监控</h3>
+  <p>当太多资金追逐同一个因子时，因子就会变得拥挤，alpha 被压缩甚至反转。</p>
+
+  <h4>2.1 拥挤度信号</h4>
+  <ul>
+    <li><strong>因子估值价差</strong>：当前 top-bottom 组的估值价差 vs 历史分位数。如果价差处于历史极端（如 &gt;95% 分位），说明因子已经非常拥挤</li>
+    <li><strong>因子 ETF 资金流入</strong>：同类因子 ETF（如红利 ETF、价值 ETF）AUM 快速增长 &rarr; 拥挤信号</li>
+    <li><strong>策略回撤相关性</strong>：多个独立策略同时出现回撤 &rarr; 系统性拥挤</li>
+  </ul>
+
+  <h4>2.2 2024 量化踩踏的教训</h4>
+  <div class="callout gap">
+    <strong>实战案例：2024年初量化踩踏</strong>
+    大量量化私募DMA策略集中在小盘风格，流动性枯竭时形成踩踏。早期信号：小盘因子价差达历史极端、多产品净值高相关回撤、监管关注DMA杠杆。个人量化规模小不会被踩踏，但持仓与机构高度重叠仍会受连带影响。
+  </div>
+
+  <pre><code><span class="code-keyword">def</span> <span class="code-highlight">monitor_crowding</span>(spread_hist, current):
+    <span class="code-string">"""因子拥挤度: 当前价差在历史中的分位数"""</span>
+    pctl = (spread_hist < current).mean()
+    <span class="code-keyword">if</span> pctl > 0.95: <span class="code-keyword">return</span> <span class="code-string">"DANGER"</span>, f<span class="code-string">"价差 {pctl:.0%} 分位, 极度拥挤!"</span>
+    <span class="code-keyword">if</span> pctl > 0.80: <span class="code-keyword">return</span> <span class="code-string">"WARN"</span>, f<span class="code-string">"价差 {pctl:.0%} 分位, 需关注"</span>
+    <span class="code-keyword">return</span> <span class="code-string">"OK"</span>, f<span class="code-string">"价差 {pctl:.0%} 分位, 正常"</span></code></pre>
+
+  <h3>3. 策略健康度仪表盘</h3>
+  <p>将核心监控指标整合成一个仪表盘，用红黄绿灯直观展示策略状态：</p>
+
+  <table>
+    <thead><tr><th>指标</th><th class="status-green">绿灯</th><th class="status-yellow">黄灯</th><th class="status-red">红灯</th></tr></thead>
+    <tbody>
+      <tr><td>20日滚动IC</td><td>&gt;0.03</td><td>0.01-0.03</td><td>&lt;0.01</td></tr>
+      <tr><td>60日滚动夏普</td><td>&gt;1.0</td><td>0.3-1.0</td><td>&lt;0.3</td></tr>
+      <tr><td>最大回撤</td><td>&lt;5%</td><td>5-10%</td><td>&gt;10%</td></tr>
+      <tr><td>月度换手率</td><td>&lt;40%</td><td>40-60%</td><td>&gt;60%</td></tr>
+      <tr><td>持仓集中度（单股最大权重）</td><td>&lt;15%</td><td>15-25%</td><td>&gt;25%</td></tr>
+      <tr><td>行业偏移（vs基准）</td><td>&lt;10%</td><td>10-20%</td><td>&gt;20%</td></tr>
+    </tbody>
+  </table>
+
+  <pre><code><span class="code-keyword">def</span> <span class="code-highlight">strategy_dashboard</span>(stats):
+    <span class="code-string">"""策略健康度仪表盘 -- 返回红黄绿灯状态"""</span>
+    rules = {
+        <span class="code-string">"ic_20d"</span>:     (<span class="code-string">"higher"</span>, 0.03, 0.01),  <span class="code-comment"># (方向, 绿线, 黄线)</span>
+        <span class="code-string">"sharpe_60d"</span>: (<span class="code-string">"higher"</span>, 1.0,  0.3),
+        <span class="code-string">"max_dd"</span>:     (<span class="code-string">"lower"</span>,  0.05, 0.10),
+        <span class="code-string">"turnover_m"</span>: (<span class="code-string">"lower"</span>,  0.40, 0.60),
+        <span class="code-string">"max_weight"</span>: (<span class="code-string">"lower"</span>,  0.15, 0.25),
+        <span class="code-string">"sector_dev"</span>: (<span class="code-string">"lower"</span>,  0.10, 0.20),
+    }
+    <span class="code-keyword">return</span> {k: classify(stats[k], *v) <span class="code-keyword">for</span> k, v <span class="code-keyword">in</span> rules.items()}</code></pre>
+
+  <h3>4. 什么时候该暂停策略</h3>
+  <p>以下任一条件触发时，应认真考虑暂停策略并进行诊断：</p>
+
+  <div class="pipeline">
+    <div class="pipeline-step"><div class="ps-label">触发1</div><div class="ps-value">连续3个月跑输基准</div></div>
+    <div class="pipeline-step"><div class="ps-label">触发2</div><div class="ps-value">60日IC归零或转负</div></div>
+    <div class="pipeline-step"><div class="ps-label">触发3</div><div class="ps-value">异常行为偏离回测</div></div>
+    <div class="pipeline-step"><div class="ps-label">触发4</div><div class="ps-value">外部环境剧变</div></div>
+  </div>
+
+  <ul>
+    <li><strong>连续3个月跑输基准</strong>：短期跑输正常，但3个月是一个有意义的窗口</li>
+    <li><strong>60日IC归零或转负</strong>：说明模型的预测能力已经消失</li>
+    <li><strong>异常行为偏离回测</strong>：如换手率突然飙升、持仓集中度异常等</li>
+    <li><strong>外部环境剧变</strong>：如 2024 年 DMA 限制、T+0 政策变化等监管层面的变化</li>
+  </ul>
+
+  <h3>5. 策略恢复决策流程</h3>
+  <p>暂停策略后，需要系统化诊断和修复，不能简单等待恢复：</p>
+
+  <div class="arch-diagram">
+策略暂停 &#9472;&#9472; 诊断原因
+&#9474;
+&#9500;&#9472;&#9472; 因子失效？     &#9472;&#9472; 更新因子集，剔除无效因子，重新训练
+&#9500;&#9472;&#9472; 模型过拟合？   &#9472;&#9472; 增加正则化，缩短训练窗口，减少特征
+&#9492;&#9472;&#9472; 市场regime变化？&#9472;&#9472; 分析风格切换方向，调整参数适配
+&#9474;
+&#9500;&#9472;&#9472; 修复后: 重新跑样本外回测 + 1-3月模拟盘
+&#9492;&#9472;&#9472; 验证通过 &#9472;&#9472; 恢复实盘（从小资金开始）</div>
+
+  <pre><code><span class="code-keyword">def</span> <span class="code-highlight">diagnose_failure</span>(factor_ics, market_regime):
+    <span class="code-string">"""策略失效诊断: 逐因子检查IC衰减 + 市场环境判断"""</span>
+    issues = []
+    <span class="code-keyword">for</span> f, ic <span class="code-keyword">in</span> factor_ics.items():
+        <span class="code-keyword">if</span> ic.tail(60).mean() < ic.mean() * 0.3:
+            issues.append(f<span class="code-string">"因子[{f}]近60日IC严重衰减"</span>)
+    <span class="code-keyword">if</span> market_regime[<span class="code-string">"vol_pctl"</span>] > 0.9:
+        issues.append(<span class="code-string">"高波环境，策略可能不适配"</span>)
+    <span class="code-keyword">if</span> market_regime.get(<span class="code-string">"style_shift"</span>):
+        issues.append(f<span class="code-string">"风格切换: {market_regime['style_shift']}"</span>)
+    <span class="code-keyword">return</span> issues <span class="code-keyword">or</span> [<span class="code-string">"未发现明确原因，建议继续观察"</span>]</code></pre>
+
+  <div class="callout insight">
+    <strong>策略监控的核心心态</strong>
+    不要因为一两周的回撤就惊慌失措，也不要因为"还没亏很多"就忽视预警信号。建立规则，按规则行事：
+    (1) 黄灯 &rarr; 加强关注，检查原因<br>
+    (2) 红灯 &rarr; 减仓或暂停，启动诊断<br>
+    (3) 恢复 &rarr; 必须重新经过模拟盘验证<br>
+    量化的优势就在于纪律性 &mdash; 不要让情绪覆盖规则。
+  </div>
+
+  <div class="callout ok">
+    <strong>实盘落地总结</strong>
+    (1) 回测到实盘的衰减通常在 30-60%，回测年化 &lt; 15% 的策略实盘风险很大。<br>
+    (2) 百万级资金几乎没有容量约束，反而是优势 &mdash; 可以在小盘股中挖掘 alpha。<br>
+    (3) 自动化流程从"每日CSV + 手动下单"起步，验证稳定后再升级工程。<br>
+    (4) 建立 IC 滚动跟踪 + 健康度仪表盘，用规则而非情绪来管理策略生命周期。<br>
+    (5) 策略失效是常态，重要的是有系统化的诊断和恢复流程。
+  </div>
+</section>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>专题五：实盘落地 &mdash; A股研究知识库</p>
+    <p style="margin-top:6px;"><a href="../research-hub.html">&larr; 返回研究计划</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

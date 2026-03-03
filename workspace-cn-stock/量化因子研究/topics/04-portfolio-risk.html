@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>专题四：组合构建与风控 | A股研究知识库</title>
+<style>
+  :root { --bg: #0a0a0f; --surface: #111118; --surface2: #1a1a24; --border: #252535; --text: #e0e0e8; --text2: #8888a0; --accent: #e05050; --gold: #f0c040; --green: #40c080; --blue: #5080e0; --orange: #e08040; --purple: #a070e0; --cyan: #40b8d0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; background: var(--bg); color: var(--text); line-height: 1.8; -webkit-font-smoothing: antialiased; }
+  .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+  .breadcrumb { padding: 16px 0; font-size: 0.85em; color: var(--text2); }
+  .breadcrumb a { color: var(--blue); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .page-header { padding: 48px 0 36px; border-bottom: 1px solid var(--border); }
+  .page-header h1 { font-size: 2.2em; font-weight: 700; letter-spacing: 0.04em; margin-bottom: 8px; }
+  .page-header h1 .hl { color: var(--accent); }
+  .page-header .meta { font-size: 0.9em; color: var(--text2); }
+  .toc { padding: 32px 0; border-bottom: 1px solid var(--border); }
+  .toc h2 { font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text2); margin-bottom: 12px; }
+  .toc ol { list-style: none; counter-reset: toc; }
+  .toc ol li { counter-increment: toc; margin-bottom: 6px; }
+  .toc ol li::before { content: counter(toc) "."; color: var(--accent); font-weight: 600; margin-right: 8px; }
+  .toc a { color: var(--blue); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  .section { padding: 48px 0; border-bottom: 1px solid var(--border); }
+  .section:last-of-type { border-bottom: none; }
+  .section h2 { font-size: 1.5em; font-weight: 700; margin-bottom: 24px; padding-bottom: 10px; border-bottom: 2px solid var(--accent); display: inline-block; }
+  .section h3 { font-size: 1.15em; font-weight: 600; margin: 28px 0 12px; color: var(--gold); }
+  .section h4 { font-size: 1.0em; font-weight: 600; margin: 20px 0 10px; color: var(--cyan); }
+  .section p { margin-bottom: 14px; color: var(--text); font-size: 0.95em; }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0 24px; font-size: 0.9em; }
+  th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+  th { background: var(--surface2); color: var(--text2); font-weight: 600; font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.05em; }
+  td { background: var(--surface); }
+  tr:hover td { background: var(--surface2); }
+  pre { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 18px 20px; margin: 16px 0 24px; overflow-x: auto; font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace; font-size: 0.88em; line-height: 1.6; color: var(--text); }
+  code { font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace; font-size: 0.9em; background: var(--surface2); padding: 2px 6px; border-radius: 4px; color: var(--green); }
+  pre code { background: none; padding: 0; color: inherit; }
+  .code-comment { color: var(--text2); } .code-keyword { color: var(--purple); } .code-string { color: var(--green); } .code-highlight { color: var(--gold); }
+  .callout { background: var(--surface); border-left: 4px solid var(--purple); border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 20px 0; font-size: 0.92em; }
+  .callout.insight { border-left-color: var(--gold); } .callout.gap { border-left-color: var(--accent); } .callout.ok { border-left-color: var(--green); } .callout.warn { border-left-color: var(--orange); }
+  .callout strong { display: block; margin-bottom: 4px; }
+  .metric-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin: 20px 0; }
+  .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px; text-align: center; }
+  .metric-card .mc-value { font-size: 1.8em; font-weight: 700; margin-bottom: 4px; }
+  .metric-card .mc-label { font-size: 0.82em; color: var(--text2); }
+  .metric-card .mc-sub { font-size: 0.75em; color: var(--text2); margin-top: 4px; }
+  .pipeline { display: flex; gap: 0; margin: 24px 0; flex-wrap: wrap; }
+  .pipeline-step { flex: 1; min-width: 120px; background: var(--surface); border: 1px solid var(--border); padding: 14px 10px; text-align: center; position: relative; font-size: 0.85em; }
+  .pipeline-step:first-child { border-radius: 10px 0 0 10px; } .pipeline-step:last-child { border-radius: 0 10px 10px 0; }
+  .pipeline-step .ps-label { font-size: 0.72em; color: var(--text2); text-transform: uppercase; letter-spacing: 0.06em; }
+  .pipeline-step .ps-value { font-weight: 600; margin-top: 4px; }
+  .pipeline-step::after { content: "\2192"; position: absolute; right: -8px; top: 50%; transform: translateY(-50%); color: var(--accent); font-size: 1.1em; z-index: 1; }
+  .pipeline-step:last-child::after { content: none; }
+  ul, ol { margin: 10px 0 18px 20px; font-size: 0.93em; } li { margin-bottom: 6px; }
+  .footer { padding: 40px 0; text-align: center; color: var(--text2); font-size: 0.85em; border-top: 1px solid var(--border); }
+  .footer a { color: var(--blue); text-decoration: none; }
+  .formula { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 20px; margin: 12px 0 20px; font-family: "SF Mono", "Fira Code", monospace; font-size: 0.9em; color: var(--cyan); text-align: center; letter-spacing: 0.02em; }
+  .flow { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; margin: 20px 0; font-size: 0.85em; }
+  .flow-node { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 8px 14px; white-space: nowrap; }
+  .flow-arrow { color: var(--accent); font-weight: 700; }
+  @media (max-width: 768px) {
+    .page-header h1 { font-size: 1.6em; } .metric-grid { grid-template-columns: 1fr 1fr; }
+    .pipeline { flex-direction: column; } .pipeline-step { border-radius: 0 !important; }
+    .pipeline-step:first-child { border-radius: 10px 10px 0 0 !important; } .pipeline-step:last-child { border-radius: 0 0 10px 10px !important; }
+    .pipeline-step::after { content: "\2193"; right: 50%; top: auto; bottom: -8px; transform: translateX(50%); }
+    pre { font-size: 0.82em; padding: 14px; } table { font-size: 0.82em; } th, td { padding: 8px 10px; }
+    .flow { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <nav class="breadcrumb">
+    <a href="../../index.html">A股研究知识库</a> &rsaquo;
+    <a href="../index.html">量化因子研究</a> &rsaquo;
+    <a href="../research-hub.html">研究计划</a> &rsaquo;
+    专题四：组合构建与风控
+  </nav>
+</div>
+
+<header class="page-header">
+  <div class="container">
+    <h1>专题四：<span class="hl">组合构建与风控</span></h1>
+    <p class="meta">Q12 ~ Q15 | 从模型预测到真金白银的实战桥梁 | 仓位管理、交易成本、风险约束</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="toc">
+    <h2>本专题内容</h2>
+    <ol>
+      <li><a href="#q12">Q12: 如何从模型预测到实际持仓？</a></li>
+      <li><a href="#q13">Q13: 行业暴露和风格暴露怎么控制？</a></li>
+      <li><a href="#q14">Q14: 换手率和交易成本怎么建模？</a></li>
+      <li><a href="#q15">Q15: 仓位管理和止损规则怎么设？</a></li>
+    </ol>
+  </nav>
+</div>
+
+<!-- Q12 -->
+<div class="container">
+<section class="section" id="q12">
+  <h2>Q12: 如何从模型预测到实际持仓？</h2>
+  <p>模型输出的是每只股票的预测得分（alpha signal），但从得分到真正的持仓还需要经过选股、定权、约束检查和交易指令生成等多个环节。</p>
+
+  <h3>1. TopkDropout（Qlib 默认策略）</h3>
+  <p>每期持有预测得分最高的 topk 只股票，通过 <code>n_drop</code> 参数限制每期的最大换手数量。</p>
+  <table>
+    <thead><tr><th>参数</th><th>含义</th><th>推荐值（个人）</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td><code>topk</code></td><td>持仓股票数</td><td>10 ~ 15</td><td>百万级资金建议 10-15 只</td></tr>
+      <tr><td><code>n_drop</code></td><td>每期最多换出数</td><td>2 ~ 3</td><td>控制换手率，避免每期大幅调仓</td></tr>
+    </tbody>
+  </table>
+  <div class="pipeline">
+    <div class="pipeline-step"><div class="ps-label">Step 1</div><div class="ps-value">预测得分排序</div></div>
+    <div class="pipeline-step"><div class="ps-label">Step 2</div><div class="ps-value">标记现有持仓</div></div>
+    <div class="pipeline-step"><div class="ps-label">Step 3</div><div class="ps-value">保留 top(k+n_drop)</div></div>
+    <div class="pipeline-step"><div class="ps-label">Step 4</div><div class="ps-value">替换末尾持仓</div></div>
+    <div class="pipeline-step"><div class="ps-label">Step 5</div><div class="ps-value">输出新持仓</div></div>
+  </div>
+  <pre><code><span class="code-comment"># Qlib TopkDropout 策略配置</span>
+<span class="code-keyword">from</span> qlib.contrib.strategy <span class="code-keyword">import</span> TopkDropoutStrategy
+strategy_config = {
+    <span class="code-string">"class"</span>: <span class="code-string">"TopkDropoutStrategy"</span>,
+    <span class="code-string">"module_path"</span>: <span class="code-string">"qlib.contrib.strategy"</span>,
+    <span class="code-string">"kwargs"</span>: {
+        <span class="code-string">"topk"</span>: <span class="code-highlight">15</span>,         <span class="code-comment"># 持仓 15 只</span>
+        <span class="code-string">"n_drop"</span>: <span class="code-highlight">2</span>,        <span class="code-comment"># 每期最多换 2 只</span>
+        <span class="code-string">"signal"</span>: pred_score, <span class="code-comment"># 模型预测得分</span>
+    },
+}</code></pre>
+  <div class="callout insight">
+    <strong>TopkDropout 的优缺点</strong>
+    优点：实现简单，换手率可控，不需要额外优化器。缺点：完全忽略行业/风格暴露，等权分配不考虑信号强度差异。适用：个人量化入门首选。
+  </div>
+
+  <h3>2. 等权 / 市值加权 / IC 加权</h3>
+  <table>
+    <thead><tr><th>加权方式</th><th>原理</th><th>优点</th><th>缺点</th></tr></thead>
+    <tbody>
+      <tr><td><strong>等权</strong></td><td>每只股票分配相同资金</td><td>最简单，无需额外数据</td><td>受小盘股波动影响大</td></tr>
+      <tr><td><strong>市值加权</strong></td><td>按流通市值占比分配</td><td>接近指数特征，波动低</td><td>因子暴露被大盘股稀释</td></tr>
+      <tr><td><strong>IC 加权</strong></td><td>按模型预测得分分配</td><td>集中资金于高信号股</td><td>风险集中，波动大</td></tr>
+    </tbody>
+  </table>
+  <pre><code><span class="code-keyword">import</span> numpy <span class="code-keyword">as</span> np
+<span class="code-keyword">def</span> <span class="code-highlight">calc_weights</span>(scores, method=<span class="code-string">"equal"</span>, market_caps=<span class="code-keyword">None</span>):
+    <span class="code-keyword">if</span> method == <span class="code-string">"equal"</span>:
+        <span class="code-keyword">return</span> np.ones(len(scores)) / len(scores)
+    <span class="code-keyword">elif</span> method == <span class="code-string">"market_cap"</span>:
+        <span class="code-keyword">return</span> market_caps / market_caps.sum()
+    <span class="code-keyword">elif</span> method == <span class="code-string">"ic_weighted"</span>:
+        pos = scores - scores.min() + 1e-6
+        <span class="code-keyword">return</span> pos / pos.sum()</code></pre>
+
+  <h3>3. 优化器方法（Mean-Variance / Risk Parity）</h3>
+  <div class="formula">max( alpha'w - lambda * w'Sigma*w )&nbsp;&nbsp;s.t.&nbsp;&nbsp;sum(w) = 1, w >= 0</div>
+  <p>均值-方差优化需要协方差矩阵估计（历史60~120日样本协方差或 Ledoit-Wolf 收缩）。风险平价让每个持仓贡献等量风险，不需要 alpha 估计。</p>
+  <pre><code><span class="code-keyword">import</span> cvxpy <span class="code-keyword">as</span> cp
+<span class="code-keyword">def</span> <span class="code-highlight">mean_variance_optimize</span>(alpha, cov_matrix, risk_aversion=1.0):
+    n = len(alpha)
+    w = cp.Variable(n)
+    ret = alpha @ w
+    risk = cp.quad_form(w, cov_matrix)
+    objective = cp.Maximize(ret - risk_aversion * risk)
+    constraints = [
+        cp.sum(w) == 1,   <span class="code-comment"># 满仓</span>
+        w >= 0,            <span class="code-comment"># 不做空（A股限制）</span>
+        w <= <span class="code-highlight">0.10</span>,         <span class="code-comment"># 单股上限 10%</span>
+    ]
+    prob = cp.Problem(objective, constraints)
+    prob.solve(solver=cp.ECOS)
+    <span class="code-keyword">return</span> w.value</code></pre>
+  <div class="callout warn">
+    <strong>A 股特殊约束</strong>
+    整手交易（100股倍数）、涨跌停不可交易、T+1 制度（当天买入次日才能卖出）。
+  </div>
+
+  <h3>4. 实际决策流程</h3>
+  <div class="flow">
+    <span class="flow-node">模型预测得分</span><span class="flow-arrow"> &rarr; </span>
+    <span class="flow-node">排序选股</span><span class="flow-arrow"> &rarr; </span>
+    <span class="flow-node">确定权重</span><span class="flow-arrow"> &rarr; </span>
+    <span class="flow-node">检查约束</span><span class="flow-arrow"> &rarr; </span>
+    <span class="flow-node">目标持仓</span><span class="flow-arrow"> &rarr; </span>
+    <span class="flow-node">对比现有</span><span class="flow-arrow"> &rarr; </span>
+    <span class="flow-node">交易指令</span><span class="flow-arrow"> &rarr; </span>
+    <span class="flow-node">成本评估</span><span class="flow-arrow"> &rarr; </span>
+    <span class="flow-node">过滤小额</span><span class="flow-arrow"> &rarr; </span>
+    <span class="flow-node">最终执行</span>
+  </div>
+  <div class="callout ok">
+    <strong>务实建议</strong>
+    初期用 TopkDropout + 等权即可。优化器方法等模型信号稳定后再考虑引入。
+  </div>
+</section>
+</div>
+
+<!-- Q13 -->
+<div class="container">
+<section class="section" id="q13">
+  <h2>Q13: 行业暴露和风格暴露怎么控制？</h2>
+  <p>未控制的因子暴露等于不可控的风险。组合不知不觉集中在某个行业或风格上，市场风格切换时就可能遭受巨大回撤。</p>
+
+  <h3>1. 什么是因子暴露</h3>
+  <p>因子暴露是组合相对于基准在各风格因子上的偏移量。例如组合平均 PE=15 而基准 PE=20，则有正向 value 暴露。</p>
+  <div class="metric-grid">
+    <div class="metric-card"><div class="mc-value" style="color:var(--gold)">+0.8</div><div class="mc-label">Value 暴露</div><div class="mc-sub">偏向低估值股票</div></div>
+    <div class="metric-card"><div class="mc-value" style="color:var(--accent)">-1.2</div><div class="mc-label">Size 暴露</div><div class="mc-sub">偏向小盘股</div></div>
+    <div class="metric-card"><div class="mc-value" style="color:var(--green)">+0.3</div><div class="mc-label">Momentum 暴露</div><div class="mc-sub">轻微偏向动量</div></div>
+    <div class="metric-card"><div class="mc-value" style="color:var(--blue)">+0.1</div><div class="mc-label">Beta 暴露</div><div class="mc-sub">接近市场中性</div></div>
+  </div>
+
+  <h3>2. 行业暴露控制</h3>
+  <table>
+    <thead><tr><th>方法</th><th>原理</th><th>难度</th><th>效果</th></tr></thead>
+    <tbody>
+      <tr><td><strong>硬约束法</strong></td><td>每个行业权重偏离基准不超 &plusmn;5%</td><td>中</td><td>严格中性</td></tr>
+      <tr><td><strong>行业内选股</strong></td><td>在每个行业内分别排序选 Top N</td><td>低</td><td>天然中性</td></tr>
+      <tr><td><strong>行业中性组合</strong></td><td>组合行业权重严格等于基准</td><td>高</td><td>完全中性</td></tr>
+      <tr><td><strong>行业权重上限</strong></td><td>单一行业不超过组合总权重 20%</td><td>低</td><td>防极端集中</td></tr>
+    </tbody>
+  </table>
+  <p>A 股实践中用 <strong>申万一级 31 个行业分类</strong>。行业内选股法最简单：每个行业按因子得分各取 Top 1-2 只。</p>
+  <pre><code><span class="code-keyword">import</span> pandas <span class="code-keyword">as</span> pd
+<span class="code-keyword">def</span> <span class="code-highlight">industry_neutral_select</span>(scores_df, industry_col, n_per_industry=1):
+    <span class="code-string">"""行业内选股：每个行业选得分最高的 N 只"""</span>
+    <span class="code-keyword">return</span> (scores_df.sort_values(<span class="code-string">"score"</span>, ascending=<span class="code-keyword">False</span>)
+            .groupby(industry_col).head(n_per_industry))
+<span class="code-comment"># 用法：scores_df 含 ['stock_id', 'score', 'sw_industry']</span>
+portfolio = industry_neutral_select(scores_df, <span class="code-string">"sw_industry"</span>, n_per_industry=<span class="code-highlight">1</span>)</code></pre>
+
+  <h3>3. Barra 风险模型简化版</h3>
+  <p>完整 Barra CNE6 需 10+ 风格因子和 30+ 行业因子。个人量化控制三个关键暴露即可：</p>
+  <table>
+    <thead><tr><th>关键暴露</th><th>含义</th><th>控制方法</th><th>目标</th></tr></thead>
+    <tbody>
+      <tr><td><strong>市值</strong></td><td>偏大盘还是小盘</td><td>限制小盘股比例或分层抽样</td><td>避免极端偏移</td></tr>
+      <tr><td><strong>行业</strong></td><td>是否集中少数行业</td><td>行业内选股或权重约束</td><td>单行业不超 20%</td></tr>
+      <tr><td><strong>Beta</strong></td><td>对市场的敏感度</td><td>过滤极端高/低 beta</td><td>beta 在 0.8-1.2</td></tr>
+    </tbody>
+  </table>
+
+  <h3>4. 暴露计算与约束代码</h3>
+  <pre><code><span class="code-keyword">import</span> numpy <span class="code-keyword">as</span> np, pandas <span class="code-keyword">as</span> pd
+
+<span class="code-keyword">def</span> <span class="code-highlight">calc_exposure</span>(portfolio_df, benchmark_df, factor_col):
+    <span class="code-string">"""计算组合相对基准的因子暴露"""</span>
+    port_mean = portfolio_df[factor_col].mean()
+    bench_mean = benchmark_df[factor_col].mean()
+    <span class="code-keyword">return</span> (port_mean - bench_mean) / benchmark_df[factor_col].std()
+
+<span class="code-keyword">def</span> <span class="code-highlight">apply_constraints</span>(weights, industry_labels, max_industry=0.20, max_stock=0.10):
+    <span class="code-string">"""应用仓位约束"""</span>
+    weights = np.minimum(weights, max_stock)  <span class="code-comment"># 个股上限</span>
+    <span class="code-keyword">for</span> ind <span class="code-keyword">in</span> set(industry_labels):
+        mask = np.array(industry_labels) == ind
+        ind_w = weights[mask].sum()
+        <span class="code-keyword">if</span> ind_w > max_industry:
+            weights[mask] *= max_industry / ind_w
+    <span class="code-keyword">return</span> weights / weights.sum()  <span class="code-comment"># 归一化</span></code></pre>
+
+  <h3>5. 个人量化的务实方案</h3>
+  <table>
+    <thead><tr><th>风控级别</th><th>措施</th><th>适合场景</th></tr></thead>
+    <tbody>
+      <tr><td><strong>最小风控</strong></td><td>单行业不超 20%，单股不超 10%，持仓 10-20 只</td><td>入门阶段</td></tr>
+      <tr><td><strong>中等风控</strong></td><td>加入市值分层（大/中/小盘各占比例）+ beta 过滤</td><td>策略稳定后</td></tr>
+      <tr><td><strong>完整风控</strong></td><td>行业中性 + 多因子暴露约束 + 优化器</td><td>百万级以上资金</td></tr>
+    </tbody>
+  </table>
+  <div class="callout ok">
+    <strong>推荐起步方案</strong>
+    行业内选股 + 等权。天然实现行业分散，不需要优化器。等 IC 稳定后再加入更复杂的约束。
+  </div>
+</section>
+</div>
+
+<!-- Q14 -->
+<div class="container">
+<section class="section" id="q14">
+  <h2>Q14: 换手率和交易成本怎么建模？</h2>
+  <p>交易成本是 alpha 的无声杀手。年化超额 15% 的策略，换手率过高时交易成本可能吃掉一半以上的收益。</p>
+
+  <h3>1. A 股交易成本全景</h3>
+  <table>
+    <thead><tr><th>成本项</th><th>费率</th><th>方向</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>佣金</td><td>0.025%</td><td>双边</td><td>个人通常万2.5，可谈到万1.5</td></tr>
+      <tr><td>印花税</td><td>0.05%</td><td>卖方</td><td>2023年减半后</td></tr>
+      <tr><td>过户费</td><td>0.001%</td><td>双边</td><td>基本可忽略</td></tr>
+      <tr><td>冲击成本</td><td>0.1~0.5%</td><td>双边</td><td>取决于流动性和订单大小</td></tr>
+      <tr><td><strong>总往返成本</strong></td><td><strong>0.4~0.8%</strong></td><td>-</td><td>CSI500约0.4-0.6%, CSI1000约0.6-0.8%</td></tr>
+    </tbody>
+  </table>
+  <div class="metric-grid">
+    <div class="metric-card"><div class="mc-value" style="color:var(--green)">0.4%</div><div class="mc-label">大盘股往返</div><div class="mc-sub">CSI300成分</div></div>
+    <div class="metric-card"><div class="mc-value" style="color:var(--gold)">0.6%</div><div class="mc-label">中盘股往返</div><div class="mc-sub">CSI500成分</div></div>
+    <div class="metric-card"><div class="mc-value" style="color:var(--orange)">0.8%</div><div class="mc-label">小盘股往返</div><div class="mc-sub">CSI1000成分</div></div>
+    <div class="metric-card"><div class="mc-value" style="color:var(--accent)">1.2%+</div><div class="mc-label">微盘股往返</div><div class="mc-sub">日均成交&lt;5000万</div></div>
+  </div>
+
+  <h3>2. 冲击成本经验模型</h3>
+  <div class="formula">impact = k &times; sqrt( V / ADV )</div>
+  <p>V=交易量，ADV=日均成交量，k=经验系数（A股约0.1~0.3）。小资金（&lt;500万）冲击成本基本可忽略。</p>
+  <pre><code><span class="code-keyword">import</span> numpy <span class="code-keyword">as</span> np
+<span class="code-keyword">def</span> <span class="code-highlight">estimate_impact</span>(trade_value, adv, k=<span class="code-highlight">0.2</span>):
+    <span class="code-string">"""估算冲击成本（平方根模型）"""</span>
+    <span class="code-keyword">return</span> k * np.sqrt(trade_value / adv)
+
+<span class="code-keyword">def</span> <span class="code-highlight">total_cost</span>(trade_value, direction, adv, commission=0.00025, stamp=0.0005):
+    <span class="code-string">"""计算总交易成本"""</span>
+    cost = commission  <span class="code-comment"># 佣金（单边）</span>
+    <span class="code-keyword">if</span> direction == <span class="code-string">"sell"</span>: cost += stamp  <span class="code-comment"># 印花税仅卖方</span>
+    cost += estimate_impact(trade_value, adv)
+    <span class="code-keyword">return</span> cost
+
+<span class="code-comment"># 示例：100万买入日均成交5亿的股票</span>
+<span class="code-keyword">print</span>(f<span class="code-string">"冲击: {estimate_impact(1e6, 5e8, 0.15):.4%}"</span>)  <span class="code-comment"># ~0.67bp，可忽略</span></code></pre>
+
+  <h3>3. 换手率 - 成本 - 收益权衡</h3>
+  <table>
+    <thead><tr><th>月度换手率（单边）</th><th>年化换手率</th><th>成本影响</th><th>评价</th></tr></thead>
+    <tbody>
+      <tr><td>&lt; 20%</td><td>&lt; 240%</td><td>年化 1-2%</td><td style="color:var(--green)">健康，成本可控</td></tr>
+      <tr><td>20-40%</td><td>240-480%</td><td>年化 2-4%</td><td style="color:var(--gold)">中等，需关注</td></tr>
+      <tr><td>40-60%</td><td>480-720%</td><td>年化 4-6%</td><td style="color:var(--orange)">偏高，alpha须很强</td></tr>
+      <tr><td>&gt; 60%</td><td>&gt; 720%</td><td>年化 6%+</td><td style="color:var(--accent)">危险，alpha被吃掉</td></tr>
+    </tbody>
+  </table>
+
+  <h3>4. 降低换手率的实用技巧</h3>
+  <table>
+    <thead><tr><th>技巧</th><th>原理</th><th>效果</th></tr></thead>
+    <tbody>
+      <tr><td><code>n_drop</code>参数</td><td>TopkDropout限制每期最大换手数</td><td>直接控制，效果显著</td></tr>
+      <tr><td>买卖阈值分离</td><td>进入topk才买，跌出top(k+buffer)才卖</td><td>减少边界股反复进出</td></tr>
+      <tr><td>交易成本惩罚</td><td>选股得分中扣除预期交易成本</td><td>自动倾向保留现有持仓</td></tr>
+      <tr><td>最小交易额过滤</td><td>忽略调仓金额&lt;5000元的交易</td><td>避免小额无效调仓</td></tr>
+    </tbody>
+  </table>
+  <pre><code><span class="code-keyword">def</span> <span class="code-highlight">adjust_score_with_cost</span>(scores, holdings, cost=<span class="code-highlight">0.006</span>):
+    <span class="code-string">"""交易成本惩罚：不在持仓中的股票扣减预期成本"""</span>
+    adjusted = scores.copy()
+    <span class="code-keyword">for</span> s <span class="code-keyword">in</span> adjusted.index:
+        <span class="code-keyword">if</span> s <span class="code-keyword">not in</span> holdings: adjusted[s] -= cost
+    <span class="code-keyword">return</span> adjusted
+
+<span class="code-keyword">def</span> <span class="code-highlight">hysteresis_filter</span>(scores, holdings, topk=15, buffer=5):
+    <span class="code-string">"""买卖阈值分离：买入要进top k，卖出要跌出top(k+buffer)"""</span>
+    ranked = scores.sort_values(ascending=<span class="code-keyword">False</span>)
+    keep = [s <span class="code-keyword">for</span> s <span class="code-keyword">in</span> holdings <span class="code-keyword">if</span> s <span class="code-keyword">in</span> ranked.index[:topk+buffer]]
+    <span class="code-keyword">for</span> s <span class="code-keyword">in</span> ranked.index:
+        <span class="code-keyword">if</span> len(keep) >= topk: <span class="code-keyword">break</span>
+        <span class="code-keyword">if</span> s <span class="code-keyword">not in</span> keep: keep.append(s)
+    <span class="code-keyword">return</span> keep[:topk]</code></pre>
+
+  <h3>5. 在回测中准确模拟交易成本</h3>
+  <pre><code><span class="code-comment"># Qlib 回测配置：准确模拟 A 股交易成本</span>
+backtest_config = {
+    <span class="code-string">"start_time"</span>: <span class="code-string">"2019-01-01"</span>, <span class="code-string">"end_time"</span>: <span class="code-string">"2024-12-31"</span>,
+    <span class="code-string">"account"</span>: <span class="code-highlight">1_000_000</span>, <span class="code-string">"benchmark"</span>: <span class="code-string">"SH000905"</span>,
+    <span class="code-string">"exchange_kwargs"</span>: {
+        <span class="code-string">"freq"</span>: <span class="code-string">"day"</span>,
+        <span class="code-string">"limit_threshold"</span>: <span class="code-highlight">0.095</span>,   <span class="code-comment"># 涨跌停 9.5%（留余量）</span>
+        <span class="code-string">"deal_price"</span>: <span class="code-string">"vwap"</span>,        <span class="code-comment"># VWAP 比收盘价更真实</span>
+        <span class="code-string">"open_cost"</span>: <span class="code-highlight">0.0005</span>,        <span class="code-comment"># 买入: 佣金+冲击 = 5bp</span>
+        <span class="code-string">"close_cost"</span>: <span class="code-highlight">0.0015</span>,       <span class="code-comment"># 卖出: 佣金+印花税+冲击 = 15bp</span>
+        <span class="code-string">"min_cost"</span>: <span class="code-highlight">5</span>,              <span class="code-comment"># 最低佣金 5 元</span>
+    },
+}</code></pre>
+  <div class="callout warn">
+    <strong>回测陷阱</strong>
+    很多框架默认收盘价成交、零佣金，严重高估策略表现。务必设置合理的佣金、滑点和涨跌停限制。
+  </div>
+</section>
+</div>
+
+<!-- Q15 -->
+<div class="container">
+<section class="section" id="q15">
+  <h2>Q15: 仓位管理和止损规则怎么设？</h2>
+  <p>仓位管理不会帮你找到好股票，但能在犯错时保护你不至于血本无归。</p>
+
+  <h3>1. 个股仓位上限</h3>
+  <table>
+    <thead><tr><th>持仓数（topk）</th><th>等权权重</th><th>推荐上限</th><th>绝对上限</th></tr></thead>
+    <tbody>
+      <tr><td>10</td><td>10.0%</td><td>20%</td><td>15%</td></tr>
+      <tr><td>15</td><td>6.7%</td><td>13%</td><td>15%</td></tr>
+      <tr><td>20</td><td>5.0%</td><td>10%</td><td>15%</td></tr>
+      <tr><td>30</td><td>3.3%</td><td>7%</td><td>10%</td></tr>
+    </tbody>
+  </table>
+  <div class="formula">推荐个股上限 = min( 1/topk &times; 2, 15% )</div>
+  <div class="callout gap">
+    <strong>A 股集中持仓的额外风险</strong>
+    跌停板 -10%（创业板/科创板 -20%）且无法卖出。单股仓位 15% 连续跌停 3 天，组合直接回撤 4.5%+。
+  </div>
+
+  <h3>2. 总仓位控制</h3>
+  <table>
+    <thead><tr><th>策略</th><th>仓位</th><th>优点</th><th>缺点</th></tr></thead>
+    <tbody>
+      <tr><td><strong>满仓</strong></td><td>100%</td><td>最大化因子暴露</td><td>承担全部系统性风险</td></tr>
+      <tr><td><strong>固定留现金</strong></td><td>70-80%</td><td>保留流动性缓冲</td><td>牛市中拖累收益</td></tr>
+      <tr><td><strong>均线择时</strong></td><td>动态</td><td>回避大级别熊市</td><td>震荡市反复止损</td></tr>
+    </tbody>
+  </table>
+  <pre><code><span class="code-keyword">def</span> <span class="code-highlight">market_timing_position</span>(index_close, ma_period=<span class="code-highlight">200</span>):
+    <span class="code-string">"""200日均线上方满仓，下方降到60%"""</span>
+    ma = index_close.rolling(ma_period).mean()
+    <span class="code-keyword">return</span> <span class="code-highlight">1.0</span> <span class="code-keyword">if</span> index_close.iloc[-1] > ma.iloc[-1] <span class="code-keyword">else</span> <span class="code-highlight">0.6</span>
+
+<span class="code-keyword">def</span> <span class="code-highlight">smooth_position</span>(index_close, ma_period=200):
+    <span class="code-string">"""渐变仓位：偏离均线幅度线性调整"""</span>
+    ma = index_close.rolling(ma_period).mean()
+    dev = (index_close.iloc[-1] - ma.iloc[-1]) / ma.iloc[-1]
+    <span class="code-keyword">return</span> max(0.5, min(1.0, 0.75 + dev * 2.5))</code></pre>
+  <div class="callout insight">
+    <strong>初期建议</strong>
+    建议满仓运行：(1) 减少决策维度；(2) 择时本身是另一个难题；(3) 长期市场向上，满仓机会成本更低。
+  </div>
+
+  <h3>3. 止损规则</h3>
+  <table>
+    <thead><tr><th>止损类型</th><th>条件</th><th>动作</th><th>推荐</th></tr></thead>
+    <tbody>
+      <tr><td><strong>个股止损</strong></td><td>跌超买入价 15-20%</td><td>强制卖出</td><td style="color:var(--orange)">不推荐</td></tr>
+      <tr><td><strong>组合止损</strong></td><td>回撤超 10-15%</td><td>减仓 50%</td><td style="color:var(--green)">推荐</td></tr>
+      <tr><td><strong>时间止损</strong></td><td>持仓超 N 期仍亏</td><td>强制卖出</td><td style="color:var(--text2)">不适用</td></tr>
+    </tbody>
+  </table>
+  <p>因子策略通常不设个股止损：模型每期重新评估，差的股票会自动被调出；止损常被"洗出"好股票；频繁止损增加交易成本。推荐组合级止损保护总资产。</p>
+  <pre><code><span class="code-keyword">class</span> <span class="code-highlight">PortfolioStopLoss</span>:
+    <span class="code-keyword">def</span> __init__(self, max_dd=<span class="code-highlight">0.12</span>, reduce=<span class="code-highlight">0.5</span>, recover=<span class="code-highlight">0.05</span>):
+        self.max_dd = max_dd        <span class="code-comment"># 止损回撤阈值</span>
+        self.reduce = reduce        <span class="code-comment"># 减仓比例</span>
+        self.recover = recover      <span class="code-comment"># 恢复阈值</span>
+        self.peak = 0; self.stopped = <span class="code-keyword">False</span>
+
+    <span class="code-keyword">def</span> <span class="code-highlight">update</span>(self, nav):
+        self.peak = max(self.peak, nav)
+        dd = (self.peak - nav) / self.peak
+        <span class="code-keyword">if</span> dd >= self.max_dd <span class="code-keyword">and not</span> self.stopped:
+            self.stopped = <span class="code-keyword">True</span>
+            <span class="code-keyword">return</span> self.reduce
+        <span class="code-keyword">if</span> self.stopped <span class="code-keyword">and</span> dd < self.recover:
+            self.stopped = <span class="code-keyword">False</span>
+            <span class="code-keyword">return</span> 1.0
+        <span class="code-keyword">return</span> self.reduce <span class="code-keyword">if</span> self.stopped <span class="code-keyword">else</span> 1.0</code></pre>
+
+  <h3>4. 资金管理的 Kelly 准则</h3>
+  <div class="formula">f* = expected_return / variance = mu / sigma^2&nbsp;&nbsp;（实践中用半 Kelly: f*/2）</div>
+  <pre><code><span class="code-keyword">def</span> <span class="code-highlight">kelly_fraction</span>(expected_return, volatility, half=<span class="code-keyword">True</span>):
+    f = expected_return / (volatility ** 2)
+    <span class="code-keyword">if</span> half: f *= 0.5
+    <span class="code-keyword">return</span> max(0, min(1.0, f))
+<span class="code-comment"># 预期超额15%, 波动率25% → 半Kelly = 120% → 限制为100%</span>
+<span class="code-comment"># 预期超额8%, 波动率30% → 半Kelly ≈ 44%</span></code></pre>
+
+  <h3>5. 风险指标监控清单</h3>
+  <table>
+    <thead><tr><th>频率</th><th>监控指标</th><th>预警条件</th><th>动作</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="3"><strong>每日</strong></td><td>组合净值</td><td>日跌幅 &gt; 3%</td><td>检查持仓重大事件</td></tr>
+      <tr><td>最大回撤</td><td>回撤 &gt; 10%</td><td>触发组合止损</td></tr>
+      <tr><td>各持仓盈亏</td><td>单股日跌 &gt; 7%</td><td>检查利空消息</td></tr>
+      <tr><td rowspan="3"><strong>每周</strong></td><td>行业暴露</td><td>单行业 &gt; 25%</td><td>下次调仓分散</td></tr>
+      <tr><td>市值分布</td><td>小盘占比 &gt; 60%</td><td>加入市值约束</td></tr>
+      <tr><td>周换手率</td><td>周换手 &gt; 15%</td><td>检查 n_drop 参数</td></tr>
+      <tr><td rowspan="3"><strong>每月</strong></td><td>IC 衰减</td><td>近3月IC &lt; 0.02</td><td>检查因子失效</td></tr>
+      <tr><td>因子拥挤度</td><td>换手/波动异常</td><td>考虑降低仓位</td></tr>
+      <tr><td>策略相关性</td><td>同类相关 &gt; 0.8</td><td>增加差异化因子</td></tr>
+    </tbody>
+  </table>
+  <pre><code><span class="code-keyword">class</span> <span class="code-highlight">RiskMonitor</span>:
+    <span class="code-keyword">def</span> __init__(self, nav): self.nav = nav
+    <span class="code-keyword">def</span> <span class="code-highlight">max_drawdown</span>(self):
+        peak = self.nav.cummax()
+        <span class="code-keyword">return</span> ((self.nav - peak) / peak).min()
+    <span class="code-keyword">def</span> <span class="code-highlight">daily_report</span>(self, holdings):
+        r = {<span class="code-string">"nav"</span>: self.nav.iloc[-1], <span class="code-string">"ret"</span>: self.nav.pct_change().iloc[-1],
+             <span class="code-string">"mdd"</span>: self.max_drawdown(), <span class="code-string">"max_w"</span>: holdings[<span class="code-string">"weight"</span>].max(),
+             <span class="code-string">"top_ind"</span>: holdings.groupby(<span class="code-string">"industry"</span>)[<span class="code-string">"weight"</span>].sum().max()}
+        alerts = []
+        <span class="code-keyword">if</span> r[<span class="code-string">"ret"</span>] < -0.03: alerts.append(<span class="code-string">"日跌幅超3%!"</span>)
+        <span class="code-keyword">if</span> r[<span class="code-string">"mdd"</span>] < -0.10: alerts.append(<span class="code-string">"回撤超10%! 考虑止损"</span>)
+        <span class="code-keyword">if</span> r[<span class="code-string">"max_w"</span>] > 0.15: alerts.append(<span class="code-string">"单股仓位超15%!"</span>)
+        <span class="code-keyword">if</span> r[<span class="code-string">"top_ind"</span>] > 0.25: alerts.append(<span class="code-string">"单行业超25%!"</span>)
+        r[<span class="code-string">"alerts"</span>] = alerts; <span class="code-keyword">return</span> r</code></pre>
+
+  <div class="callout ok">
+    <strong>组合构建与风控总结</strong>
+    (1) 从 TopkDropout + 等权开始，最简单可靠的起步方案。<br>
+    (2) 行业内选股天然实现行业分散，无需复杂优化器。<br>
+    (3) 准确建模交易成本（佣金+印花税+冲击），月换手率控制在 20-40%。<br>
+    (4) 组合级止损保护总资产，不设个股止损，让模型自动管理进出。<br>
+    (5) 建立每日/周/月三级监控体系，数据驱动风控决策。
+  </div>
+</section>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>专题四：组合构建与风控 &mdash; A股研究知识库</p>
+    <p style="margin-top:6px;"><a href="../research-hub.html">&larr; 返回研究计划</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>专题六：进阶方向 | A股研究知识库</title>
+<style>
+  :root { --bg: #0a0a0f; --surface: #111118; --surface2: #1a1a24; --border: #252535; --text: #e0e0e8; --text2: #8888a0; --accent: #e05050; --gold: #f0c040; --green: #40c080; --blue: #5080e0; --orange: #e08040; --purple: #a070e0; --cyan: #40b8d0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; background: var(--bg); color: var(--text); line-height: 1.8; -webkit-font-smoothing: antialiased; }
+  .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+  .breadcrumb { padding: 16px 0; font-size: 0.85em; color: var(--text2); }
+  .breadcrumb a { color: var(--blue); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .page-header { padding: 48px 0 36px; border-bottom: 1px solid var(--border); }
+  .page-header h1 { font-size: 2.2em; font-weight: 700; letter-spacing: 0.04em; margin-bottom: 8px; }
+  .page-header h1 .hl { color: var(--accent); }
+  .page-header .meta { font-size: 0.9em; color: var(--text2); }
+  .toc { padding: 32px 0; border-bottom: 1px solid var(--border); }
+  .toc h2 { font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text2); margin-bottom: 12px; }
+  .toc ol { list-style: none; counter-reset: toc; }
+  .toc ol li { counter-increment: toc; margin-bottom: 6px; }
+  .toc ol li::before { content: counter(toc) "."; color: var(--accent); font-weight: 600; margin-right: 8px; }
+  .toc a { color: var(--blue); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  .section { padding: 48px 0; border-bottom: 1px solid var(--border); }
+  .section:last-of-type { border-bottom: none; }
+  .section h2 { font-size: 1.5em; font-weight: 700; margin-bottom: 24px; padding-bottom: 10px; border-bottom: 2px solid var(--accent); display: inline-block; }
+  .section h3 { font-size: 1.15em; font-weight: 600; margin: 28px 0 12px; color: var(--gold); }
+  .section h4 { font-size: 1.0em; font-weight: 600; margin: 20px 0 10px; color: var(--cyan); }
+  .section p { margin-bottom: 14px; color: var(--text); font-size: 0.95em; }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0 24px; font-size: 0.9em; }
+  th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+  th { background: var(--surface2); color: var(--text2); font-weight: 600; font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.05em; }
+  td { background: var(--surface); }
+  tr:hover td { background: var(--surface2); }
+  pre { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 18px 20px; margin: 16px 0 24px; overflow-x: auto; font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace; font-size: 0.88em; line-height: 1.6; color: var(--text); }
+  code { font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace; font-size: 0.9em; background: var(--surface2); padding: 2px 6px; border-radius: 4px; color: var(--green); }
+  pre code { background: none; padding: 0; color: inherit; }
+  .code-comment { color: var(--text2); } .code-keyword { color: var(--purple); } .code-string { color: var(--green); } .code-highlight { color: var(--gold); }
+  .callout { background: var(--surface); border-left: 4px solid var(--purple); border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 20px 0; font-size: 0.92em; }
+  .callout.insight { border-left-color: var(--gold); } .callout.gap { border-left-color: var(--accent); } .callout.ok { border-left-color: var(--green); } .callout.warn { border-left-color: var(--orange); }
+  .callout strong { display: block; margin-bottom: 4px; }
+  .metric-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin: 20px 0; }
+  .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px; text-align: center; }
+  .metric-card .mc-value { font-size: 1.8em; font-weight: 700; margin-bottom: 4px; }
+  .metric-card .mc-label { font-size: 0.82em; color: var(--text2); }
+  .metric-card .mc-sub { font-size: 0.75em; color: var(--text2); margin-top: 4px; }
+  .pipeline { display: flex; gap: 0; margin: 24px 0; flex-wrap: wrap; }
+  .pipeline-step { flex: 1; min-width: 120px; background: var(--surface); border: 1px solid var(--border); padding: 14px 10px; text-align: center; position: relative; font-size: 0.85em; }
+  .pipeline-step:first-child { border-radius: 10px 0 0 10px; } .pipeline-step:last-child { border-radius: 0 10px 10px 0; }
+  .pipeline-step .ps-label { font-size: 0.72em; color: var(--text2); text-transform: uppercase; letter-spacing: 0.06em; }
+  .pipeline-step .ps-value { font-weight: 600; margin-top: 4px; }
+  .pipeline-step::after { content: "\2192"; position: absolute; right: -8px; top: 50%; transform: translateY(-50%); color: var(--accent); font-size: 1.1em; z-index: 1; }
+  .pipeline-step:last-child::after { content: none; }
+  ul, ol { margin: 10px 0 18px 20px; font-size: 0.93em; } li { margin-bottom: 6px; }
+  .footer { padding: 40px 0; text-align: center; color: var(--text2); font-size: 0.85em; border-top: 1px solid var(--border); }
+  .footer a { color: var(--blue); text-decoration: none; }
+  .formula { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 20px; margin: 12px 0 20px; font-family: "SF Mono", "Fira Code", monospace; font-size: 0.9em; color: var(--cyan); text-align: center; letter-spacing: 0.02em; }
+  .flow { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; margin: 20px 0; font-size: 0.85em; }
+  .flow-node { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 8px 14px; white-space: nowrap; }
+  .flow-arrow { color: var(--accent); font-weight: 700; }
+  .arch-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin: 20px 0; font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace; font-size: 0.82em; line-height: 1.5; white-space: pre; overflow-x: auto; color: var(--text2); }
+  .arch-box .ab-title { color: var(--gold); font-weight: 700; } .arch-box .ab-hl { color: var(--cyan); } .arch-box .ab-accent { color: var(--accent); } .arch-box .ab-green { color: var(--green); }
+  .tag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.78em; font-weight: 600; margin: 0 4px 4px 0; }
+  .tag-easy { background: rgba(64,192,128,0.15); color: var(--green); border: 1px solid rgba(64,192,128,0.3); }
+  .tag-mid { background: rgba(240,192,64,0.15); color: var(--gold); border: 1px solid rgba(240,192,64,0.3); }
+  .tag-hard { background: rgba(224,80,80,0.15); color: var(--accent); border: 1px solid rgba(224,80,80,0.3); }
+  @media (max-width: 768px) {
+    .page-header h1 { font-size: 1.6em; } .metric-grid { grid-template-columns: 1fr 1fr; }
+    .pipeline { flex-direction: column; } .pipeline-step { border-radius: 0 !important; }
+    .pipeline-step:first-child { border-radius: 10px 10px 0 0 !important; } .pipeline-step:last-child { border-radius: 0 0 10px 10px !important; }
+    .pipeline-step::after { content: "\2193"; right: 50%; top: auto; bottom: -8px; transform: translateX(50%); }
+    pre { font-size: 0.82em; padding: 14px; } table { font-size: 0.82em; } th, td { padding: 8px 10px; }
+    .flow { flex-direction: column; align-items: flex-start; } .arch-box { font-size: 0.72em; padding: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <nav class="breadcrumb">
+    <a href="../../index.html">A股研究知识库</a> &rsaquo;
+    <a href="../index.html">量化因子研究</a> &rsaquo;
+    <a href="../research-hub.html">研究计划</a> &rsaquo;
+    专题六：进阶方向
+  </nav>
+</div>
+
+<header class="page-header">
+  <div class="container">
+    <h1>专题六：<span class="hl">进阶方向</span></h1>
+    <p class="meta">Q20 ~ Q22 | LLM因子挖掘、高频日内聚合、多周期策略组合 | 最后一公里的前沿探索</p>
+  </div>
+</header>
+
+<div class="container">
+  <nav class="toc">
+    <h2>本专题内容</h2>
+    <ol>
+      <li><a href="#q20">Q20: LLM因子挖掘实际效果如何？</a></li>
+      <li><a href="#q21">Q21: 高频日内因子聚合到日频有多大提升？</a></li>
+      <li><a href="#q22">Q22: 多周期策略怎么组合？</a></li>
+    </ol>
+  </nav>
+</div>
+
+<!-- Q20 -->
+<div class="container">
+<section class="section" id="q20">
+  <h2>Q20: LLM因子挖掘实际效果如何？</h2>
+  <p>2025年以来，多个研究团队将大语言模型引入因子挖掘流程，从"人工设计因子表达式"进化到"LLM自动生成+验证+迭代"。下面按实际效果和可复现性逐一分析。</p>
+
+  <h3>1. R&D-Agent-Quant (Microsoft Research, NeurIPS 2025)</h3>
+  <div class="arch-box"><span class="ab-title">R&D-Agent-Quant 多智能体架构</span>
+
+┌──────────────────────────────────────────────────────────────┐
+│  <span class="ab-hl">Coordinator Agent</span> (协调因子R&amp;D 和 模型R&amp;D 交替进行)         │
+│                                                              │
+│  ┌────────────────────┐     ┌────────────────────┐          │
+│  │ <span class="ab-green">Factor R&amp;D Agent</span>    │     │ <span class="ab-green">Model R&amp;D Agent</span>     │          │
+│  │ 输入: 已有因子表达  │     │ 输入: 模型超参数    │          │
+│  │ 式 + 历史IC + 市场  │ <span class="ab-accent">&lt;=&gt;</span> │ + 因子池 + 回测指标  │          │
+│  │ 输出: 新因子表达式  │     │ 输出: 优化后超参数  │          │
+│  └────────┬───────────┘     └────────┬───────────┘          │
+│           └──────────┬───────────────┘                       │
+│                      ▼                                       │
+│            <span class="ab-accent">Qlib回测验证 + IC评估</span>                            │
+└──────────────────────────────────────────────────────────────┘</div>
+  <div class="metric-grid">
+    <div class="metric-card"><div class="mc-value" style="color:var(--green)">0.053</div><div class="mc-label">IC</div><div class="mc-sub">vs 基线 0.034</div></div>
+    <div class="metric-card"><div class="mc-value" style="color:var(--gold)">14.2%</div><div class="mc-label">年化收益</div><div class="mc-sub">vs 基线 5.7%</div></div>
+    <div class="metric-card"><div class="mc-value" style="color:var(--cyan)">1.74</div><div class="mc-label">IR</div><div class="mc-sub">信息比率</div></div>
+    <div class="metric-card"><div class="mc-value" style="color:var(--accent)">&lt;$10</div><div class="mc-label">单次成本</div><div class="mc-sub">API调用费</div></div>
+  </div>
+  <ul>
+    <li><strong>核心发现</strong>：用70%更少的因子达到2倍收益，LLM能识别并剔除冗余因子</li>
+    <li><strong>可复现性</strong>：代码已开源（github.com/microsoft/RD-Agent），需LLM API + Qlib</li>
+    <li><strong>局限</strong>：依赖LLM质量（o3-mini优于GPT-4o），生成因子可解释性有限</li>
+  </ul>
+
+  <h3>2. AlphaAgent (KDD 2025)</h3>
+  <p>使用DeepSeek-R1作为推理引擎，通过三个创新机制解决LLM因子挖掘的核心问题。</p>
+  <table>
+    <thead><tr><th>创新机制</th><th>原理</th><th>解决的问题</th></tr></thead>
+    <tbody>
+      <tr><td><strong>AST相似度去重</strong></td><td>抽象语法树检测因子结构相似度</td><td>避免生成重复因子</td></tr>
+      <tr><td><strong>假设-因子对齐</strong></td><td>先生成金融假设，再对应因子</td><td>提高可解释性</td></tr>
+      <tr><td><strong>复杂度控制</strong></td><td>限制表达式长度和嵌套深度</td><td>避免过拟合</td></tr>
+    </tbody>
+  </table>
+  <div class="metric-grid">
+    <div class="metric-card"><div class="mc-value" style="color:var(--green)">11.0%</div><div class="mc-label">CSI500 年化超额</div><div class="mc-sub">IR = 1.5</div></div>
+    <div class="metric-card"><div class="mc-value" style="color:var(--gold)">8.7%</div><div class="mc-label">CSI300 年化超额</div><div class="mc-sub">跨市场验证</div></div>
+  </div>
+  <div class="callout insight">
+    <strong>关键发现</strong>
+    正则化探索（避免过度exploitation）是对抗alpha衰减的关键。LLM若一直在已知好因子附近搜索，生成的因子同质化严重，衰减更快。
+  </div>
+
+  <h3>3. QuantaAlpha (2025)</h3>
+  <p>将进化算法与LLM结合：每次因子挖掘视为一条"轨迹"，通过轨迹级变异和交叉进化。</p>
+  <div class="metric-grid">
+    <div class="metric-card"><div class="mc-value" style="color:var(--green)">0.15</div><div class="mc-label">IC</div><div class="mc-sub">远超传统方法</div></div>
+    <div class="metric-card"><div class="mc-value" style="color:var(--gold)">27.8%</div><div class="mc-label">年化收益</div><div class="mc-sub">效果极佳</div></div>
+    <div class="metric-card"><div class="mc-value" style="color:var(--cyan)">7.98%</div><div class="mc-label">最大回撤</div><div class="mc-sub">控制良好</div></div>
+  </div>
+  <div class="callout gap">
+    <strong>过拟合警告</strong>
+    IC=0.15 远超行业正常水平（通常0.03-0.06），需更多独立样本外验证。跨市场迁移有效是积极信号，但仍需谨慎。
+  </div>
+
+  <h3>4. 信达金工 DeepSeek优化Alpha158</h3>
+  <p>最贴近个人量化实操：直接用DeepSeek优化现有Alpha158因子表达式，无需复杂框架。</p>
+  <div class="flow">
+    <span class="flow-node">Alpha158原始因子</span><span class="flow-arrow"> &rarr; </span>
+    <span class="flow-node">DeepSeek分析+优化</span><span class="flow-arrow"> &rarr; </span>
+    <span class="flow-node">新表达式</span><span class="flow-arrow"> &rarr; </span>
+    <span class="flow-node">RankIC回测</span><span class="flow-arrow"> &rarr; </span>
+    <span class="flow-node">择优替换</span>
+  </div>
+  <table>
+    <thead><tr><th>指标</th><th>优化前</th><th>优化后</th><th>提升</th></tr></thead>
+    <tbody>
+      <tr><td>因子改善比例</td><td>-</td><td>75%</td><td>大部分因子有提升</td></tr>
+      <tr><td>平均ICIR</td><td>0.31</td><td>0.55</td><td style="color:var(--green)">+77%</td></tr>
+    </tbody>
+  </table>
+  <pre><code><span class="code-comment"># 示例：LLM优化因子表达式 (信达金工方案)</span>
+<span class="code-comment"># 原始: std(close, 20) → 优化: ATR加权+EMA平滑+量调整</span>
+<span class="code-keyword">import</span> pandas <span class="code-keyword">as</span> pd
+
+<span class="code-keyword">def</span> <span class="code-highlight">original_vol</span>(close, w=<span class="code-highlight">20</span>):
+    <span class="code-keyword">return</span> close.pct_change().rolling(w).std()
+
+<span class="code-keyword">def</span> <span class="code-highlight">enhanced_vol</span>(high, low, close, volume, w=<span class="code-highlight">20</span>):
+    <span class="code-string">"""LLM优化后: ATR加权 + EMA平滑 + 量调整"""</span>
+    tr = pd.concat([high - low, (high - close.shift(1)).abs(),
+                    (low - close.shift(1)).abs()], axis=1).max(axis=1)
+    atr = tr.ewm(span=w).mean()
+    vol_adj = (volume / volume.rolling(w).mean()).clip(0.5, 2.0)
+    <span class="code-keyword">return</span> ((atr / close) * vol_adj).ewm(span=w).mean()</code></pre>
+
+  <h3>5. Alpha-R1 (FinStep-AI)</h3>
+  <p>不生成新因子，而是用RL训练的8B参数模型动态决定已有因子的开/关。CSI300年化27.59%，夏普1.62，最大回撤6.76%。</p>
+
+  <h3>6. 实操建议：个人量化落地路径</h3>
+  <table>
+    <thead><tr><th>方案</th><th>难度</th><th>成本</th><th>预期提升</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td><strong>信达金工方案</strong></td><td><span class="tag tag-easy">入门</span></td><td>LLM API</td><td>ICIR +50-80%</td><td>用Claude/DeepSeek逐个优化Alpha158</td></tr>
+      <tr><td><strong>R&D-Agent</strong></td><td><span class="tag tag-mid">中等</span></td><td>API + Qlib</td><td>IC +50%</td><td>开源代码，需配置环境</td></tr>
+      <tr><td><strong>QuantaAlpha</strong></td><td><span class="tag tag-hard">高级</span></td><td>自行实现</td><td>待验证</td><td>效果极佳但需谨慎</td></tr>
+    </tbody>
+  </table>
+  <div class="callout ok">
+    <strong>推荐路径</strong>
+    先手动用LLM优化5-10个核心因子 &rarr; 回测验证IC提升 &rarr; 确认后再批量优化全部因子池。
+  </div>
+
+  <h3>7. LLM因子挖掘的风险矩阵</h3>
+  <table>
+    <thead><tr><th>风险</th><th>严重度</th><th>具体表现</th><th>缓解措施</th></tr></thead>
+    <tbody>
+      <tr><td><strong>过拟合</strong></td><td style="color:var(--accent)">高</td><td>学到训练期噪声模式</td><td>严格样本外测试，滚动验证</td></tr>
+      <tr><td><strong>不可解释</strong></td><td style="color:var(--orange)">中高</td><td>表达式复杂难判断逻辑</td><td>限制复杂度，要求假设对齐</td></tr>
+      <tr><td><strong>LLM依赖</strong></td><td style="color:var(--gold)">中</td><td>不同LLM效果差异大</td><td>多模型交叉验证</td></tr>
+      <tr><td><strong>Alpha衰减</strong></td><td style="color:var(--orange)">中高</td><td>机械因子衰减可能更快</td><td>正则化探索 + 持续更新</td></tr>
+    </tbody>
+  </table>
+  <div class="callout warn">
+    <strong>核心警示</strong>
+    LLM因子挖掘是"辅助工具"而非"替代方案"。对因子经济逻辑的理解仍不可替代。盲目依赖黑箱因子，市场剧变时风险极高。
+  </div>
+</section>
+</div>
+
+<!-- Q21 -->
+<div class="container">
+<section class="section" id="q21">
+  <h2>Q21: 高频日内因子聚合到日频有多大提升？</h2>
+  <p>高频日内因子利用tick或分钟级数据捕获微观结构特征（大资金进出痕迹、订单流不平衡），最终聚合为日频因子加入选股模型。</p>
+
+  <h3>1. 高频因子聚合流程</h3>
+  <div class="arch-box"><span class="ab-title">高频日内因子 &rarr; 日频聚合</span>
+
+<span class="ab-hl">原始数据层</span>                 <span class="ab-hl">日内计算层</span>                <span class="ab-hl">日频输出层</span>
+┌───────────────┐      ┌───────────────────┐      ┌────────────┐
+│ Tick / 1min   │      │ 每只股票/每天      │      │ 每只股票   │
+│ / 5min K线    │ <span class="ab-accent">===&gt;</span> │ 计算微观特征      │ <span class="ab-accent">===&gt;</span> │ 每天一个值 │
+│ (OHLCV)       │      │ RV/偏度/波峰/     │      │ 加入因子池 │
+│               │      │ 非流动性/订单流    │      │ (Alpha158+)│
+└───────────────┘      └───────────────────┘      └────────────┘</div>
+
+  <h3>2. 典型高频因子及效果</h3>
+  <table>
+    <thead><tr><th>因子名</th><th>计算方法</th><th>RankIC</th><th>ICIR</th><th>月度胜率</th></tr></thead>
+    <tbody>
+      <tr><td><strong>波峰因子</strong></td><td>日内交易量爆发次数</td><td style="color:var(--green)">10.88%</td><td>&gt;1</td><td>&gt;60%</td></tr>
+      <tr><td><strong>高量每笔成交</strong></td><td>高量时段平均每笔成交额</td><td style="color:var(--green)">11.22%</td><td>&gt;1</td><td>&gt;60%</td></tr>
+      <tr><td><strong>非流动性</strong></td><td>价格对成交量敏感度</td><td style="color:var(--green)">8.78%</td><td>&gt;1</td><td>&gt;60%</td></tr>
+      <tr><td><strong>已实现波动率</strong></td><td>5分钟收益率标准差</td><td style="color:var(--gold)">~7%</td><td>~0.8</td><td>~58%</td></tr>
+      <tr><td><strong>已实现偏度</strong></td><td>5分钟收益率偏度</td><td style="color:var(--gold)">~5%</td><td>~0.6</td><td>~55%</td></tr>
+      <tr><td><strong>订单不平衡</strong></td><td>买卖价量差异</td><td style="color:var(--gold)">~8%</td><td>~0.9</td><td>~58%</td></tr>
+    </tbody>
+  </table>
+
+  <h3>3. 相比日频因子的提升</h3>
+  <div class="metric-grid">
+    <div class="metric-card"><div class="mc-value" style="color:var(--text2)">1-3%</div><div class="mc-label">日频Alpha158</div><div class="mc-sub">平均IC</div></div>
+    <div class="metric-card"><div class="mc-value" style="color:var(--green)">5-11%</div><div class="mc-label">高频聚合因子</div><div class="mc-sub">平均IC</div></div>
+    <div class="metric-card"><div class="mc-value" style="color:var(--gold)">2-5x</div><div class="mc-label">提升幅度</div><div class="mc-sub">IC倍数</div></div>
+  </div>
+  <div class="callout insight">
+    <strong>为什么高频因子IC这么高？</strong>
+    日频OHLCV丢失全部日内微观结构信息。同样+1%日收益率，平稳上涨(机构建仓)和先跌-3%再拉+4%(游资操盘)完全不同。高频因子捕获的正是大资金进出痕迹。
+  </div>
+
+  <h3>4. 数据需求与成本</h3>
+  <table>
+    <thead><tr><th>数据源</th><th>精度</th><th>成本</th><th>历史深度</th><th>难度</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Tushare Pro</strong></td><td>1分钟</td><td>积分/Pro会员</td><td>1-2年</td><td><span class="tag tag-easy">低</span></td></tr>
+      <tr><td><strong>JoinQuant</strong></td><td>1分钟/Tick</td><td>免费(平台内)</td><td>5+年</td><td><span class="tag tag-easy">低</span></td></tr>
+      <tr><td><strong>Wind</strong></td><td>Tick/1分钟</td><td>3万+/年</td><td>完整</td><td><span class="tag tag-hard">高</span></td></tr>
+      <tr><td><strong>通达信</strong></td><td>5分钟</td><td>免费</td><td>有限</td><td><span class="tag tag-easy">低</span></td></tr>
+    </tbody>
+  </table>
+  <div class="formula">全A股1分钟数据 &approx; 100GB/年 &nbsp;|&nbsp; 5分钟数据 &approx; 20GB/年</div>
+
+  <h3>5. Python实现：核心高频因子计算</h3>
+  <pre><code><span class="code-keyword">import</span> numpy <span class="code-keyword">as</span> np, pandas <span class="code-keyword">as</span> pd
+
+<span class="code-keyword">class</span> <span class="code-highlight">IntradayFactors</span>:
+    <span class="code-string">"""从分钟K线计算日内因子，聚合为日频"""</span>
+
+    <span class="code-keyword">def</span> <span class="code-highlight">realized_volatility</span>(self, df):
+        <span class="code-string">"""已实现波动率: 5分钟收益率标准差"""</span>
+        ret_5m = df[<span class="code-string">"close"</span>].resample(<span class="code-string">"5min"</span>).last().pct_change()
+        <span class="code-keyword">return</span> np.sqrt((ret_5m ** 2).sum())
+
+    <span class="code-keyword">def</span> <span class="code-highlight">realized_skewness</span>(self, df):
+        <span class="code-string">"""已实现偏度: 5分钟收益率三阶矩"""</span>
+        ret = df[<span class="code-string">"close"</span>].resample(<span class="code-string">"5min"</span>).last().pct_change().dropna()
+        <span class="code-keyword">if</span> len(ret) < 10: <span class="code-keyword">return</span> np.nan
+        rv = (ret ** 2).sum()
+        <span class="code-keyword">return</span> np.sqrt(len(ret)) * (ret ** 3).sum() / (rv ** 1.5)
+
+    <span class="code-keyword">def</span> <span class="code-highlight">volume_peak_count</span>(self, df, threshold=<span class="code-highlight">2.0</span>):
+        <span class="code-string">"""波峰因子: 成交量超均值N倍的次数"""</span>
+        <span class="code-keyword">return</span> (df[<span class="code-string">"volume"</span>] > df[<span class="code-string">"volume"</span>].mean() * threshold).sum()
+
+    <span class="code-keyword">def</span> <span class="code-highlight">illiquidity</span>(self, df):
+        <span class="code-string">"""非流动性: Amihud日内版"""</span>
+        ret = df[<span class="code-string">"close"</span>].pct_change().abs()
+        amt = df[<span class="code-string">"close"</span>] * df[<span class="code-string">"volume"</span>]
+        <span class="code-keyword">return</span> (ret[amt > 0] / amt[amt > 0]).mean()
+
+    <span class="code-keyword">def</span> <span class="code-highlight">aggregate_daily</span>(self, stock_id, date, df):
+        <span class="code-string">"""聚合为一行日频数据"""</span>
+        <span class="code-keyword">return</span> {<span class="code-string">"stock"</span>: stock_id, <span class="code-string">"date"</span>: date,
+                <span class="code-string">"rv"</span>: self.realized_volatility(df),
+                <span class="code-string">"rskew"</span>: self.realized_skewness(df),
+                <span class="code-string">"vpeak"</span>: self.volume_peak_count(df),
+                <span class="code-string">"illiq"</span>: self.illiquidity(df)}</code></pre>
+
+  <h3>6. 性价比分析与建议</h3>
+  <table>
+    <thead><tr><th>方案</th><th>数据成本</th><th>IC提升</th><th>复杂度</th><th>推荐度</th></tr></thead>
+    <tbody>
+      <tr><td><strong>最低成本</strong>：仅RV+偏度</td><td>免费(5分钟)</td><td>+3-5%</td><td><span class="tag tag-easy">低</span></td><td style="color:var(--green)">强烈推荐</td></tr>
+      <tr><td><strong>中等</strong>：加波峰+非流动性</td><td>Tushare Pro</td><td>+5-8%</td><td><span class="tag tag-mid">中</span></td><td style="color:var(--gold)">推荐</td></tr>
+      <tr><td><strong>完整</strong>：全部6个因子</td><td>Wind或自建</td><td>+8-11%</td><td><span class="tag tag-hard">高</span></td><td style="color:var(--text2)">大资金再考虑</td></tr>
+    </tbody>
+  </table>
+  <div class="callout ok">
+    <strong>务实结论</strong>
+    (1) 先优化日频因子（免费且空间大），达到瓶颈后再引入高频。<br>
+    (2) 最低成本方案：仅用RV和偏度，5分钟免费数据即可。<br>
+    (3) 百万级资金：日频已够用，高频是锦上添花。
+  </div>
+</section>
+</div>
+
+<!-- Q22 -->
+<div class="container">
+<section class="section" id="q22">
+  <h2>Q22: 多周期策略怎么组合？</h2>
+  <p>单一频率只能捕获该时间尺度的信号。多周期组合能提高信号覆盖面和整体稳定性。</p>
+
+  <h3>1. 不同频率信号特征</h3>
+  <table>
+    <thead><tr><th>频率</th><th>典型因子</th><th>持仓周期</th><th>月换手率</th><th>衰减速度</th></tr></thead>
+    <tbody>
+      <tr><td><strong>日度</strong></td><td>Reversal / Liquidity</td><td>1-5天</td><td style="color:var(--accent)">100%+</td><td>快(1-3天)</td></tr>
+      <tr><td><strong>周度</strong></td><td>Momentum / Trend</td><td>2-4周</td><td style="color:var(--gold)">30-50%</td><td>中(1-3周)</td></tr>
+      <tr><td><strong>月度</strong></td><td>Value / Quality</td><td>3-6月</td><td style="color:var(--green)">10-20%</td><td>慢(1-6月)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>2. 多周期Alpha模型架构</h3>
+  <div class="arch-box"><span class="ab-title">Multi-Horizon Alpha Model</span>
+
+┌──────────────────────────────────────────────────────────────┐
+│  <span class="ab-hl">Alpha Model (Signal Generation)</span>                             │
+│  ┌────────────┐   ┌────────────┐   ┌────────────┐          │
+│  │ <span class="ab-green">月度因子</span>   │   │ <span class="ab-green">周频因子</span>   │   │ <span class="ab-green">日频因子</span>   │          │
+│  │ 选股层     │   │ 择时层     │   │ 执行层     │          │
+│  │ Value      │   │ Momentum   │   │ Reversal   │          │
+│  │ Quality    │   │ Trend      │   │ Liquidity  │          │
+│  └─────┬──────┘   └─────┬──────┘   └─────┬──────┘          │
+│        └────────────────┼────────────────┘                   │
+│                         ▼                                    │
+│                <span class="ab-accent">Signal Blending</span>                              │
+└────────────────────┬─────────────────────────────────────────┘
+                     ▼
+┌──────────────────────────────────────────────────────────────┐
+│  <span class="ab-hl">Portfolio Construction + Risk Management</span>                    │
+└──────────────────────────────────────────────────────────────┘</div>
+
+  <h3>3. 两种组合方式</h3>
+  <h4>a) 层叠式（Cascading）</h4>
+  <div class="pipeline">
+    <div class="pipeline-step"><div class="ps-label">月度</div><div class="ps-value">全市场 &rarr; 50只</div></div>
+    <div class="pipeline-step"><div class="ps-label">周度</div><div class="ps-value">50只 &rarr; 15只</div></div>
+    <div class="pipeline-step"><div class="ps-label">日度</div><div class="ps-value">15只 &rarr; 执行时点</div></div>
+  </div>
+  <pre><code><span class="code-keyword">class</span> <span class="code-highlight">CascadingStrategy</span>:
+    <span class="code-string">"""层叠式: 月度选股 -> 周度排序 -> 日度执行"""</span>
+    <span class="code-keyword">def</span> <span class="code-highlight">monthly_screen</span>(self, all_scores, n=<span class="code-highlight">50</span>):
+        <span class="code-string">"""基本面因子选出候选池"""</span>
+        <span class="code-keyword">return</span> all_scores.nlargest(n)
+
+    <span class="code-keyword">def</span> <span class="code-highlight">weekly_rank</span>(self, candidates, weekly_scores, n=<span class="code-highlight">15</span>):
+        <span class="code-string">"""候选池内用技术因子排名"""</span>
+        <span class="code-keyword">return</span> weekly_scores.loc[candidates.index].nlargest(n)
+
+    <span class="code-keyword">def</span> <span class="code-highlight">daily_execute</span>(self, holdings, liquidity):
+        <span class="code-string">"""流动性因子决定执行时点"""</span>
+        <span class="code-keyword">return</span> [{<span class="code-string">"stock"</span>: s, <span class="code-string">"action"</span>: <span class="code-string">"now"</span> <span class="code-keyword">if</span> liquidity[s] > 0.5 <span class="code-keyword">else</span> <span class="code-string">"wait"</span>}
+                <span class="code-keyword">for</span> s <span class="code-keyword">in</span> holdings.index]</code></pre>
+  <p><strong>优点</strong>：逻辑清晰，每层独立，容易调试和归因。<strong>缺点</strong>：上游错误向下传导，月度层漏掉的好股票无法在后续层补回。</p>
+
+  <h4>b) 融合式（Blending）</h4>
+  <div class="formula">final_score = 0.40 &times; monthly + 0.35 &times; weekly + 0.25 &times; daily</div>
+  <pre><code><span class="code-keyword">class</span> <span class="code-highlight">BlendingStrategy</span>:
+    <span class="code-string">"""融合式: 各频率因子加权混合"""</span>
+    <span class="code-keyword">def</span> __init__(self):
+        self.w = {<span class="code-string">"monthly"</span>: <span class="code-highlight">0.40</span>, <span class="code-string">"weekly"</span>: <span class="code-highlight">0.35</span>, <span class="code-string">"daily"</span>: <span class="code-highlight">0.25</span>}
+
+    <span class="code-keyword">def</span> <span class="code-highlight">blend</span>(self, m_scores, w_scores, d_scores):
+        common = m_scores.index & w_scores.index & d_scores.index
+        <span class="code-keyword">return</span> (self.w[<span class="code-string">"monthly"</span>] * m_scores[common] +
+                self.w[<span class="code-string">"weekly"</span>]  * w_scores[common] +
+                self.w[<span class="code-string">"daily"</span>]   * d_scores[common]).sort_values(ascending=<span class="code-keyword">False</span>)
+
+    <span class="code-keyword">def</span> <span class="code-highlight">adaptive_weights</span>(self, ic_history, lookback=<span class="code-highlight">60</span>):
+        <span class="code-string">"""基于近期IC动态调整权重"""</span>
+        recent = ic_history.tail(lookback).mean()
+        total = recent.sum()
+        <span class="code-keyword">return</span> {k: max(0.1, recent[k]/total) <span class="code-keyword">for</span> k <span class="code-keyword">in</span> self.w} <span class="code-keyword">if</span> total > 0 <span class="code-keyword">else</span> {k: 1/3 <span class="code-keyword">for</span> k <span class="code-keyword">in</span> self.w}</code></pre>
+  <p><strong>优点</strong>：充分利用所有信号，容错性好。<strong>缺点</strong>：权重调优困难，需要所有频率因子同时可用。</p>
+
+  <h3>4. 权重方案与换手率</h3>
+  <table>
+    <thead><tr><th>方案</th><th>月/周/日</th><th>月换手率</th><th>成本影响</th><th>适合资金</th></tr></thead>
+    <tbody>
+      <tr><td><strong>保守</strong></td><td>60/30/10</td><td style="color:var(--green)">15-25%</td><td>低</td><td>百万级以上</td></tr>
+      <tr><td><strong>均衡</strong></td><td>40/35/25</td><td style="color:var(--gold)">25-40%</td><td>中</td><td>50-200万</td></tr>
+      <tr><td><strong>激进</strong></td><td>20/30/50</td><td style="color:var(--accent)">50-80%</td><td>高</td><td>需低佣金</td></tr>
+    </tbody>
+  </table>
+
+  <h3>5. 与现有系统的结合</h3>
+  <div class="arch-box"><span class="ab-title">双系统互补架构</span>
+
+┌──────────────────────────┐     ┌──────────────────────────┐
+│ <span class="ab-green">quant_x (量化选股)</span>        │     │ <span class="ab-green">模拟交易系统</span>              │
+│ Qlib + LightGBM          │     │ RuleStrategy /           │
+│ Alpha158 + 高频因子       │     │ ClaudeStrategy           │
+│                          │     │                          │
+│ 输出: 月度/周度候选池     │ <span class="ab-accent">==&gt;</span> │ 输出: 日度买卖+执行       │
+│ <span class="ab-hl">频率: 周度/月度</span>            │     │ <span class="ab-hl">频率: 日度</span>                │
+└──────────────────────────┘     └──────────────────────────┘
+              └──────────────┬───────────────────┘
+                             ▼
+               ┌─────────────────────────┐
+               │ <span class="ab-accent">统一风控 &amp; 执行引擎</span>    │
+               │ 组合止损/行业监控/成本  │
+               └─────────────────────────┘</div>
+  <pre><code><span class="code-keyword">class</span> <span class="code-highlight">MultiHorizonOrchestrator</span>:
+    <span class="code-string">"""多周期编排器: 连接选股系统和交易系统"""</span>
+    <span class="code-keyword">def</span> __init__(self, qlib_model, trade_engine):
+        self.model = qlib_model; self.engine = trade_engine
+        self.pool = []; self.holdings = {}
+
+    <span class="code-keyword">def</span> <span class="code-highlight">weekly_update</span>(self, date):
+        <span class="code-string">"""周度: Qlib模型刷新候选池"""</span>
+        pred = self.model.predict(date)
+        self.pool = pred.nlargest(50).index.tolist()
+        <span class="code-keyword">return</span> pred.loc[self.pool].nlargest(15)
+
+    <span class="code-keyword">def</span> <span class="code-highlight">daily_execute</span>(self, date, target):
+        <span class="code-string">"""日度: 交易引擎决定买卖"""</span>
+        to_buy = set(target.index) - set(self.holdings)
+        to_sell = set(self.holdings) - set(target.index)
+        orders = []
+        <span class="code-keyword">for</span> s <span class="code-keyword">in</span> to_sell:
+            <span class="code-keyword">if</span> self.engine.get_sell_signal(s, date).should_execute:
+                orders.append({<span class="code-string">"stock"</span>: s, <span class="code-string">"side"</span>: <span class="code-string">"sell"</span>})
+        <span class="code-keyword">for</span> s <span class="code-keyword">in</span> to_buy:
+            <span class="code-keyword">if</span> self.engine.get_buy_signal(s, date).liquidity_ok:
+                orders.append({<span class="code-string">"stock"</span>: s, <span class="code-string">"side"</span>: <span class="code-string">"buy"</span>,
+                               <span class="code-string">"weight"</span>: target[s]})
+        <span class="code-keyword">return</span> orders
+
+    <span class="code-keyword">def</span> <span class="code-highlight">run</span>(self, start, end):
+        <span class="code-string">"""主循环: 周度选股 + 日度执行"""</span>
+        <span class="code-keyword">for</span> date <span class="code-keyword">in</span> pd.bdate_range(start, end):
+            <span class="code-keyword">if</span> date.weekday() == 0:  <span class="code-comment"># 周一更新</span>
+                target = self.weekly_update(date)
+            self.engine.submit_orders(self.daily_execute(date, target))
+            self.holdings = self.engine.get_positions()</code></pre>
+
+  <h3>6. 分阶段实施路线</h3>
+  <table>
+    <thead><tr><th>阶段</th><th>频率</th><th>工作内容</th><th>时间</th><th>前置条件</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Phase 1</strong></td><td><span class="tag tag-easy">月度</span></td><td>Qlib标准workflow，Alpha158 + LightGBM</td><td>2-4周</td><td>Qlib环境就绪</td></tr>
+      <tr><td><strong>Phase 2</strong></td><td><span class="tag tag-mid">+周度</span></td><td>加入趋势/动量因子做仓位调整</td><td>3-6周</td><td>Phase 1稳定</td></tr>
+      <tr><td><strong>Phase 3</strong></td><td><span class="tag tag-hard">+日度</span></td><td>日度执行优化 + 高频因子聚合</td><td>6-12周</td><td>Phase 2 + 分钟数据</td></tr>
+    </tbody>
+  </table>
+  <div class="callout warn">
+    <strong>不要一步到位</strong>
+    多周期策略复杂度呈指数增长。同时调试三个频率极难归因。每个Phase跑满3个月实盘验证后再进入下一阶段。
+  </div>
+  <div class="callout ok">
+    <strong>多周期策略总结</strong>
+    (1) 层叠式适合入门（逻辑清晰），融合式适合成熟阶段（信号利用率高）。<br>
+    (2) 权重从保守开始（月度60%），根据实际IC逐步调整。<br>
+    (3) 现有双系统架构天然适合层叠式多周期策略。<br>
+    (4) Phase 1（纯月度）就能跑出不错效果，不要急于加入更多频率。
+  </div>
+</section>
+</div>
+
+<!-- 全专题总结 -->
+<div class="container">
+<section class="section">
+  <h2>专题六总结：进阶路线图</h2>
+  <div class="pipeline">
+    <div class="pipeline-step"><div class="ps-label">最高ROI</div><div class="ps-value">LLM优化现有因子</div></div>
+    <div class="pipeline-step"><div class="ps-label">中等ROI</div><div class="ps-value">多周期信号融合</div></div>
+    <div class="pipeline-step"><div class="ps-label">锦上添花</div><div class="ps-value">高频因子聚合</div></div>
+  </div>
+  <table>
+    <thead><tr><th>方向</th><th>核心价值</th><th>投入</th><th>风险</th><th>优先级</th></tr></thead>
+    <tbody>
+      <tr><td><strong>LLM因子优化</strong></td><td>ICIR提升50-80%</td><td>API费用</td><td>过拟合</td><td style="color:var(--green)">P0 - 立即可做</td></tr>
+      <tr><td><strong>多周期组合</strong></td><td>提高信号覆盖和稳定性</td><td>系统改造</td><td>复杂度</td><td style="color:var(--gold)">P1 - Phase 1后</td></tr>
+      <tr><td><strong>高频因子</strong></td><td>IC提升2-5倍</td><td>数据成本</td><td>数据质量</td><td style="color:var(--text2)">P2 - 日频瓶颈后</td></tr>
+    </tbody>
+  </table>
+  <div class="callout insight">
+    <strong>最终建议</strong>
+    量化因子研究六个专题到此完结。从数据基础到因子体系，从模型选择到组合风控，再到回测验证和前沿进阶 -- 核心原则始终不变：从最简单可靠的方案起步，用数据验证每一步假设，逐步增加复杂度。复杂本身不是目标，稳定可盈利的系统才是。
+  </div>
+</section>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>专题六：进阶方向 &mdash; A股研究知识库</p>
+    <p style="margin-top:6px;"><a href="../research-hub.html">&larr; 返回研究计划</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

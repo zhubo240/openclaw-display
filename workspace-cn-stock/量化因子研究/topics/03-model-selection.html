@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>专题三：模型选择 | A股研究知识库</title>
+<style>
+  :root {
+    --bg: #0a0a0f; --surface: #111118; --surface2: #1a1a24;
+    --border: #252535; --text: #e0e0e8; --text2: #8888a0;
+    --accent: #e05050; --gold: #f0c040; --green: #40c080;
+    --blue: #5080e0; --orange: #e08040; --purple: #a070e0; --cyan: #40b8d0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.8;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+  /* Breadcrumb */
+  .breadcrumb { padding: 16px 0; font-size: 0.85em; color: var(--text2); }
+  .breadcrumb a { color: var(--blue); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+
+  /* Header */
+  .page-header {
+    padding: 48px 0 36px;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-header h1 { font-size: 2.2em; font-weight: 700; letter-spacing: 0.04em; margin-bottom: 8px; }
+  .page-header h1 .hl { color: var(--purple); }
+  .page-header .meta { font-size: 0.9em; color: var(--text2); }
+
+  /* TOC */
+  .toc { padding: 32px 0; border-bottom: 1px solid var(--border); }
+  .toc h2 { font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text2); margin-bottom: 12px; }
+  .toc ol { list-style: none; counter-reset: toc; }
+  .toc ol li { counter-increment: toc; margin-bottom: 6px; }
+  .toc ol li::before { content: counter(toc) "."; color: var(--purple); font-weight: 600; margin-right: 8px; }
+  .toc a { color: var(--blue); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+
+  /* Section */
+  .section { padding: 48px 0; border-bottom: 1px solid var(--border); }
+  .section:last-of-type { border-bottom: none; }
+  .section h2 {
+    font-size: 1.5em; font-weight: 700; margin-bottom: 24px;
+    padding-bottom: 10px; border-bottom: 2px solid var(--purple); display: inline-block;
+  }
+  .section h3 { font-size: 1.15em; font-weight: 600; margin: 28px 0 12px; color: var(--gold); }
+  .section h4 { font-size: 1.0em; font-weight: 600; margin: 20px 0 10px; color: var(--cyan); }
+  .section p { margin-bottom: 14px; color: var(--text); font-size: 0.95em; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0 24px; font-size: 0.9em; }
+  th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+  th { background: var(--surface2); color: var(--text2); font-weight: 600; font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.05em; }
+  td { background: var(--surface); }
+  tr:hover td { background: var(--surface2); }
+
+  /* Code blocks */
+  pre {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 18px 20px; margin: 16px 0 24px; overflow-x: auto;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+    font-size: 0.88em; line-height: 1.6; color: var(--text);
+  }
+  code {
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+    font-size: 0.9em; background: var(--surface2); padding: 2px 6px; border-radius: 4px; color: var(--green);
+  }
+  pre code { background: none; padding: 0; color: inherit; }
+  .code-comment { color: var(--text2); }
+  .code-keyword { color: var(--purple); }
+  .code-string { color: var(--green); }
+  .code-highlight { color: var(--gold); }
+  .code-func { color: var(--cyan); }
+  .code-num { color: var(--orange); }
+
+  /* Callout boxes */
+  .callout {
+    background: var(--surface); border-left: 4px solid var(--purple);
+    border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 20px 0; font-size: 0.92em;
+  }
+  .callout.insight { border-left-color: var(--gold); }
+  .callout.gap { border-left-color: var(--accent); }
+  .callout.ok { border-left-color: var(--green); }
+  .callout.warn { border-left-color: var(--orange); }
+  .callout strong { display: block; margin-bottom: 4px; }
+
+  /* Metric cards */
+  .metric-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin: 20px 0; }
+  .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px; text-align: center; }
+  .metric-card .mc-value { font-size: 1.8em; font-weight: 700; margin-bottom: 4px; }
+  .metric-card .mc-label { font-size: 0.82em; color: var(--text2); }
+  .metric-card .mc-sub { font-size: 0.75em; color: var(--text2); margin-top: 4px; }
+
+  /* Pipeline steps */
+  .pipeline { display: flex; gap: 0; margin: 24px 0; flex-wrap: wrap; }
+  .pipeline-step {
+    flex: 1; min-width: 140px; background: var(--surface); border: 1px solid var(--border);
+    padding: 14px 16px; text-align: center; position: relative; font-size: 0.88em;
+  }
+  .pipeline-step:first-child { border-radius: 10px 0 0 10px; }
+  .pipeline-step:last-child { border-radius: 0 10px 10px 0; }
+  .pipeline-step .ps-label { font-size: 0.75em; color: var(--text2); text-transform: uppercase; letter-spacing: 0.06em; }
+  .pipeline-step .ps-value { font-weight: 600; margin-top: 4px; }
+  .pipeline-step::after {
+    content: "\2192"; position: absolute; right: -8px; top: 50%; transform: translateY(-50%);
+    color: var(--purple); font-size: 1.1em; z-index: 1;
+  }
+  .pipeline-step:last-child::after { content: none; }
+
+  /* Lists */
+  ul, ol { margin: 10px 0 18px 20px; font-size: 0.93em; }
+  li { margin-bottom: 6px; }
+
+  /* Footer */
+  .footer { padding: 40px 0; text-align: center; color: var(--text2); font-size: 0.85em; border-top: 1px solid var(--border); }
+  .footer a { color: var(--blue); text-decoration: none; }
+
+  /* Formula block */
+  .formula {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px 20px; margin: 12px 0 20px; font-family: "SF Mono", "Fira Code", monospace;
+    font-size: 0.9em; color: var(--cyan); text-align: center; letter-spacing: 0.02em;
+  }
+
+  /* Tag / chip */
+  .tag {
+    display: inline-block; font-size: 0.78em; padding: 3px 10px; border-radius: 20px;
+    background: var(--surface2); color: var(--text2); border: 1px solid var(--border); margin: 2px 3px;
+  }
+  .tag.best { border-color: var(--green); color: var(--green); }
+  .tag.good { border-color: var(--blue); color: var(--blue); }
+  .tag.new { border-color: var(--purple); color: var(--purple); }
+  .tag.warn { border-color: var(--orange); color: var(--orange); }
+
+  @media (max-width: 768px) {
+    .page-header h1 { font-size: 1.6em; }
+    .metric-grid { grid-template-columns: 1fr 1fr; }
+    .pipeline { flex-direction: column; }
+    .pipeline-step { border-radius: 0 !important; }
+    .pipeline-step:first-child { border-radius: 10px 10px 0 0 !important; }
+    .pipeline-step:last-child { border-radius: 0 0 10px 10px !important; }
+    .pipeline-step::after { content: "\2193"; right: 50%; top: auto; bottom: -8px; transform: translateX(50%); }
+    pre { font-size: 0.82em; padding: 14px; }
+    table { font-size: 0.82em; }
+    th, td { padding: 8px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <nav class="breadcrumb">
+    <a href="../../index.html">A股研究知识库</a> &rsaquo;
+    <a href="../index.html">量化因子研究</a> &rsaquo;
+    <a href="../research-hub.html">研究计划</a> &rsaquo;
+    专题三：模型选择
+  </nav>
+</div>
+
+<!-- Header -->
+<header class="page-header">
+  <div class="container">
+    <h1>专题三：<span class="hl">模型选择</span></h1>
+    <p class="meta">3 个核心问题（Q9-Q11） &middot; LightGBM vs 深度学习、滚动训练、Ensemble方法 &middot; 2026-03-03</p>
+  </div>
+</header>
+
+<!-- TOC -->
+<div class="container">
+  <nav class="toc">
+    <h2>目录</h2>
+    <ol>
+      <li><a href="#q9">Q9: LightGBM vs 深度学习在A股因子选股上哪个更好？</a></li>
+      <li><a href="#q10">Q10: 怎么做滚动训练避免过拟合？</a></li>
+      <li><a href="#q11">Q11: Ensemble怎么做效果最好？</a></li>
+    </ol>
+  </nav>
+</div>
+
+<!-- ============================================================ -->
+<!-- Q9: LightGBM vs Deep Learning -->
+<!-- ============================================================ -->
+<div class="container">
+<section class="section" id="q9">
+  <h2>Q9: LightGBM vs 深度学习在A股因子选股上哪个更好？</h2>
+
+  <p>这是量化选型中争议最大的问题之一。答案取决于<strong>输入特征类型</strong>和<strong>可用资源</strong>。我们用 Qlib 官方 benchmark 数据给出量化比较。</p>
+
+  <!-- Key metrics -->
+  <div class="metric-grid">
+    <div class="metric-card">
+      <div class="mc-value" style="color:var(--green)">0.0448</div>
+      <div class="mc-label">LightGBM IC</div>
+      <div class="mc-sub">Alpha158 / CSI300</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-value" style="color:var(--blue)">0.0497</div>
+      <div class="mc-label">ALSTM IC</div>
+      <div class="mc-sub">Alpha360 / CSI300</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-value" style="color:var(--purple)">0.0667</div>
+      <div class="mc-label">HIST Rank IC</div>
+      <div class="mc-sub">Alpha360 / CSI300</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-value" style="color:var(--gold)">0.0521</div>
+      <div class="mc-label">DoubleEnsemble IC</div>
+      <div class="mc-sub">Alpha158 / 最佳单体</div>
+    </div>
+  </div>
+
+  <h3>1. LightGBM（GBDT 家族）优势场景</h3>
+
+  <p>在工程因子（Alpha158）上，树模型显著优于深度学习。LightGBM 的 IC 达到 0.0448，而 GRU 仅 0.0315。在 CSI500 上差距更大：LightGBM(0.0399) vs ALSTM(0.0229)。</p>
+
+  <ul>
+    <li><strong>训练速度快</strong>：分钟级完成训练，DL 则需要小时级</li>
+    <li><strong>调参直观</strong>：核心参数（num_leaves, learning_rate, num_boost_round）含义清晰</li>
+    <li><strong>可解释性好</strong>：Feature importance 直接输出有效因子排序</li>
+    <li><strong>对缺失值天然鲁棒</strong>：无需预处理，树模型自带缺失值处理逻辑</li>
+    <li><strong>截面预测更擅长</strong>：在一个时间点对所有股票排序时，工程因子+LightGBM 是最优解</li>
+  </ul>
+
+  <div class="callout ok">
+    <strong>实战结论</strong>
+    如果你只用 Alpha158 类工程因子，LightGBM 几乎一定是最优选择。深度学习在此场景下的优势无法体现。
+  </div>
+
+  <h3>2. 深度学习优势场景</h3>
+
+  <p>当输入从工程因子切换为原始序列数据（Alpha360：60天 x 6 OHLCV）时，深度学习反超：ALSTM IC 0.0497 vs LightGBM 0.0400。</p>
+
+  <ul>
+    <li><strong>时序模式捕获</strong>：LSTM/GRU 能学习多日价量交互模式（如"缩量回踩后放量突破"）</li>
+    <li><strong>图神经网络（HIST）</strong>：通过行业/概念图共享信息，Rank IC 达 0.067</li>
+    <li><strong>Transformer（MASTER）</strong>：市场引导注意力机制，组合年化+47%</li>
+    <li><strong>自动特征提取</strong>：从 raw data 中端到端学习，减少手工因子构造</li>
+  </ul>
+
+  <div class="callout insight">
+    <strong>关键洞察：特征决定模型</strong>
+    不是"LightGBM vs DL"的问题，而是"工程因子 vs 原始序列"的问题。Alpha158 上选树模型，Alpha360 上选 DL。两者做 ensemble 才是最优策略。
+  </div>
+
+  <h3>3. Qlib Benchmark 全面对比</h3>
+
+  <p>以下数据基于 Qlib 官方 benchmark（CSI300，2017-2020 测试期）：</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>模型</th>
+        <th>Alpha158 IC</th>
+        <th>Alpha158 ICIR</th>
+        <th>Alpha360 IC</th>
+        <th>Alpha360 Rank IC</th>
+        <th>训练时间</th>
+        <th>适用场景</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Linear</td>
+        <td>0.0397</td>
+        <td>0.3000</td>
+        <td>-</td>
+        <td>-</td>
+        <td><span class="tag best">Minutes</span></td>
+        <td>Baseline 参考</td>
+      </tr>
+      <tr>
+        <td><strong>LightGBM</strong></td>
+        <td style="color:var(--green)">0.0448</td>
+        <td style="color:var(--green)">0.3660</td>
+        <td>0.0400</td>
+        <td>0.0499</td>
+        <td><span class="tag best">Minutes</span></td>
+        <td><span class="tag best">主力模型</span></td>
+      </tr>
+      <tr>
+        <td>XGBoost</td>
+        <td style="color:var(--green)">0.0498</td>
+        <td style="color:var(--green)">0.3779</td>
+        <td>-</td>
+        <td>-</td>
+        <td><span class="tag best">Minutes</span></td>
+        <td>备选树模型</td>
+      </tr>
+      <tr>
+        <td>CatBoost</td>
+        <td>0.0481</td>
+        <td>0.3366</td>
+        <td>-</td>
+        <td>-</td>
+        <td><span class="tag best">Minutes</span></td>
+        <td>类别特征场景</td>
+      </tr>
+      <tr>
+        <td><strong>DoubleEnsemble</strong></td>
+        <td style="color:var(--gold)">0.0521</td>
+        <td style="color:var(--gold)">0.4223</td>
+        <td>-</td>
+        <td>-</td>
+        <td><span class="tag good">~10min</span></td>
+        <td><span class="tag best">最佳单体</span></td>
+      </tr>
+      <tr>
+        <td>GRU</td>
+        <td>0.0315</td>
+        <td>0.2450</td>
+        <td>0.0493</td>
+        <td>0.0584</td>
+        <td><span class="tag warn">Hours</span></td>
+        <td>时序建模</td>
+      </tr>
+      <tr>
+        <td><strong>ALSTM</strong></td>
+        <td>0.0362</td>
+        <td>0.2789</td>
+        <td style="color:var(--blue)">0.0497</td>
+        <td style="color:var(--blue)">0.0599</td>
+        <td><span class="tag warn">Hours</span></td>
+        <td>时序建模（推荐）</td>
+      </tr>
+      <tr>
+        <td>TRA</td>
+        <td>0.0440</td>
+        <td>0.3535</td>
+        <td>-</td>
+        <td>-</td>
+        <td><span class="tag warn">Hours</span></td>
+        <td>异质模式</td>
+      </tr>
+      <tr>
+        <td><strong>HIST</strong></td>
+        <td>-</td>
+        <td>-</td>
+        <td style="color:var(--purple)">0.0522</td>
+        <td style="color:var(--purple)">0.0667</td>
+        <td><span class="tag warn">Hours</span></td>
+        <td><span class="tag new">图结构</span></td>
+      </tr>
+      <tr>
+        <td>MASTER</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+        <td><span class="tag warn">Hours</span></td>
+        <td><span class="tag new">最新 SOTA</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn">
+    <strong>注意：MASTER 数据缺失</strong>
+    MASTER 论文在非 Qlib 标准 benchmark 下报告结果，其组合年化收益+47% 来自论文自身的回测设置，无法直接与上表数据对比。使用时需统一回测框架。
+  </div>
+
+  <h3>4. 实用选型路线图</h3>
+
+  <div class="pipeline">
+    <div class="pipeline-step">
+      <div class="ps-label">入门起步</div>
+      <div class="ps-value" style="color:var(--green)">LightGBM + Alpha158</div>
+    </div>
+    <div class="pipeline-step">
+      <div class="ps-label">进阶优化</div>
+      <div class="ps-value" style="color:var(--blue)">DoubleEnsemble</div>
+    </div>
+    <div class="pipeline-step">
+      <div class="ps-label">高阶融合</div>
+      <div class="ps-value" style="color:var(--purple)">LGBM + ALSTM</div>
+    </div>
+    <div class="pipeline-step">
+      <div class="ps-label">极致方案</div>
+      <div class="ps-value" style="color:var(--gold)">HIST + 自定义因子</div>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>阶段</th>
+        <th>模型方案</th>
+        <th>预期 IC</th>
+        <th>周期</th>
+        <th>硬件要求</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>个人起步</td>
+        <td>LightGBM + Alpha158</td>
+        <td>~0.045</td>
+        <td>1-2 天出结果</td>
+        <td>CPU only, 16GB RAM</td>
+      </tr>
+      <tr>
+        <td>进阶</td>
+        <td>DoubleEnsemble + 筛选 Alpha158</td>
+        <td>~0.052</td>
+        <td>3-5 天</td>
+        <td>CPU only, 16GB RAM</td>
+      </tr>
+      <tr>
+        <td>高阶</td>
+        <td>LightGBM(A158) + ALSTM(A360) ensemble</td>
+        <td>~0.055</td>
+        <td>1-2 周</td>
+        <td>GPU recommended</td>
+      </tr>
+      <tr>
+        <td>极致</td>
+        <td>MASTER/HIST + 自定义因子集</td>
+        <td>~0.065+</td>
+        <td>1 个月+</td>
+        <td>GPU required (8GB+ VRAM)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>5. 计算资源对比</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>模型</th>
+        <th>硬件需求</th>
+        <th>单次训练时间</th>
+        <th>内存 / 显存</th>
+        <th>个人可行性</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>LightGBM</td>
+        <td>CPU only</td>
+        <td>5-10 min</td>
+        <td>16GB RAM</td>
+        <td style="color:var(--green)">Mac/PC 完全可行</td>
+      </tr>
+      <tr>
+        <td>XGBoost / CatBoost</td>
+        <td>CPU (GPU optional)</td>
+        <td>5-15 min</td>
+        <td>16GB RAM</td>
+        <td style="color:var(--green)">Mac/PC 完全可行</td>
+      </tr>
+      <tr>
+        <td>GRU / ALSTM</td>
+        <td>GPU recommended</td>
+        <td>10-30 min</td>
+        <td>4GB+ VRAM</td>
+        <td style="color:var(--orange)">有 GPU 最佳</td>
+      </tr>
+      <tr>
+        <td>Transformer / HIST</td>
+        <td>GPU required</td>
+        <td>30-60 min</td>
+        <td>8GB+ VRAM</td>
+        <td style="color:var(--accent)">需要独显或云 GPU</td>
+      </tr>
+      <tr>
+        <td>MASTER</td>
+        <td>GPU required</td>
+        <td>1-2 hours</td>
+        <td>16GB+ VRAM</td>
+        <td style="color:var(--accent)">建议云服务器</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout ok">
+    <strong>个人量化推荐硬件</strong>
+    入门阶段 LightGBM 对硬件零门槛。如果想尝试 DL，可用 Google Colab（免费 T4 GPU）或 AutoDL（约 1 元/小时 3090）跑 ALSTM。不必在本地购买显卡。
+  </div>
+
+</section>
+
+<!-- ============================================================ -->
+<!-- Q10: Rolling Training -->
+<!-- ============================================================ -->
+<section class="section" id="q10">
+  <h2>Q10: 怎么做滚动训练避免过拟合？</h2>
+
+  <p>静态训练（train once, predict forever）是量化新手最常见的错误。金融数据非平稳（non-stationary），模型的预测能力会随时间衰减。滚动训练是应对这一问题的核心手段。</p>
+
+  <h3>1. 为什么需要滚动训练</h3>
+
+  <ul>
+    <li><strong>数据非平稳</strong>：2017 年有效的模式，到 2024 年可能已完全失效</li>
+    <li><strong>概念漂移（Concept Drift）</strong>：市场结构、参与者构成、监管政策持续变化</li>
+    <li><strong>IC 时间衰减</strong>：静态模型的样本外 IC 通常每年衰减 10-20%</li>
+    <li><strong>前沿研究</strong>：DoubleAdapt (KDD 2023) 和 AdaRNN 专门解决分布漂移问题</li>
+  </ul>
+
+  <div class="callout gap">
+    <strong>常见误区</strong>
+    "我用了 2010-2023 全部数据训练，数据量够大，应该够泛化了。" ——错。数据量大但分布不稳定时，模型会学到过时的信号。用全量数据训练的 LightGBM，在 2024 年的 IC 可能仅为训练期的 60%。
+  </div>
+
+  <h3>2. 三种训练窗口策略</h3>
+
+  <h4>a) 固定窗口滚动（Rolling Window）</h4>
+
+  <p>训练窗口固定为 N 年，每到重训节点就向前滚动。旧数据被"遗忘"，始终只用最近 N 年。</p>
+
+  <div class="formula">
+    Train: [t-N, t-gap] &rarr; Valid: [t-gap, t] &rarr; Predict: [t, t+step]<br>
+    下一轮: Train: [t-N+step, t+step-gap] &rarr; Valid: [t+step-gap, t+step] &rarr; Predict: [t+step, t+2*step]
+  </div>
+
+  <ul>
+    <li><strong>优点</strong>：自动遗忘过时数据，对概念漂移适应性强</li>
+    <li><strong>缺点</strong>：丢弃可能仍有用的早期数据</li>
+    <li><strong>适合</strong>：短期因子（反转、短期动量、量价因子）</li>
+    <li><strong>推荐窗口</strong>：3-5 年训练期</li>
+  </ul>
+
+  <h4>b) 扩展窗口（Expanding Window）</h4>
+
+  <p>训练窗口起点固定，终点不断延伸。随着时间推移，训练数据量持续增长。</p>
+
+  <div class="formula">
+    Round 1: Train [2008, 2020] &rarr; Valid [2020, 2021] &rarr; Test [2021]<br>
+    Round 2: Train [2008, 2021] &rarr; Valid [2021, 2022] &rarr; Test [2022]<br>
+    Round 3: Train [2008, 2022] &rarr; Valid [2022, 2023] &rarr; Test [2023]
+  </div>
+
+  <ul>
+    <li><strong>优点</strong>：数据量大，信号更稳定，不浪费历史数据</li>
+    <li><strong>缺点</strong>：近期数据占比越来越小，早期噪声累积</li>
+    <li><strong>适合</strong>：价值、质量等长期稳定因子</li>
+  </ul>
+
+  <h4>c) 混合策略（Hybrid / Sample Weighting）</h4>
+
+  <p>保留全部历史数据，但对近期数据赋予更高权重。兼顾数据量和时效性。</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>数据时段</th>
+        <th>距今时间</th>
+        <th>样本权重</th>
+        <th>说明</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>近 1 年</td>
+        <td>0-12 月</td>
+        <td style="color:var(--green)">1.0</td>
+        <td>最高权重，反映当前市场</td>
+      </tr>
+      <tr>
+        <td>1-3 年</td>
+        <td>12-36 月</td>
+        <td style="color:var(--blue)">0.7</td>
+        <td>中等权重</td>
+      </tr>
+      <tr>
+        <td>3-5 年</td>
+        <td>36-60 月</td>
+        <td style="color:var(--orange)">0.4</td>
+        <td>较低权重</td>
+      </tr>
+      <tr>
+        <td>5 年以上</td>
+        <td>60+ 月</td>
+        <td style="color:var(--text2)">0.2</td>
+        <td>仅保留长期规律</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout insight">
+    <strong>DoubleEnsemble 的内置机制</strong>
+    DoubleEnsemble 使用类似的学习轨迹重加权（sample reweighting by learning trajectory），自动为"难学"样本分配更高权重，类似 AdaBoost 思想。无需手动设定权重衰减。
+  </div>
+
+  <h3>3. 重训频率选择</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>频率</th>
+        <th>计算成本</th>
+        <th>适应性</th>
+        <th>推荐场景</th>
+        <th>备注</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>每日</td>
+        <td style="color:var(--accent)">极高</td>
+        <td style="color:var(--green)">最强</td>
+        <td>高频策略 / 生产环境</td>
+        <td>需自动化 pipeline</td>
+      </tr>
+      <tr>
+        <td>每周</td>
+        <td style="color:var(--orange)">高</td>
+        <td style="color:var(--green)">强</td>
+        <td>短期因子</td>
+        <td>周末跑训练</td>
+      </tr>
+      <tr>
+        <td style="color:var(--gold)"><strong>每月</strong></td>
+        <td style="color:var(--blue)">中等</td>
+        <td style="color:var(--blue)">中</td>
+        <td><strong>推荐起步方案</strong></td>
+        <td>月初重训，当月预测</td>
+      </tr>
+      <tr>
+        <td>每季度</td>
+        <td style="color:var(--green)">低</td>
+        <td style="color:var(--orange)">较弱</td>
+        <td>稳定因子 / 低频策略</td>
+        <td>配合财报季</td>
+      </tr>
+      <tr>
+        <td>每半年</td>
+        <td style="color:var(--green)">最低</td>
+        <td style="color:var(--accent)">弱</td>
+        <td>仅基本面因子</td>
+        <td>最低限度更新</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>4. Qlib 滚动训练实现</h3>
+
+  <p>Qlib 提供了 <code>RollingGen</code> 工作流，可以一行配置完成滚动训练。以下是完整的 YAML 配置示例：</p>
+
+  <pre><code><span class="code-comment"># rolling_train_config.yaml</span>
+<span class="code-comment"># Qlib 滚动训练完整配置</span>
+
+<span class="code-keyword">qlib_init</span>:
+    <span class="code-keyword">provider_uri</span>: <span class="code-string">"~/.qlib/qlib_data/cn_data"</span>
+    <span class="code-keyword">region</span>: cn
+
+<span class="code-keyword">task</span>:
+    <span class="code-keyword">model</span>:
+        <span class="code-keyword">class</span>: <span class="code-string">LGBModel</span>
+        <span class="code-keyword">module_path</span>: <span class="code-string">qlib.contrib.model.gbdt</span>
+        <span class="code-keyword">kwargs</span>:
+            <span class="code-keyword">loss</span>: <span class="code-string">mse</span>
+            <span class="code-keyword">colsample_bytree</span>: <span class="code-num">0.8879</span>
+            <span class="code-keyword">learning_rate</span>: <span class="code-num">0.0421</span>
+            <span class="code-keyword">subsample</span>: <span class="code-num">0.8789</span>
+            <span class="code-keyword">lambda_l1</span>: <span class="code-num">205.6999</span>
+            <span class="code-keyword">lambda_l2</span>: <span class="code-num">580.9768</span>
+            <span class="code-keyword">max_depth</span>: <span class="code-num">8</span>
+            <span class="code-keyword">num_leaves</span>: <span class="code-num">210</span>
+            <span class="code-keyword">num_threads</span>: <span class="code-num">20</span>
+
+    <span class="code-keyword">dataset</span>:
+        <span class="code-keyword">class</span>: <span class="code-string">DatasetH</span>
+        <span class="code-keyword">module_path</span>: <span class="code-string">qlib.data.dataset</span>
+        <span class="code-keyword">kwargs</span>:
+            <span class="code-keyword">handler</span>:
+                <span class="code-keyword">class</span>: <span class="code-string">Alpha158</span>
+                <span class="code-keyword">module_path</span>: <span class="code-string">qlib.contrib.data.handler</span>
+            <span class="code-keyword">segments</span>:
+                <span class="code-keyword">train</span>: [<span class="code-string">"2008-01-01"</span>, <span class="code-string">"2017-12-31"</span>]
+                <span class="code-keyword">valid</span>: [<span class="code-string">"2018-01-01"</span>, <span class="code-string">"2019-12-31"</span>]
+                <span class="code-keyword">test</span>:  [<span class="code-string">"2020-01-01"</span>, <span class="code-string">"2020-12-31"</span>]
+
+<span class="code-comment"># 滚动训练核心配置</span>
+<span class="code-keyword">rolling</span>:
+    <span class="code-keyword">class</span>: <span class="code-string">RollingGen</span>
+    <span class="code-keyword">module_path</span>: <span class="code-string">qlib.model.trainer</span>
+    <span class="code-keyword">kwargs</span>:
+        <span class="code-keyword">step</span>: <span class="code-num">20</span>         <span class="code-comment"># 每20个交易日（约1月）滚动一次</span>
+        <span class="code-keyword">rtype</span>: <span class="code-string">"rolling"</span>  <span class="code-comment"># "rolling" 固定窗口 / "expanding" 扩展窗口</span>
+        <span class="code-keyword">ds_extra_mod_func</span>: <span class="code-string">"RollingGen.ds_merge"</span></code></pre>
+
+  <p>以下是 Python 代码中使用滚动训练的完整流程：</p>
+
+  <pre><code><span class="code-keyword">import</span> qlib
+<span class="code-keyword">from</span> qlib.workflow <span class="code-keyword">import</span> R
+<span class="code-keyword">from</span> qlib.model.trainer <span class="code-keyword">import</span> TrainerR
+<span class="code-keyword">from</span> qlib.workflow.task.gen <span class="code-keyword">import</span> RollingGen
+<span class="code-keyword">from</span> qlib.workflow.task.collect <span class="code-keyword">import</span> RecorderCollector
+<span class="code-keyword">from</span> qlib.workflow.record_temp <span class="code-keyword">import</span> SignalRecord, SigAnaRecord
+
+<span class="code-comment"># Step 1: 初始化 Qlib</span>
+qlib.<span class="code-func">init</span>(provider_uri=<span class="code-string">"~/.qlib/qlib_data/cn_data"</span>, region=<span class="code-string">"cn"</span>)
+
+<span class="code-comment"># Step 2: 定义基础任务（单个时间窗口）</span>
+task = {
+    <span class="code-string">"model"</span>: {
+        <span class="code-string">"class"</span>: <span class="code-string">"LGBModel"</span>,
+        <span class="code-string">"module_path"</span>: <span class="code-string">"qlib.contrib.model.gbdt"</span>,
+        <span class="code-string">"kwargs"</span>: {<span class="code-string">"loss"</span>: <span class="code-string">"mse"</span>, <span class="code-string">"num_leaves"</span>: <span class="code-num">210</span>},
+    },
+    <span class="code-string">"dataset"</span>: {
+        <span class="code-string">"class"</span>: <span class="code-string">"DatasetH"</span>,
+        <span class="code-string">"module_path"</span>: <span class="code-string">"qlib.data.dataset"</span>,
+        <span class="code-string">"kwargs"</span>: {
+            <span class="code-string">"handler"</span>: {
+                <span class="code-string">"class"</span>: <span class="code-string">"Alpha158"</span>,
+                <span class="code-string">"module_path"</span>: <span class="code-string">"qlib.contrib.data.handler"</span>,
+            },
+            <span class="code-string">"segments"</span>: {
+                <span class="code-string">"train"</span>: (<span class="code-string">"2008-01-01"</span>, <span class="code-string">"2017-12-31"</span>),
+                <span class="code-string">"valid"</span>: (<span class="code-string">"2018-01-01"</span>, <span class="code-string">"2019-12-31"</span>),
+                <span class="code-string">"test"</span>:  (<span class="code-string">"2020-01-01"</span>, <span class="code-string">"2020-12-31"</span>),
+            },
+        },
+    },
+}
+
+<span class="code-comment"># Step 3: 用 RollingGen 生成多个滚动任务</span>
+rg = RollingGen(
+    step=<span class="code-num">20</span>,              <span class="code-comment"># 每20个交易日滚动一步</span>
+    rtype=<span class="code-string">"rolling"</span>,     <span class="code-comment"># "rolling" or "expanding"</span>
+)
+tasks = rg(task)        <span class="code-comment"># 返回 list of tasks，每个对应一个时间窗口</span>
+
+<span class="code-comment"># Step 4: 逐个训练并记录预测结果</span>
+trainer = TrainerR(experiment_name=<span class="code-string">"rolling_lgbm"</span>)
+<span class="code-keyword">for</span> t <span class="code-keyword">in</span> tasks:
+    <span class="code-keyword">with</span> R.<span class="code-func">start</span>(experiment_name=<span class="code-string">"rolling_lgbm"</span>):
+        model = trainer.<span class="code-func">train</span>(t)
+        recorder = R.<span class="code-func">get_recorder</span>()
+        <span class="code-comment"># 记录预测信号</span>
+        sr = SignalRecord(model, t[<span class="code-string">"dataset"</span>], recorder)
+        sr.<span class="code-func">generate</span>()
+        <span class="code-comment"># 记录信号分析（IC等指标）</span>
+        sar = SigAnaRecord(recorder)
+        sar.<span class="code-func">generate</span>()
+
+<span class="code-comment"># Step 5: 收集所有滚动窗口的预测，拼接为完整时间序列</span>
+collector = RecorderCollector(experiment_name=<span class="code-string">"rolling_lgbm"</span>)
+predictions = collector.<span class="code-func">collect</span>()
+<span class="code-keyword">print</span>(<span class="code-string">f"Total predictions shape: </span>{predictions.shape}<span class="code-string">"</span>)</code></pre>
+
+  <h3>5. 验证集设计要点</h3>
+
+  <p>验证集的设计对防止过拟合至关重要。在时序数据中，验证集必须遵守严格的时间顺序。</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>设计要点</th>
+        <th>推荐做法</th>
+        <th>常见错误</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>时间顺序</td>
+        <td>验证集严格在训练集之后</td>
+        <td style="color:var(--accent)">随机 shuffle 打乱时序</td>
+      </tr>
+      <tr>
+        <td>Gap 设置</td>
+        <td>训练集与验证集之间留 5 天 gap</td>
+        <td style="color:var(--accent)">训练集和验证集紧邻</td>
+      </tr>
+      <tr>
+        <td>验证集用途</td>
+        <td>仅用于 early stopping + 超参选择</td>
+        <td style="color:var(--accent)">用验证集 IC 选特征</td>
+      </tr>
+      <tr>
+        <td>测试集隔离</td>
+        <td>测试集完全不参与任何决策</td>
+        <td style="color:var(--accent)">根据测试集结果调参</td>
+      </tr>
+      <tr>
+        <td>验证集比例</td>
+        <td>训练:验证 = 4:1 或 5:1</td>
+        <td style="color:var(--accent)">验证集过大浪费数据</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn">
+    <strong>数据泄露的隐蔽来源</strong>
+    即使做了时间顺序分割，以下操作仍可能导致数据泄露：(1) 用全量数据做标准化（应只用训练集计算均值/标准差）；(2) 因子构造用了未来函数（如收盘价对齐到当日而非次日）；(3) 行业分类用了最新版而非历史版。
+  </div>
+
+  <h3>6. 过拟合信号检测</h3>
+
+  <p>如何判断模型是否过拟合？以下信号是明确的警告：</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>过拟合信号</th>
+        <th>具体表现</th>
+        <th>诊断阈值</th>
+        <th>应对措施</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="color:var(--accent)">IC 逐级衰减</td>
+        <td>训练IC &gt;&gt; 验证IC &gt;&gt; 测试IC</td>
+        <td>衰减超过 30%</td>
+        <td>增加正则化，减少模型复杂度</td>
+      </tr>
+      <tr>
+        <td style="color:var(--accent)">换手率异常高</td>
+        <td>月度换手率 &gt; 200%</td>
+        <td>对比基准策略换手率</td>
+        <td>添加换手率惩罚，降低预测灵敏度</td>
+      </tr>
+      <tr>
+        <td style="color:var(--accent)">时间不稳定</td>
+        <td>近 1-2 年 IC 显著低于早期</td>
+        <td>近期IC &lt; 历史IC的 50%</td>
+        <td>缩短训练窗口，增加重训频率</td>
+      </tr>
+      <tr>
+        <td style="color:var(--accent)">因子集中度</td>
+        <td>Feature importance 高度集中在少数因子</td>
+        <td>Top3 因子占比 &gt; 60%</td>
+        <td>特征子采样 (colsample_bytree)</td>
+      </tr>
+      <tr>
+        <td style="color:var(--accent)">过拟合验证集</td>
+        <td>验证集IC高但测试集IC低</td>
+        <td>验证IC/测试IC &gt; 1.5</td>
+        <td>更换验证集时间段，交叉验证</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <pre><code><span class="code-comment"># 过拟合诊断代码片段</span>
+<span class="code-keyword">import</span> pandas <span class="code-keyword">as</span> pd
+<span class="code-keyword">import</span> numpy <span class="code-keyword">as</span> np
+
+<span class="code-keyword">def</span> <span class="code-func">diagnose_overfitting</span>(predictions, labels, dates):
+    <span class="code-string">"""
+    对滚动预测结果进行过拟合诊断
+    predictions: pd.Series, 模型预测值
+    labels: pd.Series, 实际收益率
+    dates: pd.Series, 日期索引
+    """</span>
+    df = pd.<span class="code-func">DataFrame</span>({
+        <span class="code-string">"pred"</span>: predictions,
+        <span class="code-string">"label"</span>: labels,
+        <span class="code-string">"date"</span>: dates,
+    })
+
+    <span class="code-comment"># 1. 分时段计算IC</span>
+    monthly_ic = df.<span class="code-func">groupby</span>(df[<span class="code-string">"date"</span>].dt.to_period(<span class="code-string">"M"</span>)).<span class="code-func">apply</span>(
+        <span class="code-keyword">lambda</span> x: x[<span class="code-string">"pred"</span>].<span class="code-func">corr</span>(x[<span class="code-string">"label"</span>])
+    )
+
+    <span class="code-comment"># 2. 检测近期IC是否衰减</span>
+    recent_ic = monthly_ic[-<span class="code-num">12</span>:].<span class="code-func">mean</span>()
+    historical_ic = monthly_ic[:-<span class="code-num">12</span>].<span class="code-func">mean</span>()
+    decay_ratio = recent_ic / historical_ic
+
+    <span class="code-keyword">print</span>(<span class="code-string">f"历史IC均值: </span>{historical_ic:<span class="code-num">.4f</span>}<span class="code-string">"</span>)
+    <span class="code-keyword">print</span>(<span class="code-string">f"近12月IC均值: </span>{recent_ic:<span class="code-num">.4f</span>}<span class="code-string">"</span>)
+    <span class="code-keyword">print</span>(<span class="code-string">f"衰减比例: </span>{decay_ratio:<span class="code-num">.2f</span>}<span class="code-string">"</span>)
+
+    <span class="code-keyword">if</span> decay_ratio < <span class="code-num">0.5</span>:
+        <span class="code-keyword">print</span>(<span class="code-string">"<span class="code-highlight">WARNING: 严重过拟合信号！近期IC不足历史的50%</span>"</span>)
+    <span class="code-keyword">elif</span> decay_ratio < <span class="code-num">0.7</span>:
+        <span class="code-keyword">print</span>(<span class="code-string">"CAUTION: 中度衰减，建议缩短训练窗口"</span>)
+    <span class="code-keyword">else</span>:
+        <span class="code-keyword">print</span>(<span class="code-string">"OK: IC衰减在可接受范围内"</span>)
+
+    <span class="code-keyword">return</span> monthly_ic, decay_ratio</code></pre>
+
+  <div class="callout ok">
+    <strong>最佳实践总结</strong>
+    推荐起步方案：每月滚动重训 + 3 年固定窗口 + 5 天 gap + LightGBM。这个配置在计算成本和适应性之间取得了最佳平衡，个人 PC 即可运行。
+  </div>
+
+</section>
+
+<!-- ============================================================ -->
+<!-- Q11: Ensemble Methods -->
+<!-- ============================================================ -->
+<section class="section" id="q11">
+  <h2>Q11: Ensemble 怎么做效果最好？</h2>
+
+  <p>单一模型的预测能力终究有限。Ensemble（集成学习）通过组合多个模型的预测，能稳定提升 IC 和降低回撤。关键在于选择<strong>多样性高</strong>的 base model 组合。</p>
+
+  <h3>1. 简单加权平均（Blending）</h3>
+
+  <p>最简单也最鲁棒的 ensemble 方式。几乎没有过拟合风险，推荐所有人先尝试。</p>
+
+  <div class="formula">
+    pred_final = w<sub>1</sub> &times; pred_lgbm + w<sub>2</sub> &times; pred_alstm
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>权重策略</th>
+        <th>公式</th>
+        <th>优点</th>
+        <th>缺点</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>等权</td>
+        <td>w = 0.5 / 0.5</td>
+        <td>最简单，零过拟合风险</td>
+        <td>忽略模型质量差异</td>
+      </tr>
+      <tr>
+        <td>验证集 IC 加权</td>
+        <td>w<sub>i</sub> = IC<sub>i</sub> / &Sigma;IC</td>
+        <td>自动偏向更好的模型</td>
+        <td>轻微过拟合验证集</td>
+      </tr>
+      <tr>
+        <td>验证集 Sharpe 加权</td>
+        <td>w<sub>i</sub> = SR<sub>i</sub> / &Sigma;SR</td>
+        <td>同时考虑收益和稳定性</td>
+        <td>需要回测，计算量大</td>
+      </tr>
+      <tr>
+        <td>滚动 IC 加权</td>
+        <td>w<sub>i,t</sub> = IC<sub>i,t-k:t</sub> / &Sigma;IC</td>
+        <td>权重动态适应</td>
+        <td>参数选择（回看窗口 k）</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <pre><code><span class="code-keyword">import</span> pandas <span class="code-keyword">as</span> pd
+<span class="code-keyword">import</span> numpy <span class="code-keyword">as</span> np
+
+<span class="code-keyword">def</span> <span class="code-func">simple_blend</span>(pred_lgbm, pred_alstm, method=<span class="code-string">"equal"</span>, valid_ic=<span class="code-keyword">None</span>):
+    <span class="code-string">"""
+    简单加权 Ensemble
+    pred_lgbm, pred_alstm: pd.Series，同index
+    method: "equal" | "ic_weighted"
+    valid_ic: dict, e.g. {"lgbm": 0.045, "alstm": 0.050}
+    """</span>
+    <span class="code-keyword">if</span> method == <span class="code-string">"equal"</span>:
+        w1, w2 = <span class="code-num">0.5</span>, <span class="code-num">0.5</span>
+    <span class="code-keyword">elif</span> method == <span class="code-string">"ic_weighted"</span>:
+        total = valid_ic[<span class="code-string">"lgbm"</span>] + valid_ic[<span class="code-string">"alstm"</span>]
+        w1 = valid_ic[<span class="code-string">"lgbm"</span>] / total
+        w2 = valid_ic[<span class="code-string">"alstm"</span>] / total
+
+    pred_final = w1 * pred_lgbm + w2 * pred_alstm
+    <span class="code-keyword">print</span>(<span class="code-string">f"Blend weights: LGBM=</span>{w1:<span class="code-num">.3f</span>}<span class="code-string">, ALSTM=</span>{w2:<span class="code-num">.3f</span>}<span class="code-string">"</span>)
+    <span class="code-keyword">return</span> pred_final
+
+<span class="code-comment"># 使用示例</span>
+pred_ensemble = <span class="code-func">simple_blend</span>(
+    pred_lgbm, pred_alstm,
+    method=<span class="code-string">"ic_weighted"</span>,
+    valid_ic={<span class="code-string">"lgbm"</span>: <span class="code-num">0.045</span>, <span class="code-string">"alstm"</span>: <span class="code-num">0.050</span>}
+)
+<span class="code-comment"># 预期效果：Rank IC 提升约 5-10%</span></code></pre>
+
+  <div class="callout ok">
+    <strong>Blending 够用吗？</strong>
+    对于个人量化来说，LGBM + ALSTM 等权混合已经能获得很好的效果。Rank IC 提升 5-10% 且完全不增加过拟合风险。如果时间有限，用 Blending 即可。
+  </div>
+
+  <h3>2. DoubleEnsemble（Qlib 内置）</h3>
+
+  <p>DoubleEnsemble 是 Qlib 提供的高级 ensemble 方法，内部实现了样本重加权和特征选择两个维度的集成。IC 从 LightGBM 的 0.0448 提升到 0.0521（+16%），ICIR 从 0.3660 到 0.4223（+15%）。</p>
+
+  <div class="metric-grid">
+    <div class="metric-card">
+      <div class="mc-value" style="color:var(--gold)">+16%</div>
+      <div class="mc-label">IC 提升</div>
+      <div class="mc-sub">0.0448 &rarr; 0.0521</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-value" style="color:var(--gold)">+15%</div>
+      <div class="mc-label">ICIR 提升</div>
+      <div class="mc-sub">0.3660 &rarr; 0.4223</div>
+    </div>
+    <div class="metric-card">
+      <div class="mc-value" style="color:var(--green)">+50%</div>
+      <div class="mc-label">额外训练成本</div>
+      <div class="mc-sub">~15 min total</div>
+    </div>
+  </div>
+
+  <ul>
+    <li><strong>样本重加权</strong>：给"难学"的样本更高权重（类似 AdaBoost 思想），聚焦难预测的时间段</li>
+    <li><strong>特征选择</strong>：通过打乱特征值（permutation）评估重要性，自动剔除无效特征</li>
+    <li><strong>迭代优化</strong>：上述两步交替进行，逐步提炼有效信号</li>
+  </ul>
+
+  <pre><code><span class="code-comment"># Qlib DoubleEnsemble 配置</span>
+<span class="code-comment"># 在 workflow YAML 中替换 model 配置即可</span>
+
+<span class="code-keyword">task</span>:
+    <span class="code-keyword">model</span>:
+        <span class="code-keyword">class</span>: <span class="code-string">DEnsembleModel</span>
+        <span class="code-keyword">module_path</span>: <span class="code-string">qlib.contrib.model.double_ensemble</span>
+        <span class="code-keyword">kwargs</span>:
+            <span class="code-keyword">base_model</span>: <span class="code-string">"gbm"</span>        <span class="code-comment"># 基础模型: "gbm" or "mlp"</span>
+            <span class="code-keyword">num_models</span>: <span class="code-num">6</span>           <span class="code-comment"># 集成的子模型数量</span>
+            <span class="code-keyword">enable_sr</span>: <span class="code-keyword">True</span>         <span class="code-comment"># 启用样本重加权</span>
+            <span class="code-keyword">enable_fs</span>: <span class="code-keyword">True</span>         <span class="code-comment"># 启用特征选择</span>
+            <span class="code-keyword">alpha1</span>: <span class="code-num">1.0</span>             <span class="code-comment"># 样本重加权强度</span>
+            <span class="code-keyword">alpha2</span>: <span class="code-num">1.0</span>             <span class="code-comment"># 特征选择强度</span>
+            <span class="code-keyword">loss</span>: <span class="code-string">mse</span>
+            <span class="code-keyword">colsample_bytree</span>: <span class="code-num">0.8879</span>
+            <span class="code-keyword">learning_rate</span>: <span class="code-num">0.0421</span>
+            <span class="code-keyword">subsample</span>: <span class="code-num">0.8789</span>
+            <span class="code-keyword">num_leaves</span>: <span class="code-num">210</span>
+            <span class="code-keyword">max_depth</span>: <span class="code-num">8</span></code></pre>
+
+  <div class="callout insight">
+    <strong>性价比之王</strong>
+    DoubleEnsemble 是目前性价比最高的 ensemble 方法：仅需在 Qlib config 中替换 model class，零额外代码，+50% 训练成本换取 +16% IC 提升。<strong>强烈推荐作为 LightGBM 的直接升级。</strong>
+  </div>
+
+  <h3>3. Stacking（堆叠）</h3>
+
+  <p>Stacking 是更高级的 ensemble 方法：Level 0 的多个 base model 各自预测，然后将这些预测作为特征，训练 Level 1 的 meta model。</p>
+
+  <div class="pipeline">
+    <div class="pipeline-step">
+      <div class="ps-label">Level 0</div>
+      <div class="ps-value" style="color:var(--green)">LightGBM</div>
+    </div>
+    <div class="pipeline-step">
+      <div class="ps-label">Level 0</div>
+      <div class="ps-value" style="color:var(--blue)">ALSTM</div>
+    </div>
+    <div class="pipeline-step">
+      <div class="ps-label">Level 0</div>
+      <div class="ps-value" style="color:var(--purple)">HIST</div>
+    </div>
+    <div class="pipeline-step">
+      <div class="ps-label">Level 1</div>
+      <div class="ps-value" style="color:var(--gold)">Meta Ridge</div>
+    </div>
+  </div>
+
+  <pre><code><span class="code-keyword">import</span> numpy <span class="code-keyword">as</span> np
+<span class="code-keyword">import</span> pandas <span class="code-keyword">as</span> pd
+<span class="code-keyword">from</span> sklearn.linear_model <span class="code-keyword">import</span> Ridge
+
+<span class="code-keyword">def</span> <span class="code-func">time_series_stacking</span>(base_preds, labels, dates, n_splits=<span class="code-num">5</span>):
+    <span class="code-string">"""
+    时序 Stacking 框架
+    base_preds: dict of pd.Series, {"lgbm": pred1, "alstm": pred2, "hist": pred3}
+    labels: pd.Series, 实际收益率
+    dates: pd.Series, 日期
+    n_splits: 时序分割数
+    """</span>
+    <span class="code-comment"># 构建 meta features DataFrame</span>
+    meta_features = pd.<span class="code-func">DataFrame</span>(base_preds)
+    unique_dates = <span class="code-func">sorted</span>(dates.unique())
+    split_size = <span class="code-func">len</span>(unique_dates) // (n_splits + <span class="code-num">1</span>)
+
+    oof_predictions = pd.<span class="code-func">Series</span>(index=labels.index, dtype=<span class="code-string">"float64"</span>)
+
+    <span class="code-comment"># 时序交叉验证（不打乱时间顺序！）</span>
+    <span class="code-keyword">for</span> i <span class="code-keyword">in</span> <span class="code-func">range</span>(n_splits):
+        train_end = unique_dates[(i + <span class="code-num">1</span>) * split_size]
+        valid_start = unique_dates[(i + <span class="code-num">1</span>) * split_size + <span class="code-num">5</span>]  <span class="code-comment"># 5天gap</span>
+        valid_end = unique_dates[(i + <span class="code-num">2</span>) * split_size]
+
+        train_mask = dates <= train_end
+        valid_mask = (dates >= valid_start) & (dates <= valid_end)
+
+        <span class="code-comment"># 训练 meta model (Ridge回归，防过拟合)</span>
+        meta_model = Ridge(alpha=<span class="code-num">1.0</span>)
+        meta_model.<span class="code-func">fit</span>(
+            meta_features[train_mask],
+            labels[train_mask]
+        )
+
+        <span class="code-comment"># out-of-fold 预测</span>
+        oof_predictions[valid_mask] = meta_model.<span class="code-func">predict</span>(
+            meta_features[valid_mask]
+        )
+
+    <span class="code-keyword">return</span> oof_predictions
+
+<span class="code-comment"># 使用示例</span>
+stacked_pred = <span class="code-func">time_series_stacking</span>(
+    base_preds={
+        <span class="code-string">"lgbm"</span>: pred_lgbm,
+        <span class="code-string">"alstm"</span>: pred_alstm,
+        <span class="code-string">"hist"</span>: pred_hist,
+    },
+    labels=actual_returns,
+    dates=trade_dates,
+)
+<span class="code-comment"># 预期效果：Rank IC 提升约 10-15%</span></code></pre>
+
+  <div class="callout warn">
+    <strong>Stacking 的数据泄露陷阱</strong>
+    必须使用 out-of-fold 预测作为 meta features。如果直接用 base model 在训练集上的预测来训练 meta model，会导致严重过拟合。在时序场景下，用时序 split 替代 K-fold。
+  </div>
+
+  <h3>4. 模型多样性原则</h3>
+
+  <p>Ensemble 的关键不是模型越多越好，而是 base model 之间的<strong>预测相关性要低</strong>。最佳组合是让每个模型捕获不同类型的信号。</p>
+
+  <h4>预测相关性矩阵示例</h4>
+
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th>LightGBM (A158)</th>
+        <th>ALSTM (A360)</th>
+        <th>HIST (A360)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>LightGBM (A158)</strong></td>
+        <td>1.00</td>
+        <td style="color:var(--green)">0.45</td>
+        <td style="color:var(--green)">0.38</td>
+      </tr>
+      <tr>
+        <td><strong>ALSTM (A360)</strong></td>
+        <td style="color:var(--green)">0.45</td>
+        <td>1.00</td>
+        <td style="color:var(--orange)">0.72</td>
+      </tr>
+      <tr>
+        <td><strong>HIST (A360)</strong></td>
+        <td style="color:var(--green)">0.38</td>
+        <td style="color:var(--orange)">0.72</td>
+        <td>1.00</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ul>
+    <li><strong>LightGBM vs ALSTM 相关性 0.45</strong>：很低，ensemble 效果好（不同特征集 + 不同模型结构）</li>
+    <li><strong>ALSTM vs HIST 相关性 0.72</strong>：较高，因为共用 Alpha360 特征集</li>
+    <li><strong>最佳组合</strong>：Tree(Alpha158) + Sequential(Alpha360) + Graph(HIST)，三者分别捕获截面排序 + 时序模式 + 股票间关系</li>
+  </ul>
+
+  <div class="callout insight">
+    <strong>多样性 &gt; 单体性能</strong>
+    两个 IC 为 0.04 但相关性 0.3 的模型做 ensemble，效果好于两个 IC 为 0.05 但相关性 0.8 的模型。选择 base model 时，优先保证多样性。
+  </div>
+
+  <h3>5. 实际效果对比</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>方法</th>
+        <th>额外 IC 提升</th>
+        <th>额外训练成本</th>
+        <th>实现复杂度</th>
+        <th>推荐度</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>单 LightGBM</td>
+        <td>baseline</td>
+        <td>0</td>
+        <td>最低</td>
+        <td><span class="tag">起步</span></td>
+      </tr>
+      <tr>
+        <td><strong>DoubleEnsemble</strong></td>
+        <td style="color:var(--gold)">+16% IC</td>
+        <td>+50%</td>
+        <td>低（Qlib 内置）</td>
+        <td><span class="tag best">强烈推荐</span></td>
+      </tr>
+      <tr>
+        <td>LGBM + ALSTM 均权</td>
+        <td style="color:var(--green)">+10%</td>
+        <td>+200%</td>
+        <td>中等</td>
+        <td><span class="tag good">推荐</span></td>
+      </tr>
+      <tr>
+        <td>Stacking 3 模型</td>
+        <td style="color:var(--blue)">+15%</td>
+        <td>+400%</td>
+        <td>高</td>
+        <td><span class="tag">进阶</span></td>
+      </tr>
+      <tr>
+        <td>R&D-Agent 联合优化</td>
+        <td style="color:var(--purple)">+55%</td>
+        <td>API cost &lt;$10</td>
+        <td>高</td>
+        <td><span class="tag new">前沿</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>6. 时序 Ensemble 特殊考虑</h3>
+
+  <p>因子和模型的效果会随时间变化，固定权重的 ensemble 无法适应这种变化。动态权重调整是进阶方案。</p>
+
+  <h4>动态权重方案</h4>
+
+  <ul>
+    <li><strong>滚动 IC 加权</strong>：用最近 3-6 个月的滚动 IC 作为权重，自动偏向近期表现好的模型</li>
+    <li><strong>AlphaForge 方法</strong>：每个时间步基于 meta-learning 动态重加权</li>
+    <li><strong>简单 Regime 切换</strong>：牛市偏重动量模型，震荡市偏重反转模型</li>
+  </ul>
+
+  <pre><code><span class="code-keyword">def</span> <span class="code-func">dynamic_ensemble</span>(preds_dict, labels, dates, lookback=<span class="code-num">60</span>):
+    <span class="code-string">"""
+    动态 IC 加权 Ensemble
+    preds_dict: {"model_name": pd.Series}
+    labels: pd.Series
+    dates: pd.DatetimeIndex
+    lookback: 回看天数（计算滚动IC用）
+    """</span>
+    <span class="code-keyword">import</span> pandas <span class="code-keyword">as</span> pd
+    <span class="code-keyword">import</span> numpy <span class="code-keyword">as</span> np
+
+    all_dates = <span class="code-func">sorted</span>(dates.unique())
+    result = pd.<span class="code-func">Series</span>(index=labels.index, dtype=<span class="code-string">"float64"</span>)
+
+    <span class="code-keyword">for</span> i, date <span class="code-keyword">in</span> <span class="code-func">enumerate</span>(all_dates):
+        <span class="code-keyword">if</span> i < lookback:
+            <span class="code-comment"># 回看期不够，用等权</span>
+            weights = {k: <span class="code-num">1.0</span> / <span class="code-func">len</span>(preds_dict) <span class="code-keyword">for</span> k <span class="code-keyword">in</span> preds_dict}
+        <span class="code-keyword">else</span>:
+            <span class="code-comment"># 计算每个模型近 lookback 天的 IC</span>
+            recent_dates = all_dates[i - lookback:i]
+            mask = dates.<span class="code-func">isin</span>(recent_dates)
+            rolling_ics = {}
+            <span class="code-keyword">for</span> name, pred <span class="code-keyword">in</span> preds_dict.<span class="code-func">items</span>():
+                ic = pred[mask].<span class="code-func">corr</span>(labels[mask])
+                rolling_ics[name] = <span class="code-func">max</span>(ic, <span class="code-num">0.001</span>)  <span class="code-comment"># 下限防止负权</span>
+
+            total = <span class="code-func">sum</span>(rolling_ics.<span class="code-func">values</span>())
+            weights = {k: v / total <span class="code-keyword">for</span> k, v <span class="code-keyword">in</span> rolling_ics.<span class="code-func">items</span>()}
+
+        <span class="code-comment"># 加权融合当天预测</span>
+        day_mask = dates == date
+        <span class="code-keyword">for</span> name, pred <span class="code-keyword">in</span> preds_dict.<span class="code-func">items</span>():
+            result[day_mask] += weights[name] * pred[day_mask]
+
+    <span class="code-keyword">return</span> result</code></pre>
+
+  <div class="callout warn">
+    <strong>动态权重的陷阱</strong>
+    回看窗口太短（如 20 天）会导致权重剧烈波动，实际效果反而不如等权。建议回看窗口至少 60 个交易日（约 3 个月），并设置权重变化幅度上限。
+  </div>
+
+  <h3>7. Ensemble 选型决策树</h3>
+
+  <p>根据你的场景选择最合适的 ensemble 方法：</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>你的情况</th>
+        <th>推荐方案</th>
+        <th>原因</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>刚开始，只有 LightGBM</td>
+        <td style="color:var(--gold)">DoubleEnsemble</td>
+        <td>零代码改动，仅改 config，IC +16%</td>
+      </tr>
+      <tr>
+        <td>有 GPU，想尝试 DL</td>
+        <td style="color:var(--green)">LGBM + ALSTM 等权</td>
+        <td>不同特征集+不同模型，多样性高</td>
+      </tr>
+      <tr>
+        <td>多模型都跑通了</td>
+        <td style="color:var(--blue)">Stacking (Ridge meta)</td>
+        <td>自动学习最优权重组合</td>
+      </tr>
+      <tr>
+        <td>追求极致，有 API 预算</td>
+        <td style="color:var(--purple)">R&D-Agent 联合优化</td>
+        <td>LLM 自动搜索最优因子+模型组合</td>
+      </tr>
+      <tr>
+        <td>策略运行中，需要维护</td>
+        <td style="color:var(--cyan)">动态 IC 加权</td>
+        <td>自动适应市场变化，减少人工干预</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout ok">
+    <strong>总结：Ensemble 路线图</strong>
+    Step 1: LightGBM baseline &rarr; Step 2: 替换为 DoubleEnsemble（+16%） &rarr; Step 3: 加入 ALSTM blend（+10%） &rarr; Step 4: 三模型 Stacking（+15%）。每一步都有明确的收益，按需推进即可。
+  </div>
+
+</section>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <p>
+      <a href="02-factor-system.html">&larr; 专题二：因子体系</a> &nbsp;&middot;&nbsp;
+      <a href="../research-hub.html">返回研究计划</a> &nbsp;&middot;&nbsp;
+      专题四：组合优化（即将推出） &rarr;
+    </p>
+    <p style="margin-top: 12px;">A股研究知识库 &middot; 量化因子研究系列 &middot; 2026</p>
+  </div>
+</footer>
+
+</body>
+</html>
