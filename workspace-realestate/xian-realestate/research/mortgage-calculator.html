@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>购房成本计算器 | 西安高新区房地产研究</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#f0fdf4;color:#1e293b;line-height:1.7}
+a{color:#16a34a;text-decoration:none}
+.hero{background:linear-gradient(135deg,#14532d 0%,#166534 50%,#16a34a 100%);color:#fff;padding:48px 24px 40px;text-align:center}
+.hero h1{font-size:28px;margin-bottom:6px}
+.hero p{font-size:14px;opacity:0.75;max-width:640px;margin:0 auto}
+.hero .tag{display:inline-block;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);padding:3px 12px;border-radius:16px;font-size:11px;margin-top:12px}
+.container{max-width:1100px;margin:0 auto;padding:0 20px}
+.back-link{display:inline-block;margin:20px 0;font-size:13px}
+.section{margin:36px 0}
+.section h2{font-size:20px;font-weight:700;color:#14532d;margin-bottom:4px;padding-bottom:8px;border-bottom:2px solid #bbf7d0}
+.section .sub{font-size:13px;color:#64748b;margin-bottom:18px}
+
+/* Layout */
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:24px 0}
+@media(max-width:800px){.calc-grid{grid-template-columns:1fr}}
+
+.card{background:#fff;border:1px solid #bbf7d0;border-radius:12px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card h3{font-size:16px;color:#166534;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid #dcfce7}
+
+/* Form */
+.form-row{margin-bottom:14px}
+.form-row label{display:block;font-size:13px;color:#475569;margin-bottom:4px;font-weight:500}
+.form-row input,.form-row select{width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;color:#1e293b;background:#fff;transition:border 0.2s}
+.form-row input:focus,.form-row select:focus{outline:none;border-color:#16a34a;box-shadow:0 0 0 3px rgba(22,163,74,0.1)}
+.form-row .hint{font-size:11px;color:#94a3b8;margin-top:2px}
+.form-row .inline{display:flex;gap:8px;align-items:center}
+.form-row .inline input{flex:1}
+.form-row .inline span{font-size:13px;color:#64748b;white-space:nowrap}
+
+/* Quick-pick */
+.quick-pick{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.quick-pick button{padding:5px 12px;border:1px solid #bbf7d0;background:#f0fdf4;border-radius:16px;font-size:11px;color:#166534;cursor:pointer;transition:all 0.15s}
+.quick-pick button:hover{background:#166534;color:#fff}
+.quick-pick button.active{background:#166534;color:#fff}
+
+/* Results */
+.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:16px 0}
+.result-item{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:14px;text-align:center}
+.result-item .v{font-size:22px;font-weight:700;color:#166534}
+.result-item .v.warn{color:#d97706}
+.result-item .v.danger{color:#dc2626}
+.result-item .l{font-size:11px;color:#64748b;margin-top:2px}
+
+/* Breakdown table */
+.breakdown{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+.breakdown th{background:#f0fdf4;color:#166534;padding:8px 12px;text-align:left;border-bottom:2px solid #bbf7d0}
+.breakdown td{padding:8px 12px;border-bottom:1px solid #f1f5f9}
+.breakdown tr:hover td{background:#f7fee7}
+.breakdown .total{font-weight:700;background:#dcfce7}
+.breakdown .right{text-align:right}
+
+/* Policy ref */
+.policy-ref{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:16px;margin:16px 0;font-size:13px}
+.policy-ref h4{color:#92400e;margin-bottom:8px}
+.policy-ref ul{padding-left:16px;color:#78350f}
+.policy-ref li{margin:4px 0}
+
+/* Bar chart */
+.cost-bar{margin:8px 0}
+.cost-bar-row{display:flex;align-items:center;margin:6px 0}
+.cost-bar-label{width:90px;font-size:12px;text-align:right;padding-right:10px;color:#475569}
+.cost-bar-track{flex:1;background:#f0fdf4;border-radius:4px;height:26px;position:relative;overflow:hidden}
+.cost-bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding:0 10px;font-size:11px;color:#fff;font-weight:600;transition:width 0.5s}
+.cost-bar-fill.green{background:linear-gradient(90deg,#15803d,#22c55e)}
+.cost-bar-fill.blue{background:linear-gradient(90deg,#1d4ed8,#3b82f6)}
+.cost-bar-fill.amber{background:linear-gradient(90deg,#b45309,#f59e0b)}
+.cost-bar-fill.red{background:linear-gradient(90deg,#b91c1c,#ef4444)}
+
+/* Btn */
+.calc-btn{width:100%;padding:12px;background:linear-gradient(135deg,#166534,#16a34a);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;transition:transform 0.1s;margin-top:8px}
+.calc-btn:hover{transform:scale(1.01)}
+.calc-btn:active{transform:scale(0.99)}
+
+.footer{text-align:center;padding:32px 20px;font-size:12px;color:#94a3b8;border-top:1px solid #dcfce7;margin-top:40px}
+</style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>购房成本计算器</h1>
+    <p>基于西安最新政策（2026）+ 高新区真实小区数据，一键计算月供、总成本、税费</p>
+    <div class="tag">商贷 / 公积金 / 组合贷 | 首套 / 二套 | 含税费估算</div>
+</div>
+
+<div class="container">
+    <a class="back-link" href="../../index.html">&larr; 返回研究门户</a>
+
+    <!-- Policy Reference -->
+    <div class="policy-ref">
+        <h4>当前政策环境（2025-2026 西安）</h4>
+        <ul>
+            <li><strong>限购：</strong>已全面取消，不限户籍、套数</li>
+            <li><strong>首套首付：</strong>最低 15%（部分银行 20%）</li>
+            <li><strong>二套首付：</strong>最低 25%</li>
+            <li><strong>商贷利率：</strong>首套 LPR-45bp ≈ 3.15%（2025.10），二套 LPR-5bp ≈ 3.55%</li>
+            <li><strong>公积金贷款：</strong>首套上限 80 万（双缴 100 万），利率 2.85%；二套上限 50 万，利率 3.325%</li>
+            <li><strong>契税：</strong>首套 ≤90㎡ 1%，>90㎡ 1.5%；二套 ≤90㎡ 1%，>90㎡ 2%</li>
+            <li><strong>人才补贴：</strong>E 类及以上人才购房补贴最高 100 万元</li>
+        </ul>
+    </div>
+
+    <div class="calc-grid">
+        <!-- Input Panel -->
+        <div class="card">
+            <h3>房产信息</h3>
+
+            <div class="form-row">
+                <label>快速选择小区（高新区热门）</label>
+                <select id="preset" onchange="applyPreset()">
+                    <option value="">-- 自定义输入 --</option>
+                    <optgroup label="豪宅 (3万+/㎡)">
+                        <option value="89622|140">中大国际九号 (89,622 元/㎡ · 高新一中)</option>
+                        <option value="62303|160">长安龙胤 (62,303 元/㎡ · 科技六路)</option>
+                        <option value="43303|130">天地源丹轩坊 (43,303 元/㎡ · 高新一中)</option>
+                        <option value="35026|140">万达天玺 (35,026 元/㎡ · 科技六路)</option>
+                        <option value="33439|120">香榭御澄 (33,439 元/㎡ · 科技八路)</option>
+                    </optgroup>
+                    <optgroup label="改善 (2-3万/㎡)">
+                        <option value="29750|140">逸翠园四期 (29,750 元/㎡ · 锦业路)</option>
+                        <option value="28615|130">万科翡翠国宾 (28,615 元/㎡ · 科技六路)</option>
+                        <option value="28278|120">中海·学仕里 (28,278 元/㎡ · CID)</option>
+                        <option value="25063|120">绿城海棠三章 (25,063 元/㎡ · 软件新城)</option>
+                        <option value="24971|130">天地源枫林绿洲 (24,971 元/㎡ · 科技六路)</option>
+                        <option value="20257|110">金地中央公园 (20,257 元/㎡ · 西万路口)</option>
+                    </optgroup>
+                    <optgroup label="刚需 (1-2万/㎡)">
+                        <option value="19937|100">中建国熙台 (19,937 元/㎡ · 科技路西口)</option>
+                        <option value="17120|100">紫薇田园都市 (17,120 元/㎡ · 锦业路)</option>
+                        <option value="16331|90">苏宁云著 (16,331 元/㎡ · 软件新城)</option>
+                        <option value="15081|90">融侨城 (15,081 元/㎡ · 大寨路)</option>
+                        <option value="15022|100">中华世纪城 (15,022 元/㎡ · 科技路西口)</option>
+                        <option value="13557|90">高新红枫林 (13,557 元/㎡ · 大寨路)</option>
+                        <option value="11046|90">恒大城 (11,046 元/㎡ · 大寨路)</option>
+                        <option value="10765|80">铭城国际社区 (10,765 元/㎡ · 大寨路)</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <label>单价（元/㎡）</label>
+                <input type="number" id="unitPrice" value="15000" min="0" step="100">
+            </div>
+            <div class="form-row">
+                <label>面积（㎡）</label>
+                <div class="quick-pick" id="areaQuick">
+                    <button onclick="setArea(70)">70㎡</button>
+                    <button onclick="setArea(89)">89㎡</button>
+                    <button onclick="setArea(100)" class="active">100㎡</button>
+                    <button onclick="setArea(120)">120㎡</button>
+                    <button onclick="setArea(140)">140㎡</button>
+                    <button onclick="setArea(160)">160㎡</button>
+                </div>
+                <input type="number" id="area" value="100" min="1" step="1">
+            </div>
+            <div class="form-row">
+                <label>总价（自动计算）</label>
+                <input type="text" id="totalPrice" readonly style="background:#f0fdf4;font-weight:700;color:#166534">
+            </div>
+
+            <h3 style="margin-top:20px">贷款方案</h3>
+            <div class="form-row">
+                <label>购房类型</label>
+                <select id="houseType" onchange="updateDefaults()">
+                    <option value="first">首套房</option>
+                    <option value="second">二套房</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <label>贷款方式</label>
+                <select id="loanType" onchange="updateDefaults()">
+                    <option value="commercial">纯商业贷款</option>
+                    <option value="provident">纯公积金贷款</option>
+                    <option value="combo">组合贷款（公积金+商贷）</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <label>首付比例</label>
+                <div class="quick-pick" id="downQuick">
+                    <button onclick="setDown(15)">15%</button>
+                    <button onclick="setDown(20)" class="active">20%</button>
+                    <button onclick="setDown(25)">25%</button>
+                    <button onclick="setDown(30)">30%</button>
+                    <button onclick="setDown(40)">40%</button>
+                    <button onclick="setDown(50)">50%</button>
+                </div>
+                <div class="inline">
+                    <input type="number" id="downPercent" value="20" min="15" max="100" step="1">
+                    <span>%</span>
+                </div>
+            </div>
+            <div class="form-row">
+                <label>贷款年限</label>
+                <div class="quick-pick" id="yearQuick">
+                    <button onclick="setYears(10)">10年</button>
+                    <button onclick="setYears(15)">15年</button>
+                    <button onclick="setYears(20)">20年</button>
+                    <button onclick="setYears(25)">25年</button>
+                    <button onclick="setYears(30)" class="active">30年</button>
+                </div>
+                <div class="inline">
+                    <input type="number" id="loanYears" value="30" min="1" max="30" step="1">
+                    <span>年</span>
+                </div>
+            </div>
+            <div class="form-row" id="rateRow">
+                <label>商贷年利率</label>
+                <div class="inline">
+                    <input type="number" id="commercialRate" value="3.15" min="0" max="20" step="0.01">
+                    <span>%</span>
+                </div>
+                <div class="hint">首套 LPR-45bp ≈ 3.15%，二套 LPR-5bp ≈ 3.55%（2025.10 水平）</div>
+            </div>
+            <div class="form-row" id="pvdRateRow" style="display:none">
+                <label>公积金年利率</label>
+                <div class="inline">
+                    <input type="number" id="providentRate" value="2.85" min="0" max="20" step="0.01">
+                    <span>%</span>
+                </div>
+                <div class="hint">首套 2.85%，二套 3.325%</div>
+            </div>
+            <div class="form-row" id="pvdMaxRow" style="display:none">
+                <label>公积金贷款额度（万元）</label>
+                <div class="inline">
+                    <input type="number" id="providentMax" value="80" min="0" max="100" step="1">
+                    <span>万</span>
+                </div>
+                <div class="hint">单缴最高 80 万，双缴最高 100 万；二套最高 50 万</div>
+            </div>
+
+            <button class="calc-btn" onclick="calculate()">计算月供与总成本</button>
+        </div>
+
+        <!-- Results Panel -->
+        <div class="card" id="resultsCard">
+            <h3>计算结果</h3>
+            <div id="resultsPlaceholder" style="text-align:center;color:#94a3b8;padding:40px 0;font-size:14px">
+                &larr; 填写信息后点击"计算"按钮
+            </div>
+            <div id="results" style="display:none">
+                <div class="result-grid">
+                    <div class="result-item"><div class="v" id="rTotalPrice">-</div><div class="l">房屋总价</div></div>
+                    <div class="result-item"><div class="v" id="rDownPayment">-</div><div class="l">首付金额</div></div>
+                    <div class="result-item"><div class="v" id="rLoanAmount">-</div><div class="l">贷款总额</div></div>
+                    <div class="result-item"><div class="v" id="rMonthly">-</div><div class="l">月供（等额本息）</div></div>
+                    <div class="result-item"><div class="v" id="rTotalInterest">-</div><div class="l">利息总额</div></div>
+                    <div class="result-item"><div class="v" id="rTotalCost">-</div><div class="l">购房总成本</div></div>
+                </div>
+
+                <!-- Combo detail -->
+                <div id="comboDetail" style="display:none;margin:16px 0">
+                    <table class="breakdown">
+                        <tr><th>贷款部分</th><th class="right">贷款额</th><th class="right">利率</th><th class="right">月供</th><th class="right">利息总额</th></tr>
+                        <tr><td>公积金</td><td class="right" id="cPvdLoan">-</td><td class="right" id="cPvdRate">-</td><td class="right" id="cPvdMonthly">-</td><td class="right" id="cPvdInterest">-</td></tr>
+                        <tr><td>商业贷款</td><td class="right" id="cComLoan">-</td><td class="right" id="cComRate">-</td><td class="right" id="cComMonthly">-</td><td class="right" id="cComInterest">-</td></tr>
+                        <tr class="total"><td>合计</td><td class="right" id="cTotalLoan">-</td><td class="right">-</td><td class="right" id="cTotalMonthly">-</td><td class="right" id="cTotalInterest">-</td></tr>
+                    </table>
+                </div>
+
+                <!-- Tax & Fees -->
+                <h3 style="margin-top:24px">税费估算</h3>
+                <table class="breakdown" id="taxTable">
+                    <tr><th>项目</th><th class="right">金额</th><th>说明</th></tr>
+                </table>
+
+                <!-- Cost Structure Bar -->
+                <h3 style="margin-top:24px">成本结构</h3>
+                <div class="cost-bar" id="costBar"></div>
+
+                <!-- Income Reference -->
+                <h3 style="margin-top:24px">收入参考（月供/收入比）</h3>
+                <div class="form-row">
+                    <label>家庭月收入（元）</label>
+                    <div class="quick-pick">
+                        <button onclick="setIncome(10000)">1万</button>
+                        <button onclick="setIncome(15000)">1.5万</button>
+                        <button onclick="setIncome(20000)" class="active">2万</button>
+                        <button onclick="setIncome(30000)">3万</button>
+                        <button onclick="setIncome(50000)">5万</button>
+                    </div>
+                    <input type="number" id="monthlyIncome" value="20000" min="0" step="1000" onchange="updateRatio()">
+                </div>
+                <div class="result-grid" style="grid-template-columns:1fr 1fr">
+                    <div class="result-item"><div class="v" id="rRatio">-</div><div class="l">月供/收入比</div></div>
+                    <div class="result-item"><div class="v" id="rVerdict">-</div><div class="l">压力评估</div></div>
+                </div>
+                <div id="ratioAdvice" style="font-size:13px;color:#475569;margin:8px 0;padding:12px;background:#f0fdf4;border-radius:8px"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comparison: Rent vs Buy -->
+    <div class="section">
+        <h2>高新区各板块 100㎡ 月供速查</h2>
+        <div class="sub">首付 20% + 商贷 30 年 3.15% | 等额本息 | 仅供快速参考</div>
+        <div style="overflow-x:auto">
+            <table class="breakdown" id="boardTable">
+                <tr>
+                    <th>板块</th>
+                    <th class="right">中位价 (元/㎡)</th>
+                    <th class="right">100㎡ 总价 (万)</th>
+                    <th class="right">首付 20% (万)</th>
+                    <th class="right">月供 (元)</th>
+                    <th class="right">年收入门槛 (万)</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    购房成本计算器 | 基于西安 2025-2026 政策 + 高新区真实数据 | 生成于 2026-03-03<br>
+    <a href="../../index.html">返回研究门户</a> | 计算结果仅供参考，请以银行实际审批为准
+</div>
+
+<script>
+// Board median prices (from our data)
+const boards = [
+    {name:"高新一中", median:36642},
+    {name:"科技六路", median:27297},
+    {name:"锦业路", median:20423},
+    {name:"西万路口", median:18036},
+    {name:"科技路西口", median:15022},
+    {name:"软件新城", median:16331},
+    {name:"CID中央创新区", median:22929},
+    {name:"大寨路", median:11414},
+    {name:"鱼化寨", median:8920},
+    {name:"大学城", median:14190},
+    {name:"高新四路", median:22798},
+    {name:"郭杜", median:12500},
+    {name:"丈八北路", median:14500},
+    {name:"科技八路以北", median:19000},
+    {name:"徐家庄", median:11652}
+];
+
+// Monthly payment calculator (equal principal + interest)
+function calcMonthly(principal, annualRate, years) {
+    if (principal <= 0 || years <= 0) return {monthly: 0, totalInterest: 0};
+    const n = years * 12;
+    const r = annualRate / 100 / 12;
+    if (r === 0) return {monthly: principal / n, totalInterest: 0};
+    const monthly = principal * r * Math.pow(1+r, n) / (Math.pow(1+r, n) - 1);
+    const totalInterest = monthly * n - principal;
+    return {monthly, totalInterest};
+}
+
+function fmt(n) { return n.toLocaleString('zh-CN', {maximumFractionDigits: 0}); }
+function fmtW(n) { return (n / 10000).toFixed(1) + '万'; }
+
+// Auto-calculate total price
+function updateTotalPrice() {
+    const up = parseFloat(document.getElementById('unitPrice').value) || 0;
+    const area = parseFloat(document.getElementById('area').value) || 0;
+    const total = up * area;
+    document.getElementById('totalPrice').value = fmt(total) + ' 元 (' + (total/10000).toFixed(1) + '万)';
+}
+document.getElementById('unitPrice').addEventListener('input', updateTotalPrice);
+document.getElementById('area').addEventListener('input', updateTotalPrice);
+
+function applyPreset() {
+    const v = document.getElementById('preset').value;
+    if (!v) return;
+    const [price, area] = v.split('|');
+    document.getElementById('unitPrice').value = price;
+    document.getElementById('area').value = area;
+    updateTotalPrice();
+}
+
+function setArea(v) {
+    document.getElementById('area').value = v;
+    document.querySelectorAll('#areaQuick button').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    updateTotalPrice();
+}
+
+function setDown(v) {
+    document.getElementById('downPercent').value = v;
+    document.querySelectorAll('#downQuick button').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+}
+
+function setYears(v) {
+    document.getElementById('loanYears').value = v;
+    document.querySelectorAll('#yearQuick button').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+}
+
+function setIncome(v) {
+    document.getElementById('monthlyIncome').value = v;
+    document.querySelectorAll('#monthlyIncome').forEach(b => {});
+    updateRatio();
+}
+
+function updateDefaults() {
+    const ht = document.getElementById('houseType').value;
+    const lt = document.getElementById('loanType').value;
+    const isFirst = ht === 'first';
+
+    // Rate defaults
+    document.getElementById('commercialRate').value = isFirst ? '3.15' : '3.55';
+    document.getElementById('providentRate').value = isFirst ? '2.85' : '3.325';
+    document.getElementById('providentMax').value = isFirst ? '80' : '50';
+
+    // Down payment default
+    if (isFirst) { setDown(20); document.getElementById('downPercent').value = 20; }
+    else { setDown(25); document.getElementById('downPercent').value = 25; }
+
+    // Show/hide fields
+    const showCom = lt === 'commercial' || lt === 'combo';
+    const showPvd = lt === 'provident' || lt === 'combo';
+    document.getElementById('rateRow').style.display = showCom ? '' : 'none';
+    document.getElementById('pvdRateRow').style.display = showPvd ? '' : 'none';
+    document.getElementById('pvdMaxRow').style.display = showPvd ? '' : 'none';
+}
+
+function calculate() {
+    const unitPrice = parseFloat(document.getElementById('unitPrice').value) || 0;
+    const area = parseFloat(document.getElementById('area').value) || 0;
+    const totalPrice = unitPrice * area;
+    const downPct = parseFloat(document.getElementById('downPercent').value) / 100;
+    const downPayment = totalPrice * downPct;
+    const loanAmount = totalPrice - downPayment;
+    const years = parseInt(document.getElementById('loanYears').value) || 30;
+    const loanType = document.getElementById('loanType').value;
+    const houseType = document.getElementById('houseType').value;
+    const comRate = parseFloat(document.getElementById('commercialRate').value);
+    const pvdRate = parseFloat(document.getElementById('providentRate').value);
+    const pvdMax = parseFloat(document.getElementById('providentMax').value) * 10000;
+
+    let monthly = 0, totalInterest = 0;
+    let pvdLoan = 0, comLoan = 0;
+
+    document.getElementById('comboDetail').style.display = 'none';
+
+    if (loanType === 'commercial') {
+        const r = calcMonthly(loanAmount, comRate, years);
+        monthly = r.monthly;
+        totalInterest = r.totalInterest;
+    } else if (loanType === 'provident') {
+        const actualPvd = Math.min(loanAmount, pvdMax);
+        const r = calcMonthly(actualPvd, pvdRate, years);
+        monthly = r.monthly;
+        totalInterest = r.totalInterest;
+        if (actualPvd < loanAmount) {
+            // Cannot fully cover with provident fund
+            const remain = loanAmount - actualPvd;
+            const r2 = calcMonthly(remain, comRate, years);
+            monthly += r2.monthly;
+            totalInterest += r2.totalInterest;
+            // Show as combo
+            document.getElementById('comboDetail').style.display = '';
+            document.getElementById('cPvdLoan').textContent = fmtW(actualPvd);
+            document.getElementById('cPvdRate').textContent = pvdRate + '%';
+            document.getElementById('cPvdMonthly').textContent = fmt(r.monthly);
+            document.getElementById('cPvdInterest').textContent = fmtW(r.totalInterest);
+            document.getElementById('cComLoan').textContent = fmtW(remain);
+            document.getElementById('cComRate').textContent = comRate + '%';
+            document.getElementById('cComMonthly').textContent = fmt(r2.monthly);
+            document.getElementById('cComInterest').textContent = fmtW(r2.totalInterest);
+            document.getElementById('cTotalLoan').textContent = fmtW(loanAmount);
+            document.getElementById('cTotalMonthly').textContent = fmt(monthly);
+            document.getElementById('cTotalInterest').textContent = fmtW(totalInterest);
+        }
+    } else { // combo
+        pvdLoan = Math.min(pvdMax, loanAmount);
+        comLoan = loanAmount - pvdLoan;
+        const r1 = calcMonthly(pvdLoan, pvdRate, years);
+        const r2 = calcMonthly(comLoan, comRate, years);
+        monthly = r1.monthly + r2.monthly;
+        totalInterest = r1.totalInterest + r2.totalInterest;
+        document.getElementById('comboDetail').style.display = '';
+        document.getElementById('cPvdLoan').textContent = fmtW(pvdLoan);
+        document.getElementById('cPvdRate').textContent = pvdRate + '%';
+        document.getElementById('cPvdMonthly').textContent = fmt(r1.monthly);
+        document.getElementById('cPvdInterest').textContent = fmtW(r1.totalInterest);
+        document.getElementById('cComLoan').textContent = fmtW(comLoan);
+        document.getElementById('cComRate').textContent = comRate + '%';
+        document.getElementById('cComMonthly').textContent = fmt(r2.monthly);
+        document.getElementById('cComInterest').textContent = fmtW(r2.totalInterest);
+        document.getElementById('cTotalLoan').textContent = fmtW(loanAmount);
+        document.getElementById('cTotalMonthly').textContent = fmt(monthly);
+        document.getElementById('cTotalInterest').textContent = fmtW(totalInterest);
+    }
+
+    // Tax & fees
+    const isFirst = houseType === 'first';
+    let deedTaxRate;
+    if (isFirst) deedTaxRate = area <= 90 ? 0.01 : 0.015;
+    else deedTaxRate = area <= 90 ? 0.01 : 0.02;
+    const deedTax = totalPrice * deedTaxRate;
+    const stampDuty = 0; // currently waived
+    const agencyFee = totalPrice * 0.01; // ~1% agency
+    const mortgageReg = 80; // fixed
+    const maintenance = totalPrice * 0.02; // 维修基金 ~2%
+    const totalTax = deedTax + agencyFee + mortgageReg + maintenance;
+
+    const totalCost = totalPrice + totalInterest + totalTax;
+
+    // Update results
+    document.getElementById('resultsPlaceholder').style.display = 'none';
+    document.getElementById('results').style.display = '';
+
+    document.getElementById('rTotalPrice').textContent = fmtW(totalPrice);
+    document.getElementById('rDownPayment').textContent = fmtW(downPayment);
+    document.getElementById('rLoanAmount').textContent = fmtW(loanAmount);
+    document.getElementById('rMonthly').textContent = fmt(monthly) + '元';
+    document.getElementById('rTotalInterest').textContent = fmtW(totalInterest);
+    document.getElementById('rTotalCost').textContent = fmtW(totalCost);
+
+    // Color-code monthly
+    if (monthly > 15000) document.getElementById('rMonthly').className = 'v danger';
+    else if (monthly > 8000) document.getElementById('rMonthly').className = 'v warn';
+    else document.getElementById('rMonthly').className = 'v';
+
+    // Tax table
+    const taxTable = document.getElementById('taxTable');
+    taxTable.innerHTML = `
+        <tr><th>项目</th><th class="right">金额</th><th>说明</th></tr>
+        <tr><td>契税</td><td class="right">${fmt(deedTax)} 元</td><td>${isFirst?'首套':'二套'} ${area<=90?'≤90㎡':'>90㎡'} → ${(deedTaxRate*100)}%</td></tr>
+        <tr><td>维修基金</td><td class="right">${fmt(maintenance)} 元</td><td>按总价 2% 估算（多层/高层有差异）</td></tr>
+        <tr><td>中介费</td><td class="right">${fmt(agencyFee)} 元</td><td>按 1% 估算（可协商）</td></tr>
+        <tr><td>抵押登记费</td><td class="right">${mortgageReg} 元</td><td>固定费用</td></tr>
+        <tr><td>印花税</td><td class="right">0 元</td><td>个人购买住房暂免</td></tr>
+        <tr class="total"><td>税费合计</td><td class="right">${fmt(totalTax)} 元 (${fmtW(totalTax)})</td><td></td></tr>
+    `;
+
+    // Cost structure bar
+    const costBar = document.getElementById('costBar');
+    const maxVal = totalCost;
+    costBar.innerHTML = `
+        <div class="cost-bar-row">
+            <div class="cost-bar-label">首付</div>
+            <div class="cost-bar-track"><div class="cost-bar-fill green" style="width:${downPayment/maxVal*100}%">${fmtW(downPayment)}</div></div>
+        </div>
+        <div class="cost-bar-row">
+            <div class="cost-bar-label">贷款本金</div>
+            <div class="cost-bar-track"><div class="cost-bar-fill blue" style="width:${loanAmount/maxVal*100}%">${fmtW(loanAmount)}</div></div>
+        </div>
+        <div class="cost-bar-row">
+            <div class="cost-bar-label">利息总额</div>
+            <div class="cost-bar-track"><div class="cost-bar-fill amber" style="width:${totalInterest/maxVal*100}%">${fmtW(totalInterest)}</div></div>
+        </div>
+        <div class="cost-bar-row">
+            <div class="cost-bar-label">税费</div>
+            <div class="cost-bar-track"><div class="cost-bar-fill red" style="width:${Math.max(totalTax/maxVal*100,2)}%">${fmtW(totalTax)}</div></div>
+        </div>
+    `;
+
+    updateRatio();
+}
+
+function updateRatio() {
+    const monthlyEl = document.getElementById('rMonthly');
+    if (!monthlyEl || monthlyEl.textContent === '-') return;
+    const monthly = parseFloat(monthlyEl.textContent.replace(/[^0-9.]/g, ''));
+    const income = parseFloat(document.getElementById('monthlyIncome').value) || 1;
+    const ratio = (monthly / income * 100).toFixed(1);
+
+    const ratioEl = document.getElementById('rRatio');
+    const verdictEl = document.getElementById('rVerdict');
+    const adviceEl = document.getElementById('ratioAdvice');
+    ratioEl.textContent = ratio + '%';
+
+    if (ratio <= 30) {
+        ratioEl.className = 'v';
+        verdictEl.textContent = '轻松';
+        verdictEl.className = 'v';
+        adviceEl.textContent = '月供占收入 ' + ratio + '%，低于 30% 红线，还款压力较小，生活品质有保障。';
+    } else if (ratio <= 50) {
+        ratioEl.className = 'v warn';
+        verdictEl.textContent = '适中';
+        verdictEl.className = 'v warn';
+        adviceEl.textContent = '月供占收入 ' + ratio + '%，处于 30%-50% 区间，需适当控制其他开支。银行审批一般要求月供不超过月收入 50%。';
+    } else {
+        ratioEl.className = 'v danger';
+        verdictEl.textContent = '压力大';
+        verdictEl.className = 'v danger';
+        adviceEl.textContent = '月供占收入 ' + ratio + '%，超过 50% 警戒线！建议增加首付、延长贷款年限、或选择更低价位房源。银行可能不批此方案。';
+    }
+}
+
+// Board quick-look table
+function buildBoardTable() {
+    const sorted = [...boards].sort((a,b) => b.median - a.median);
+    const tbody = document.getElementById('boardTable');
+    sorted.forEach(b => {
+        const total = b.median * 100;
+        const down = total * 0.2;
+        const loan = total - down;
+        const r = calcMonthly(loan, 3.15, 30);
+        const incomeThreshold = r.monthly * 12 * 2 / 10000; // 月供×2 as annual income
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${b.name}</td>
+            <td class="right">${fmt(b.median)}</td>
+            <td class="right">${(total/10000).toFixed(0)}</td>
+            <td class="right">${(down/10000).toFixed(0)}</td>
+            <td class="right">${fmt(r.monthly)}</td>
+            <td class="right">${incomeThreshold.toFixed(1)}</td>
+        `;
+        tr.style.cursor = 'pointer';
+        tr.title = '点击填入计算器';
+        tr.addEventListener('click', () => {
+            document.getElementById('unitPrice').value = b.median;
+            document.getElementById('area').value = 100;
+            document.getElementById('preset').value = '';
+            updateTotalPrice();
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        });
+        tbody.appendChild(tr);
+    });
+}
+
+// Init
+updateTotalPrice();
+updateDefaults();
+buildBoardTable();
+</script>
+</body>
+</html>
