@@ -664,6 +664,88 @@
     .prec-box { font-size: 0.7em; padding: 16px; }
   }
 
+  /* Timeline */
+  .timeline-sec {
+    padding: 48px 0; border-bottom: 1px solid var(--border);
+  }
+  .timeline-sec h2 {
+    text-align: center; font-size: 1.3em; font-weight: 600;
+    margin-bottom: 8px; color: var(--text2); letter-spacing: 0.08em;
+  }
+  .timeline-sec .sub {
+    text-align: center; color: var(--text2); font-size: 0.88em; margin-bottom: 32px;
+  }
+  .tl-track {
+    position: relative; max-width: 740px; margin: 0 auto;
+    padding-left: 32px;
+  }
+  .tl-track::before {
+    content: ''; position: absolute; left: 10px; top: 0; bottom: 0;
+    width: 2px; background: var(--border);
+  }
+  .tl-item {
+    position: relative; margin-bottom: 24px;
+  }
+  .tl-item::before {
+    content: ''; position: absolute; left: -26px; top: 6px;
+    width: 10px; height: 10px; border-radius: 50%;
+    border: 2px solid var(--accent); background: var(--bg);
+  }
+  .tl-item.tl-neg::before { border-color: var(--red); }
+  .tl-item.tl-pos::before { border-color: var(--green); }
+  .tl-year {
+    font-size: 0.78em; font-weight: 700; color: var(--accent);
+    letter-spacing: 0.04em; margin-bottom: 2px;
+  }
+  .tl-item.tl-neg .tl-year { color: var(--red); }
+  .tl-item.tl-pos .tl-year { color: var(--green); }
+  .tl-title {
+    font-size: 0.92em; font-weight: 600; color: var(--text);
+    margin-bottom: 4px;
+  }
+  .tl-desc {
+    font-size: 0.8em; color: var(--text2); line-height: 1.5;
+    margin-bottom: 6px;
+  }
+  .tl-dims {
+    display: flex; flex-wrap: wrap; gap: 4px;
+  }
+  .tl-dims span {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 3px; padding: 1px 6px; font-size: 0.78em;
+    color: var(--accent); white-space: nowrap;
+  }
+  .tl-lever {
+    max-width: 740px; margin: 32px auto 0;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px 24px;
+  }
+  .tl-lever h4 {
+    font-size: 0.88em; font-weight: 600; color: var(--text2);
+    margin-bottom: 14px; text-align: center;
+  }
+  .lever-row {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 8px; font-size: 0.8em;
+  }
+  .lever-row .lever-label {
+    width: 56px; text-align: right; color: var(--text2); font-weight: 600;
+    flex-shrink: 0;
+  }
+  .lever-row .lever-bar {
+    flex: 1; height: 14px; background: var(--surface2);
+    border-radius: 7px; overflow: hidden; position: relative;
+  }
+  .lever-row .lever-fill {
+    height: 100%; border-radius: 7px; transition: width 0.6s ease;
+  }
+  .lever-row .lever-val {
+    width: 46px; font-size: 0.88em; font-weight: 600; color: var(--text);
+  }
+  @media (max-width: 600px) {
+    .tl-track { padding-left: 28px; }
+  }
+
   /* Footer */
   .footer {
     padding: 40px 0;
@@ -705,6 +787,7 @@
   <a href="#mismatches" title="六大错配">错</a>
   <a href="#scenarios" title="情景推演">景</a>
   <a href="#precedents" title="历史镜鉴">鉴</a>
+  <a href="#timeline" title="转折点">转</a>
 </nav>
 
 <div class="container">
