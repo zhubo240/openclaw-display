@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>可视化对话</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: #f5f5f7; color: #333; overflow: hidden; height: 100vh; display: flex; }
+
+/* ── Left Sidebar ── */
+#sidebar {
+  width: 300px; min-width: 300px; height: 100vh;
+  background: #fff; border-right: 1px solid #e0e0e0;
+  display: flex; flex-direction: column; z-index: 100;
+  overflow: hidden;
+}
+#sidebar-scroll {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  display: flex; flex-direction: column;
+}
+#sidebar-header {
+  padding: 16px; border-bottom: 1px solid #e8e8e8;
+}
+#sidebar-header h1 { font-size: 15px; font-weight: 600; color: #333; margin-bottom: 8px; }
+#session-title { font-size: 13px; color: #555; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#session-stats { font-size: 11px; color: #999; }
+
+/* Question Input */
+#question-section {
+  padding: 12px 16px; border-bottom: 1px solid #e8e8e8;
+}
+#question-section h3 { font-size: 11px; color: #999; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+#question-input {
+  width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #ddd;
+  background: #fafafa; color: #333; font-size: 13px; font-family: inherit;
+  resize: vertical; height: 80px;
+}
+#question-input:focus { outline: none; border-color: #3b82f6; }
+#ref-list {
+  margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px;
+}
+.ref-tag {
+  font-size: 10px; padding: 2px 8px; border-radius: 10px;
+  background: #fef3c7; border: 1px solid #fbbf24; color: #92400e;
+  display: flex; align-items: center; gap: 4px;
+}
+.ref-tag .ref-remove {
+  cursor: pointer; font-size: 12px; color: #b45309; line-height: 1;
+}
+.ref-tag .ref-remove:hover { color: #d93025; }
+#question-actions {
+  display: flex; gap: 6px; margin-top: 8px; align-items: center;
+}
+.q-btn {
+  padding: 7px 14px; border-radius: 6px; border: 1px solid #d0d0d0;
+  background: #fff; color: #555; font-size: 12px;
+  cursor: pointer; transition: all 0.15s;
+}
+.q-btn:hover { background: #f0f0f0; color: #333; }
+.q-btn.primary { background: #e8f0fe; border-color: #b3d4fc; color: #1a73e8; }
+.q-btn.primary:hover { background: #d2e3fc; }
+.q-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+#ref-mode-btn {
+  font-size: 10px; padding: 4px 10px; border-radius: 10px;
+  border: 1px solid #d0d0d0; background: transparent; color: #888;
+  cursor: pointer; transition: all 0.15s;
+}
+#ref-mode-btn:hover { border-color: #f59e0b; color: #92400e; }
+#ref-mode-btn.active { border-color: #f59e0b; background: #fef3c7; color: #92400e; }
+
+/* Progress */
+#progress-bar {
+  height: 2px; background: #e0e0e0; margin-top: 4px; border-radius: 1px; display: none;
+}
+#progress-fill { height: 100%; background: #10b981; border-radius: 1px; width: 0%; animation: pulse 1.5s ease-in-out infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+#progress-text { font-size: 10px; color: #888; margin-top: 4px; text-align: center; }
+
+/* Filters */
+#filters {
+  padding: 12px 16px; border-bottom: 1px solid #e8e8e8;
+}
+#filters h3 { font-size: 11px; color: #999; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+.filter-row { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 6px; }
+.fbtn {
+  font-size: 10px; padding: 2px 8px; border-radius: 10px;
+  border: 1px solid #d0d0d0; background: transparent; color: #888;
+  cursor: pointer; transition: all 0.15s;
+}
+.fbtn:hover { border-color: #aaa; color: #555; }
+.fbtn.active { border-color: var(--c, #888); color: var(--c, #333); background: rgba(0,0,0,0.04); }
+
+/* Settings */
+#settings-panel {
+  display: none; padding: 12px 16px; border-bottom: 1px solid #e8e8e8;
+}
+#settings-panel.open { display: block; }
+#settings-panel h3 { font-size: 11px; color: #999; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+.setting-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.setting-row label { font-size: 11px; color: #666; width: 60px; flex-shrink: 0; }
+.setting-row input[type="range"] { flex: 1; }
+.setting-row .setting-val { font-size: 11px; color: #888; width: 36px; text-align: right; }
+#settings-gear {
+  background: none; border: none; color: #aaa; font-size: 14px; cursor: pointer; padding: 2px 4px;
+}
+#settings-gear:hover { color: #333; }
+
+/* Session Manager */
+#session-mgr {
+  padding: 12px 16px;
+}
+#session-mgr h3 { font-size: 11px; color: #999; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: space-between; align-items: center; }
+.session-item {
+  padding: 8px 10px; margin-bottom: 4px; border-radius: 6px;
+  background: #fafafa; border: 1px solid transparent;
+  cursor: pointer; transition: all 0.15s;
+}
+.session-item:hover { background: #f0f0f0; }
+.session-item.current { border-color: #ccc; background: #eef2ff; }
+.session-item .s-topic { font-size: 12px; color: #333; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.session-item .s-meta { font-size: 10px; color: #aaa; margin-top: 2px; }
+.session-item .s-actions { display: none; margin-top: 4px; }
+.session-item:hover .s-actions { display: flex; gap: 4px; }
+.s-actions button {
+  font-size: 10px; padding: 2px 8px; border-radius: 4px;
+  border: 1px solid #d0d0d0; background: transparent; color: #888; cursor: pointer;
+}
+.s-actions button:hover { color: #333; border-color: #aaa; }
+.s-actions button.del:hover { color: #d93025; border-color: #f5c6cb; }
+#new-session-btn {
+  font-size: 11px; padding: 2px 8px; border-radius: 4px;
+  border: 1px solid #d0d0d0; background: transparent; color: #888; cursor: pointer;
+}
+#new-session-btn:hover { color: #333; border-color: #aaa; }
+
+/* ── Main area ── */
+#main { flex: 1; display: flex; flex-direction: column; position: relative; background: #fafbfc; }
+#canvas { flex: 1; }
+
+/* ── Log Panel (bottom) ── */
+#log-panel {
+  height: 0; min-height: 0; background: #fff;
+  border-top: 1px solid #e0e0e0; transition: height 0.25s ease;
+  display: flex; flex-direction: column; overflow: hidden;
+}
+#log-panel.open { height: 180px; }
+#log-header {
+  display: flex; align-items: center; padding: 6px 16px;
+  border-bottom: 1px solid #eee; flex-shrink: 0;
+}
+#log-header h3 { font-size: 11px; color: #999; flex: 1; text-transform: uppercase; letter-spacing: 1px; }
+#log-toggle {
+  position: absolute; bottom: 0; right: 20px; z-index: 50;
+  padding: 4px 12px; border-radius: 6px 6px 0 0; border: 1px solid #e0e0e0; border-bottom: none;
+  background: #fff; color: #888; font-size: 11px; cursor: pointer;
+}
+#log-toggle:hover { color: #333; }
+.log-filter-btn {
+  font-size: 10px; padding: 1px 6px; border-radius: 8px;
+  border: 1px solid transparent; background: transparent; color: #aaa;
+  cursor: pointer; margin-left: 4px;
+}
+.log-filter-btn:hover { color: #555; }
+.log-filter-btn.active { border-color: #ccc; color: #555; }
+#log-clear {
+  font-size: 10px; padding: 1px 8px; border-radius: 4px;
+  border: 1px solid #d0d0d0; background: transparent; color: #aaa;
+  cursor: pointer; margin-left: 8px;
+}
+#log-clear:hover { color: #555; }
+#log-content {
+  flex: 1; overflow-y: auto; padding: 8px 16px; font-family: "SF Mono", "Fira Code", monospace;
+}
+.log-entry { font-size: 11px; line-height: 1.6; display: flex; gap: 8px; }
+.log-entry .log-time { color: #bbb; flex-shrink: 0; width: 60px; }
+.log-entry .log-turn { color: #10b981; flex-shrink: 0; width: 24px; font-size: 10px; text-align: right; }
+.log-entry .log-msg { flex: 1; }
+.log-entry[data-level="system"] .log-msg { color: #999; }
+.log-entry[data-level="round"] .log-msg { color: #10b981; font-weight: 500; }
+.log-entry[data-level="info"] .log-msg { color: #666; }
+.log-entry[data-level="success"] .log-msg { color: #0d904f; }
+.log-entry[data-level="pub"] .log-msg { color: #3b82f6; }
+.log-entry[data-level="warn"] .log-msg { color: #b45309; }
+.log-entry[data-level="error"] .log-msg { color: #d93025; }
+
+/* ── Detail Panel (right) ── */
+#detail-panel {
+  position: fixed; right: -420px; top: 0; bottom: 0; width: 400px;
+  background: rgba(255,255,255,0.97); backdrop-filter: blur(16px);
+  border-left: 1px solid #e0e0e0; padding: 20px;
+  transition: right 0.3s ease; z-index: 90; overflow-y: auto;
+}
+#detail-panel.open { right: 0; }
+#detail-panel .close-btn {
+  position: absolute; top: 12px; right: 16px; background: none; border: none;
+  color: #aaa; font-size: 20px; cursor: pointer;
+}
+#detail-panel .close-btn:hover { color: #333; }
+#detail-panel h2 { font-size: 16px; margin-bottom: 8px; margin-top: 20px; }
+#detail-panel .meta { font-size: 11px; color: #999; margin-bottom: 12px; }
+#detail-panel .meta span { margin-right: 12px; }
+#detail-panel .content-text { font-size: 13px; line-height: 1.7; color: #444; margin-bottom: 16px; white-space: pre-wrap; }
+#detail-panel .connections h3 { font-size: 12px; color: #888; margin-bottom: 6px; }
+.conn-item {
+  padding: 4px 8px; margin: 3px 0; border-radius: 4px;
+  background: #f5f5f5; font-size: 11px; color: #555; cursor: pointer;
+}
+.conn-item:hover { background: #eee; color: #333; }
+.energy-bar { height: 3px; border-radius: 2px; margin-top: 8px; background: #e8e8e8; }
+.energy-fill { height: 100%; border-radius: 2px; transition: width 0.3s; }
+.action-btn {
+  padding: 8px 16px; border-radius: 6px; border: 1px solid;
+  font-size: 12px; cursor: pointer; transition: all 0.15s; margin-top: 12px;
+}
+.action-btn:hover { filter: brightness(0.95); }
+.action-btn.answer-btn { border-color: #10b981; background: #ecfdf5; color: #059669; }
+.action-btn.elaborate-btn { border-color: #8b5cf6; background: #f5f3ff; color: #7c3aed; }
+.followup-item {
+  padding: 6px 10px; margin: 3px 0; border-radius: 6px;
+  background: #f0f9ff; border: 1px solid #bae6fd; font-size: 11px; color: #0369a1;
+  cursor: pointer; transition: all 0.15s;
+}
+.followup-item:hover { background: #e0f2fe; }
+
+/* ── Tooltip ── */
+#tooltip {
+  position: fixed; pointer-events: none; z-index: 200;
+  background: #fff; border: 1px solid #ddd; border-radius: 6px;
+  padding: 8px 12px; font-size: 11px; max-width: 300px; display: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+#tooltip .tt-label { font-size: 13px; font-weight: 600; margin-bottom: 4px; color: #333; }
+#tooltip .tt-type { font-size: 10px; color: #888; }
+#tooltip .tt-content { font-size: 11px; color: #555; margin-top: 4px; max-height: 60px; overflow: hidden; }
+
+/* ── Modal ── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 300;
+  display: flex; align-items: center; justify-content: center;
+}
+.modal {
+  background: #fff; border: 1px solid #ddd; border-radius: 10px;
+  padding: 24px; width: 400px; max-width: 90vw;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+}
+.modal h2 { font-size: 15px; margin-bottom: 16px; color: #333; }
+.modal label { display: block; font-size: 12px; color: #888; margin-bottom: 4px; }
+.modal input, .modal textarea {
+  width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #ddd;
+  background: #fafafa; color: #333; font-size: 13px; margin-bottom: 12px;
+  font-family: inherit;
+}
+.modal textarea { height: 80px; resize: vertical; }
+.modal input:focus, .modal textarea:focus { outline: none; border-color: #1a73e8; }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+.modal-actions button {
+  padding: 8px 20px; border-radius: 6px; border: 1px solid #ddd;
+  background: transparent; color: #555; font-size: 12px; cursor: pointer;
+}
+.modal-actions button:hover { background: #f5f5f5; color: #333; }
+.modal-actions button.primary { background: #e8f0fe; border-color: #b3d4fc; color: #1a73e8; }
+.modal-actions button.primary:hover { background: #d2e3fc; }
+
+/* Turn label in SVG */
+.turn-label { font-size: 12px; fill: #bbb; font-weight: 500; }
+
+svg text { user-select: none; }
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- Left Sidebar -->
+<div id="sidebar">
+  <div id="sidebar-header">
+    <h1>可视化对话 <button id="settings-gear" onclick="toggleSettings()">&#9881;</button></h1>
+    <div id="session-title">未选择对话</div>
+    <div id="session-stats"></div>
+  </div>
+
+  <div id="sidebar-scroll">
+  <div id="settings-panel">
+    <h3>显示设置</h3>
+    <div class="setting-row">
+      <label>节点大小</label>
+      <input type="range" id="node-scale" min="0.5" max="3" step="0.1" value="1.0">
+      <span class="setting-val" id="node-scale-val">1.0x</span>
+    </div>
+    <div class="setting-row">
+      <label>节点间距</label>
+      <input type="range" id="spacing-scale" min="0.5" max="3" step="0.1" value="1.0">
+      <span class="setting-val" id="spacing-scale-val">1.0x</span>
+    </div>
+  </div>
+
+  <div id="question-section">
+    <h3>提问</h3>
+    <textarea id="question-input" placeholder="输入你的问题..."></textarea>
+    <div id="ref-list"></div>
+    <div id="question-actions">
+      <button class="q-btn primary" id="btn-ask" onclick="askQuestion()" disabled>提问</button>
+      <button id="ref-mode-btn" onclick="toggleRefMode()">引用节点</button>
+      <div id="progress-bar"><div id="progress-fill"></div></div>
+    </div>
+    <div id="progress-text"></div>
+  </div>
+
+  <div id="filters">
+    <h3>筛选</h3>
+    <div class="filter-row" id="type-filters"></div>
+    <div class="filter-row" id="creator-filters"></div>
+  </div>
+
+  <div id="session-mgr">
+    <h3>对话列表 <button id="new-session-btn" onclick="showNewSessionModal()">+ 新建</button></h3>
+    <div id="session-list"></div>
+  </div>
+  </div>
+</div>
+
+<!-- Main -->
+<div id="main">
+  <svg id="canvas"></svg>
+  <button id="log-toggle" onclick="toggleLog()">日志</button>
+  <div id="log-panel">
+    <div id="log-header">
+      <h3>对话日志</h3>
+      <button class="log-filter-btn active" data-lf="all">全部</button>
+      <button class="log-filter-btn" data-lf="round">轮次</button>
+      <button class="log-filter-btn" data-lf="success">结果</button>
+      <button class="log-filter-btn" data-lf="error">错误</button>
+      <button id="log-clear" onclick="clearLogs()">清空</button>
+    </div>
+    <div id="log-content"></div>
+  </div>
+</div>
+
+<!-- Right detail panel -->
+<div id="detail-panel">
+  <button class="close-btn" onclick="closePanel()">&times;</button>
+  <div id="detail-content"></div>
+</div>
+
+<div id="tooltip">
+  <div class="tt-label"></div>
+  <div class="tt-type"></div>
+  <div class="tt-content"></div>
+</div>
+
+<!-- Modal container -->
+<div id="modal-root"></div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+// ── Constants ──
+const NODE_COLORS = {
+  question: '#3b82f6',     // Blue
+  answer: '#10b981',       // Green
+  explanation: '#8b5cf6',  // Purple
+};
+const NODE_NAMES = {
+  question: '问题', answer: '回答', explanation: '解释',
+};
+const CREATOR_COLORS = {
+  user: '#3b82f6', ai: '#10b981',
+};
+const TYPE_SHAPES = {
+  question: 'diamond', answer: 'circle', explanation: 'rect',
+};
+const EDGE_COLORS = {
+  responds_to: '#10b981', elaborates: '#8b5cf6',
+  references: '#f59e0b', ai_references: '#f97316',
+};
+
+// ── State ──
+let graphData = { nodes: [], edges: [], turn: 0 };
+let currentFilter = { type: 'all', creator: 'all' };
+let logFilter = 'all';
+let logSeq = 0;
+let allLogEntries = [];
+let pollTimer = null;
+let logPollTimer = null;
+let isRunning = false;
+let referenceMode = false;
+let selectedReferences = [];
+let focusedNodeId = null;
+
+// ── API Helpers ──
+async function api(method, path, body) {
+  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(path, opts);
+  return res.json();
+}
+
+// ── Session Management ──
+async function loadSessions() {
+  const data = await api('GET', '/api/sessions');
+  const list = document.getElementById('session-list');
+  list.innerHTML = '';
+  (data.sessions || []).forEach(s => {
+    const d = document.createElement('div');
+    d.className = 'session-item' + (s.is_current ? ' current' : '');
+    const date = s.created_at ? new Date(s.created_at * 1000).toLocaleDateString('zh-CN') : '';
+    d.innerHTML = `
+      <div class="s-topic">${esc(s.title || s.id)}</div>
+      <div class="s-meta">${date} &middot; T${s.turns} &middot; ${s.nodes}节点</div>
+      <div class="s-actions">
+        ${s.is_current ? '' : `<button onclick="switchSession('${s.id}')">切换</button>`}
+        <button class="del" onclick="deleteSession('${s.id}', event)">删除</button>
+      </div>
+    `;
+    if (!s.is_current) {
+      d.addEventListener('dblclick', () => switchSession(s.id));
+    }
+    list.appendChild(d);
+  });
+}
+
+async function switchSession(id) {
+  await api('POST', '/api/session/switch', { id });
+  await refreshAll();
+}
+
+async function deleteSession(id, event) {
+  if (event) event.stopPropagation();
+  if (!confirm('删除这个对话?')) return;
+  await api('POST', '/api/session/delete', { id });
+  await refreshAll();
+}
+
+function showNewSessionModal() {
+  const root = document.getElementById('modal-root');
+  root.innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal">
+        <h2>新建对话</h2>
+        <label>对话主题</label>
+        <input id="m-title" placeholder="例: 关于量子计算的讨论" autofocus>
+        <label>描述 (可选)</label>
+        <textarea id="m-desc" placeholder="描述讨论方向..."></textarea>
+        <div class="modal-actions">
+          <button onclick="closeModal()">取消</button>
+          <button class="primary" onclick="createSession()">创建</button>
+        </div>
+      </div>
+    </div>
+  `;
+  setTimeout(() => document.getElementById('m-title')?.focus(), 100);
+}
+
+async function createSession() {
+  const title = document.getElementById('m-title').value.trim();
+  const desc = document.getElementById('m-desc').value.trim();
+  if (!title) return;
+  closeModal();
+  await api('POST', '/api/session/create', { title, description: desc });
+  await refreshAll();
+}
+
+function closeModal() {
+  document.getElementById('modal-root').innerHTML = '';
+}
+
+// ── Question & Reference ──
+function toggleRefMode() {
+  referenceMode = !referenceMode;
+  document.getElementById('ref-mode-btn').classList.toggle('active', referenceMode);
+  // Re-render to show selection state
+  renderGraph();
+}
+
+function addReference(nodeId) {
+  if (selectedReferences.includes(nodeId)) {
+    selectedReferences = selectedReferences.filter(id => id !== nodeId);
+  } else {
+    selectedReferences.push(nodeId);
+  }
+  renderRefList();
+  renderGraph();
+}
+
+function removeReference(nodeId) {
+  selectedReferences = selectedReferences.filter(id => id !== nodeId);
+  renderRefList();
+  renderGraph();
+}
+
+function renderRefList() {
+  const container = document.getElementById('ref-list');
+  container.innerHTML = '';
+  selectedReferences.forEach(id => {
+    const node = graphData.nodes.find(n => n.id === id);
+    if (!node) return;
+    const tag = document.createElement('span');
+    tag.className = 'ref-tag';
+    tag.innerHTML = `${esc(node.label)} <span class="ref-remove" onclick="removeReference('${id}')">&times;</span>`;
+    container.appendChild(tag);
+  });
+}
+
+async function askQuestion() {
+  const input = document.getElementById('question-input');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  const refs = [...selectedReferences];
+  selectedReferences = [];
+  renderRefList();
+  if (referenceMode) toggleRefMode();
+
+  await api('POST', '/api/question', { text, references: refs });
+  await loadNetwork();
+}
+
+async function activateNode(nodeId) {
+  const result = await api('POST', '/api/activate', { node_id: nodeId });
+  if (result.ok) {
+    startPolling();
+  } else {
+    alert(result.error || '无法激活');
+  }
+}
+
+function useFollowup(text) {
+  document.getElementById('question-input').value = text;
+  document.getElementById('question-input').focus();
+}
+
+// ── Status & Polling ──
+async function fetchStatus() {
+  const data = await api('GET', '/api/status');
+  isRunning = data.running;
+
+  document.getElementById('btn-ask').disabled = isRunning || !data.session;
+
+  const pbar = document.getElementById('progress-bar');
+  const ptxt = document.getElementById('progress-text');
+  if (isRunning) {
+    pbar.style.display = 'block';
+    document.getElementById('progress-fill').style.width = '100%';
+    ptxt.textContent = data.progress?.action === 'answering' ? 'AI 回答中...' : 'AI 展开中...';
+  } else {
+    pbar.style.display = 'none';
+    ptxt.textContent = data.progress?.status === 'done' ? '完成' : (data.progress?.status === 'error' ? '出错' : '');
+  }
+
+  if (data.title) {
+    document.getElementById('session-title').textContent = data.title;
+  } else {
+    document.getElementById('session-title').textContent = '未选择对话';
+  }
+  if (data.stats) {
+    document.getElementById('session-stats').textContent =
+      `T${data.stats.turn} | ${data.stats.nodes}节点 ${data.stats.edges}连接`;
+  }
+
+  if (!isRunning && pollTimer) {
+    stopPolling();
+    await loadNetwork();
+    await loadSessions();
+  }
+}
+
+function startPolling() {
+  if (pollTimer) return;
+  pollTimer = setInterval(fetchStatus, 1500);
+  if (!logPollTimer) {
+    logPollTimer = setInterval(fetchLogs, 1000);
+  }
+  fetchStatus();
+}
+
+function stopPolling() {
+  if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+  setTimeout(() => {
+    if (!isRunning && logPollTimer) { clearInterval(logPollTimer); logPollTimer = null; }
+  }, 3000);
+}
+
+// ── Logs ──
+async function fetchLogs() {
+  const data = await api('GET', `/api/logs?since=${logSeq}`);
+  if (!data.logs || data.logs.length === 0) return;
+  logSeq = data.seq;
+  allLogEntries = allLogEntries.concat(data.logs);
+  if (allLogEntries.length > 2000) allLogEntries = allLogEntries.slice(-2000);
+  renderLogEntries(data.logs, true);
+}
+
+function renderLogEntries(entries, append) {
+  const container = document.getElementById('log-content');
+  if (!append) container.innerHTML = '';
+  const autoScroll = container.scrollHeight - container.scrollTop - container.clientHeight < 40;
+  entries.forEach(entry => {
+    if (logFilter !== 'all' && entry.level !== logFilter) return;
+    const el = document.createElement('div');
+    el.className = 'log-entry';
+    el.dataset.level = entry.level;
+    const t = new Date(entry.time * 1000);
+    const ts = `${t.getHours().toString().padStart(2,'0')}:${t.getMinutes().toString().padStart(2,'0')}:${t.getSeconds().toString().padStart(2,'0')}`;
+    const turnLabel = entry.turn != null ? `T${entry.turn}` : '';
+    el.innerHTML = `<span class="log-time">${ts}</span><span class="log-turn">${turnLabel}</span><span class="log-msg">${esc(entry.msg)}</span>`;
+    container.appendChild(el);
+  });
+  if (autoScroll) container.scrollTop = container.scrollHeight;
+}
+
+function refilterLogs() { renderLogEntries(allLogEntries, false); }
+function clearLogs() { document.getElementById('log-content').innerHTML = ''; allLogEntries = []; logSeq = 0; }
+function toggleLog() {
+  document.getElementById('log-panel').classList.toggle('open');
+  const btn = document.getElementById('log-toggle');
+  btn.textContent = document.getElementById('log-panel').classList.contains('open') ? '收起日志' : '日志';
+}
+
+document.querySelectorAll('.log-filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.log-filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    logFilter = btn.dataset.lf;
+    refilterLogs();
+  });
+});
+
+// ── Filters ──
+function initFilters() {
+  const typeDiv = document.getElementById('type-filters');
+  typeDiv.innerHTML = `<button class="fbtn active" data-filter="type" data-value="all">全部</button>`;
+  for (const [t, name] of Object.entries(NODE_NAMES)) {
+    const c = NODE_COLORS[t];
+    typeDiv.innerHTML += `<button class="fbtn" data-filter="type" data-value="${t}" style="--c:${c}">${name}</button>`;
+  }
+
+  const creatorDiv = document.getElementById('creator-filters');
+  creatorDiv.innerHTML = `<button class="fbtn active" data-filter="creator" data-value="all">全部</button>`;
+  creatorDiv.innerHTML += `<button class="fbtn" data-filter="creator" data-value="user" style="--c:#3b82f6">用户</button>`;
+  creatorDiv.innerHTML += `<button class="fbtn" data-filter="creator" data-value="ai" style="--c:#10b981">AI</button>`;
+
+  document.querySelectorAll('.fbtn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const ft = btn.dataset.filter;
+      document.querySelectorAll(`.fbtn[data-filter="${ft}"]`).forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter[ft] = btn.dataset.value === 'all' ? 'all' : btn.dataset.value;
+      renderGraph();
+    });
+  });
+}
+
+// ── Network ──
+async function loadNetwork() {
+  try {
+    const data = await api('GET', '/api/network');
+    graphData = data;
+  } catch(e) {
+    graphData = { nodes: [], edges: [], turn: 0 };
+  }
+  renderGraph();
+}
+
+// ── Graph Rendering ──
+function getFiltered() {
+  let nodes = graphData.nodes.filter(n => {
+    if (currentFilter.type !== 'all' && n.type !== currentFilter.type) return false;
+    if (currentFilter.creator !== 'all' && n.created_by !== currentFilter.creator) return false;
+    return true;
+  });
+  const nodeIds = new Set(nodes.map(n => n.id));
+  let edges = graphData.edges.filter(e => nodeIds.has(e.source) && nodeIds.has(e.target));
+  return { nodes, edges };
+}
+
+function layoutByTurn(nodes, edges) {
+  const colWidth = 200 * spacingScale;
+  const rowHeight = 160 * spacingScale;
+
+  // Build tree structure
+  const childrenMap = {};
+  const rootNodes = [];
+  nodes.forEach(n => {
+    if (!n.parent_id || !nodes.find(p => p.id === n.parent_id)) {
+      rootNodes.push(n);
+    } else {
+      if (!childrenMap[n.parent_id]) childrenMap[n.parent_id] = [];
+      childrenMap[n.parent_id].push(n);
+    }
+  });
+
+  // Sort roots by turn
+  rootNodes.sort((a, b) => (a.turn || 0) - (b.turn || 0));
+
+  const positions = {};
+  let nextX = 0;
+
+  function layoutSubtree(node, depth) {
+    const children = (childrenMap[node.id] || []).sort((a, b) => (a.turn || 0) - (b.turn || 0));
+    if (children.length === 0) {
+      positions[node.id] = { x: nextX, y: depth * rowHeight };
+      nextX += colWidth;
+      return;
+    }
+    children.forEach(child => layoutSubtree(child, depth + 1));
+    // Center parent above children
+    const childXs = children.map(c => positions[c.id].x);
+    positions[node.id] = {
+      x: (Math.min(...childXs) + Math.max(...childXs)) / 2,
+      y: depth * rowHeight,
+    };
+  }
+
+  rootNodes.forEach(root => layoutSubtree(root, 0));
+
+  // Handle orphan nodes (referenced but filtered parent)
+  nodes.forEach(n => {
+    if (!positions[n.id]) {
+      positions[n.id] = { x: nextX, y: 0 };
+      nextX += colWidth;
+    }
+  });
+
+  return { positions };
+}
+
+function renderGraph() {
+  const { nodes, edges } = getFiltered();
+  const svg = d3.select('#canvas');
+  svg.selectAll('*').remove();
+
+  const rect = document.getElementById('main').getBoundingClientRect();
+  const width = rect.width;
+  const height = rect.height - (document.getElementById('log-panel').classList.contains('open') ? 180 : 0);
+  svg.attr('width', width).attr('height', height);
+
+  if (nodes.length === 0) {
+    svg.append('text').attr('x', width/2).attr('y', height/2)
+      .attr('text-anchor', 'middle').attr('fill', '#aaa').attr('font-size', 13)
+      .text(graphData.nodes.length === 0 ? '创建对话并提问以开始' : '没有匹配的节点');
+    return;
+  }
+
+  const { positions } = layoutByTurn(nodes, edges);
+
+  const xs = Object.values(positions).map(p => p.x);
+  const ys = Object.values(positions).map(p => p.y);
+  const gw = (xs.length > 1 ? Math.max(...xs) - Math.min(...xs) : 200) + 300;
+  const gh = (ys.length > 1 ? Math.max(...ys) - Math.min(...ys) : 200) + 200;
+  const offsetX = (xs.length > 0 ? Math.min(...xs) : 0) - 150;
+  const offsetY = (ys.length > 0 ? Math.min(...ys) : 0) - 100;
+
+  const container = svg.append('g');
+  const zoom = d3.zoom().scaleExtent([0.15, 4]).on('zoom', (e) => container.attr('transform', e.transform));
+  svg.call(zoom);
+
+  const scale = Math.min(width / gw, height / gh, 1.5) * 0.85;
+  const tx = (width - gw * scale) / 2 - offsetX * scale;
+  const ty = (height - gh * scale) / 2 - offsetY * scale;
+  svg.call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
+
+  // Arrow markers
+  const defs = svg.append('defs');
+  Object.entries(EDGE_COLORS).forEach(([type, color]) => {
+    defs.append('marker').attr('id', `arrow-${type}`)
+      .attr('viewBox', '0 0 10 6').attr('refX', 10).attr('refY', 3)
+      .attr('markerWidth', 8).attr('markerHeight', 6).attr('orient', 'auto')
+      .append('path').attr('d', 'M0,0 L10,3 L0,6 Z').attr('fill', color);
+  });
+
+  // Edges
+  const edgeGroup = container.append('g');
+  const edgeEls = edgeGroup.selectAll('g').data(edges).enter().append('g');
+
+  function orthoPath(src, tgt) {
+    const nodeR = 40 * nodeScale;
+    const dx = Math.abs(tgt.x - src.x), dy = Math.abs(tgt.y - src.y);
+    if (dy >= dx * 0.3) {
+      const sy = src.y + nodeR, ey = tgt.y - nodeR;
+      const midY = (sy + ey) / 2;
+      return { d: `M${src.x},${sy} L${src.x},${midY} L${tgt.x},${midY} L${tgt.x},${ey}`, mx: (src.x+tgt.x)/2, my: midY };
+    } else {
+      const dir = tgt.x > src.x ? 1 : -1;
+      const sx = src.x + dir * nodeR, ex = tgt.x - dir * nodeR;
+      const midX = (sx + ex) / 2;
+      return { d: `M${sx},${src.y} L${midX},${src.y} L${midX},${tgt.y} L${ex},${tgt.y}`, mx: midX, my: (src.y+tgt.y)/2 };
+    }
+  }
+
+  function curvePath(src, tgt) {
+    const dx = tgt.x - src.x;
+    const dy = tgt.y - src.y;
+    const cx = (src.x + tgt.x) / 2 + dy * 0.3;
+    const cy = (src.y + tgt.y) / 2 - dx * 0.3;
+    return { d: `M${src.x},${src.y} Q${cx},${cy} ${tgt.x},${tgt.y}`, mx: cx, my: cy };
+  }
+
+  edgeEls.each(function(e) {
+    const g = d3.select(this);
+    const src = positions[e.source], tgt = positions[e.target];
+    if (!src || !tgt) return;
+    const color = EDGE_COLORS[e.type] || '#999';
+    const isRef = e.type === 'references' || e.type === 'ai_references';
+    const sw = isRef ? 1.5 : 2;
+
+    let p;
+    if (isRef) {
+      p = curvePath(src, tgt);
+    } else {
+      p = orthoPath(src, tgt);
+    }
+
+    g.append('path')
+      .attr('d', p.d)
+      .attr('fill', 'none').attr('stroke', color).attr('stroke-width', sw)
+      .attr('stroke-opacity', isRef ? 0.4 : 0.6)
+      .attr('stroke-dasharray', isRef ? '6,3' : 'none')
+      .attr('marker-end', `url(#arrow-${e.type})`)
+      .attr('class', 'edge-path');
+    if (e.label) {
+      g.append('text').attr('x', p.mx).attr('y', p.my - 4)
+        .attr('text-anchor', 'middle').attr('fill', '#888').attr('font-size', 14)
+        .attr('opacity', 0).text(e.label).attr('class', 'edge-label');
+    }
+    g.on('mouseenter', function() {
+      d3.select(this).select('.edge-path').attr('stroke-opacity', 1);
+      d3.select(this).select('.edge-label').attr('opacity', 1);
+    }).on('mouseleave', function() {
+      d3.select(this).select('.edge-path').attr('stroke-opacity', isRef ? 0.4 : 0.6);
+      d3.select(this).select('.edge-label').attr('opacity', 0);
+    });
+  });
+
+  // Nodes
+  const nodeGroup = container.append('g');
+  const nodeMap = {}; nodes.forEach(n => nodeMap[n.id] = n);
+  const nodeEls = nodeGroup.selectAll('g').data(nodes, d=>d.id).enter().append('g')
+    .attr('transform', d => `translate(${positions[d.id]?.x||0},${positions[d.id]?.y||0})`)
+    .attr('cursor', 'pointer');
+
+  nodeEls.each(function(d) {
+    const g = d3.select(this);
+    const color = NODE_COLORS[d.type] || '#888';
+    const r = Math.max(30, Math.min(50, 35 + (d.energy || 1) * 8)) * nodeScale;
+    const isSelected = selectedReferences.includes(d.id);
+    const isFocused = focusedNodeId === d.id;
+
+    // Reference selection highlight
+    if (isSelected) {
+      g.append('circle').attr('r', r+10).attr('fill','none')
+        .attr('stroke','#f59e0b').attr('stroke-width',3).attr('stroke-dasharray','5,3');
+    }
+
+    // Focused node pulsing ring
+    if (isFocused) {
+      g.append('circle').attr('r', r+6).attr('fill','none')
+        .attr('stroke', color).attr('stroke-width', 2).attr('stroke-opacity', 0.5)
+        .append('animate').attr('attributeName','stroke-opacity').attr('values','0.5;1;0.5').attr('dur','2s').attr('repeatCount','indefinite');
+    }
+
+    // Has children indicator
+    const children = graphData.nodes.filter(n => n.parent_id === d.id);
+    const hasAnswer = d.type === 'question' && children.some(c => c.type === 'answer');
+
+    const shape = TYPE_SHAPES[d.type] || 'circle';
+    if (shape === 'circle') {
+      g.append('circle').attr('r', r).attr('fill', color).attr('fill-opacity', 0.12).attr('stroke', color).attr('stroke-width', 1.5);
+    } else if (shape === 'rect') {
+      g.append('rect').attr('x',-r*1.2).attr('y',-r*0.8).attr('width',r*2.4).attr('height',r*1.6).attr('rx',4)
+        .attr('fill',color).attr('fill-opacity',0.12).attr('stroke',color).attr('stroke-width',1.5);
+    } else if (shape === 'diamond') {
+      g.append('polygon').attr('points',`0,${-r} ${r},0 0,${r} ${-r},0`)
+        .attr('fill',color).attr('fill-opacity',0.12).attr('stroke',color).attr('stroke-width',1.5);
+    }
+
+    // Status indicator for unanswered questions
+    if (d.type === 'question' && !hasAnswer) {
+      g.append('circle').attr('cx', r*0.7).attr('cy', -r*0.7).attr('r', 6)
+        .attr('fill', '#ef4444').attr('stroke', '#fff').attr('stroke-width', 1.5);
+    }
+
+    const label = d.label.length > 10 ? d.label.slice(0,9)+'..' : d.label;
+    g.append('text').attr('y', 5).attr('text-anchor','middle').attr('fill','#333').attr('font-size', 18*nodeScale).attr('font-weight',500).text(label);
+    // Turn label below
+    g.append('text').attr('y', r+18).attr('text-anchor','middle').attr('fill','#aaa').attr('font-size', 14*nodeScale).text(`T${d.turn||'?'}`);
+  });
+
+  // Interactions
+  nodeEls.on('mouseenter', function(event, d) {
+    const tt = document.getElementById('tooltip');
+    tt.style.display = 'block';
+    tt.querySelector('.tt-label').textContent = d.label;
+    tt.querySelector('.tt-type').textContent = `${NODE_NAMES[d.type]||d.type} | ${d.created_by === 'user' ? '用户' : 'AI'} | T${d.turn||'?'}`;
+    tt.querySelector('.tt-content').textContent = (d.content || '').slice(0, 100);
+    tt.style.left = (event.clientX+14)+'px'; tt.style.top = (event.clientY-10)+'px';
+    edgeEls.each(function(e) {
+      const c = e.source===d.id || e.target===d.id;
+      d3.select(this).select('.edge-path').attr('stroke-opacity', c?1:0.1);
+      d3.select(this).select('.edge-label').attr('opacity', c?1:0);
+    });
+    nodeEls.attr('opacity', nd => {
+      if (nd.id===d.id) return 1;
+      for (const e of edges) { if ((e.source===d.id&&e.target===nd.id)||(e.target===d.id&&e.source===nd.id)) return 1; }
+      return 0.2;
+    });
+  })
+  .on('mousemove', function(event) {
+    const tt = document.getElementById('tooltip');
+    tt.style.left = (event.clientX+14)+'px'; tt.style.top = (event.clientY-10)+'px';
+  })
+  .on('mouseleave', function() {
+    document.getElementById('tooltip').style.display = 'none';
+    edgeEls.each(function(e) {
+      const isRef = e.type === 'references' || e.type === 'ai_references';
+      d3.select(this).select('.edge-path').attr('stroke-opacity', isRef ? 0.4 : 0.6);
+      d3.select(this).select('.edge-label').attr('opacity', 0);
+    });
+    nodeEls.attr('opacity', 1);
+  })
+  .on('click', function(event, d) {
+    event.stopPropagation();
+    if (referenceMode) {
+      addReference(d.id);
+      return;
+    }
+    focusedNodeId = d.id;
+    showDetail(d, edges, nodeMap);
+    renderGraph(); // Re-render to show focus
+  });
+
+  svg.on('click', () => { closePanel(); focusedNodeId = null; renderGraph(); });
+}
+
+function showDetail(node, edges, nodeMap) {
+  const panel = document.getElementById('detail-panel');
+  const content = document.getElementById('detail-content');
+  const color = NODE_COLORS[node.type] || '#888';
+  const typeName = NODE_NAMES[node.type] || node.type;
+  const creatorName = node.created_by === 'user' ? '用户' : 'AI';
+
+  let html = `
+    <h2 style="color:${color}">${esc(node.label)}</h2>
+    <div class="meta">
+      <span>${typeName}</span><span>${creatorName}</span><span>T${node.turn||'?'}</span>
+    </div>
+    <div class="content-text">${esc(node.content || '无内容')}</div>
+  `;
+
+  // Action buttons
+  if (node.type === 'question') {
+    const children = graphData.nodes.filter(n => n.parent_id === node.id);
+    const hasAnswer = children.some(c => c.type === 'answer');
+    if (!hasAnswer) {
+      html += `<button class="action-btn answer-btn" onclick="activateNode('${node.id}')">激活 AI 回答</button>`;
+    } else {
+      html += `<div style="font-size:11px;color:#10b981;margin-top:8px;">已有回答</div>`;
+    }
+  } else if (node.type === 'answer' || node.type === 'explanation') {
+    html += `<button class="action-btn elaborate-btn" onclick="activateNode('${node.id}')">展开解释</button>`;
+  }
+
+  // Suggested followups
+  if (node.suggested_followups && node.suggested_followups.length > 0) {
+    html += `<div style="margin-top:12px;"><h3 style="font-size:12px;color:#0369a1;margin-bottom:6px;">建议追问</h3>`;
+    node.suggested_followups.forEach(f => {
+      html += `<div class="followup-item" onclick="useFollowup('${esc(f)}')">${esc(f)}</div>`;
+    });
+    html += '</div>';
+  }
+
+  // Thread (parent chain)
+  // Walk up parent chain
+  const thread = [];
+  let cur = node.parent_id;
+  const visited = new Set([node.id]);
+  while (cur && nodeMap[cur] && !visited.has(cur)) {
+    visited.add(cur);
+    thread.unshift(nodeMap[cur]);
+    cur = nodeMap[cur].parent_id;
+  }
+  if (thread.length > 0) {
+    html += `<div style="margin-top:12px;"><h3 style="font-size:12px;color:#888;margin-bottom:6px;">对话线索</h3>`;
+    thread.forEach(t => {
+      const tc = NODE_COLORS[t.type] || '#888';
+      html += `<div class="conn-item" onclick="clickNode('${t.id}')">
+        <span style="color:${tc};">${NODE_NAMES[t.type]||t.type}</span> ${esc(t.label)}
+        <div style="font-size:10px;color:#aaa;margin-top:2px;">${esc((t.content||'').slice(0,60))}${(t.content||'').length>60?'...':''}</div>
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  // Children
+  const children = graphData.nodes.filter(n => n.parent_id === node.id);
+  if (children.length > 0) {
+    html += `<div style="margin-top:12px;"><h3 style="font-size:12px;color:#888;margin-bottom:6px;">子节点 (${children.length})</h3>`;
+    children.forEach(c => {
+      const cc = NODE_COLORS[c.type] || '#888';
+      html += `<div class="conn-item" onclick="clickNode('${c.id}')">
+        <span style="color:${cc};">${NODE_NAMES[c.type]||c.type}</span> ${esc(c.label)}
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  // References
+  if (node.references && node.references.length > 0) {
+    html += `<div style="margin-top:12px;"><h3 style="font-size:12px;color:#f59e0b;margin-bottom:6px;">引用</h3>`;
+    node.references.forEach(refId => {
+      const ref = nodeMap[refId];
+      if (!ref) return;
+      const rc = NODE_COLORS[ref.type] || '#888';
+      html += `<div class="conn-item" onclick="clickNode('${refId}')">
+        <span style="color:${rc};">${NODE_NAMES[ref.type]||ref.type}</span> ${esc(ref.label)}
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  // Edit/Delete for user nodes
+  if (node.created_by === 'user') {
+    html += `
+      <div style="margin-top:16px;border-top:1px solid #eee;padding-top:12px;display:flex;gap:8px;">
+        <button onclick="editNode('${node.id}')" style="font-size:11px;padding:4px 12px;border-radius:4px;border:1px solid #ddd;background:#fff;color:#555;cursor:pointer;">编辑</button>
+        <button onclick="deleteNode('${node.id}')" style="font-size:11px;padding:4px 12px;border-radius:4px;border:1px solid #fca5a5;background:#fff;color:#ef4444;cursor:pointer;">删除</button>
+      </div>
+    `;
+  }
+
+  content.innerHTML = html;
+  panel.classList.add('open');
+}
+
+function clickNode(id) {
+  const node = graphData.nodes.find(n => n.id === id);
+  if (node) {
+    focusedNodeId = id;
+    const { edges } = getFiltered();
+    const nodeMap = {}; graphData.nodes.forEach(n => nodeMap[n.id] = n);
+    showDetail(node, edges, nodeMap);
+    renderGraph();
+  }
+}
+
+function closePanel() { document.getElementById('detail-panel').classList.remove('open'); }
+
+async function editNode(nodeId) {
+  const node = graphData.nodes.find(n => n.id === nodeId);
+  if (!node) return;
+  const root = document.getElementById('modal-root');
+  root.innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal">
+        <h2>编辑问题</h2>
+        <textarea id="edit-text" style="height:100px">${esc(node.content)}</textarea>
+        <div class="modal-actions">
+          <button onclick="closeModal()">取消</button>
+          <button class="primary" onclick="saveEdit('${nodeId}')">保存</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function saveEdit(nodeId) {
+  const text = document.getElementById('edit-text').value.trim();
+  if (!text) return;
+  closeModal();
+  await api('POST', '/api/node/update', { node_id: nodeId, text });
+  await loadNetwork();
+}
+
+async function deleteNode(nodeId) {
+  if (!confirm('删除此节点及其所有子节点?')) return;
+  closePanel();
+  await api('POST', '/api/node/delete', { node_id: nodeId });
+  await loadNetwork();
+}
+
+// ── Utilities ──
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+async function refreshAll() {
+  await Promise.all([loadSessions(), fetchStatus(), loadNetwork()]);
+  fetchLogs();
+}
+
+// ── Settings ──
+let nodeScale = parseFloat(localStorage.getItem('conv_node_scale') || '1.0');
+let spacingScale = parseFloat(localStorage.getItem('conv_spacing_scale') || '1.0');
+
+function toggleSettings() {
+  document.getElementById('settings-panel').classList.toggle('open');
+}
+
+function initSettings() {
+  const nodeS = document.getElementById('node-scale');
+  const nodeV = document.getElementById('node-scale-val');
+  const spS = document.getElementById('spacing-scale');
+  const spV = document.getElementById('spacing-scale-val');
+  nodeS.value = nodeScale; nodeV.textContent = nodeScale + 'x';
+  spS.value = spacingScale; spV.textContent = spacingScale + 'x';
+  nodeS.oninput = () => {
+    nodeScale = parseFloat(nodeS.value);
+    nodeV.textContent = nodeScale.toFixed(1) + 'x';
+    localStorage.setItem('conv_node_scale', nodeScale);
+    renderGraph();
+  };
+  spS.oninput = () => {
+    spacingScale = parseFloat(spS.value);
+    spV.textContent = spacingScale.toFixed(1) + 'x';
+    localStorage.setItem('conv_spacing_scale', spacingScale);
+    renderGraph();
+  };
+}
+
+// ── Init ──
+initFilters();
+initSettings();
+refreshAll();
+logPollTimer = setInterval(fetchLogs, 2000);
+
+window.addEventListener('resize', () => renderGraph());
+
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+    // Enter in question input = submit
+    if (e.target.id === 'question-input' && e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      askQuestion();
+    }
+    return;
+  }
+  if (e.key === 'l' || e.key === 'L') toggleLog();
+  if (e.key === 'Escape') { closePanel(); closeModal(); focusedNodeId = null; renderGraph(); }
+  if (e.key === 'n' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); showNewSessionModal(); }
+  if (e.key === 'r') toggleRefMode();
+});
+</script>
+</body>
+</html>
