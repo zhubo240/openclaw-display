@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>探索网络 - DAG 可视化</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: #0a0a0f; color: #e0e0e0; overflow: hidden; height: 100vh; }
+
+#toolbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(10,10,15,0.92); backdrop-filter: blur(12px);
+  border-bottom: 1px solid #222; padding: 10px 20px;
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+}
+#toolbar h1 { font-size: 15px; font-weight: 600; color: #aaa; white-space: nowrap; }
+.filter-group { display: flex; gap: 6px; align-items: center; }
+.filter-group label { font-size: 12px; color: #777; }
+.filter-btn {
+  font-size: 11px; padding: 3px 10px; border-radius: 12px;
+  border: 1px solid #333; background: transparent; color: #999;
+  cursor: pointer; transition: all 0.2s;
+}
+.filter-btn:hover { border-color: #555; color: #ccc; }
+.filter-btn.active { border-color: var(--c, #888); color: var(--c, #fff); background: rgba(255,255,255,0.06); }
+#stats { font-size: 11px; color: #555; margin-left: auto; white-space: nowrap; }
+#round-slider { width: 120px; accent-color: #666; }
+
+#canvas { width: 100%; height: 100%; }
+
+#detail-panel {
+  position: fixed; right: -380px; top: 0; bottom: 0; width: 360px;
+  background: rgba(15,15,22,0.96); backdrop-filter: blur(16px);
+  border-left: 1px solid #222; padding: 60px 20px 20px;
+  transition: right 0.3s ease; z-index: 90; overflow-y: auto;
+}
+#detail-panel.open { right: 0; }
+#detail-panel .close-btn {
+  position: absolute; top: 12px; right: 16px; background: none; border: none;
+  color: #666; font-size: 20px; cursor: pointer;
+}
+#detail-panel .close-btn:hover { color: #fff; }
+#detail-panel h2 { font-size: 16px; margin-bottom: 8px; }
+#detail-panel .meta { font-size: 11px; color: #666; margin-bottom: 12px; }
+#detail-panel .meta span { margin-right: 12px; }
+#detail-panel .summary { font-size: 13px; line-height: 1.6; color: #bbb; margin-bottom: 16px; }
+#detail-panel .connections { font-size: 12px; }
+#detail-panel .connections h3 { font-size: 12px; color: #777; margin-bottom: 6px; }
+#detail-panel .conn-item {
+  padding: 4px 8px; margin: 3px 0; border-radius: 4px;
+  background: rgba(255,255,255,0.03); font-size: 11px; color: #999;
+  cursor: pointer;
+}
+#detail-panel .conn-item:hover { background: rgba(255,255,255,0.07); color: #ccc; }
+.energy-bar { height: 3px; border-radius: 2px; margin-top: 8px; background: #1a1a2a; }
+.energy-fill { height: 100%; border-radius: 2px; transition: width 0.3s; }
+
+#tooltip {
+  position: fixed; pointer-events: none; z-index: 200;
+  background: rgba(20,20,30,0.95); border: 1px solid #333; border-radius: 6px;
+  padding: 8px 12px; font-size: 11px; max-width: 280px; display: none;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+#tooltip .tt-label { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+#tooltip .tt-type { font-size: 10px; color: #888; }
+
+svg text { user-select: none; }
+</style>
+</head>
+<body>
+
+<div id="toolbar">
+  <h1>探索网络</h1>
+  <div class="filter-group">
+    <label>Agent:</label>
+    <button class="filter-btn active" data-filter="agent" data-value="all">全部</button>
+    <button class="filter-btn" data-filter="agent" data-value="digger" style="--c:#f59e0b">挖掘</button>
+    <button class="filter-btn" data-filter="agent" data-value="hunter" style="--c:#10b981">搜猎</button>
+    <button class="filter-btn" data-filter="agent" data-value="skeptic" style="--c:#ef4444">质疑</button>
+    <button class="filter-btn" data-filter="agent" data-value="weaver" style="--c:#8b5cf6">编织</button>
+    <button class="filter-btn" data-filter="agent" data-value="organizer" style="--c:#3b82f6">整理</button>
+  </div>
+  <div class="filter-group">
+    <label>类型:</label>
+    <button class="filter-btn active" data-filter="type" data-value="all">全部</button>
+    <button class="filter-btn" data-filter="type" data-value="discovery">发现</button>
+    <button class="filter-btn" data-filter="type" data-value="question">问题</button>
+    <button class="filter-btn" data-filter="type" data-value="framework">框架</button>
+    <button class="filter-btn" data-filter="type" data-value="contradiction">矛盾</button>
+    <button class="filter-btn" data-filter="type" data-value="bridge">桥梁</button>
+  </div>
+  <div class="filter-group">
+    <label>轮次:</label>
+    <input type="range" id="round-slider" min="0" max="1" value="1" step="1">
+    <span id="round-label" style="font-size:11px;color:#777;">all</span>
+  </div>
+  <div id="stats"></div>
+</div>
+
+<svg id="canvas"></svg>
+
+<div id="detail-panel">
+  <button class="close-btn" onclick="closePanel()">&times;</button>
+  <div id="detail-content"></div>
+</div>
+
+<div id="tooltip">
+  <div class="tt-label"></div>
+  <div class="tt-type"></div>
+</div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@dagrejs/dagre@1.1.4/dist/dagre.min.js"></script>
+<script>
+const AGENT_COLORS = {
+  digger: '#f59e0b', hunter: '#10b981', skeptic: '#ef4444',
+  weaver: '#8b5cf6', organizer: '#3b82f6',
+};
+const TYPE_SHAPES = {
+  discovery: 'circle', question: 'diamond', framework: 'rect',
+  contradiction: 'triangle', bridge: 'hexagon',
+};
+const EDGE_COLORS = {
+  connection: '#444', tension: '#ef4444', derivation: '#3b82f6', 'cross-domain': '#8b5cf6',
+};
+
+let graphData = null;
+let currentFilter = { agent: 'all', type: 'all', maxRound: Infinity };
+let selectedNode = null;
+
+// Load data
+async function loadData() {
+  try {
+    const resp = await fetch('knowledge/network_viz.json');
+    graphData = await resp.json();
+  } catch(e) {
+    // Try demo data if file not found
+    graphData = generateDemo();
+  }
+  initSlider();
+  render();
+}
+
+function generateDemo() {
+  return {
+    nodes: [
+      { id: 'root', label: '探索起点', summary: '这是探索的初始主题节点', type: 'framework', depth: 0, energy: 1.5, references: 3, created_by: 'organizer', verified_by: ['skeptic'], round: 1 },
+      { id: 'mechanism_1', label: '核心机制A', summary: '发现了第一个核心机制，涉及到自组织和涌现', type: 'discovery', depth: 1, energy: 1.2, references: 2, created_by: 'digger', verified_by: [], round: 1 },
+      { id: 'mechanism_2', label: '核心机制B', summary: '第二个机制与反馈回路有关', type: 'discovery', depth: 1, energy: 0.9, references: 1, created_by: 'digger', verified_by: [], round: 2 },
+      { id: 'external_1', label: '外部理论X', summary: '来自复杂系统理论的相关框架', type: 'discovery', depth: 1, energy: 0.8, references: 1, created_by: 'hunter', verified_by: [], round: 2 },
+      { id: 'q1', label: '机制A是否可逆？', summary: '质疑机制A的可逆性假设', type: 'question', depth: 2, energy: 1.0, references: 0, created_by: 'skeptic', verified_by: [], round: 2 },
+      { id: 'bridge_1', label: 'A-X 同构', summary: '机制A和外部理论X在结构上具有同构性', type: 'bridge', depth: 2, energy: 1.1, references: 2, created_by: 'weaver', verified_by: ['skeptic'], round: 3 },
+      { id: 'detail_1', label: '具体案例1', summary: '一个具体的应用场景验证', type: 'discovery', depth: 3, energy: 0.7, references: 0, created_by: 'hunter', verified_by: [], round: 3 },
+      { id: 'contradiction_1', label: 'A与B矛盾', summary: '机制A和机制B在某个边界条件下产生矛盾', type: 'contradiction', depth: 2, energy: 1.3, references: 1, created_by: 'skeptic', verified_by: [], round: 3 },
+      { id: 'framework_1', label: '统一框架v1', summary: '整合前三轮发现的初步框架', type: 'framework', depth: 0, energy: 1.0, references: 0, created_by: 'organizer', verified_by: [], round: 3 },
+      { id: 'deep_1', label: '深层结构', summary: '机制A背后更深层的数学结构', type: 'discovery', depth: 4, energy: 0.6, references: 0, created_by: 'digger', verified_by: [], round: 3 },
+    ],
+    edges: [
+      { source: 'root', target: 'mechanism_1', label: '催生', type: 'derivation', strength: 1.2, created_by: 'digger', round: 1 },
+      { source: 'root', target: 'mechanism_2', label: '催生', type: 'derivation', strength: 1.0, created_by: 'digger', round: 2 },
+      { source: 'mechanism_1', target: 'q1', label: '引发质疑', type: 'connection', strength: 0.9, created_by: 'skeptic', round: 2 },
+      { source: 'mechanism_1', target: 'bridge_1', label: '同构端', type: 'cross-domain', strength: 1.1, created_by: 'weaver', round: 3 },
+      { source: 'external_1', target: 'bridge_1', label: '同构端', type: 'cross-domain', strength: 1.1, created_by: 'weaver', round: 3 },
+      { source: 'mechanism_1', target: 'contradiction_1', label: '矛盾方', type: 'tension', strength: 1.3, created_by: 'skeptic', round: 3 },
+      { source: 'mechanism_2', target: 'contradiction_1', label: '矛盾方', type: 'tension', strength: 1.3, created_by: 'skeptic', round: 3 },
+      { source: 'mechanism_1', target: 'detail_1', label: '验证', type: 'derivation', strength: 0.7, created_by: 'hunter', round: 3 },
+      { source: 'root', target: 'framework_1', label: '整合', type: 'derivation', strength: 0.8, created_by: 'organizer', round: 3 },
+      { source: 'mechanism_1', target: 'framework_1', label: '纳入', type: 'connection', strength: 0.8, created_by: 'organizer', round: 3 },
+      { source: 'mechanism_2', target: 'framework_1', label: '纳入', type: 'connection', strength: 0.8, created_by: 'organizer', round: 3 },
+      { source: 'mechanism_1', target: 'deep_1', label: '深挖', type: 'derivation', strength: 0.6, created_by: 'digger', round: 3 },
+    ],
+    round: 3,
+    stats: { nodes: 10, edges: 12 },
+  };
+}
+
+function initSlider() {
+  const maxRound = graphData.round || Math.max(...graphData.nodes.map(n => n.round || 0), 1);
+  const slider = document.getElementById('round-slider');
+  slider.max = maxRound;
+  slider.value = maxRound;
+  document.getElementById('round-label').textContent = `1-${maxRound}`;
+  slider.oninput = () => {
+    const v = +slider.value;
+    currentFilter.maxRound = v;
+    document.getElementById('round-label').textContent = v == 0 ? '0' : `1-${v}`;
+    render();
+  };
+}
+
+function getFiltered() {
+  let nodes = graphData.nodes.filter(n => {
+    if (currentFilter.maxRound !== Infinity && (n.round || 0) > currentFilter.maxRound) return false;
+    if (currentFilter.agent !== 'all' && n.created_by !== currentFilter.agent) return false;
+    if (currentFilter.type !== 'all' && n.type !== currentFilter.type) return false;
+    return true;
+  });
+  const nodeIds = new Set(nodes.map(n => n.id));
+  let edges = graphData.edges.filter(e => {
+    if (currentFilter.maxRound !== Infinity && (e.round || 0) > currentFilter.maxRound) return false;
+    return nodeIds.has(e.source) && nodeIds.has(e.target);
+  });
+  return { nodes, edges };
+}
+
+function layoutDAG(nodes, edges) {
+  const g = new dagre.graphlib.Graph();
+  g.setGraph({
+    rankdir: 'TB', nodesep: 80, ranksep: 100, marginx: 40, marginy: 40,
+    acyclicer: 'greedy', ranker: 'network-simplex',
+  });
+  g.setDefaultEdgeLabel(() => ({}));
+
+  nodes.forEach(n => {
+    const w = Math.max(60, n.label.length * 14 + 20);
+    g.setNode(n.id, { width: w, height: 44, label: n.label, rank: n.depth });
+  });
+  edges.forEach(e => {
+    g.setEdge(e.source, e.target);
+  });
+
+  dagre.layout(g);
+
+  const positions = {};
+  g.nodes().forEach(id => {
+    const nd = g.node(id);
+    if (nd) positions[id] = { x: nd.x, y: nd.y };
+  });
+  return { positions, graph: g };
+}
+
+function render() {
+  const { nodes, edges } = getFiltered();
+  const svg = d3.select('#canvas');
+  svg.selectAll('*').remove();
+
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  svg.attr('width', width).attr('height', height);
+
+  if (nodes.length === 0) {
+    svg.append('text').attr('x', width/2).attr('y', height/2)
+      .attr('text-anchor', 'middle').attr('fill', '#444').attr('font-size', 14)
+      .text('没有匹配的节点');
+    updateStats(0, 0);
+    return;
+  }
+
+  const { positions } = layoutDAG(nodes, edges);
+
+  // Center the graph
+  const xs = Object.values(positions).map(p => p.x);
+  const ys = Object.values(positions).map(p => p.y);
+  const gw = Math.max(...xs) - Math.min(...xs) + 200;
+  const gh = Math.max(...ys) - Math.min(...ys) + 200;
+  const offsetX = (Math.min(...xs) - 100);
+  const offsetY = (Math.min(...ys) - 100);
+
+  const zoom = d3.zoom()
+    .scaleExtent([0.2, 4])
+    .on('zoom', (e) => container.attr('transform', e.transform));
+  svg.call(zoom);
+
+  // Initial fit
+  const scale = Math.min(width / gw, (height - 50) / gh, 1.5) * 0.85;
+  const tx = (width - gw * scale) / 2 - offsetX * scale;
+  const ty = (height - gh * scale) / 2 - offsetY * scale + 25;
+  svg.call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
+
+  const container = svg.append('g');
+
+  // Arrow markers
+  const defs = svg.append('defs');
+  Object.entries(EDGE_COLORS).forEach(([type, color]) => {
+    defs.append('marker').attr('id', `arrow-${type}`)
+      .attr('viewBox', '0 0 10 6').attr('refX', 10).attr('refY', 3)
+      .attr('markerWidth', 8).attr('markerHeight', 6).attr('orient', 'auto')
+      .append('path').attr('d', 'M0,0 L10,3 L0,6 Z').attr('fill', color);
+  });
+
+  // Edges
+  const edgeGroup = container.append('g').attr('class', 'edges');
+  const edgeEls = edgeGroup.selectAll('g').data(edges).enter().append('g');
+
+  edgeEls.each(function(e) {
+    const g = d3.select(this);
+    const src = positions[e.source];
+    const tgt = positions[e.target];
+    if (!src || !tgt) return;
+
+    const color = EDGE_COLORS[e.type] || '#444';
+    const sw = Math.max(1, Math.min(4, (e.strength || 1) * 1.5));
+
+    // Curved path
+    const dx = tgt.x - src.x;
+    const dy = tgt.y - src.y;
+    const dr = Math.sqrt(dx*dx + dy*dy) * 0.8;
+
+    // Shorten path to not overlap node
+    const angle = Math.atan2(dy, dx);
+    const nodeR = 22;
+    const sx = src.x + Math.cos(angle) * nodeR;
+    const sy = src.y + Math.sin(angle) * nodeR;
+    const ex = tgt.x - Math.cos(angle) * nodeR;
+    const ey = tgt.y - Math.sin(angle) * nodeR;
+
+    g.append('path')
+      .attr('d', `M${sx},${sy} Q${(sx+ex)/2 + (sy-ey)*0.15},${(sy+ey)/2 + (ex-sx)*0.15} ${ex},${ey}`)
+      .attr('fill', 'none').attr('stroke', color).attr('stroke-width', sw)
+      .attr('stroke-opacity', 0.5).attr('marker-end', `url(#arrow-${e.type})`)
+      .attr('class', 'edge-path');
+
+    // Edge label (on hover)
+    if (e.label) {
+      const mx = (sx+ex)/2 + (sy-ey)*0.075;
+      const my = (sy+ey)/2 + (ex-sx)*0.075;
+      g.append('text').attr('x', mx).attr('y', my)
+        .attr('text-anchor', 'middle').attr('fill', '#555').attr('font-size', 9)
+        .attr('opacity', 0).text(e.label).attr('class', 'edge-label');
+    }
+
+    g.on('mouseenter', function() {
+      d3.select(this).select('.edge-path').attr('stroke-opacity', 1);
+      d3.select(this).select('.edge-label').attr('opacity', 1);
+    }).on('mouseleave', function() {
+      d3.select(this).select('.edge-path').attr('stroke-opacity', 0.5);
+      d3.select(this).select('.edge-label').attr('opacity', 0);
+    });
+  });
+
+  // Nodes
+  const nodeGroup = container.append('g').attr('class', 'nodes');
+  const nodeMap = {};
+  nodes.forEach(n => nodeMap[n.id] = n);
+
+  const nodeEls = nodeGroup.selectAll('g').data(nodes, d => d.id).enter().append('g')
+    .attr('transform', d => `translate(${positions[d.id]?.x || 0},${positions[d.id]?.y || 0})`)
+    .attr('cursor', 'pointer');
+
+  // Drag
+  const drag = d3.drag()
+    .on('start', function(event, d) { d3.select(this).raise(); })
+    .on('drag', function(event, d) {
+      positions[d.id] = { x: event.x, y: event.y };
+      d3.select(this).attr('transform', `translate(${event.x},${event.y})`);
+      // Update connected edges
+      edgeEls.each(function(e) {
+        const src = positions[e.source];
+        const tgt = positions[e.target];
+        if (!src || !tgt) return;
+        if (e.source !== d.id && e.target !== d.id) return;
+        const dx = tgt.x - src.x;
+        const dy = tgt.y - src.y;
+        const angle = Math.atan2(dy, dx);
+        const nodeR = 22;
+        const sx = src.x + Math.cos(angle) * nodeR;
+        const sy = src.y + Math.sin(angle) * nodeR;
+        const ex = tgt.x - Math.cos(angle) * nodeR;
+        const ey = tgt.y - Math.sin(angle) * nodeR;
+        d3.select(this).select('.edge-path')
+          .attr('d', `M${sx},${sy} Q${(sx+ex)/2 + (sy-ey)*0.15},${(sy+ey)/2 + (ex-sx)*0.15} ${ex},${ey}`);
+        d3.select(this).select('.edge-label')
+          .attr('x', (sx+ex)/2 + (sy-ey)*0.075).attr('y', (sy+ey)/2 + (ex-sx)*0.075);
+      });
+    });
+  nodeEls.call(drag);
+
+  // Draw shapes
+  nodeEls.each(function(d) {
+    const g = d3.select(this);
+    const color = AGENT_COLORS[d.created_by] || '#888';
+    const energy = d.energy || 1;
+    const r = Math.max(16, Math.min(30, 16 + energy * 6));
+
+    // Glow for high energy
+    if (energy > 1.0) {
+      g.append('circle').attr('r', r + 8)
+        .attr('fill', 'none').attr('stroke', color).attr('stroke-opacity', 0.15)
+        .attr('stroke-width', 2);
+    }
+
+    // Verified badge
+    if (d.verified_by && d.verified_by.length > 0) {
+      g.append('circle').attr('r', r + 3)
+        .attr('fill', 'none').attr('stroke', '#4ade80').attr('stroke-width', 1.5)
+        .attr('stroke-dasharray', '3,2');
+    }
+
+    const shape = TYPE_SHAPES[d.type] || 'circle';
+    if (shape === 'circle') {
+      g.append('circle').attr('r', r)
+        .attr('fill', color).attr('fill-opacity', 0.12)
+        .attr('stroke', color).attr('stroke-width', 1.5);
+    } else if (shape === 'rect') {
+      g.append('rect').attr('x', -r*1.2).attr('y', -r*0.8).attr('width', r*2.4).attr('height', r*1.6).attr('rx', 4)
+        .attr('fill', color).attr('fill-opacity', 0.12)
+        .attr('stroke', color).attr('stroke-width', 1.5);
+    } else if (shape === 'diamond') {
+      g.append('polygon').attr('points', `0,${-r} ${r},0 0,${r} ${-r},0`)
+        .attr('fill', color).attr('fill-opacity', 0.12)
+        .attr('stroke', color).attr('stroke-width', 1.5);
+    } else if (shape === 'triangle') {
+      const s = r * 1.2;
+      g.append('polygon').attr('points', `0,${-s} ${s},${s*0.7} ${-s},${s*0.7}`)
+        .attr('fill', color).attr('fill-opacity', 0.15)
+        .attr('stroke', color).attr('stroke-width', 1.5);
+    } else if (shape === 'hexagon') {
+      const pts = d3.range(6).map(i => {
+        const a = Math.PI / 3 * i - Math.PI / 6;
+        return `${r * Math.cos(a)},${r * Math.sin(a)}`;
+      }).join(' ');
+      g.append('polygon').attr('points', pts)
+        .attr('fill', color).attr('fill-opacity', 0.12)
+        .attr('stroke', color).attr('stroke-width', 1.5);
+    }
+
+    // Label
+    const label = d.label.length > 8 ? d.label.slice(0, 7) + '..' : d.label;
+    g.append('text').attr('y', 4).attr('text-anchor', 'middle')
+      .attr('fill', '#ddd').attr('font-size', 11).attr('font-weight', 500)
+      .text(label);
+
+    // Depth indicator
+    g.append('text').attr('y', r + 14).attr('text-anchor', 'middle')
+      .attr('fill', '#555').attr('font-size', 9)
+      .text(`D${d.depth}`);
+  });
+
+  // Interactions
+  nodeEls.on('mouseenter', function(event, d) {
+    const tt = document.getElementById('tooltip');
+    tt.style.display = 'block';
+    tt.querySelector('.tt-label').textContent = d.label;
+    const agentName = {digger:'挖掘者',hunter:'搜猎者',skeptic:'质疑者',weaver:'编织者',organizer:'整理者'}[d.created_by] || d.created_by;
+    tt.querySelector('.tt-type').textContent = `${d.type} | ${agentName} | 能量:${(d.energy||0).toFixed(2)} | R${d.round||'?'}`;
+    tt.style.left = (event.clientX + 14) + 'px';
+    tt.style.top = (event.clientY - 10) + 'px';
+
+    // Highlight connected
+    edgeEls.each(function(e) {
+      const connected = e.source === d.id || e.target === d.id;
+      d3.select(this).select('.edge-path')
+        .attr('stroke-opacity', connected ? 1 : 0.1)
+        .attr('stroke-width', connected ? parseFloat(d3.select(this).select('.edge-path').attr('stroke-width')) * 1.5 : undefined);
+      d3.select(this).select('.edge-label').attr('opacity', connected ? 1 : 0);
+    });
+    nodeEls.attr('opacity', nd => {
+      if (nd.id === d.id) return 1;
+      for (const e of edges) {
+        if ((e.source === d.id && e.target === nd.id) || (e.target === d.id && e.source === nd.id)) return 1;
+      }
+      return 0.2;
+    });
+  })
+  .on('mousemove', function(event) {
+    const tt = document.getElementById('tooltip');
+    tt.style.left = (event.clientX + 14) + 'px';
+    tt.style.top = (event.clientY - 10) + 'px';
+  })
+  .on('mouseleave', function() {
+    document.getElementById('tooltip').style.display = 'none';
+    edgeEls.each(function(e) {
+      const color = EDGE_COLORS[e.type] || '#444';
+      const sw = Math.max(1, Math.min(4, (e.strength || 1) * 1.5));
+      d3.select(this).select('.edge-path').attr('stroke-opacity', 0.5).attr('stroke-width', sw);
+      d3.select(this).select('.edge-label').attr('opacity', 0);
+    });
+    nodeEls.attr('opacity', 1);
+  })
+  .on('click', function(event, d) {
+    event.stopPropagation();
+    showDetail(d, edges, nodeMap);
+  });
+
+  svg.on('click', () => closePanel());
+
+  updateStats(nodes.length, edges.length);
+}
+
+function showDetail(node, edges, nodeMap) {
+  selectedNode = node;
+  const panel = document.getElementById('detail-panel');
+  const content = document.getElementById('detail-content');
+  const color = AGENT_COLORS[node.created_by] || '#888';
+  const agentName = {digger:'挖掘者',hunter:'搜猎者',skeptic:'质疑者',weaver:'编织者',organizer:'整理者'}[node.created_by] || node.created_by;
+
+  let html = `
+    <h2 style="color:${color}">${node.label}</h2>
+    <div class="meta">
+      <span>${node.type}</span>
+      <span>深度 ${node.depth}</span>
+      <span>${agentName}</span>
+      <span>R${node.round || '?'}</span>
+    </div>
+    <div class="energy-bar">
+      <div class="energy-fill" style="width:${Math.min(100, (node.energy||1)/2*100)}%; background:${color}"></div>
+    </div>
+    <div style="font-size:10px;color:#555;margin:4px 0 12px;">能量 ${(node.energy||0).toFixed(2)} / 引用 ${node.references||0}</div>
+    <div class="summary">${node.summary || '无描述'}</div>
+  `;
+
+  if (node.verified_by && node.verified_by.length > 0) {
+    html += `<div style="font-size:11px;color:#4ade80;margin-bottom:12px;">已验证: ${node.verified_by.join(', ')}</div>`;
+  }
+
+  // Connected edges
+  const incoming = edges.filter(e => e.target === node.id);
+  const outgoing = edges.filter(e => e.source === node.id);
+
+  if (incoming.length > 0) {
+    html += `<div class="connections"><h3>入边 (${incoming.length})</h3>`;
+    incoming.forEach(e => {
+      const src = nodeMap[e.source];
+      html += `<div class="conn-item" onclick="highlightNode('${e.source}')">
+        <span style="color:${EDGE_COLORS[e.type]||'#444'}">&larr;</span>
+        ${src?.label || e.source} <span style="color:#555">${e.label || ''}</span>
+      </div>`;
+    });
+    html += '</div>';
+  }
+  if (outgoing.length > 0) {
+    html += `<div class="connections" style="margin-top:8px"><h3>出边 (${outgoing.length})</h3>`;
+    outgoing.forEach(e => {
+      const tgt = nodeMap[e.target];
+      html += `<div class="conn-item" onclick="highlightNode('${e.target}')">
+        <span style="color:${EDGE_COLORS[e.type]||'#444'}">&rarr;</span>
+        ${tgt?.label || e.target} <span style="color:#555">${e.label || ''}</span>
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  content.innerHTML = html;
+  panel.classList.add('open');
+}
+
+function closePanel() {
+  document.getElementById('detail-panel').classList.remove('open');
+  selectedNode = null;
+}
+
+function highlightNode(id) {
+  // Find and click the node
+  d3.selectAll('.nodes g').each(function(d) {
+    if (d.id === id) d3.select(this).dispatch('click');
+  });
+}
+
+function updateStats(n, e) {
+  document.getElementById('stats').textContent = `${n} 节点 / ${e} 连接`;
+}
+
+// Filter buttons
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const filterType = btn.dataset.filter;
+    const value = btn.dataset.value;
+    document.querySelectorAll(`.filter-btn[data-filter="${filterType}"]`).forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter[filterType] = value === 'all' ? 'all' : value;
+    render();
+  });
+});
+
+window.addEventListener('resize', () => render());
+loadData();
+</script>
+</body>
+</html>
