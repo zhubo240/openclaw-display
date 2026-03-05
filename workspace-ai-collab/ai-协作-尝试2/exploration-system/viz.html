@@ -353,10 +353,10 @@ svg text { user-select: none; }
 // ── Constants ──
 const AGENT_COLORS = {
   digger: '#f59e0b', hunter: '#10b981', skeptic: '#ef4444',
-  weaver: '#8b5cf6', organizer: '#3b82f6',
+  weaver: '#8b5cf6', organizer: '#3b82f6', user: '#ec4899',
 };
 const AGENT_NAMES = {
-  digger: '挖掘', hunter: '搜猎', skeptic: '质疑', weaver: '编织', organizer: '整理',
+  digger: '挖掘', hunter: '搜猎', skeptic: '质疑', weaver: '编织', organizer: '整理', user: '用户',
 };
 const TYPE_SHAPES = {
   discovery: 'circle', question: 'diamond', framework: 'rect',
@@ -939,17 +939,64 @@ function showDetail(node, edges, nodeMap) {
   if (incoming.length > 0) {
     html += `<div class="connections"><h3>入边 (${incoming.length})</h3>`;
     incoming.forEach(e => {
-      html += `<div class="conn-item" onclick="highlightNode('${e.source}')"><span style="color:${EDGE_COLORS[e.type]||'#444'}">&larr;</span> ${esc(nodeMap[e.source]?.label||e.source)} <span style="color:#555">${esc(e.label||'')}</span></div>`;
+      const ec = EDGE_COLORS[e.type]||'#444';
+      const an = AGENT_NAMES[e.created_by]||e.created_by||'?';
+      const ac = AGENT_COLORS[e.created_by]||'#888';
+      html += `<div class="conn-item" onclick="highlightNode('${e.source}')">
+        <span style="color:${ec}">&larr;</span> ${esc(nodeMap[e.source]?.label||e.source)}
+        <div style="font-size:10px;color:#999;margin-top:2px;">
+          <span style="color:${ec}">${esc(e.type)}</span>
+          <span style="margin-left:6px;color:${ac}">${esc(an)}</span>
+          <span style="margin-left:6px;">R${e.round??'?'}</span>
+          <span style="margin-left:6px;">S:${(e.strength||1).toFixed(2)}</span>
+          ${e.label ? `<span style="margin-left:6px;color:#555;">${esc(e.label)}</span>` : ''}
+        </div>
+      </div>`;
     });
     html += '</div>';
   }
   if (outgoing.length > 0) {
     html += `<div class="connections" style="margin-top:8px"><h3>出边 (${outgoing.length})</h3>`;
     outgoing.forEach(e => {
-      html += `<div class="conn-item" onclick="highlightNode('${e.target}')"><span style="color:${EDGE_COLORS[e.type]||'#444'}">&rarr;</span> ${esc(nodeMap[e.target]?.label||e.target)} <span style="color:#555">${esc(e.label||'')}</span></div>`;
+      const ec = EDGE_COLORS[e.type]||'#444';
+      const an = AGENT_NAMES[e.created_by]||e.created_by||'?';
+      const ac = AGENT_COLORS[e.created_by]||'#888';
+      html += `<div class="conn-item" onclick="highlightNode('${e.target}')">
+        <span style="color:${ec}">&rarr;</span> ${esc(nodeMap[e.target]?.label||e.target)}
+        <div style="font-size:10px;color:#999;margin-top:2px;">
+          <span style="color:${ec}">${esc(e.type)}</span>
+          <span style="margin-left:6px;color:${ac}">${esc(an)}</span>
+          <span style="margin-left:6px;">R${e.round??'?'}</span>
+          <span style="margin-left:6px;">S:${(e.strength||1).toFixed(2)}</span>
+          ${e.label ? `<span style="margin-left:6px;color:#555;">${esc(e.label)}</span>` : ''}
+        </div>
+      </div>`;
     });
     html += '</div>';
   }
+  // Show existing user feedback targeting this node
+  const userFeedback = (graphData.nodes || []).filter(n => n.created_by === 'user' && n.type === 'question' &&
+    (graphData.edges || []).some(e => e.source === n.id && e.target === node.id));
+  if (userFeedback.length > 0) {
+    html += `<div style="margin-top:12px"><h3 style="font-size:12px;color:#ec4899;margin-bottom:6px;">用户反馈 (${userFeedback.length})</h3>`;
+    userFeedback.forEach(fb => {
+      html += `<div style="padding:6px 8px;margin:3px 0;border-radius:4px;background:#fdf2f8;font-size:11px;color:#555;border-left:3px solid #ec4899;">${esc(fb.summary)}<div style="font-size:10px;color:#aaa;margin-top:2px;">E:${(fb.energy||0).toFixed(2)} R${fb.round||'?'}</div></div>`;
+    });
+    html += '</div>';
+  }
+  // Feedback form
+  html += `
+    <div style="margin-top:16px;border-top:1px solid #eee;padding-top:12px;">
+      <button onclick="toggleFeedbackForm()" style="font-size:12px;padding:4px 12px;border-radius:6px;border:1px solid #ec4899;background:transparent;color:#ec4899;cursor:pointer;">提问 / 评论</button>
+      <div id="feedback-form" style="display:none;margin-top:8px;">
+        <textarea id="feedback-text" placeholder="输入你的问题或评论..." style="width:100%;height:60px;padding:8px;border-radius:6px;border:1px solid #ddd;font-size:12px;font-family:inherit;resize:vertical;"></textarea>
+        <div style="display:flex;gap:6px;margin-top:6px;justify-content:flex-end;">
+          <button onclick="toggleFeedbackForm()" style="font-size:11px;padding:4px 12px;border-radius:4px;border:1px solid #ddd;background:transparent;color:#888;cursor:pointer;">取消</button>
+          <button onclick="submitFeedback('${node.id}')" style="font-size:11px;padding:4px 12px;border-radius:4px;border:1px solid #ec4899;background:#fdf2f8;color:#ec4899;cursor:pointer;">提交</button>
+        </div>
+      </div>
+    </div>
+  `;
   content.innerHTML = html;
   panel.classList.add('open');
 }
@@ -960,6 +1007,20 @@ function highlightNode(id) {
   d3.selectAll('#canvas g g').each(function(d) {
     if (d && d.id === id) d3.select(this).dispatch('click');
   });
+}
+
+// ── Feedback ──
+function toggleFeedbackForm() {
+  const form = document.getElementById('feedback-form');
+  if (form) form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+
+async function submitFeedback(nodeId) {
+  const textarea = document.getElementById('feedback-text');
+  const text = textarea?.value?.trim();
+  if (!text) return;
+  await api('POST', '/api/feedback', { node_id: nodeId, text });
+  await loadNetwork();
 }
 
 // ── Utilities ──
