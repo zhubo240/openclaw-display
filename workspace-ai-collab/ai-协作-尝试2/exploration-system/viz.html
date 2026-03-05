@@ -2,36 +2,168 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>探索网络 - DAG 可视化</title>
+<title>探索网络</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: #0a0a0f; color: #e0e0e0; overflow: hidden; height: 100vh; }
+body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: #0a0a0f; color: #e0e0e0; overflow: hidden; height: 100vh; display: flex; }
 
-#toolbar {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  background: rgba(10,10,15,0.92); backdrop-filter: blur(12px);
-  border-bottom: 1px solid #222; padding: 10px 20px;
-  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+/* ── Left Sidebar ── */
+#sidebar {
+  width: 280px; min-width: 280px; height: 100vh;
+  background: rgba(12,12,18,0.98); border-right: 1px solid #1a1a24;
+  display: flex; flex-direction: column; z-index: 100;
 }
-#toolbar h1 { font-size: 15px; font-weight: 600; color: #aaa; white-space: nowrap; }
-.filter-group { display: flex; gap: 6px; align-items: center; }
-.filter-group label { font-size: 12px; color: #777; }
-.filter-btn {
-  font-size: 11px; padding: 3px 10px; border-radius: 12px;
-  border: 1px solid #333; background: transparent; color: #999;
-  cursor: pointer; transition: all 0.2s;
+#sidebar-header {
+  padding: 16px; border-bottom: 1px solid #1a1a24;
 }
-.filter-btn:hover { border-color: #555; color: #ccc; }
-.filter-btn.active { border-color: var(--c, #888); color: var(--c, #fff); background: rgba(255,255,255,0.06); }
-#stats { font-size: 11px; color: #555; margin-left: auto; white-space: nowrap; }
-#round-slider { width: 120px; accent-color: #666; }
+#sidebar-header h1 { font-size: 15px; font-weight: 600; color: #888; margin-bottom: 8px; }
+#session-topic { font-size: 13px; color: #ccc; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#session-stats { font-size: 11px; color: #555; }
 
-#canvas { width: 100%; height: 100%; }
+/* Control Section */
+#controls {
+  padding: 12px 16px; border-bottom: 1px solid #1a1a24;
+}
+.ctrl-row { display: flex; gap: 6px; margin-bottom: 8px; align-items: center; }
+.ctrl-btn {
+  flex: 1; padding: 7px 0; border-radius: 6px; border: 1px solid #222;
+  background: rgba(255,255,255,0.03); color: #aaa; font-size: 12px;
+  cursor: pointer; transition: all 0.15s; text-align: center;
+}
+.ctrl-btn:hover { background: rgba(255,255,255,0.07); color: #ddd; border-color: #333; }
+.ctrl-btn.primary { background: rgba(59,130,246,0.15); border-color: rgba(59,130,246,0.3); color: #60a5fa; }
+.ctrl-btn.primary:hover { background: rgba(59,130,246,0.25); }
+.ctrl-btn.danger { color: #f87171; border-color: rgba(239,68,68,0.2); }
+.ctrl-btn.danger:hover { background: rgba(239,68,68,0.1); }
+.ctrl-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.ctrl-input {
+  width: 50px; padding: 5px 8px; border-radius: 4px; border: 1px solid #222;
+  background: #0f0f18; color: #ccc; font-size: 12px; text-align: center;
+}
+.ctrl-label { font-size: 11px; color: #666; }
 
+/* Progress bar */
+#progress-bar {
+  height: 2px; background: #111; margin-top: 4px; border-radius: 1px; display: none;
+}
+#progress-fill { height: 100%; background: #3b82f6; border-radius: 1px; transition: width 0.3s; width: 0%; }
+#progress-text { font-size: 10px; color: #555; margin-top: 4px; text-align: center; }
+
+/* Agent Config */
+#agent-config {
+  padding: 12px 16px; border-bottom: 1px solid #1a1a24;
+}
+#agent-config h3 { font-size: 11px; color: #555; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+.agent-row {
+  display: flex; align-items: center; gap: 8px; padding: 4px 0;
+}
+.agent-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.agent-name { font-size: 11px; color: #999; width: 42px; flex-shrink: 0; }
+.agent-freq-slider { flex: 1; accent-color: var(--c); height: 2px; }
+.agent-freq-val { font-size: 10px; color: #555; width: 28px; text-align: right; }
+.agent-stat { font-size: 10px; color: #444; width: 40px; text-align: right; }
+
+/* Filters */
+#filters {
+  padding: 12px 16px; border-bottom: 1px solid #1a1a24;
+}
+#filters h3 { font-size: 11px; color: #555; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+.filter-row { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 6px; }
+.fbtn {
+  font-size: 10px; padding: 2px 8px; border-radius: 10px;
+  border: 1px solid #222; background: transparent; color: #666;
+  cursor: pointer; transition: all 0.15s;
+}
+.fbtn:hover { border-color: #444; color: #aaa; }
+.fbtn.active { border-color: var(--c, #555); color: var(--c, #ccc); background: rgba(255,255,255,0.04); }
+.round-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+.round-row input { flex: 1; accent-color: #555; }
+.round-row span { font-size: 10px; color: #555; width: 30px; }
+
+/* Session Manager */
+#session-mgr {
+  flex: 1; overflow-y: auto; padding: 12px 16px;
+}
+#session-mgr h3 { font-size: 11px; color: #555; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: space-between; align-items: center; }
+.session-item {
+  padding: 8px 10px; margin-bottom: 4px; border-radius: 6px;
+  background: rgba(255,255,255,0.02); border: 1px solid transparent;
+  cursor: pointer; transition: all 0.15s;
+}
+.session-item:hover { background: rgba(255,255,255,0.04); }
+.session-item.current { border-color: #333; background: rgba(255,255,255,0.05); }
+.session-item .s-topic { font-size: 12px; color: #bbb; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.session-item .s-meta { font-size: 10px; color: #444; margin-top: 2px; }
+.session-item .s-actions { display: none; margin-top: 4px; }
+.session-item:hover .s-actions { display: flex; gap: 4px; }
+.s-actions button {
+  font-size: 10px; padding: 2px 8px; border-radius: 4px;
+  border: 1px solid #222; background: transparent; color: #666; cursor: pointer;
+}
+.s-actions button:hover { color: #ccc; border-color: #444; }
+.s-actions button.del:hover { color: #f87171; border-color: rgba(239,68,68,0.3); }
+#new-session-btn {
+  font-size: 11px; padding: 2px 8px; border-radius: 4px;
+  border: 1px solid #222; background: transparent; color: #555; cursor: pointer;
+}
+#new-session-btn:hover { color: #aaa; border-color: #444; }
+
+/* ── Main area ── */
+#main { flex: 1; display: flex; flex-direction: column; position: relative; }
+#canvas { flex: 1; }
+
+/* ── Log Panel (bottom) ── */
+#log-panel {
+  height: 0; min-height: 0; background: rgba(8,8,14,0.98);
+  border-top: 1px solid #1a1a24; transition: height 0.25s ease;
+  display: flex; flex-direction: column; overflow: hidden;
+}
+#log-panel.open { height: 220px; }
+#log-header {
+  display: flex; align-items: center; padding: 6px 16px;
+  border-bottom: 1px solid #151520; flex-shrink: 0;
+}
+#log-header h3 { font-size: 11px; color: #555; flex: 1; text-transform: uppercase; letter-spacing: 1px; }
+#log-toggle {
+  position: absolute; bottom: 0; right: 20px; z-index: 50;
+  padding: 4px 12px; border-radius: 6px 6px 0 0; border: 1px solid #1a1a24; border-bottom: none;
+  background: rgba(12,12,18,0.95); color: #555; font-size: 11px; cursor: pointer;
+}
+#log-toggle:hover { color: #aaa; }
+.log-filter-btn {
+  font-size: 10px; padding: 1px 6px; border-radius: 8px;
+  border: 1px solid transparent; background: transparent; color: #444;
+  cursor: pointer; margin-left: 4px;
+}
+.log-filter-btn:hover { color: #888; }
+.log-filter-btn.active { border-color: #333; color: #888; }
+#log-clear {
+  font-size: 10px; padding: 1px 8px; border-radius: 4px;
+  border: 1px solid #222; background: transparent; color: #444;
+  cursor: pointer; margin-left: 8px;
+}
+#log-clear:hover { color: #888; }
+#log-content {
+  flex: 1; overflow-y: auto; padding: 8px 16px; font-family: "SF Mono", "Fira Code", monospace;
+}
+.log-entry { font-size: 11px; line-height: 1.6; display: flex; gap: 8px; }
+.log-entry .log-time { color: #333; flex-shrink: 0; width: 60px; }
+.log-entry .log-agent { width: 32px; flex-shrink: 0; font-size: 10px; text-align: right; }
+.log-entry .log-msg { flex: 1; }
+.log-entry[data-level="system"] .log-msg { color: #555; }
+.log-entry[data-level="round"] .log-msg { color: #60a5fa; font-weight: 500; }
+.log-entry[data-level="info"] .log-msg { color: #888; }
+.log-entry[data-level="success"] .log-msg { color: #4ade80; }
+.log-entry[data-level="detail"] .log-msg { color: #666; font-style: italic; }
+.log-entry[data-level="pub"] .log-msg { color: #c084fc; }
+.log-entry[data-level="warn"] .log-msg { color: #fbbf24; }
+.log-entry[data-level="error"] .log-msg { color: #f87171; }
+
+/* ── Detail Panel (right) ── */
 #detail-panel {
   position: fixed; right: -380px; top: 0; bottom: 0; width: 360px;
   background: rgba(15,15,22,0.96); backdrop-filter: blur(16px);
-  border-left: 1px solid #222; padding: 60px 20px 20px;
+  border-left: 1px solid #222; padding: 20px;
   transition: right 0.3s ease; z-index: 90; overflow-y: auto;
 }
 #detail-panel.open { right: 0; }
@@ -40,21 +172,20 @@ body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
   color: #666; font-size: 20px; cursor: pointer;
 }
 #detail-panel .close-btn:hover { color: #fff; }
-#detail-panel h2 { font-size: 16px; margin-bottom: 8px; }
+#detail-panel h2 { font-size: 16px; margin-bottom: 8px; margin-top: 20px; }
 #detail-panel .meta { font-size: 11px; color: #666; margin-bottom: 12px; }
 #detail-panel .meta span { margin-right: 12px; }
 #detail-panel .summary { font-size: 13px; line-height: 1.6; color: #bbb; margin-bottom: 16px; }
-#detail-panel .connections { font-size: 12px; }
 #detail-panel .connections h3 { font-size: 12px; color: #777; margin-bottom: 6px; }
-#detail-panel .conn-item {
+.conn-item {
   padding: 4px 8px; margin: 3px 0; border-radius: 4px;
-  background: rgba(255,255,255,0.03); font-size: 11px; color: #999;
-  cursor: pointer;
+  background: rgba(255,255,255,0.03); font-size: 11px; color: #999; cursor: pointer;
 }
-#detail-panel .conn-item:hover { background: rgba(255,255,255,0.07); color: #ccc; }
+.conn-item:hover { background: rgba(255,255,255,0.07); color: #ccc; }
 .energy-bar { height: 3px; border-radius: 2px; margin-top: 8px; background: #1a1a2a; }
 .energy-fill { height: 100%; border-radius: 2px; transition: width 0.3s; }
 
+/* ── Tooltip ── */
 #tooltip {
   position: fixed; pointer-events: none; z-index: 200;
   background: rgba(20,20,30,0.95); border: 1px solid #333; border-radius: 6px;
@@ -64,41 +195,105 @@ body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
 #tooltip .tt-label { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
 #tooltip .tt-type { font-size: 10px; color: #888; }
 
+/* ── Modal ── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 300;
+  display: flex; align-items: center; justify-content: center;
+}
+.modal {
+  background: #141420; border: 1px solid #222; border-radius: 10px;
+  padding: 24px; width: 400px; max-width: 90vw;
+}
+.modal h2 { font-size: 15px; margin-bottom: 16px; color: #ccc; }
+.modal label { display: block; font-size: 12px; color: #777; margin-bottom: 4px; }
+.modal input, .modal textarea {
+  width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #222;
+  background: #0a0a12; color: #ddd; font-size: 13px; margin-bottom: 12px;
+  font-family: inherit;
+}
+.modal textarea { height: 80px; resize: vertical; }
+.modal input:focus, .modal textarea:focus { outline: none; border-color: #3b82f6; }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+.modal-actions button {
+  padding: 8px 20px; border-radius: 6px; border: 1px solid #222;
+  background: transparent; color: #aaa; font-size: 12px; cursor: pointer;
+}
+.modal-actions button:hover { background: rgba(255,255,255,0.05); color: #ddd; }
+.modal-actions button.primary { background: rgba(59,130,246,0.2); border-color: rgba(59,130,246,0.3); color: #60a5fa; }
+.modal-actions button.primary:hover { background: rgba(59,130,246,0.35); }
+
 svg text { user-select: none; }
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #222; border-radius: 3px; }
 </style>
 </head>
 <body>
 
-<div id="toolbar">
-  <h1>探索网络</h1>
-  <div class="filter-group">
-    <label>Agent:</label>
-    <button class="filter-btn active" data-filter="agent" data-value="all">全部</button>
-    <button class="filter-btn" data-filter="agent" data-value="digger" style="--c:#f59e0b">挖掘</button>
-    <button class="filter-btn" data-filter="agent" data-value="hunter" style="--c:#10b981">搜猎</button>
-    <button class="filter-btn" data-filter="agent" data-value="skeptic" style="--c:#ef4444">质疑</button>
-    <button class="filter-btn" data-filter="agent" data-value="weaver" style="--c:#8b5cf6">编织</button>
-    <button class="filter-btn" data-filter="agent" data-value="organizer" style="--c:#3b82f6">整理</button>
+<!-- Left Sidebar -->
+<div id="sidebar">
+  <div id="sidebar-header">
+    <h1>探索网络</h1>
+    <div id="session-topic">未选择 Session</div>
+    <div id="session-stats"></div>
   </div>
-  <div class="filter-group">
-    <label>类型:</label>
-    <button class="filter-btn active" data-filter="type" data-value="all">全部</button>
-    <button class="filter-btn" data-filter="type" data-value="discovery">发现</button>
-    <button class="filter-btn" data-filter="type" data-value="question">问题</button>
-    <button class="filter-btn" data-filter="type" data-value="framework">框架</button>
-    <button class="filter-btn" data-filter="type" data-value="contradiction">矛盾</button>
-    <button class="filter-btn" data-filter="type" data-value="bridge">桥梁</button>
+
+  <div id="controls">
+    <div class="ctrl-row">
+      <button class="ctrl-btn primary" id="btn-step" onclick="apiStep()" disabled>单步</button>
+      <button class="ctrl-btn primary" id="btn-run" onclick="apiRun()" disabled>运行</button>
+      <input class="ctrl-input" type="number" id="run-rounds" value="3" min="1" max="50">
+      <span class="ctrl-label">轮</span>
+    </div>
+    <div class="ctrl-row">
+      <button class="ctrl-btn danger" id="btn-stop" onclick="apiStop()" disabled>停止</button>
+      <button class="ctrl-btn" id="btn-refresh" onclick="refreshAll()">刷新</button>
+    </div>
+    <div id="progress-bar"><div id="progress-fill"></div></div>
+    <div id="progress-text"></div>
   </div>
-  <div class="filter-group">
-    <label>轮次:</label>
-    <input type="range" id="round-slider" min="0" max="1" value="1" step="1">
-    <span id="round-label" style="font-size:11px;color:#777;">all</span>
+
+  <div id="agent-config">
+    <h3>Agent 频率</h3>
+    <div id="agent-sliders"></div>
   </div>
-  <div id="stats"></div>
+
+  <div id="filters">
+    <h3>筛选</h3>
+    <div class="filter-row" id="agent-filters"></div>
+    <div class="filter-row" id="type-filters"></div>
+    <div class="round-row">
+      <span class="ctrl-label">轮次</span>
+      <input type="range" id="round-slider" min="0" max="1" value="1" step="1">
+      <span id="round-label">all</span>
+    </div>
+  </div>
+
+  <div id="session-mgr">
+    <h3>Sessions <button id="new-session-btn" onclick="showNewSessionModal()">+ 新建</button></h3>
+    <div id="session-list"></div>
+  </div>
 </div>
 
-<svg id="canvas"></svg>
+<!-- Main -->
+<div id="main">
+  <svg id="canvas"></svg>
+  <button id="log-toggle" onclick="toggleLog()">日志</button>
+  <div id="log-panel">
+    <div id="log-header">
+      <h3>探索日志</h3>
+      <button class="log-filter-btn active" data-lf="all">全部</button>
+      <button class="log-filter-btn" data-lf="round">轮次</button>
+      <button class="log-filter-btn" data-lf="success">结果</button>
+      <button class="log-filter-btn" data-lf="pub">发布</button>
+      <button class="log-filter-btn" data-lf="error">错误</button>
+      <button id="log-clear" onclick="clearLogs()">清空</button>
+    </div>
+    <div id="log-content"></div>
+  </div>
+</div>
 
+<!-- Right detail panel -->
 <div id="detail-panel">
   <button class="close-btn" onclick="closePanel()">&times;</button>
   <div id="detail-content"></div>
@@ -109,12 +304,19 @@ svg text { user-select: none; }
   <div class="tt-type"></div>
 </div>
 
+<!-- Modal container -->
+<div id="modal-root"></div>
+
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@dagrejs/dagre@1.1.4/dist/dagre.min.js"></script>
 <script>
+// ── Constants ──
 const AGENT_COLORS = {
   digger: '#f59e0b', hunter: '#10b981', skeptic: '#ef4444',
   weaver: '#8b5cf6', organizer: '#3b82f6',
+};
+const AGENT_NAMES = {
+  digger: '挖掘', hunter: '搜猎', skeptic: '质疑', weaver: '编织', organizer: '整理',
 };
 const TYPE_SHAPES = {
   discovery: 'circle', question: 'diamond', framework: 'rect',
@@ -124,70 +326,301 @@ const EDGE_COLORS = {
   connection: '#444', tension: '#ef4444', derivation: '#3b82f6', 'cross-domain': '#8b5cf6',
 };
 
-let graphData = null;
+// ── State ──
+let graphData = { nodes: [], edges: [], round: 0 };
 let currentFilter = { agent: 'all', type: 'all', maxRound: Infinity };
-let selectedNode = null;
+let logFilter = 'all';
+let logSeq = 0;
+let pollTimer = null;
+let logPollTimer = null;
+let isRunning = false;
 
-// Load data
-async function loadData() {
-  try {
-    const resp = await fetch('knowledge/network_viz.json');
-    graphData = await resp.json();
-  } catch(e) {
-    // Try demo data if file not found
-    graphData = generateDemo();
+// ── API Helpers ──
+async function api(method, path, body) {
+  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(path, opts);
+  return res.json();
+}
+
+// ── Session Management ──
+async function loadSessions() {
+  const data = await api('GET', '/api/sessions');
+  const list = document.getElementById('session-list');
+  list.innerHTML = '';
+  (data.sessions || []).forEach(s => {
+    const d = document.createElement('div');
+    d.className = 'session-item' + (s.is_current ? ' current' : '');
+    const date = s.created_at ? new Date(s.created_at * 1000).toLocaleDateString('zh-CN') : '';
+    d.innerHTML = `
+      <div class="s-topic">${esc(s.topic || s.id)}</div>
+      <div class="s-meta">${date} &middot; ${s.rounds}轮 &middot; ${s.nodes}节点</div>
+      <div class="s-actions">
+        ${s.is_current ? '' : `<button onclick="switchSession('${s.id}')">切换</button>`}
+        <button class="del" onclick="deleteSession('${s.id}', event)">删除</button>
+      </div>
+    `;
+    if (!s.is_current) {
+      d.addEventListener('dblclick', () => switchSession(s.id));
+    }
+    list.appendChild(d);
+  });
+}
+
+async function switchSession(id) {
+  await api('POST', '/api/session/switch', { id });
+  await refreshAll();
+}
+
+async function deleteSession(id, event) {
+  if (event) event.stopPropagation();
+  if (!confirm('删除这个 Session?')) return;
+  await api('POST', '/api/session/delete', { id });
+  await refreshAll();
+}
+
+function showNewSessionModal() {
+  const root = document.getElementById('modal-root');
+  root.innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal">
+        <h2>新建探索 Session</h2>
+        <label>探索主题</label>
+        <input id="m-topic" placeholder="例: 意识的本质" autofocus>
+        <label>详细描述 (可选)</label>
+        <textarea id="m-desc" placeholder="描述探索方向、感兴趣的问题..."></textarea>
+        <div class="modal-actions">
+          <button onclick="closeModal()">取消</button>
+          <button class="primary" onclick="createSession()">创建</button>
+        </div>
+      </div>
+    </div>
+  `;
+  setTimeout(() => document.getElementById('m-topic')?.focus(), 100);
+}
+
+async function createSession() {
+  const topic = document.getElementById('m-topic').value.trim();
+  const desc = document.getElementById('m-desc').value.trim();
+  if (!topic) return;
+  closeModal();
+  await api('POST', '/api/session/create', { topic, description: desc });
+  await refreshAll();
+}
+
+function closeModal() {
+  document.getElementById('modal-root').innerHTML = '';
+}
+
+// ── Controls ──
+async function apiStep() {
+  await api('POST', '/api/step', {});
+  startPolling();
+}
+
+async function apiRun() {
+  const rounds = parseInt(document.getElementById('run-rounds').value) || 3;
+  await api('POST', '/api/run', { rounds });
+  startPolling();
+}
+
+async function apiStop() {
+  await api('POST', '/api/stop');
+}
+
+async function updateAgentFreq(agentId, value) {
+  await api('POST', '/api/agent/config', { agent_id: agentId, frequency: value });
+}
+
+// ── Status & Polling ──
+async function fetchStatus() {
+  const data = await api('GET', '/api/status');
+  isRunning = data.running;
+
+  // Update buttons
+  document.getElementById('btn-step').disabled = isRunning || !data.session;
+  document.getElementById('btn-run').disabled = isRunning || !data.session;
+  document.getElementById('btn-stop').disabled = !isRunning;
+
+  // Progress
+  const prog = data.progress || {};
+  const pbar = document.getElementById('progress-bar');
+  const pfill = document.getElementById('progress-fill');
+  const ptxt = document.getElementById('progress-text');
+  if (isRunning && prog.total > 0) {
+    pbar.style.display = 'block';
+    pfill.style.width = (prog.round / prog.total * 100) + '%';
+    ptxt.textContent = `第${prog.round}/${prog.total}轮 - ${prog.agent || ''}`;
+  } else {
+    pbar.style.display = 'none';
+    ptxt.textContent = prog.status === 'done' ? '完成' : (prog.status === 'error' ? '出错' : '');
   }
-  initSlider();
-  render();
+
+  // Header info
+  if (data.topic) {
+    document.getElementById('session-topic').textContent = data.topic;
+  } else {
+    document.getElementById('session-topic').textContent = '未选择 Session';
+  }
+  if (data.stats) {
+    document.getElementById('session-stats').textContent =
+      `R${data.stats.round} | ${data.stats.nodes}节点 ${data.stats.edges}连接 | E=${data.stats.avg_energy}`;
+  }
+
+  // Agent config sliders
+  if (data.agents) {
+    renderAgentSliders(data.agents);
+  }
+
+  if (!isRunning && pollTimer) {
+    stopPolling();
+    await loadNetwork();
+    await loadSessions();
+  }
 }
 
-function generateDemo() {
-  return {
-    nodes: [
-      { id: 'root', label: '探索起点', summary: '这是探索的初始主题节点', type: 'framework', depth: 0, energy: 1.5, references: 3, created_by: 'organizer', verified_by: ['skeptic'], round: 1 },
-      { id: 'mechanism_1', label: '核心机制A', summary: '发现了第一个核心机制，涉及到自组织和涌现', type: 'discovery', depth: 1, energy: 1.2, references: 2, created_by: 'digger', verified_by: [], round: 1 },
-      { id: 'mechanism_2', label: '核心机制B', summary: '第二个机制与反馈回路有关', type: 'discovery', depth: 1, energy: 0.9, references: 1, created_by: 'digger', verified_by: [], round: 2 },
-      { id: 'external_1', label: '外部理论X', summary: '来自复杂系统理论的相关框架', type: 'discovery', depth: 1, energy: 0.8, references: 1, created_by: 'hunter', verified_by: [], round: 2 },
-      { id: 'q1', label: '机制A是否可逆？', summary: '质疑机制A的可逆性假设', type: 'question', depth: 2, energy: 1.0, references: 0, created_by: 'skeptic', verified_by: [], round: 2 },
-      { id: 'bridge_1', label: 'A-X 同构', summary: '机制A和外部理论X在结构上具有同构性', type: 'bridge', depth: 2, energy: 1.1, references: 2, created_by: 'weaver', verified_by: ['skeptic'], round: 3 },
-      { id: 'detail_1', label: '具体案例1', summary: '一个具体的应用场景验证', type: 'discovery', depth: 3, energy: 0.7, references: 0, created_by: 'hunter', verified_by: [], round: 3 },
-      { id: 'contradiction_1', label: 'A与B矛盾', summary: '机制A和机制B在某个边界条件下产生矛盾', type: 'contradiction', depth: 2, energy: 1.3, references: 1, created_by: 'skeptic', verified_by: [], round: 3 },
-      { id: 'framework_1', label: '统一框架v1', summary: '整合前三轮发现的初步框架', type: 'framework', depth: 0, energy: 1.0, references: 0, created_by: 'organizer', verified_by: [], round: 3 },
-      { id: 'deep_1', label: '深层结构', summary: '机制A背后更深层的数学结构', type: 'discovery', depth: 4, energy: 0.6, references: 0, created_by: 'digger', verified_by: [], round: 3 },
-    ],
-    edges: [
-      { source: 'root', target: 'mechanism_1', label: '催生', type: 'derivation', strength: 1.2, created_by: 'digger', round: 1 },
-      { source: 'root', target: 'mechanism_2', label: '催生', type: 'derivation', strength: 1.0, created_by: 'digger', round: 2 },
-      { source: 'mechanism_1', target: 'q1', label: '引发质疑', type: 'connection', strength: 0.9, created_by: 'skeptic', round: 2 },
-      { source: 'mechanism_1', target: 'bridge_1', label: '同构端', type: 'cross-domain', strength: 1.1, created_by: 'weaver', round: 3 },
-      { source: 'external_1', target: 'bridge_1', label: '同构端', type: 'cross-domain', strength: 1.1, created_by: 'weaver', round: 3 },
-      { source: 'mechanism_1', target: 'contradiction_1', label: '矛盾方', type: 'tension', strength: 1.3, created_by: 'skeptic', round: 3 },
-      { source: 'mechanism_2', target: 'contradiction_1', label: '矛盾方', type: 'tension', strength: 1.3, created_by: 'skeptic', round: 3 },
-      { source: 'mechanism_1', target: 'detail_1', label: '验证', type: 'derivation', strength: 0.7, created_by: 'hunter', round: 3 },
-      { source: 'root', target: 'framework_1', label: '整合', type: 'derivation', strength: 0.8, created_by: 'organizer', round: 3 },
-      { source: 'mechanism_1', target: 'framework_1', label: '纳入', type: 'connection', strength: 0.8, created_by: 'organizer', round: 3 },
-      { source: 'mechanism_2', target: 'framework_1', label: '纳入', type: 'connection', strength: 0.8, created_by: 'organizer', round: 3 },
-      { source: 'mechanism_1', target: 'deep_1', label: '深挖', type: 'derivation', strength: 0.6, created_by: 'digger', round: 3 },
-    ],
-    round: 3,
-    stats: { nodes: 10, edges: 12 },
-  };
+function startPolling() {
+  if (pollTimer) return;
+  pollTimer = setInterval(fetchStatus, 1500);
+  if (!logPollTimer) {
+    logPollTimer = setInterval(fetchLogs, 1000);
+  }
+  fetchStatus();
 }
 
-function initSlider() {
-  const maxRound = graphData.round || Math.max(...graphData.nodes.map(n => n.round || 0), 1);
+function stopPolling() {
+  if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+  // Keep log polling a bit longer
+  setTimeout(() => {
+    if (!isRunning && logPollTimer) { clearInterval(logPollTimer); logPollTimer = null; }
+  }, 3000);
+}
+
+// ── Agent Sliders ──
+let agentSlidersRendered = false;
+function renderAgentSliders(agents) {
+  if (agentSlidersRendered) return; // Only render once, update values via DOM
+  const container = document.getElementById('agent-sliders');
+  container.innerHTML = '';
+  for (const [aid, info] of Object.entries(agents)) {
+    const color = AGENT_COLORS[aid] || '#888';
+    const row = document.createElement('div');
+    row.className = 'agent-row';
+    row.innerHTML = `
+      <div class="agent-dot" style="background:${color}"></div>
+      <span class="agent-name">${info.role_cn}</span>
+      <input class="agent-freq-slider" type="range" min="0" max="1" step="0.1"
+             value="${info.frequency}" style="--c:${color}"
+             data-agent="${aid}">
+      <span class="agent-freq-val">${info.frequency}</span>
+      <span class="agent-stat">${info.rounds_active}轮</span>
+    `;
+    const slider = row.querySelector('input');
+    const valSpan = row.querySelector('.agent-freq-val');
+    slider.oninput = () => { valSpan.textContent = slider.value; };
+    slider.onchange = () => { updateAgentFreq(aid, parseFloat(slider.value)); };
+    container.appendChild(row);
+  }
+  agentSlidersRendered = true;
+}
+
+// ── Logs ──
+async function fetchLogs() {
+  const data = await api('GET', `/api/logs?since=${logSeq}`);
+  if (!data.logs || data.logs.length === 0) return;
+  logSeq = data.seq;
+  const container = document.getElementById('log-content');
+  const autoScroll = container.scrollHeight - container.scrollTop - container.clientHeight < 40;
+  data.logs.forEach(entry => {
+    if (logFilter !== 'all' && entry.level !== logFilter) return;
+    const el = document.createElement('div');
+    el.className = 'log-entry';
+    el.dataset.level = entry.level;
+    const t = new Date(entry.time * 1000);
+    const ts = `${t.getHours().toString().padStart(2,'0')}:${t.getMinutes().toString().padStart(2,'0')}:${t.getSeconds().toString().padStart(2,'0')}`;
+    const agentColor = entry.agent ? (AGENT_COLORS[entry.agent] || '#555') : 'transparent';
+    const agentLabel = entry.agent ? (AGENT_NAMES[entry.agent] || '') : '';
+    el.innerHTML = `<span class="log-time">${ts}</span><span class="log-agent" style="color:${agentColor}">${agentLabel}</span><span class="log-msg">${esc(entry.msg)}</span>`;
+    container.appendChild(el);
+  });
+  if (autoScroll) container.scrollTop = container.scrollHeight;
+}
+
+function clearLogs() {
+  document.getElementById('log-content').innerHTML = '';
+  logSeq = 0;
+}
+
+function toggleLog() {
+  document.getElementById('log-panel').classList.toggle('open');
+  const btn = document.getElementById('log-toggle');
+  btn.textContent = document.getElementById('log-panel').classList.contains('open') ? '收起日志' : '日志';
+}
+
+// Log filter buttons
+document.querySelectorAll('.log-filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.log-filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    logFilter = btn.dataset.lf;
+    clearLogs();
+    fetchLogs();
+  });
+});
+
+// ── Filters ──
+function initFilters() {
+  const agentDiv = document.getElementById('agent-filters');
+  agentDiv.innerHTML = `<button class="fbtn active" data-filter="agent" data-value="all">全部</button>`;
+  for (const [aid, name] of Object.entries(AGENT_NAMES)) {
+    agentDiv.innerHTML += `<button class="fbtn" data-filter="agent" data-value="${aid}" style="--c:${AGENT_COLORS[aid]}">${name}</button>`;
+  }
+  const typeDiv = document.getElementById('type-filters');
+  typeDiv.innerHTML = `<button class="fbtn active" data-filter="type" data-value="all">全部</button>`;
+  for (const t of ['discovery', 'question', 'framework', 'contradiction', 'bridge']) {
+    const names = {discovery:'发现',question:'问题',framework:'框架',contradiction:'矛盾',bridge:'桥梁'};
+    typeDiv.innerHTML += `<button class="fbtn" data-filter="type" data-value="${t}">${names[t]}</button>`;
+  }
+
+  document.querySelectorAll('.fbtn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const ft = btn.dataset.filter;
+      document.querySelectorAll(`.fbtn[data-filter="${ft}"]`).forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter[ft] = btn.dataset.value === 'all' ? 'all' : btn.dataset.value;
+      renderGraph();
+    });
+  });
+
   const slider = document.getElementById('round-slider');
-  slider.max = maxRound;
-  slider.value = maxRound;
-  document.getElementById('round-label').textContent = `1-${maxRound}`;
   slider.oninput = () => {
     const v = +slider.value;
     currentFilter.maxRound = v;
     document.getElementById('round-label').textContent = v == 0 ? '0' : `1-${v}`;
-    render();
+    renderGraph();
   };
 }
 
+// ── Network ──
+async function loadNetwork() {
+  try {
+    const data = await api('GET', '/api/network');
+    graphData = data;
+  } catch(e) {
+    graphData = { nodes: [], edges: [], round: 0 };
+  }
+  // Update round slider
+  const maxR = graphData.round || 0;
+  const slider = document.getElementById('round-slider');
+  slider.max = Math.max(maxR, 1);
+  slider.value = Math.max(maxR, 1);
+  currentFilter.maxRound = maxR || Infinity;
+  document.getElementById('round-label').textContent = maxR > 0 ? `1-${maxR}` : 'all';
+
+  renderGraph();
+}
+
+// ── Graph Rendering ──
 function getFiltered() {
   let nodes = graphData.nodes.filter(n => {
     if (currentFilter.maxRound !== Infinity && (n.round || 0) > currentFilter.maxRound) return false;
@@ -205,71 +638,54 @@ function getFiltered() {
 
 function layoutDAG(nodes, edges) {
   const g = new dagre.graphlib.Graph();
-  g.setGraph({
-    rankdir: 'TB', nodesep: 80, ranksep: 100, marginx: 40, marginy: 40,
-    acyclicer: 'greedy', ranker: 'network-simplex',
-  });
+  g.setGraph({ rankdir: 'TB', nodesep: 80, ranksep: 100, marginx: 40, marginy: 40, acyclicer: 'greedy', ranker: 'network-simplex' });
   g.setDefaultEdgeLabel(() => ({}));
-
   nodes.forEach(n => {
     const w = Math.max(60, n.label.length * 14 + 20);
     g.setNode(n.id, { width: w, height: 44, label: n.label, rank: n.depth });
   });
-  edges.forEach(e => {
-    g.setEdge(e.source, e.target);
-  });
-
+  edges.forEach(e => g.setEdge(e.source, e.target));
   dagre.layout(g);
-
   const positions = {};
-  g.nodes().forEach(id => {
-    const nd = g.node(id);
-    if (nd) positions[id] = { x: nd.x, y: nd.y };
-  });
-  return { positions, graph: g };
+  g.nodes().forEach(id => { const nd = g.node(id); if (nd) positions[id] = { x: nd.x, y: nd.y }; });
+  return positions;
 }
 
-function render() {
+function renderGraph() {
   const { nodes, edges } = getFiltered();
   const svg = d3.select('#canvas');
   svg.selectAll('*').remove();
 
-  const width = window.innerWidth;
-  const height = window.innerHeight;
+  const rect = document.getElementById('main').getBoundingClientRect();
+  const width = rect.width;
+  const height = rect.height - (document.getElementById('log-panel').classList.contains('open') ? 220 : 0);
   svg.attr('width', width).attr('height', height);
 
   if (nodes.length === 0) {
     svg.append('text').attr('x', width/2).attr('y', height/2)
-      .attr('text-anchor', 'middle').attr('fill', '#444').attr('font-size', 14)
-      .text('没有匹配的节点');
-    updateStats(0, 0);
+      .attr('text-anchor', 'middle').attr('fill', '#333').attr('font-size', 13)
+      .text(graphData.nodes.length === 0 ? '创建 Session 并运行探索以生成知识网络' : '没有匹配的节点');
     return;
   }
 
-  const { positions } = layoutDAG(nodes, edges);
+  const positions = layoutDAG(nodes, edges);
 
-  // Center the graph
   const xs = Object.values(positions).map(p => p.x);
   const ys = Object.values(positions).map(p => p.y);
   const gw = Math.max(...xs) - Math.min(...xs) + 200;
   const gh = Math.max(...ys) - Math.min(...ys) + 200;
-  const offsetX = (Math.min(...xs) - 100);
-  const offsetY = (Math.min(...ys) - 100);
-
-  const zoom = d3.zoom()
-    .scaleExtent([0.2, 4])
-    .on('zoom', (e) => container.attr('transform', e.transform));
-  svg.call(zoom);
-
-  // Initial fit
-  const scale = Math.min(width / gw, (height - 50) / gh, 1.5) * 0.85;
-  const tx = (width - gw * scale) / 2 - offsetX * scale;
-  const ty = (height - gh * scale) / 2 - offsetY * scale + 25;
-  svg.call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
+  const offsetX = Math.min(...xs) - 100;
+  const offsetY = Math.min(...ys) - 100;
 
   const container = svg.append('g');
 
-  // Arrow markers
+  const zoom = d3.zoom().scaleExtent([0.15, 4]).on('zoom', (e) => container.attr('transform', e.transform));
+  svg.call(zoom);
+
+  const scale = Math.min(width / gw, height / gh, 1.5) * 0.85;
+  const tx = (width - gw * scale) / 2 - offsetX * scale;
+  const ty = (height - gh * scale) / 2 - offsetY * scale;
+  svg.call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
   const defs = svg.append('defs');
   Object.entries(EDGE_COLORS).forEach(([type, color]) => {
     defs.append('marker').attr('id', `arrow-${type}`)
@@ -279,46 +695,42 @@ function render() {
   });
 
   // Edges
-  const edgeGroup = container.append('g').attr('class', 'edges');
+  const edgeGroup = container.append('g');
   const edgeEls = edgeGroup.selectAll('g').data(edges).enter().append('g');
+  function orthoPath(src, tgt) {
+    const nodeR = 22;
+    // Determine if mostly vertical or horizontal
+    const dx = Math.abs(tgt.x - src.x), dy = Math.abs(tgt.y - src.y);
+    if (dy >= dx * 0.3) {
+      // Vertical-first: down from source, horizontal, down to target
+      const sy = src.y + nodeR, ey = tgt.y - nodeR;
+      const midY = (sy + ey) / 2;
+      return { d: `M${src.x},${sy} L${src.x},${midY} L${tgt.x},${midY} L${tgt.x},${ey}`, mx: (src.x+tgt.x)/2, my: midY };
+    } else {
+      // Horizontal-first: right/left from source, vertical, right/left to target
+      const dir = tgt.x > src.x ? 1 : -1;
+      const sx = src.x + dir * nodeR, ex = tgt.x - dir * nodeR;
+      const midX = (sx + ex) / 2;
+      return { d: `M${sx},${src.y} L${midX},${src.y} L${midX},${tgt.y} L${ex},${tgt.y}`, mx: midX, my: (src.y+tgt.y)/2 };
+    }
+  }
 
   edgeEls.each(function(e) {
     const g = d3.select(this);
-    const src = positions[e.source];
-    const tgt = positions[e.target];
+    const src = positions[e.source], tgt = positions[e.target];
     if (!src || !tgt) return;
-
     const color = EDGE_COLORS[e.type] || '#444';
     const sw = Math.max(1, Math.min(4, (e.strength || 1) * 1.5));
-
-    // Curved path
-    const dx = tgt.x - src.x;
-    const dy = tgt.y - src.y;
-    const dr = Math.sqrt(dx*dx + dy*dy) * 0.8;
-
-    // Shorten path to not overlap node
-    const angle = Math.atan2(dy, dx);
-    const nodeR = 22;
-    const sx = src.x + Math.cos(angle) * nodeR;
-    const sy = src.y + Math.sin(angle) * nodeR;
-    const ex = tgt.x - Math.cos(angle) * nodeR;
-    const ey = tgt.y - Math.sin(angle) * nodeR;
-
+    const p = orthoPath(src, tgt);
     g.append('path')
-      .attr('d', `M${sx},${sy} Q${(sx+ex)/2 + (sy-ey)*0.15},${(sy+ey)/2 + (ex-sx)*0.15} ${ex},${ey}`)
+      .attr('d', p.d)
       .attr('fill', 'none').attr('stroke', color).attr('stroke-width', sw)
-      .attr('stroke-opacity', 0.5).attr('marker-end', `url(#arrow-${e.type})`)
-      .attr('class', 'edge-path');
-
-    // Edge label (on hover)
+      .attr('stroke-opacity', 0.5).attr('marker-end', `url(#arrow-${e.type})`).attr('class', 'edge-path');
     if (e.label) {
-      const mx = (sx+ex)/2 + (sy-ey)*0.075;
-      const my = (sy+ey)/2 + (ex-sx)*0.075;
-      g.append('text').attr('x', mx).attr('y', my)
+      g.append('text').attr('x', p.mx).attr('y', p.my - 4)
         .attr('text-anchor', 'middle').attr('fill', '#555').attr('font-size', 9)
         .attr('opacity', 0).text(e.label).attr('class', 'edge-label');
     }
-
     g.on('mouseenter', function() {
       d3.select(this).select('.edge-path').attr('stroke-opacity', 1);
       d3.select(this).select('.edge-label').attr('opacity', 1);
@@ -329,101 +741,58 @@ function render() {
   });
 
   // Nodes
-  const nodeGroup = container.append('g').attr('class', 'nodes');
-  const nodeMap = {};
-  nodes.forEach(n => nodeMap[n.id] = n);
-
-  const nodeEls = nodeGroup.selectAll('g').data(nodes, d => d.id).enter().append('g')
-    .attr('transform', d => `translate(${positions[d.id]?.x || 0},${positions[d.id]?.y || 0})`)
+  const nodeGroup = container.append('g');
+  const nodeMap = {}; nodes.forEach(n => nodeMap[n.id] = n);
+  const nodeEls = nodeGroup.selectAll('g').data(nodes, d=>d.id).enter().append('g')
+    .attr('transform', d => `translate(${positions[d.id]?.x||0},${positions[d.id]?.y||0})`)
     .attr('cursor', 'pointer');
 
-  // Drag
   const drag = d3.drag()
-    .on('start', function(event, d) { d3.select(this).raise(); })
+    .on('start', function() { d3.select(this).raise(); })
     .on('drag', function(event, d) {
       positions[d.id] = { x: event.x, y: event.y };
       d3.select(this).attr('transform', `translate(${event.x},${event.y})`);
-      // Update connected edges
       edgeEls.each(function(e) {
-        const src = positions[e.source];
-        const tgt = positions[e.target];
-        if (!src || !tgt) return;
-        if (e.source !== d.id && e.target !== d.id) return;
-        const dx = tgt.x - src.x;
-        const dy = tgt.y - src.y;
-        const angle = Math.atan2(dy, dx);
-        const nodeR = 22;
-        const sx = src.x + Math.cos(angle) * nodeR;
-        const sy = src.y + Math.sin(angle) * nodeR;
-        const ex = tgt.x - Math.cos(angle) * nodeR;
-        const ey = tgt.y - Math.sin(angle) * nodeR;
-        d3.select(this).select('.edge-path')
-          .attr('d', `M${sx},${sy} Q${(sx+ex)/2 + (sy-ey)*0.15},${(sy+ey)/2 + (ex-sx)*0.15} ${ex},${ey}`);
-        d3.select(this).select('.edge-label')
-          .attr('x', (sx+ex)/2 + (sy-ey)*0.075).attr('y', (sy+ey)/2 + (ex-sx)*0.075);
+        const src = positions[e.source], tgt = positions[e.target];
+        if (!src || !tgt || (e.source !== d.id && e.target !== d.id)) return;
+        const p = orthoPath(src, tgt);
+        d3.select(this).select('.edge-path').attr('d', p.d);
+        d3.select(this).select('.edge-label').attr('x', p.mx).attr('y', p.my - 4);
       });
     });
   nodeEls.call(drag);
 
-  // Draw shapes
   nodeEls.each(function(d) {
     const g = d3.select(this);
     const color = AGENT_COLORS[d.created_by] || '#888';
     const energy = d.energy || 1;
     const r = Math.max(16, Math.min(30, 16 + energy * 6));
-
-    // Glow for high energy
     if (energy > 1.0) {
-      g.append('circle').attr('r', r + 8)
-        .attr('fill', 'none').attr('stroke', color).attr('stroke-opacity', 0.15)
-        .attr('stroke-width', 2);
+      g.append('circle').attr('r', r+8).attr('fill','none').attr('stroke',color).attr('stroke-opacity',0.15).attr('stroke-width',2);
     }
-
-    // Verified badge
     if (d.verified_by && d.verified_by.length > 0) {
-      g.append('circle').attr('r', r + 3)
-        .attr('fill', 'none').attr('stroke', '#4ade80').attr('stroke-width', 1.5)
-        .attr('stroke-dasharray', '3,2');
+      g.append('circle').attr('r', r+3).attr('fill','none').attr('stroke','#4ade80').attr('stroke-width',1.5).attr('stroke-dasharray','3,2');
     }
-
     const shape = TYPE_SHAPES[d.type] || 'circle';
     if (shape === 'circle') {
-      g.append('circle').attr('r', r)
-        .attr('fill', color).attr('fill-opacity', 0.12)
-        .attr('stroke', color).attr('stroke-width', 1.5);
+      g.append('circle').attr('r', r).attr('fill', color).attr('fill-opacity', 0.12).attr('stroke', color).attr('stroke-width', 1.5);
     } else if (shape === 'rect') {
-      g.append('rect').attr('x', -r*1.2).attr('y', -r*0.8).attr('width', r*2.4).attr('height', r*1.6).attr('rx', 4)
-        .attr('fill', color).attr('fill-opacity', 0.12)
-        .attr('stroke', color).attr('stroke-width', 1.5);
+      g.append('rect').attr('x',-r*1.2).attr('y',-r*0.8).attr('width',r*2.4).attr('height',r*1.6).attr('rx',4)
+        .attr('fill',color).attr('fill-opacity',0.12).attr('stroke',color).attr('stroke-width',1.5);
     } else if (shape === 'diamond') {
-      g.append('polygon').attr('points', `0,${-r} ${r},0 0,${r} ${-r},0`)
-        .attr('fill', color).attr('fill-opacity', 0.12)
-        .attr('stroke', color).attr('stroke-width', 1.5);
+      g.append('polygon').attr('points',`0,${-r} ${r},0 0,${r} ${-r},0`)
+        .attr('fill',color).attr('fill-opacity',0.12).attr('stroke',color).attr('stroke-width',1.5);
     } else if (shape === 'triangle') {
-      const s = r * 1.2;
-      g.append('polygon').attr('points', `0,${-s} ${s},${s*0.7} ${-s},${s*0.7}`)
-        .attr('fill', color).attr('fill-opacity', 0.15)
-        .attr('stroke', color).attr('stroke-width', 1.5);
+      const s = r*1.2;
+      g.append('polygon').attr('points',`0,${-s} ${s},${s*0.7} ${-s},${s*0.7}`)
+        .attr('fill',color).attr('fill-opacity',0.15).attr('stroke',color).attr('stroke-width',1.5);
     } else if (shape === 'hexagon') {
-      const pts = d3.range(6).map(i => {
-        const a = Math.PI / 3 * i - Math.PI / 6;
-        return `${r * Math.cos(a)},${r * Math.sin(a)}`;
-      }).join(' ');
-      g.append('polygon').attr('points', pts)
-        .attr('fill', color).attr('fill-opacity', 0.12)
-        .attr('stroke', color).attr('stroke-width', 1.5);
+      const pts = d3.range(6).map(i => { const a=Math.PI/3*i-Math.PI/6; return `${r*Math.cos(a)},${r*Math.sin(a)}`; }).join(' ');
+      g.append('polygon').attr('points',pts).attr('fill',color).attr('fill-opacity',0.12).attr('stroke',color).attr('stroke-width',1.5);
     }
-
-    // Label
-    const label = d.label.length > 8 ? d.label.slice(0, 7) + '..' : d.label;
-    g.append('text').attr('y', 4).attr('text-anchor', 'middle')
-      .attr('fill', '#ddd').attr('font-size', 11).attr('font-weight', 500)
-      .text(label);
-
-    // Depth indicator
-    g.append('text').attr('y', r + 14).attr('text-anchor', 'middle')
-      .attr('fill', '#555').attr('font-size', 9)
-      .text(`D${d.depth}`);
+    const label = d.label.length > 8 ? d.label.slice(0,7)+'..' : d.label;
+    g.append('text').attr('y',4).attr('text-anchor','middle').attr('fill','#ddd').attr('font-size',11).attr('font-weight',500).text(label);
+    g.append('text').attr('y',r+14).attr('text-anchor','middle').attr('fill','#555').attr('font-size',9).text(`D${d.depth}`);
   });
 
   // Interactions
@@ -431,37 +800,28 @@ function render() {
     const tt = document.getElementById('tooltip');
     tt.style.display = 'block';
     tt.querySelector('.tt-label').textContent = d.label;
-    const agentName = {digger:'挖掘者',hunter:'搜猎者',skeptic:'质疑者',weaver:'编织者',organizer:'整理者'}[d.created_by] || d.created_by;
-    tt.querySelector('.tt-type').textContent = `${d.type} | ${agentName} | 能量:${(d.energy||0).toFixed(2)} | R${d.round||'?'}`;
-    tt.style.left = (event.clientX + 14) + 'px';
-    tt.style.top = (event.clientY - 10) + 'px';
-
-    // Highlight connected
+    const an = AGENT_NAMES[d.created_by] || d.created_by;
+    tt.querySelector('.tt-type').textContent = `${d.type} | ${an} | E:${(d.energy||0).toFixed(2)} | R${d.round||'?'}`;
+    tt.style.left = (event.clientX+14)+'px'; tt.style.top = (event.clientY-10)+'px';
     edgeEls.each(function(e) {
-      const connected = e.source === d.id || e.target === d.id;
-      d3.select(this).select('.edge-path')
-        .attr('stroke-opacity', connected ? 1 : 0.1)
-        .attr('stroke-width', connected ? parseFloat(d3.select(this).select('.edge-path').attr('stroke-width')) * 1.5 : undefined);
-      d3.select(this).select('.edge-label').attr('opacity', connected ? 1 : 0);
+      const c = e.source===d.id || e.target===d.id;
+      d3.select(this).select('.edge-path').attr('stroke-opacity', c?1:0.1);
+      d3.select(this).select('.edge-label').attr('opacity', c?1:0);
     });
     nodeEls.attr('opacity', nd => {
-      if (nd.id === d.id) return 1;
-      for (const e of edges) {
-        if ((e.source === d.id && e.target === nd.id) || (e.target === d.id && e.source === nd.id)) return 1;
-      }
+      if (nd.id===d.id) return 1;
+      for (const e of edges) { if ((e.source===d.id&&e.target===nd.id)||(e.target===d.id&&e.source===nd.id)) return 1; }
       return 0.2;
     });
   })
   .on('mousemove', function(event) {
     const tt = document.getElementById('tooltip');
-    tt.style.left = (event.clientX + 14) + 'px';
-    tt.style.top = (event.clientY - 10) + 'px';
+    tt.style.left = (event.clientX+14)+'px'; tt.style.top = (event.clientY-10)+'px';
   })
   .on('mouseleave', function() {
     document.getElementById('tooltip').style.display = 'none';
     edgeEls.each(function(e) {
-      const color = EDGE_COLORS[e.type] || '#444';
-      const sw = Math.max(1, Math.min(4, (e.strength || 1) * 1.5));
+      const sw = Math.max(1, Math.min(4, (e.strength||1)*1.5));
       d3.select(this).select('.edge-path').attr('stroke-opacity', 0.5).attr('stroke-width', sw);
       d3.select(this).select('.edge-label').attr('opacity', 0);
     });
@@ -473,97 +833,79 @@ function render() {
   });
 
   svg.on('click', () => closePanel());
-
-  updateStats(nodes.length, edges.length);
 }
 
 function showDetail(node, edges, nodeMap) {
-  selectedNode = node;
   const panel = document.getElementById('detail-panel');
   const content = document.getElementById('detail-content');
   const color = AGENT_COLORS[node.created_by] || '#888';
-  const agentName = {digger:'挖掘者',hunter:'搜猎者',skeptic:'质疑者',weaver:'编织者',organizer:'整理者'}[node.created_by] || node.created_by;
-
+  const agentName = AGENT_NAMES[node.created_by] || node.created_by;
   let html = `
-    <h2 style="color:${color}">${node.label}</h2>
+    <h2 style="color:${color}">${esc(node.label)}</h2>
     <div class="meta">
-      <span>${node.type}</span>
-      <span>深度 ${node.depth}</span>
-      <span>${agentName}</span>
-      <span>R${node.round || '?'}</span>
+      <span>${node.type}</span><span>深度 ${node.depth}</span>
+      <span>${agentName}</span><span>R${node.round||'?'}</span>
     </div>
     <div class="energy-bar">
-      <div class="energy-fill" style="width:${Math.min(100, (node.energy||1)/2*100)}%; background:${color}"></div>
+      <div class="energy-fill" style="width:${Math.min(100,(node.energy||1)/2*100)}%;background:${color}"></div>
     </div>
     <div style="font-size:10px;color:#555;margin:4px 0 12px;">能量 ${(node.energy||0).toFixed(2)} / 引用 ${node.references||0}</div>
-    <div class="summary">${node.summary || '无描述'}</div>
+    <div class="summary">${esc(node.summary || '无描述')}</div>
   `;
-
-  if (node.verified_by && node.verified_by.length > 0) {
+  if (node.verified_by?.length > 0)
     html += `<div style="font-size:11px;color:#4ade80;margin-bottom:12px;">已验证: ${node.verified_by.join(', ')}</div>`;
-  }
-
-  // Connected edges
   const incoming = edges.filter(e => e.target === node.id);
   const outgoing = edges.filter(e => e.source === node.id);
-
   if (incoming.length > 0) {
     html += `<div class="connections"><h3>入边 (${incoming.length})</h3>`;
     incoming.forEach(e => {
-      const src = nodeMap[e.source];
-      html += `<div class="conn-item" onclick="highlightNode('${e.source}')">
-        <span style="color:${EDGE_COLORS[e.type]||'#444'}">&larr;</span>
-        ${src?.label || e.source} <span style="color:#555">${e.label || ''}</span>
-      </div>`;
+      html += `<div class="conn-item" onclick="highlightNode('${e.source}')"><span style="color:${EDGE_COLORS[e.type]||'#444'}">&larr;</span> ${esc(nodeMap[e.source]?.label||e.source)} <span style="color:#555">${esc(e.label||'')}</span></div>`;
     });
     html += '</div>';
   }
   if (outgoing.length > 0) {
     html += `<div class="connections" style="margin-top:8px"><h3>出边 (${outgoing.length})</h3>`;
     outgoing.forEach(e => {
-      const tgt = nodeMap[e.target];
-      html += `<div class="conn-item" onclick="highlightNode('${e.target}')">
-        <span style="color:${EDGE_COLORS[e.type]||'#444'}">&rarr;</span>
-        ${tgt?.label || e.target} <span style="color:#555">${e.label || ''}</span>
-      </div>`;
+      html += `<div class="conn-item" onclick="highlightNode('${e.target}')"><span style="color:${EDGE_COLORS[e.type]||'#444'}">&rarr;</span> ${esc(nodeMap[e.target]?.label||e.target)} <span style="color:#555">${esc(e.label||'')}</span></div>`;
     });
     html += '</div>';
   }
-
   content.innerHTML = html;
   panel.classList.add('open');
 }
 
-function closePanel() {
-  document.getElementById('detail-panel').classList.remove('open');
-  selectedNode = null;
-}
+function closePanel() { document.getElementById('detail-panel').classList.remove('open'); }
 
 function highlightNode(id) {
-  // Find and click the node
-  d3.selectAll('.nodes g').each(function(d) {
-    if (d.id === id) d3.select(this).dispatch('click');
+  d3.selectAll('#canvas .nodes g, #canvas g g').each(function(d) {
+    if (d && d.id === id) d3.select(this).dispatch('click');
   });
 }
 
-function updateStats(n, e) {
-  document.getElementById('stats').textContent = `${n} 节点 / ${e} 连接`;
+// ── Utilities ──
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+async function refreshAll() {
+  agentSlidersRendered = false;
+  await Promise.all([loadSessions(), fetchStatus(), loadNetwork()]);
+  fetchLogs();
 }
 
-// Filter buttons
-document.querySelectorAll('.filter-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const filterType = btn.dataset.filter;
-    const value = btn.dataset.value;
-    document.querySelectorAll(`.filter-btn[data-filter="${filterType}"]`).forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentFilter[filterType] = value === 'all' ? 'all' : value;
-    render();
-  });
+// ── Init ──
+initFilters();
+refreshAll();
+// Start log polling
+logPollTimer = setInterval(fetchLogs, 2000);
+
+window.addEventListener('resize', () => renderGraph());
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.key === 'l' || e.key === 'L') toggleLog();
+  if (e.key === 'Escape') { closePanel(); closeModal(); }
+  if (e.key === 'n' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); showNewSessionModal(); }
 });
-
-window.addEventListener('resize', () => render());
-loadData();
 </script>
 </body>
 </html>
