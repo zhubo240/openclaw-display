@@ -1021,6 +1021,13 @@ async function submitFeedback(nodeId) {
   if (!text) return;
   await api('POST', '/api/feedback', { node_id: nodeId, text });
   await loadNetwork();
+  // Re-open detail panel for the same node with updated data
+  const updatedNode = graphData.nodes.find(n => n.id === nodeId);
+  if (updatedNode) {
+    const { edges } = getFiltered();
+    const nodeMap = {}; graphData.nodes.forEach(n => nodeMap[n.id] = n);
+    showDetail(updatedNode, edges, nodeMap);
+  }
 }
 
 // ── Utilities ──
