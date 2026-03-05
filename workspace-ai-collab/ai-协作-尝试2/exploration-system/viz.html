@@ -982,7 +982,21 @@ function showDetail(node, edges, nodeMap) {
   if (userFeedback.length > 0) {
     html += `<div style="margin-top:12px"><h3 style="font-size:12px;color:#ec4899;margin-bottom:6px;">用户反馈 (${userFeedback.length})</h3>`;
     userFeedback.forEach(fb => {
-      html += `<div style="padding:6px 8px;margin:3px 0;border-radius:4px;background:#fdf2f8;font-size:11px;color:#555;border-left:3px solid #ec4899;">${esc(fb.summary)}<div style="font-size:10px;color:#aaa;margin-top:2px;">E:${(fb.energy||0).toFixed(2)} R${fb.round||'?'}</div></div>`;
+      html += `<div style="padding:6px 8px;margin:3px 0;border-radius:4px;background:#fdf2f8;font-size:11px;color:#555;border-left:3px solid #ec4899;">
+        <div id="fb-display-${fb.id}">${esc(fb.summary)}
+          <div style="font-size:10px;color:#aaa;margin-top:2px;">E:${(fb.energy||0).toFixed(2)} R${fb.round||'?'}
+            <button onclick="startEditFeedback('${fb.id}','${node.id}')" style="margin-left:6px;font-size:9px;padding:1px 6px;border-radius:3px;border:1px solid #ddd;background:#fff;color:#888;cursor:pointer;">编辑</button>
+            <button onclick="deleteUserNode('${fb.id}','${node.id}')" style="margin-left:3px;font-size:9px;padding:1px 6px;border-radius:3px;border:1px solid #fca5a5;background:#fff;color:#ef4444;cursor:pointer;">删除</button>
+          </div>
+        </div>
+        <div id="fb-edit-${fb.id}" style="display:none;">
+          <textarea id="fb-edit-text-${fb.id}" style="width:100%;height:50px;padding:6px;border-radius:4px;border:1px solid #ddd;font-size:11px;font-family:inherit;resize:vertical;">${esc(fb.summary)}</textarea>
+          <div style="display:flex;gap:4px;margin-top:4px;justify-content:flex-end;">
+            <button onclick="cancelEditFeedback('${fb.id}')" style="font-size:10px;padding:2px 8px;border-radius:3px;border:1px solid #ddd;background:#fff;color:#888;cursor:pointer;">取消</button>
+            <button onclick="saveEditFeedback('${fb.id}','${node.id}')" style="font-size:10px;padding:2px 8px;border-radius:3px;border:1px solid #ec4899;background:#fdf2f8;color:#ec4899;cursor:pointer;">保存</button>
+          </div>
+        </div>
+      </div>`;
     });
     html += '</div>';
   }
@@ -1044,6 +1058,54 @@ async function submitFeedback(nodeId) {
   await api('POST', '/api/feedback', { node_id: nodeId, text, weight });
   await loadNetwork();
   // Re-open detail panel for the same node with updated data
+  const updatedNode = graphData.nodes.find(n => n.id === nodeId);
+  if (updatedNode) {
+    const { edges } = getFiltered();
+    const nodeMap = {}; graphData.nodes.forEach(n => nodeMap[n.id] = n);
+    showDetail(updatedNode, edges, nodeMap);
+  }
+}
+
+// ── User Node Edit/Delete ──
+function startEditFeedback(fbId, nodeId) {
+  document.getElementById('fb-display-' + fbId).style.display = 'none';
+  document.getElementById('fb-edit-' + fbId).style.display = 'block';
+}
+function cancelEditFeedback(fbId) {
+  document.getElementById('fb-display-' + fbId).style.display = '';
+  document.getElementById('fb-edit-' + fbId).style.display = 'none';
+}
+async function saveEditFeedback(fbId, nodeId) {
+  const text = document.getElementById('fb-edit-text-' + fbId)?.value?.trim();
+  if (!text) return;
+  await api('POST', '/api/node/update', { node_id: fbId, text });
+  await loadNetwork();
+  const updatedNode = graphData.nodes.find(n => n.id === nodeId);
+  if (updatedNode) {
+    const { edges } = getFiltered();
+    const nodeMap = {}; graphData.nodes.forEach(n => nodeMap[n.id] = n);
+    showDetail(updatedNode, edges, nodeMap);
+  }
+}
+function deleteUserNode(fbId, nodeId) {
+  const display = document.getElementById('fb-display-' + fbId);
+  if (!display) return;
+  display.innerHTML = `<span style="color:#ef4444;">确定删除？</span>
+    <button onclick="confirmDeleteNode('${fbId}','${nodeId}')" style="margin-left:6px;font-size:10px;padding:2px 8px;border-radius:3px;border:1px solid #ef4444;background:#fef2f2;color:#ef4444;cursor:pointer;">确定</button>
+    <button onclick="cancelDeleteNode('${fbId}','${nodeId}')" style="margin-left:3px;font-size:10px;padding:2px 8px;border-radius:3px;border:1px solid #ddd;background:#fff;color:#888;cursor:pointer;">取消</button>`;
+}
+function cancelDeleteNode(fbId, nodeId) {
+  // Re-render detail panel to restore original state
+  const node = graphData.nodes.find(n => n.id === nodeId);
+  if (node) {
+    const { edges } = getFiltered();
+    const nodeMap = {}; graphData.nodes.forEach(n => nodeMap[n.id] = n);
+    showDetail(node, edges, nodeMap);
+  }
+}
+async function confirmDeleteNode(fbId, nodeId) {
+  await api('POST', '/api/node/delete', { node_id: fbId });
+  await loadNetwork();
   const updatedNode = graphData.nodes.find(n => n.id === nodeId);
   if (updatedNode) {
     const { edges } = getFiltered();
