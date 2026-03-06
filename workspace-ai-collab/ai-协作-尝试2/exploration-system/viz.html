@@ -470,9 +470,16 @@ let allLogEntries = []; // store all fetched logs for round filtering
 let pollTimer = null;
 let logPollTimer = null;
 let isRunning = false;
+// Multi-tab session support: each tab can view a different session
+let viewSessionId = new URLSearchParams(location.search).get('session') || null;
 
 // ── API Helpers ──
 async function api(method, path, body) {
+  // For GET requests, append session_id if viewing a specific session
+  if (method === 'GET' && viewSessionId && !path.includes('session_id=')) {
+    const sep = path.includes('?') ? '&' : '?';
+    path += `${sep}session_id=${encodeURIComponent(viewSessionId)}`;
+  }
   const opts = { method, headers: { 'Content-Type': 'application/json' } };
   if (body) opts.body = JSON.stringify(body);
   const res = await fetch(path, opts);
@@ -486,13 +493,15 @@ async function loadSessions() {
   list.innerHTML = '';
   (data.sessions || []).forEach(s => {
     const d = document.createElement('div');
-    d.className = 'session-item' + (s.is_current ? ' current' : '');
+    const isViewing = viewSessionId ? (s.id === viewSessionId) : s.is_current;
+    d.className = 'session-item' + (isViewing ? ' current' : '');
     const date = s.created_at ? new Date(s.created_at * 1000).toLocaleDateString('zh-CN') : '';
     d.innerHTML = `
       <div class="s-topic">${esc(s.topic || s.id)}</div>
       <div class="s-meta">${date} &middot; ${s.rounds}轮 &middot; ${s.nodes}节点</div>
       <div class="s-actions">
         ${s.is_current ? '' : `<button onclick="switchSession('${s.id}')">切换</button>`}
+        <button onclick="openSessionInNewTab('${s.id}')" title="在新标签页打开">窗</button>
         <button class="del" onclick="deleteSession('${s.id}', event)">删除</button>
       </div>
     `;
@@ -505,7 +514,15 @@ async function loadSessions() {
 
 async function switchSession(id) {
   await api('POST', '/api/session/switch', { id });
+  viewSessionId = id;
+  const url = new URL(location);
+  url.searchParams.set('session', id);
+  history.replaceState(null, '', url);
+  logSeq = 0; allLogEntries = [];
   await refreshAll();
+}
+function openSessionInNewTab(id) {
+  window.open(`${location.pathname}?session=${encodeURIComponent(id)}`, '_blank');
 }
 
 async function deleteSession(id, event) {
