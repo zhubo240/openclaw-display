@@ -67,6 +67,21 @@ body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
 .agent-freq-slider { flex: 1; accent-color: var(--c); height: 2px; }
 .agent-freq-val { font-size: 10px; color: #888; width: 28px; text-align: right; }
 .agent-stat { font-size: 10px; color: #aaa; width: 40px; text-align: right; }
+.agent-actions { display: flex; gap: 2px; }
+.agent-actions button { font-size: 9px; padding: 1px 4px; border: none; background: transparent; color: #aaa; cursor: pointer; border-radius: 3px; }
+.agent-actions button:hover { background: #f0f0f0; color: #555; }
+.agent-actions button.del:hover { color: #d93025; background: #fce8e6; }
+#agent-config h3 { display: flex; justify-content: space-between; align-items: center; }
+#agent-config h3 button { font-size: 10px; padding: 2px 8px; border: 1px solid #d0d0d0; background: #fff; border-radius: 4px; cursor: pointer; color: #1a73e8; }
+#agent-config h3 button:hover { background: #e8f0fe; }
+.registry-item {
+  display: flex; align-items: center; gap: 6px; padding: 3px 0; font-size: 11px;
+}
+.registry-item .ri-name { color: #555; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+.registry-item .ri-name:hover { color: #1a73e8; }
+.registry-item .ri-actions button { font-size: 9px; padding: 1px 4px; border: none; background: transparent; color: #aaa; cursor: pointer; border-radius: 3px; }
+.registry-item .ri-actions button:hover { background: #f0f0f0; color: #555; }
+.registry-item .ri-actions button.del:hover { color: #d93025; background: #fce8e6; }
 
 /* Filters */
 #filters {
@@ -339,8 +354,16 @@ svg text { user-select: none; }
   </div>
 
   <div id="agent-config">
-    <h3>Agent 频率</h3>
+    <h3>Session Agents <button onclick="showSessionAddAgentModal()">+ 加入</button></h3>
     <div id="agent-sliders"></div>
+  </div>
+
+  <div id="agent-registry-section" style="padding:12px 16px;border-bottom:1px solid #e8e8e8">
+    <h3 style="font-size:11px;color:#999;text-transform:uppercase;letter-spacing:1px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      Agent 库
+      <button onclick="showRegistryAddModal()" style="font-size:10px;padding:2px 8px;border:1px solid #d0d0d0;background:#fff;border-radius:4px;cursor:pointer;color:#1a73e8">+ 新建</button>
+    </h3>
+    <div id="registry-list"></div>
   </div>
 
   <div id="filters">
@@ -598,23 +621,43 @@ function stopPolling() {
 }
 
 // ── Agent Sliders ──
-let agentSlidersRendered = false;
+const EXTRA_COLORS = ['#0ea5e9','#a855f7','#14b8a6','#e11d48','#84cc16','#f59e0b','#6366f1','#22d3ee'];
+let extraColorIdx = 0;
+function getAgentColor(aid) {
+  if (AGENT_COLORS[aid]) return AGENT_COLORS[aid];
+  // Assign a color for custom agents
+  AGENT_COLORS[aid] = EXTRA_COLORS[extraColorIdx % EXTRA_COLORS.length];
+  extraColorIdx++;
+  return AGENT_COLORS[aid];
+}
+
+let lastAgentJSON = '';
 function renderAgentSliders(agents) {
-  if (agentSlidersRendered) return;
+  const json = JSON.stringify(agents);
+  if (json === lastAgentJSON) return;
+  lastAgentJSON = json;
+  // Update AGENT_NAMES for dynamic agents
+  for (const [aid, info] of Object.entries(agents)) {
+    AGENT_NAMES[aid] = info.role_cn;
+    getAgentColor(aid);
+  }
   const container = document.getElementById('agent-sliders');
   container.innerHTML = '';
   for (const [aid, info] of Object.entries(agents)) {
-    const color = AGENT_COLORS[aid] || '#888';
+    const color = getAgentColor(aid);
     const row = document.createElement('div');
     row.className = 'agent-row';
     row.innerHTML = `
       <div class="agent-dot" style="background:${color}"></div>
-      <span class="agent-name">${info.role_cn}</span>
+      <span class="agent-name" title="${aid}">${info.role_cn}</span>
       <input class="agent-freq-slider" type="range" min="0" max="1" step="0.1"
              value="${info.frequency}" style="--c:${color}"
              data-agent="${aid}">
       <span class="agent-freq-val">${info.frequency}</span>
-      <span class="agent-stat">${info.rounds_active}轮</span>
+      <span class="agent-actions">
+        <button onclick="showEditAgentModal('${aid}')">编辑</button>
+        <button class="del" onclick="deleteAgent('${aid}')">×</button>
+      </span>
     `;
     const slider = row.querySelector('input');
     const valSpan = row.querySelector('.agent-freq-val');
@@ -622,7 +665,6 @@ function renderAgentSliders(agents) {
     slider.onchange = () => { updateAgentFreq(aid, parseFloat(slider.value)); };
     container.appendChild(row);
   }
-  agentSlidersRendered = true;
 }
 
 // ── Logs ──
@@ -1256,11 +1298,155 @@ async function loadFrameworks() {
   } catch(e) {}
 }
 
+// ── Agent Management ──
+function showAddAgentModal() {
+  const root = document.getElementById('modal-root');
+  root.innerHTML = `
+    <div class="modal-overlay" onclick="closeModal()">
+      <div class="modal-box" onclick="event.stopPropagation()" style="width:420px">
+        <h3>添加 Agent</h3>
+        <div style="margin:8px 0">
+          <label style="font-size:12px;color:#666">ID (英文)</label>
+          <input id="add-agent-id" class="modal-input" placeholder="例: philosopher">
+        </div>
+        <div style="margin:8px 0">
+          <label style="font-size:12px;color:#666">中文名</label>
+          <input id="add-agent-cn" class="modal-input" placeholder="例: 哲思者">
+        </div>
+        <div style="margin:8px 0">
+          <label style="font-size:12px;color:#666">参与频率</label>
+          <input id="add-agent-freq" class="modal-input" type="number" min="0" max="1" step="0.1" value="0.8" style="width:80px">
+          <label style="font-size:12px;color:#666;margin-left:12px">可见度</label>
+          <input id="add-agent-vis" class="modal-input" type="number" min="0" max="1" step="0.1" value="0.8" style="width:80px">
+        </div>
+        <div style="margin:8px 0">
+          <label style="font-size:12px;color:#666">自然语言描述 (AI生成prompt)</label>
+          <textarea id="add-agent-desc" class="modal-input" rows="2" placeholder="描述这个Agent的角色和行为，AI会自动生成系统prompt"></textarea>
+        </div>
+        <div style="margin:8px 0">
+          <label style="font-size:12px;color:#666">或直接填写 System Prompt</label>
+          <textarea id="add-agent-prompt" class="modal-input" rows="4" placeholder="手动填写系统提示词（如果上面已填描述，可留空由AI生成）"></textarea>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+          <button class="ctrl-btn" onclick="closeModal()">取消</button>
+          <button class="ctrl-btn primary" id="add-agent-btn" onclick="doAddAgent()">添加</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function doAddAgent() {
+  const aid = document.getElementById('add-agent-id').value.trim();
+  const cn = document.getElementById('add-agent-cn').value.trim();
+  const freq = parseFloat(document.getElementById('add-agent-freq').value) || 0.8;
+  const vis = parseFloat(document.getElementById('add-agent-vis').value) || 0.8;
+  const desc = document.getElementById('add-agent-desc').value.trim();
+  const prompt = document.getElementById('add-agent-prompt').value.trim();
+  if (!aid || !cn) return;
+
+  const btn = document.getElementById('add-agent-btn');
+  btn.disabled = true;
+  btn.textContent = desc && !prompt ? 'AI生成中...' : '添加中...';
+
+  const body = { agent_id: aid, role_cn: cn, frequency: freq, visibility_radius: vis };
+  if (prompt) body.system_prompt = prompt;
+  else if (desc) body.description = desc;
+
+  const data = await api('POST', '/api/agent/add', body);
+  if (data.error) {
+    btn.disabled = false;
+    btn.textContent = '添加';
+    const errEl = document.createElement('div');
+    errEl.style.cssText = 'color:#d93025;font-size:12px;margin-top:4px';
+    errEl.textContent = data.error;
+    btn.parentElement.appendChild(errEl);
+    return;
+  }
+  closeModal();
+  lastAgentJSON = '';
+  await fetchStatus();
+}
+
+async function showEditAgentModal(aid) {
+  const [statusData, fwData] = await Promise.all([
+    api('GET', '/api/status'),
+    api('GET', `/api/agent/framework?agent_id=${aid}`),
+  ]);
+  const info = statusData.agents?.[aid];
+  if (!info) return;
+  const fw = fwData?.framework || {};
+  const fwVersion = fw.version || 0;
+
+  let fwHtml = '';
+  if (fwVersion > 0) {
+    fwHtml = `<div style="margin:8px 0;padding:8px;background:#f8f8f8;border-radius:6px;font-size:11px;max-height:150px;overflow-y:auto">
+      <div style="color:#999;margin-bottom:4px">认知框架 v${fwVersion}</div>`;
+    (fw.core_beliefs || []).forEach(b => { fwHtml += `<div style="color:#333">- ${esc(b)}</div>`; });
+    (fw.open_questions || []).forEach(q => { fwHtml += `<div style="color:#1a73e8">? ${esc(q)}</div>`; });
+    (fw.disagreements || []).forEach(d => { fwHtml += `<div style="color:#d93025">! ${esc(d)}</div>`; });
+    fwHtml += '</div>';
+  }
+
+  const root = document.getElementById('modal-root');
+  root.innerHTML = `
+    <div class="modal-overlay" onclick="closeModal()">
+      <div class="modal-box" onclick="event.stopPropagation()" style="width:420px">
+        <h3>编辑 ${esc(info.role_cn)} (${esc(aid)})</h3>
+        <div style="margin:8px 0">
+          <label style="font-size:12px;color:#666">中文名</label>
+          <input id="edit-agent-cn" class="modal-input" value="${esc(info.role_cn)}">
+        </div>
+        <div style="margin:8px 0">
+          <label style="font-size:12px;color:#666">参与频率</label>
+          <input id="edit-agent-freq" class="modal-input" type="number" min="0" max="1" step="0.1" value="${info.frequency}" style="width:80px">
+          <label style="font-size:12px;color:#666;margin-left:12px">可见度</label>
+          <input id="edit-agent-vis" class="modal-input" type="number" min="0" max="1" step="0.1" value="${info.visibility_radius}" style="width:80px">
+        </div>
+        ${fwHtml}
+        <div style="margin:8px 0">
+          <label style="font-size:12px;color:#666">System Prompt</label>
+          <textarea id="edit-agent-prompt" class="modal-input" rows="8">${esc(info.system_prompt || '')}</textarea>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+          <button class="ctrl-btn" onclick="closeModal()">取消</button>
+          <button class="ctrl-btn primary" onclick="doEditAgent('${aid}')">保存</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function doEditAgent(aid) {
+  const cn = document.getElementById('edit-agent-cn').value.trim();
+  const freq = parseFloat(document.getElementById('edit-agent-freq').value);
+  const vis = parseFloat(document.getElementById('edit-agent-vis').value);
+  const prompt = document.getElementById('edit-agent-prompt').value;
+  const body = { agent_id: aid };
+  if (cn) body.role_cn = cn;
+  if (!isNaN(freq)) body.frequency = freq;
+  if (!isNaN(vis)) body.visibility_radius = vis;
+  if (prompt) body.system_prompt = prompt;
+  await api('POST', '/api/agent/edit', body);
+  closeModal();
+  lastAgentJSON = '';
+  await fetchStatus();
+}
+
+async function deleteAgent(aid) {
+  const name = AGENT_NAMES[aid] || aid;
+  if (!confirm(`删除 Agent "${name}"？`)) return;
+  const data = await api('POST', '/api/agent/delete', { agent_id: aid });
+  if (data.error) return;
+  lastAgentJSON = '';
+  await fetchStatus();
+}
+
 // ── Utilities ──
 function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
 async function refreshAll() {
-  agentSlidersRendered = false;
+  lastAgentJSON = '';
   await Promise.all([loadSessions(), fetchStatus(), loadNetwork()]);
   fetchLogs();
 }
