@@ -357,6 +357,7 @@ svg text { user-select: none; }
     </div>
     <div class="ctrl-row">
       <button class="ctrl-btn danger" id="btn-stop" onclick="apiStop()" disabled>停止</button>
+      <button class="ctrl-btn" id="btn-rollback" onclick="showRollbackModal()" disabled>回退</button>
       <button class="ctrl-btn" id="btn-refresh" onclick="refreshAll()">刷新</button>
     </div>
     <div id="progress-bar"><div id="progress-fill"></div></div>
@@ -564,6 +565,39 @@ async function apiStop() {
   await api('POST', '/api/stop');
 }
 
+function showRollbackModal() {
+  const currentRound = graphData.round || 0;
+  if (currentRound <= 0) return;
+  let options = '';
+  for (let r = currentRound - 1; r >= 0; r--) {
+    options += `<option value="${r}">第 ${r} 轮${r === currentRound - 1 ? ' (上一轮)' : ''}</option>`;
+  }
+  const root = document.getElementById('modal-root');
+  root.innerHTML = `
+    <div class="modal-overlay" onclick="closeModal()">
+      <div class="modal-box" onclick="event.stopPropagation()" style="width:340px">
+        <h3>回退到指定轮次</h3>
+        <p style="font-size:12px;color:#666;margin:8px 0">当前第 ${currentRound} 轮。回退将删除目标轮次之后的所有节点、连接和发布。</p>
+        <select id="rollback-target" class="modal-input" style="margin:8px 0">${options}</select>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+          <button class="ctrl-btn" onclick="closeModal()">取消</button>
+          <button class="ctrl-btn danger" onclick="doRollback()">回退</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function doRollback() {
+  const target = parseInt(document.getElementById('rollback-target').value);
+  const data = await api('POST', '/api/rollback', { round: target });
+  closeModal();
+  if (data.ok) {
+    lastAgentJSON = '';
+    await refreshAll();
+  }
+}
+
 async function updateAgentFreq(agentId, value) {
   await api('POST', '/api/agent/config', { agent_id: agentId, frequency: value });
 }
@@ -577,6 +611,7 @@ async function fetchStatus() {
   document.getElementById('btn-step').disabled = isRunning || !data.session;
   document.getElementById('btn-run').disabled = isRunning || !data.session;
   document.getElementById('btn-stop').disabled = !isRunning;
+  document.getElementById('btn-rollback').disabled = isRunning || !data.session || !(data.stats && data.stats.round > 0);
   document.getElementById('query-submit').disabled = !data.session;
 
   // Progress
@@ -1092,10 +1127,16 @@ function showDetail(node, edges, nodeMap) {
   if (userFeedback.length > 0) {
     html += `<div style="margin-top:12px"><h3 style="font-size:12px;color:#ec4899;margin-bottom:6px;">用户反馈 (${userFeedback.length})</h3>`;
     userFeedback.forEach(fb => {
-      html += `<div style="padding:6px 8px;margin:3px 0;border-radius:4px;background:#fdf2f8;font-size:11px;color:#555;border-left:3px solid #ec4899;">
-        <div id="fb-display-${fb.id}">${esc(fb.summary)}
-          <div style="font-size:10px;color:#aaa;margin-top:2px;">E:${(fb.energy||0).toFixed(2)} R${fb.round||'?'}
-            <button onclick="startEditFeedback('${fb.id}','${node.id}')" style="margin-left:6px;font-size:9px;padding:1px 6px;border-radius:3px;border:1px solid #ddd;background:#fff;color:#888;cursor:pointer;">编辑</button>
+      const resolved = fb.resolved || false;
+      const bgColor = resolved ? '#f0fdf4' : '#fdf2f8';
+      const borderColor = resolved ? '#86efac' : '#ec4899';
+      const resolveLabel = resolved ? '重新打开' : '已解决';
+      const resolveColor = resolved ? '#f59e0b' : '#10b981';
+      html += `<div style="padding:6px 8px;margin:3px 0;border-radius:4px;background:${bgColor};font-size:11px;color:#555;border-left:3px solid ${borderColor};${resolved?'opacity:0.7;':''}">
+        <div id="fb-display-${fb.id}">${resolved?'<s>':''}${esc(fb.summary)}${resolved?'</s>':''}
+          <div style="font-size:10px;color:#aaa;margin-top:2px;">${resolved?'[已解决] ':''}E:${(fb.energy||0).toFixed(2)} R${fb.round||'?'}
+            <button onclick="resolveUserNode('${fb.id}','${node.id}',${!resolved})" style="margin-left:6px;font-size:9px;padding:1px 6px;border-radius:3px;border:1px solid ${resolveColor};background:#fff;color:${resolveColor};cursor:pointer;">${resolveLabel}</button>
+            <button onclick="startEditFeedback('${fb.id}','${node.id}')" style="margin-left:3px;font-size:9px;padding:1px 6px;border-radius:3px;border:1px solid #ddd;background:#fff;color:#888;cursor:pointer;">编辑</button>
             <button onclick="deleteUserNode('${fb.id}','${node.id}')" style="margin-left:3px;font-size:9px;padding:1px 6px;border-radius:3px;border:1px solid #fca5a5;background:#fff;color:#ef4444;cursor:pointer;">删除</button>
           </div>
         </div>
@@ -1197,6 +1238,17 @@ async function saveEditFeedback(fbId, nodeId) {
     showDetail(updatedNode, edges, nodeMap);
   }
 }
+async function resolveUserNode(fbId, nodeId, resolved) {
+  await api('POST', '/api/node/resolve', { node_id: fbId, resolved });
+  await loadNetwork();
+  const node = graphData.nodes.find(n => n.id === nodeId);
+  if (node) {
+    const { edges } = getFiltered();
+    const nodeMap = {}; graphData.nodes.forEach(n => nodeMap[n.id] = n);
+    showDetail(node, edges, nodeMap);
+  }
+}
+
 function deleteUserNode(fbId, nodeId) {
   const display = document.getElementById('fb-display-' + fbId);
   if (!display) return;
@@ -1588,15 +1640,32 @@ async function showSessionAgentDetail(aid) {
   const info = statusData.agents?.[aid];
   if (!info) return;
   const fw = fwData?.framework || {};
+  const fwHistory = fwData?.framework_history || [];
   const fwVersion = fw.version || 0;
+
+  function renderFw(f, label) {
+    let h = `<div style="font-size:11px">`;
+    if (label) h += `<div style="color:#999;margin-bottom:4px">${label}</div>`;
+    (f.core_beliefs || []).forEach(b => { h += `<div style="color:#333;margin:2px 0">- ${esc(b)}</div>`; });
+    (f.open_questions || []).forEach(q => { h += `<div style="color:#1a73e8;margin:2px 0">? ${esc(q)}</div>`; });
+    (f.disagreements || []).forEach(d => { h += `<div style="color:#d93025;margin:2px 0">! ${esc(d)}</div>`; });
+    return h + '</div>';
+  }
 
   let fwHtml = '<div style="color:#aaa;font-size:11px">还未建立框架</div>';
   if (fwVersion > 0) {
-    fwHtml = `<div style="font-size:11px;max-height:150px;overflow-y:auto">
-      <div style="color:#999;margin-bottom:4px">v${fwVersion}</div>`;
-    (fw.core_beliefs || []).forEach(b => { fwHtml += `<div style="color:#333;margin:2px 0">- ${esc(b)}</div>`; });
-    (fw.open_questions || []).forEach(q => { fwHtml += `<div style="color:#1a73e8;margin:2px 0">? ${esc(q)}</div>`; });
-    (fw.disagreements || []).forEach(d => { fwHtml += `<div style="color:#d93025;margin:2px 0">! ${esc(d)}</div>`; });
+    fwHtml = `<div style="max-height:200px;overflow-y:auto">`;
+    fwHtml += renderFw(fw, `当前 v${fwVersion}`);
+    if (fwHistory.length > 0) {
+      fwHtml += `<details style="margin-top:6px"><summary style="font-size:11px;color:#999;cursor:pointer">历史版本 (${fwHistory.length})</summary>`;
+      for (let i = fwHistory.length - 1; i >= 0; i--) {
+        const h = fwHistory[i];
+        fwHtml += `<div style="margin:6px 0;padding:6px;background:#f0f0f0;border-radius:4px">`;
+        fwHtml += renderFw(h.framework, `R${h.round} · v${h.framework.version || 0}`);
+        fwHtml += `</div>`;
+      }
+      fwHtml += `</details>`;
+    }
     fwHtml += '</div>';
   }
 
