@@ -221,6 +221,16 @@ body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
   position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 300;
   display: flex; align-items: center; justify-content: center;
 }
+.modal-box {
+  background: #fff; border-radius: 10px; padding: 24px; max-width: 90vw;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+}
+.modal-box h3 { font-size: 15px; margin-bottom: 12px; color: #333; }
+.modal-input {
+  width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #ddd;
+  background: #fafafa; color: #333; font-size: 13px; font-family: inherit;
+}
+.modal-input:focus { outline: none; border-color: #1a73e8; }
 .modal {
   background: #fff; border: 1px solid #ddd; border-radius: 10px;
   padding: 24px; width: 400px; max-width: 90vw;
@@ -249,11 +259,11 @@ body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
   display: none; padding: 12px 16px; border-bottom: 1px solid #e8e8e8;
 }
 #settings-panel.open { display: block; }
-#settings-panel h3 { font-size: 11px; color: #999; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+#settings-panel h3 { font-size: 22px; color: #999; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
 .setting-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-.setting-row label { font-size: 11px; color: #666; width: 60px; flex-shrink: 0; }
+.setting-row label { font-size: 22px; color: #666; width: 120px; flex-shrink: 0; }
 .setting-row input[type="range"] { flex: 1; }
-.setting-row .setting-val { font-size: 11px; color: #888; width: 36px; text-align: right; }
+.setting-row .setting-val { font-size: 22px; color: #888; width: 50px; text-align: right; }
 #settings-gear {
   background: none; border: none; color: #aaa; font-size: 14px; cursor: pointer; padding: 2px 4px;
 }
@@ -649,15 +659,12 @@ function renderAgentSliders(agents) {
     row.className = 'agent-row';
     row.innerHTML = `
       <div class="agent-dot" style="background:${color}"></div>
-      <span class="agent-name" title="${aid}">${info.role_cn}</span>
+      <span class="agent-name" title="${aid}" style="cursor:pointer" onclick="showSessionAgentDetail('${aid}')">${info.role_cn}</span>
       <input class="agent-freq-slider" type="range" min="0" max="1" step="0.1"
              value="${info.frequency}" style="--c:${color}"
              data-agent="${aid}">
       <span class="agent-freq-val">${info.frequency}</span>
-      <span class="agent-actions">
-        <button onclick="showEditAgentModal('${aid}')">编辑</button>
-        <button class="del" onclick="deleteAgent('${aid}')">×</button>
-      </span>
+      <span class="agent-stat">${info.rounds_active}轮</span>
     `;
     const slider = row.querySelector('input');
     const valSpan = row.querySelector('.agent-freq-val');
@@ -1298,77 +1305,279 @@ async function loadFrameworks() {
   } catch(e) {}
 }
 
-// ── Agent Management ──
-function showAddAgentModal() {
+// ── Global Agent Registry ──
+let registryCache = {};
+
+async function loadRegistry() {
+  registryCache = await api('GET', '/api/registry');
+  renderRegistryList();
+}
+
+function renderRegistryList() {
+  const container = document.getElementById('registry-list');
+  if (!container) return;
+  container.innerHTML = '';
+  for (const [aid, info] of Object.entries(registryCache)) {
+    const color = getAgentColor(aid);
+    const div = document.createElement('div');
+    div.className = 'registry-item';
+    div.innerHTML = `
+      <div class="agent-dot" style="background:${color}"></div>
+      <span class="ri-name" onclick="showRegistryDetailModal('${aid}')" title="查看配置">${esc(info.role_cn)}</span>
+      <span class="ri-actions">
+        <button onclick="showRegistryEditModal('${aid}')">编辑</button>
+        <button class="del" onclick="deleteRegistryAgent('${aid}')">×</button>
+      </span>
+    `;
+    container.appendChild(div);
+  }
+}
+
+function showRegistryAddModal() {
   const root = document.getElementById('modal-root');
   root.innerHTML = `
     <div class="modal-overlay" onclick="closeModal()">
-      <div class="modal-box" onclick="event.stopPropagation()" style="width:420px">
-        <h3>添加 Agent</h3>
-        <div style="margin:8px 0">
-          <label style="font-size:12px;color:#666">ID (英文)</label>
-          <input id="add-agent-id" class="modal-input" placeholder="例: philosopher">
+      <div class="modal-box" onclick="event.stopPropagation()" style="width:440px">
+        <h3>新建 Agent</h3>
+        <div style="display:flex;gap:4px;margin-bottom:12px">
+          <button class="ctrl-btn primary" id="tab-batch" onclick="switchRegAddTab('batch')" style="flex:1">AI 批量生成</button>
+          <button class="ctrl-btn" id="tab-single" onclick="switchRegAddTab('single')" style="flex:1">手动创建</button>
         </div>
-        <div style="margin:8px 0">
-          <label style="font-size:12px;color:#666">中文名</label>
-          <input id="add-agent-cn" class="modal-input" placeholder="例: 哲思者">
+        <div id="reg-add-batch">
+          <div style="margin:8px 0">
+            <label style="font-size:12px;color:#666">描述你需要的Agent（AI会自动设计数量、角色和prompt）</label>
+            <textarea id="reg-batch-desc" class="modal-input" rows="4" placeholder="例: 我需要几个从不同哲学流派分析问题的Agent，比如实用主义、存在主义、辩证法等"></textarea>
+          </div>
+          <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+            <button class="ctrl-btn" onclick="closeModal()">取消</button>
+            <button class="ctrl-btn primary" id="reg-batch-btn" onclick="doRegistryBatchAdd()">生成</button>
+          </div>
         </div>
-        <div style="margin:8px 0">
-          <label style="font-size:12px;color:#666">参与频率</label>
-          <input id="add-agent-freq" class="modal-input" type="number" min="0" max="1" step="0.1" value="0.8" style="width:80px">
-          <label style="font-size:12px;color:#666;margin-left:12px">可见度</label>
-          <input id="add-agent-vis" class="modal-input" type="number" min="0" max="1" step="0.1" value="0.8" style="width:80px">
-        </div>
-        <div style="margin:8px 0">
-          <label style="font-size:12px;color:#666">自然语言描述 (AI生成prompt)</label>
-          <textarea id="add-agent-desc" class="modal-input" rows="2" placeholder="描述这个Agent的角色和行为，AI会自动生成系统prompt"></textarea>
-        </div>
-        <div style="margin:8px 0">
-          <label style="font-size:12px;color:#666">或直接填写 System Prompt</label>
-          <textarea id="add-agent-prompt" class="modal-input" rows="4" placeholder="手动填写系统提示词（如果上面已填描述，可留空由AI生成）"></textarea>
-        </div>
-        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
-          <button class="ctrl-btn" onclick="closeModal()">取消</button>
-          <button class="ctrl-btn primary" id="add-agent-btn" onclick="doAddAgent()">添加</button>
+        <div id="reg-add-single" style="display:none">
+          <div style="margin:8px 0">
+            <label style="font-size:12px;color:#666">ID (英文)</label>
+            <input id="reg-add-id" class="modal-input" placeholder="例: philosopher">
+          </div>
+          <div style="margin:8px 0">
+            <label style="font-size:12px;color:#666">中文名</label>
+            <input id="reg-add-cn" class="modal-input" placeholder="例: 哲思者">
+          </div>
+          <div style="margin:8px 0">
+            <label style="font-size:12px;color:#666">参与频率</label>
+            <input id="reg-add-freq" class="modal-input" type="number" min="0" max="1" step="0.1" value="0.8" style="width:80px">
+            <label style="font-size:12px;color:#666;margin-left:12px">可见度</label>
+            <input id="reg-add-vis" class="modal-input" type="number" min="0" max="1" step="0.1" value="0.8" style="width:80px">
+          </div>
+          <div style="margin:8px 0">
+            <label style="font-size:12px;color:#666">描述 (AI生成prompt)</label>
+            <textarea id="reg-add-desc" class="modal-input" rows="2" placeholder="描述角色，AI生成prompt"></textarea>
+          </div>
+          <div style="margin:8px 0">
+            <label style="font-size:12px;color:#666">或直接填写 System Prompt</label>
+            <textarea id="reg-add-prompt" class="modal-input" rows="4" placeholder="手动填写（上面已填描述可留空）"></textarea>
+          </div>
+          <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+            <button class="ctrl-btn" onclick="closeModal()">取消</button>
+            <button class="ctrl-btn primary" id="reg-add-btn" onclick="doRegistryAdd()">创建</button>
+          </div>
         </div>
       </div>
     </div>
   `;
 }
 
-async function doAddAgent() {
-  const aid = document.getElementById('add-agent-id').value.trim();
-  const cn = document.getElementById('add-agent-cn').value.trim();
-  const freq = parseFloat(document.getElementById('add-agent-freq').value) || 0.8;
-  const vis = parseFloat(document.getElementById('add-agent-vis').value) || 0.8;
-  const desc = document.getElementById('add-agent-desc').value.trim();
-  const prompt = document.getElementById('add-agent-prompt').value.trim();
+function switchRegAddTab(tab) {
+  document.getElementById('reg-add-batch').style.display = tab === 'batch' ? '' : 'none';
+  document.getElementById('reg-add-single').style.display = tab === 'single' ? '' : 'none';
+  document.getElementById('tab-batch').className = 'ctrl-btn' + (tab === 'batch' ? ' primary' : '');
+  document.getElementById('tab-single').className = 'ctrl-btn' + (tab === 'single' ? ' primary' : '');
+}
+
+async function doRegistryBatchAdd() {
+  const desc = document.getElementById('reg-batch-desc').value.trim();
+  if (!desc) return;
+  const btn = document.getElementById('reg-batch-btn');
+  btn.disabled = true;
+  btn.textContent = 'AI 设计中...';
+
+  const data = await api('POST', '/api/registry/batch_add', { description: desc });
+  if (data.error) {
+    btn.disabled = false; btn.textContent = '生成';
+    btn.parentElement.insertAdjacentHTML('beforeend',
+      `<div style="color:#d93025;font-size:12px;margin-top:4px">${esc(data.error)}</div>`);
+    return;
+  }
+  const added = data.added || [];
+  if (added.length > 0) {
+    const names = added.map(a => a.role_cn).join('、');
+    btn.textContent = `已创建 ${added.length} 个`;
+    btn.parentElement.insertAdjacentHTML('beforeend',
+      `<div style="color:#0d904f;font-size:12px;margin-top:4px">已创建: ${esc(names)}</div>`);
+    setTimeout(async () => { closeModal(); await loadRegistry(); }, 1500);
+  } else {
+    btn.disabled = false; btn.textContent = '生成';
+    btn.parentElement.insertAdjacentHTML('beforeend',
+      `<div style="color:#b45309;font-size:12px;margin-top:4px">未生成任何Agent</div>`);
+  }
+}
+
+async function doRegistryAdd() {
+  const aid = document.getElementById('reg-add-id').value.trim();
+  const cn = document.getElementById('reg-add-cn').value.trim();
+  const freq = parseFloat(document.getElementById('reg-add-freq').value) || 0.8;
+  const vis = parseFloat(document.getElementById('reg-add-vis').value) || 0.8;
+  const desc = document.getElementById('reg-add-desc').value.trim();
+  const prompt = document.getElementById('reg-add-prompt').value.trim();
   if (!aid || !cn) return;
 
-  const btn = document.getElementById('add-agent-btn');
+  const btn = document.getElementById('reg-add-btn');
   btn.disabled = true;
-  btn.textContent = desc && !prompt ? 'AI生成中...' : '添加中...';
+  btn.textContent = desc && !prompt ? 'AI生成中...' : '创建中...';
 
   const body = { agent_id: aid, role_cn: cn, frequency: freq, visibility_radius: vis };
   if (prompt) body.system_prompt = prompt;
   else if (desc) body.description = desc;
 
-  const data = await api('POST', '/api/agent/add', body);
+  const data = await api('POST', '/api/registry/add', body);
   if (data.error) {
-    btn.disabled = false;
-    btn.textContent = '添加';
-    const errEl = document.createElement('div');
-    errEl.style.cssText = 'color:#d93025;font-size:12px;margin-top:4px';
-    errEl.textContent = data.error;
-    btn.parentElement.appendChild(errEl);
+    btn.disabled = false; btn.textContent = '创建';
+    btn.parentElement.insertAdjacentHTML('beforeend',
+      `<div style="color:#d93025;font-size:12px;margin-top:4px">${esc(data.error)}</div>`);
     return;
   }
+  closeModal();
+  await loadRegistry();
+}
+
+function showRegistryDetailModal(aid) {
+  const info = registryCache[aid];
+  if (!info) return;
+  const root = document.getElementById('modal-root');
+  root.innerHTML = `
+    <div class="modal-overlay" onclick="closeModal()">
+      <div class="modal-box" onclick="event.stopPropagation()" style="width:440px">
+        <h3>${esc(info.role_cn)} (${esc(aid)})</h3>
+        <div style="margin:8px 0;font-size:12px;color:#666">
+          频率: ${info.frequency} | 可见度: ${info.visibility_radius || 0.8}
+        </div>
+        <div style="margin:8px 0">
+          <label style="font-size:12px;color:#999">System Prompt</label>
+          <pre style="margin-top:4px;padding:10px;background:#f8f8f8;border-radius:6px;font-size:11px;line-height:1.5;white-space:pre-wrap;max-height:300px;overflow-y:auto">${esc(info.system_prompt || '')}</pre>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+          <button class="ctrl-btn" onclick="closeModal()">关闭</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function showRegistryEditModal(aid) {
+  const info = registryCache[aid];
+  if (!info) return;
+  const root = document.getElementById('modal-root');
+  root.innerHTML = `
+    <div class="modal-overlay" onclick="closeModal()">
+      <div class="modal-box" onclick="event.stopPropagation()" style="width:420px">
+        <h3>编辑模板: ${esc(info.role_cn)}</h3>
+        <div style="margin:8px 0">
+          <label style="font-size:12px;color:#666">中文名</label>
+          <input id="reg-edit-cn" class="modal-input" value="${esc(info.role_cn)}">
+        </div>
+        <div style="margin:8px 0">
+          <label style="font-size:12px;color:#666">频率</label>
+          <input id="reg-edit-freq" class="modal-input" type="number" min="0" max="1" step="0.1" value="${info.frequency}" style="width:80px">
+          <label style="font-size:12px;color:#666;margin-left:12px">可见度</label>
+          <input id="reg-edit-vis" class="modal-input" type="number" min="0" max="1" step="0.1" value="${info.visibility_radius || 0.8}" style="width:80px">
+        </div>
+        <div style="margin:8px 0">
+          <label style="font-size:12px;color:#666">System Prompt</label>
+          <textarea id="reg-edit-prompt" class="modal-input" rows="8">${esc(info.system_prompt || '')}</textarea>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+          <button class="ctrl-btn" onclick="closeModal()">取消</button>
+          <button class="ctrl-btn primary" onclick="doRegistryEdit('${aid}')">保存</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function doRegistryEdit(aid) {
+  const body = { agent_id: aid };
+  const cn = document.getElementById('reg-edit-cn').value.trim();
+  const freq = parseFloat(document.getElementById('reg-edit-freq').value);
+  const vis = parseFloat(document.getElementById('reg-edit-vis').value);
+  const prompt = document.getElementById('reg-edit-prompt').value;
+  if (cn) body.role_cn = cn;
+  if (!isNaN(freq)) body.frequency = freq;
+  if (!isNaN(vis)) body.visibility_radius = vis;
+  if (prompt) body.system_prompt = prompt;
+  await api('POST', '/api/registry/edit', body);
+  closeModal();
+  await loadRegistry();
+}
+
+async function deleteRegistryAgent(aid) {
+  const name = registryCache[aid]?.role_cn || aid;
+  if (!confirm(`从全局库删除 "${name}"？已有Session中的该Agent不受影响。`)) return;
+  await api('POST', '/api/registry/delete', { agent_id: aid });
+  await loadRegistry();
+}
+
+// ── Session Agent Management ──
+function showSessionAddAgentModal() {
+  // Show agents from registry that are NOT in current session
+  api('GET', '/api/status').then(statusData => {
+    const sessionAgents = statusData.agents ? Object.keys(statusData.agents) : [];
+    const available = Object.entries(registryCache).filter(([aid]) => !sessionAgents.includes(aid));
+    const root = document.getElementById('modal-root');
+    if (available.length === 0) {
+      root.innerHTML = `
+        <div class="modal-overlay" onclick="closeModal()">
+          <div class="modal-box" onclick="event.stopPropagation()" style="width:360px">
+            <h3>加入 Agent</h3>
+            <p style="font-size:13px;color:#666;margin:12px 0">全局库中所有Agent都已在此Session中。</p>
+            <p style="font-size:12px;color:#999">可在下方"Agent 库"中先新建模板。</p>
+            <div style="display:flex;justify-content:flex-end;margin-top:12px">
+              <button class="ctrl-btn" onclick="closeModal()">关闭</button>
+            </div>
+          </div>
+        </div>
+      `;
+      return;
+    }
+    let listHtml = available.map(([aid, info]) => {
+      const color = getAgentColor(aid);
+      return `<div class="registry-item" style="padding:6px 0">
+        <div class="agent-dot" style="background:${color}"></div>
+        <span style="font-size:12px;color:#333;flex:1">${esc(info.role_cn)} <span style="color:#aaa">(${esc(aid)})</span></span>
+        <button class="ctrl-btn primary" style="flex:none;padding:3px 10px;font-size:11px" onclick="doSessionAddAgent('${aid}')">加入</button>
+      </div>`;
+    }).join('');
+    root.innerHTML = `
+      <div class="modal-overlay" onclick="closeModal()">
+        <div class="modal-box" onclick="event.stopPropagation()" style="width:380px">
+          <h3>从库中加入 Agent</h3>
+          <div style="margin:8px 0;max-height:300px;overflow-y:auto">${listHtml}</div>
+          <div style="display:flex;justify-content:flex-end;margin-top:12px">
+            <button class="ctrl-btn" onclick="closeModal()">关闭</button>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+}
+
+async function doSessionAddAgent(aid) {
+  const data = await api('POST', '/api/session/agent/add', { agent_id: aid });
+  if (data.error) return;
   closeModal();
   lastAgentJSON = '';
   await fetchStatus();
 }
 
-async function showEditAgentModal(aid) {
+async function showSessionAgentDetail(aid) {
   const [statusData, fwData] = await Promise.all([
     api('GET', '/api/status'),
     api('GET', `/api/agent/framework?agent_id=${aid}`),
@@ -1378,65 +1587,53 @@ async function showEditAgentModal(aid) {
   const fw = fwData?.framework || {};
   const fwVersion = fw.version || 0;
 
-  let fwHtml = '';
+  let fwHtml = '<div style="color:#aaa;font-size:11px">还未建立框架</div>';
   if (fwVersion > 0) {
-    fwHtml = `<div style="margin:8px 0;padding:8px;background:#f8f8f8;border-radius:6px;font-size:11px;max-height:150px;overflow-y:auto">
-      <div style="color:#999;margin-bottom:4px">认知框架 v${fwVersion}</div>`;
-    (fw.core_beliefs || []).forEach(b => { fwHtml += `<div style="color:#333">- ${esc(b)}</div>`; });
-    (fw.open_questions || []).forEach(q => { fwHtml += `<div style="color:#1a73e8">? ${esc(q)}</div>`; });
-    (fw.disagreements || []).forEach(d => { fwHtml += `<div style="color:#d93025">! ${esc(d)}</div>`; });
+    fwHtml = `<div style="font-size:11px;max-height:150px;overflow-y:auto">
+      <div style="color:#999;margin-bottom:4px">v${fwVersion}</div>`;
+    (fw.core_beliefs || []).forEach(b => { fwHtml += `<div style="color:#333;margin:2px 0">- ${esc(b)}</div>`; });
+    (fw.open_questions || []).forEach(q => { fwHtml += `<div style="color:#1a73e8;margin:2px 0">? ${esc(q)}</div>`; });
+    (fw.disagreements || []).forEach(d => { fwHtml += `<div style="color:#d93025;margin:2px 0">! ${esc(d)}</div>`; });
     fwHtml += '</div>';
+  }
+
+  let memoryHtml = '';
+  if (info.context_summary) {
+    memoryHtml = `<div style="margin:8px 0">
+      <label style="font-size:12px;color:#999">探索记忆</label>
+      <div style="margin-top:4px;padding:8px;background:#f8f8f8;border-radius:6px;font-size:11px;line-height:1.5;max-height:100px;overflow-y:auto">${esc(info.context_summary)}</div>
+    </div>`;
   }
 
   const root = document.getElementById('modal-root');
   root.innerHTML = `
     <div class="modal-overlay" onclick="closeModal()">
-      <div class="modal-box" onclick="event.stopPropagation()" style="width:420px">
-        <h3>编辑 ${esc(info.role_cn)} (${esc(aid)})</h3>
-        <div style="margin:8px 0">
-          <label style="font-size:12px;color:#666">中文名</label>
-          <input id="edit-agent-cn" class="modal-input" value="${esc(info.role_cn)}">
+      <div class="modal-box" onclick="event.stopPropagation()" style="width:440px">
+        <h3>${esc(info.role_cn)} (${esc(aid)})</h3>
+        <div style="margin:4px 0;font-size:12px;color:#666">
+          频率: ${info.frequency} | 可见度: ${info.visibility_radius} | ${info.rounds_active}轮 | ${info.discoveries}发现
         </div>
         <div style="margin:8px 0">
-          <label style="font-size:12px;color:#666">参与频率</label>
-          <input id="edit-agent-freq" class="modal-input" type="number" min="0" max="1" step="0.1" value="${info.frequency}" style="width:80px">
-          <label style="font-size:12px;color:#666;margin-left:12px">可见度</label>
-          <input id="edit-agent-vis" class="modal-input" type="number" min="0" max="1" step="0.1" value="${info.visibility_radius}" style="width:80px">
+          <label style="font-size:12px;color:#999">认知框架</label>
+          ${fwHtml}
         </div>
-        ${fwHtml}
+        ${memoryHtml}
         <div style="margin:8px 0">
-          <label style="font-size:12px;color:#666">System Prompt</label>
-          <textarea id="edit-agent-prompt" class="modal-input" rows="8">${esc(info.system_prompt || '')}</textarea>
+          <label style="font-size:12px;color:#999">System Prompt</label>
+          <pre style="margin-top:4px;padding:10px;background:#f8f8f8;border-radius:6px;font-size:11px;line-height:1.5;white-space:pre-wrap;max-height:150px;overflow-y:auto">${esc(info.system_prompt || '')}</pre>
         </div>
         <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
-          <button class="ctrl-btn" onclick="closeModal()">取消</button>
-          <button class="ctrl-btn primary" onclick="doEditAgent('${aid}')">保存</button>
+          <button class="ctrl-btn" onclick="closeModal()">关闭</button>
         </div>
       </div>
     </div>
   `;
 }
 
-async function doEditAgent(aid) {
-  const cn = document.getElementById('edit-agent-cn').value.trim();
-  const freq = parseFloat(document.getElementById('edit-agent-freq').value);
-  const vis = parseFloat(document.getElementById('edit-agent-vis').value);
-  const prompt = document.getElementById('edit-agent-prompt').value;
-  const body = { agent_id: aid };
-  if (cn) body.role_cn = cn;
-  if (!isNaN(freq)) body.frequency = freq;
-  if (!isNaN(vis)) body.visibility_radius = vis;
-  if (prompt) body.system_prompt = prompt;
-  await api('POST', '/api/agent/edit', body);
-  closeModal();
-  lastAgentJSON = '';
-  await fetchStatus();
-}
-
-async function deleteAgent(aid) {
+async function removeSessionAgent(aid) {
   const name = AGENT_NAMES[aid] || aid;
-  if (!confirm(`删除 Agent "${name}"？`)) return;
-  const data = await api('POST', '/api/agent/delete', { agent_id: aid });
+  if (!confirm(`从当前Session移除 "${name}"？其认知框架和历史将丢失。`)) return;
+  const data = await api('POST', '/api/session/agent/remove', { agent_id: aid });
   if (data.error) return;
   lastAgentJSON = '';
   await fetchStatus();
@@ -1447,7 +1644,7 @@ function esc(s) { const d = document.createElement('div'); d.textContent = s; re
 
 async function refreshAll() {
   lastAgentJSON = '';
-  await Promise.all([loadSessions(), fetchStatus(), loadNetwork()]);
+  await Promise.all([loadSessions(), fetchStatus(), loadNetwork(), loadRegistry()]);
   fetchLogs();
 }
 
