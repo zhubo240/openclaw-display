@@ -365,7 +365,7 @@ svg text { user-select: none; }
   </div>
 
   <div id="agent-config">
-    <h3>Session Agents <button onclick="showSessionAddAgentModal()">+ 加入</button></h3>
+    <h3>Session Agents <button onclick="showSessionAddAgentModal()">+ 加入</button> <button onclick="setAllAgentFreq(0)" title="全部归零">全0</button> <button onclick="setAllAgentFreq(1)" title="全部拉满">全1</button></h3>
     <div id="agent-sliders"></div>
   </div>
 
@@ -504,12 +504,12 @@ async function loadSessions() {
       <div class="s-topic">${esc(s.topic || s.id)}</div>
       <div class="s-meta">${date} &middot; ${s.rounds}轮 &middot; ${s.nodes}节点</div>
       <div class="s-actions">
-        ${s.is_current ? '' : `<button onclick="switchSession('${s.id}')">切换</button>`}
+        ${isViewing ? '' : `<button onclick="switchSession('${s.id}')">切换</button>`}
         <button onclick="openSessionInNewTab('${s.id}')" title="在新标签页打开">窗</button>
         <button class="del" onclick="deleteSession('${s.id}', event)">删除</button>
       </div>
     `;
-    if (!s.is_current) {
+    if (!isViewing) {
       d.addEventListener('dblclick', () => switchSession(s.id));
     }
     list.appendChild(d);
@@ -517,7 +517,7 @@ async function loadSessions() {
 }
 
 async function switchSession(id) {
-  await api('POST', '/api/session/switch', { id });
+  // Pure client-side switch — each tab views its own session independently
   viewSessionId = id;
   const url = new URL(location);
   url.searchParams.set('session', id);
@@ -636,6 +636,22 @@ async function doRollback() {
 
 async function updateAgentFreq(agentId, value) {
   await api('POST', '/api/agent/config', { agent_id: agentId, frequency: value });
+}
+
+async function setAllAgentFreq(value) {
+  const sliders = document.querySelectorAll('.agent-freq-slider');
+  const promises = [];
+  sliders.forEach(slider => {
+    slider.value = value;
+    slider.previousElementSibling; // skip
+    const valSpan = slider.nextElementSibling;
+    if (valSpan) valSpan.textContent = value;
+    const aid = slider.dataset.agent;
+    if (aid) promises.push(api('POST', '/api/agent/config', { agent_id: aid, frequency: value }));
+  });
+  await Promise.all(promises);
+  lastAgentJSON = '';
+  await fetchStatus();
 }
 
 // ── Status & Polling ──
