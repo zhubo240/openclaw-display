@@ -548,12 +548,15 @@ function closeModal() {
 // ── Controls ──
 async function apiStep() {
   await api('POST', '/api/step', {});
+  // Open log panel automatically
+  document.getElementById('log-panel').classList.add('open');
   startPolling();
 }
 
 async function apiRun() {
   const rounds = parseInt(document.getElementById('run-rounds').value) || 3;
   await api('POST', '/api/run', { rounds });
+  document.getElementById('log-panel').classList.add('open');
   startPolling();
 }
 
@@ -616,18 +619,18 @@ async function fetchStatus() {
 function startPolling() {
   if (pollTimer) return;
   pollTimer = setInterval(fetchStatus, 1500);
-  if (!logPollTimer) {
-    logPollTimer = setInterval(fetchLogs, 1000);
-  }
+  // Speed up log polling during run
+  if (logPollTimer) { clearInterval(logPollTimer); }
+  logPollTimer = setInterval(fetchLogs, 800);
   fetchStatus();
+  fetchLogs();
 }
 
 function stopPolling() {
   if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
-  // Keep log polling a bit longer
-  setTimeout(() => {
-    if (!isRunning && logPollTimer) { clearInterval(logPollTimer); logPollTimer = null; }
-  }, 3000);
+  // Slow down log polling but never stop it
+  if (logPollTimer) { clearInterval(logPollTimer); }
+  logPollTimer = setInterval(fetchLogs, 2000);
 }
 
 // ── Agent Sliders ──
