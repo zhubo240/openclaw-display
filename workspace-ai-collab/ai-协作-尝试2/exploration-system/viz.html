@@ -455,6 +455,8 @@ const TYPE_SHAPES = {
   discovery: 'circle', question: 'diamond', framework: 'rect',
   contradiction: 'triangle', bridge: 'hexagon',
 };
+// Global refs for pan/zoom to node
+let _graphZoom = null, _graphSvg = null, _graphPositions = null;
 const EDGE_COLORS = {
   connection: '#999', tension: '#dc2626', derivation: '#2563eb', 'cross-domain': '#7c3aed',
 };
@@ -906,6 +908,7 @@ function renderGraph() {
 
   const zoom = d3.zoom().scaleExtent([0.15, 4]).on('zoom', (e) => container.attr('transform', e.transform));
   svg.call(zoom);
+  _graphZoom = zoom; _graphSvg = svg; _graphPositions = positions;
 
   const scale = Math.min(width / gw, height / gh, 1.5) * 0.85;
   const tx = (width - gw * scale) / 2 - offsetX * scale;
@@ -1178,9 +1181,22 @@ function showDetail(node, edges, nodeMap) {
 function closePanel() { document.getElementById('detail-panel').classList.remove('open'); }
 
 function highlightNode(id) {
-  d3.selectAll('#canvas g g').each(function(d) {
-    if (d && d.id === id) d3.select(this).dispatch('click');
-  });
+  // Pan to center on the node, then trigger click
+  if (_graphZoom && _graphSvg && _graphPositions && _graphPositions[id]) {
+    const pos = _graphPositions[id];
+    const svgEl = _graphSvg.node();
+    const w = svgEl.clientWidth, h = svgEl.clientHeight;
+    const scale = 1.2;
+    const tx = w / 2 - pos.x * scale;
+    const ty = h / 2 - pos.y * scale;
+    _graphSvg.transition().duration(500)
+      .call(_graphZoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
+  }
+  setTimeout(() => {
+    d3.selectAll('#canvas g g').each(function(d) {
+      if (d && d.id === id) d3.select(this).dispatch('click');
+    });
+  }, _graphPositions?.[id] ? 550 : 0);
 }
 
 // ── Feedback ──
