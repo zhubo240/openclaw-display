@@ -1186,7 +1186,7 @@ function highlightNode(id) {
     const pos = _graphPositions[id];
     const svgEl = _graphSvg.node();
     const w = svgEl.clientWidth, h = svgEl.clientHeight;
-    const scale = 1.2;
+    const scale = 0.8;
     const tx = w / 2 - pos.x * scale;
     const ty = h / 2 - pos.y * scale;
     _graphSvg.transition().duration(500)
