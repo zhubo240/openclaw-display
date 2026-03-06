@@ -557,7 +557,20 @@ async function createSession() {
   const desc = document.getElementById('m-desc').value.trim();
   if (!topic) return;
   closeModal();
-  await api('POST', '/api/session/create', { topic, description: desc });
+  const result = await api('POST', '/api/session/create', { topic, description: desc });
+  // New session becomes active — sync viewSessionId
+  if (result.id) {
+    viewSessionId = result.id;
+    const url = new URL(location);
+    url.searchParams.set('session', result.id);
+    history.replaceState(null, '', url);
+  } else {
+    viewSessionId = null;
+    const url = new URL(location);
+    url.searchParams.delete('session');
+    history.replaceState(null, '', url);
+  }
+  logSeq = 0; allLogEntries = [];
   await refreshAll();
 }
 
@@ -625,13 +638,15 @@ async function updateAgentFreq(agentId, value) {
 async function fetchStatus() {
   const data = await api('GET', '/api/status');
   isRunning = data.running;
+  const isActiveSession = !viewSessionId || viewSessionId === data.active_session;
+  const canOperate = isActiveSession && !isRunning && data.session;
 
-  // Update buttons
-  document.getElementById('btn-step').disabled = isRunning || !data.session;
-  document.getElementById('btn-run').disabled = isRunning || !data.session;
-  document.getElementById('btn-stop').disabled = !isRunning;
-  document.getElementById('btn-rollback').disabled = isRunning || !data.session || !(data.stats && data.stats.round > 0);
-  document.getElementById('query-submit').disabled = !data.session;
+  // Update buttons — only allow write ops on active session
+  document.getElementById('btn-step').disabled = !canOperate;
+  document.getElementById('btn-run').disabled = !canOperate;
+  document.getElementById('btn-stop').disabled = !(isActiveSession && isRunning);
+  document.getElementById('btn-rollback').disabled = !canOperate || !(data.stats && data.stats.round > 0);
+  document.getElementById('query-submit').disabled = !isActiveSession || !data.session;
 
   // Progress
   const prog = data.progress || {};
@@ -649,7 +664,8 @@ async function fetchStatus() {
 
   // Header info
   if (data.topic) {
-    document.getElementById('session-topic').textContent = data.topic;
+    const viewOnly = !isActiveSession ? ' [只读]' : '';
+    document.getElementById('session-topic').textContent = data.topic + viewOnly;
   } else {
     document.getElementById('session-topic').textContent = '未选择 Session';
   }
