@@ -1082,6 +1082,17 @@ function showDetail(node, edges, nodeMap) {
     <div style="font-size:10px;color:#555;margin:4px 0 12px;">能量 ${(node.energy||0).toFixed(2)} / 引用 ${node.references||0}</div>
     <div class="summary">${esc(node.summary || '无描述')}</div>
   `;
+  // Resolve button for user question nodes
+  if (node.created_by === 'user') {
+    const resolved = node.resolved || false;
+    const resolveLabel = resolved ? '重新打开问题' : '标记为已解决';
+    const resolveColor = resolved ? '#f59e0b' : '#10b981';
+    const statusText = resolved ? '<span style="color:#10b981;font-size:11px;">✓ 已解决</span>' : '';
+    html += `<div style="margin:8px 0;display:flex;align-items:center;gap:8px">
+      ${statusText}
+      <button onclick="resolveUserNodeDirect('${node.id}',${!resolved})" style="font-size:11px;padding:4px 12px;border-radius:4px;border:1px solid ${resolveColor};background:#fff;color:${resolveColor};cursor:pointer;">${resolveLabel}</button>
+    </div>`;
+  }
   if (node.verified_by?.length > 0)
     html += `<div style="font-size:11px;color:#4ade80;margin-bottom:12px;">已验证: ${node.verified_by.join(', ')}</div>`;
   const incoming = edges.filter(e => e.target === node.id);
@@ -1256,6 +1267,16 @@ async function saveEditFeedback(fbId, nodeId) {
 }
 async function resolveUserNode(fbId, nodeId, resolved) {
   await api('POST', '/api/node/resolve', { node_id: fbId, resolved });
+  await loadNetwork();
+  const node = graphData.nodes.find(n => n.id === nodeId);
+  if (node) {
+    const { edges } = getFiltered();
+    const nodeMap = {}; graphData.nodes.forEach(n => nodeMap[n.id] = n);
+    showDetail(node, edges, nodeMap);
+  }
+}
+async function resolveUserNodeDirect(nodeId, resolved) {
+  await api('POST', '/api/node/resolve', { node_id: nodeId, resolved });
   await loadNetwork();
   const node = graphData.nodes.find(n => n.id === nodeId);
   if (node) {
