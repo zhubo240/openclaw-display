@@ -365,7 +365,7 @@ svg text { user-select: none; }
   </div>
 
   <div id="agent-config">
-    <h3>Session Agents <button onclick="showSessionAddAgentModal()">+ 加入</button> <button onclick="setAllAgentFreq(0)" title="全部归零">全0</button> <button onclick="setAllAgentFreq(1)" title="全部拉满">全1</button></h3>
+    <h3>Session Agents <button onclick="showSessionAddAgentModal()">+ 加入</button> <button onclick="setAllAgentFreq(0)" title="全部归零">全0</button> <button onclick="setAllAgentFreq(1)" title="全部拉满">全1</button> <button onclick="randomizeAgentFreq()" title="随机">随机</button></h3>
     <div id="agent-sliders"></div>
   </div>
 
@@ -642,16 +642,20 @@ async function setAllAgentFreq(value) {
   const sliders = document.querySelectorAll('.agent-freq-slider');
   const promises = [];
   sliders.forEach(slider => {
-    slider.value = value;
-    slider.previousElementSibling; // skip
+    const v = typeof value === 'function' ? value() : value;
+    slider.value = v;
     const valSpan = slider.nextElementSibling;
-    if (valSpan) valSpan.textContent = value;
+    if (valSpan) valSpan.textContent = v;
     const aid = slider.dataset.agent;
-    if (aid) promises.push(api('POST', '/api/agent/config', { agent_id: aid, frequency: value }));
+    if (aid) promises.push(api('POST', '/api/agent/config', { agent_id: aid, frequency: v }));
   });
   await Promise.all(promises);
   lastAgentJSON = '';
   await fetchStatus();
+}
+
+function randomizeAgentFreq() {
+  setAllAgentFreq(() => Math.round(Math.random() * 10) / 10);
 }
 
 // ── Status & Polling ──
