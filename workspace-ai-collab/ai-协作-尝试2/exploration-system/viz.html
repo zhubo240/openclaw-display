@@ -244,6 +244,51 @@ body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 #settings-gear:hover { color: #333; }
 
+/* ── Query Panel ── */
+#query-section {
+  padding: 12px 16px; border-bottom: 1px solid #e8e8e8;
+}
+#query-section h3 { font-size: 11px; color: #999; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+#query-input {
+  width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid #d0d0d0;
+  font-size: 12px; font-family: inherit; resize: vertical; height: 50px;
+  background: #fafafa;
+}
+#query-input:focus { outline: none; border-color: #7c3aed; }
+#query-submit {
+  margin-top: 6px; padding: 6px 16px; border-radius: 6px; border: 1px solid #7c3aed;
+  background: #f5f3ff; color: #7c3aed; font-size: 11px; cursor: pointer; width: 100%;
+}
+#query-submit:hover { background: #ede9fe; }
+#query-submit:disabled { opacity: 0.4; cursor: not-allowed; }
+#query-result {
+  margin-top: 8px; max-height: 300px; overflow-y: auto;
+  font-size: 12px; line-height: 1.6; color: #444;
+  display: none; padding: 10px; background: #fafafa; border-radius: 6px;
+  border: 1px solid #e8e8e8;
+}
+#query-result h1, #query-result h2, #query-result h3 { font-size: 13px; color: #333; margin: 8px 0 4px; }
+#query-result ul, #query-result ol { padding-left: 16px; }
+
+/* ── Frameworks Panel ── */
+#fw-section {
+  padding: 12px 16px; border-bottom: 1px solid #e8e8e8;
+}
+#fw-section h3 { font-size: 11px; color: #999; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; }
+#fw-list { display: none; }
+#fw-list.open { display: block; }
+.fw-agent { margin-bottom: 8px; }
+.fw-agent-header {
+  font-size: 11px; font-weight: 600; color: #555; cursor: pointer;
+  display: flex; align-items: center; gap: 6px;
+}
+.fw-agent-header .fw-dot { width: 6px; height: 6px; border-radius: 50%; }
+.fw-agent-body { display: none; padding: 4px 0 4px 14px; font-size: 10px; line-height: 1.5; color: #666; }
+.fw-agent-body.open { display: block; }
+.fw-belief { color: #555; }
+.fw-question { color: #7c3aed; }
+.fw-disagree { color: #dc2626; }
+
 /* Round label in SVG */
 .round-label { font-size: 12px; fill: #bbb; font-weight: 500; }
 
@@ -309,6 +354,18 @@ svg text { user-select: none; }
     </div>
   </div>
 
+  <div id="query-section">
+    <h3>查询网络</h3>
+    <textarea id="query-input" placeholder="向知识网络提问..."></textarea>
+    <button id="query-submit" onclick="submitQuery()" disabled>提问</button>
+    <div id="query-result"></div>
+  </div>
+
+  <div id="fw-section">
+    <h3 onclick="toggleFrameworks()">Agent 框架 &#9662;</h3>
+    <div id="fw-list"></div>
+  </div>
+
   <div id="session-mgr">
     <h3>Sessions <button id="new-session-btn" onclick="showNewSessionModal()">+ 新建</button></h3>
     <div id="session-list"></div>
@@ -354,11 +411,11 @@ svg text { user-select: none; }
 const AGENT_COLORS = {
   digger: '#f59e0b', hunter: '#10b981', skeptic: '#ef4444',
   weaver: '#8b5cf6', organizer: '#3b82f6', user: '#ec4899',
-  scenario: '#06b6d4', builder: '#f97316',
+  scenario: '#06b6d4', builder: '#f97316', system: '#6b7280',
 };
 const AGENT_NAMES = {
   digger: '挖掘', hunter: '搜猎', skeptic: '质疑', weaver: '编织', organizer: '整理', user: '用户',
-  scenario: '造景', builder: '实践',
+  scenario: '造景', builder: '实践', system: '收敛',
 };
 const TYPE_SHAPES = {
   discovery: 'circle', question: 'diamond', framework: 'rect',
@@ -484,6 +541,7 @@ async function fetchStatus() {
   document.getElementById('btn-step').disabled = isRunning || !data.session;
   document.getElementById('btn-run').disabled = isRunning || !data.session;
   document.getElementById('btn-stop').disabled = !isRunning;
+  document.getElementById('query-submit').disabled = !data.session;
 
   // Progress
   const prog = data.progress || {};
@@ -1112,6 +1170,90 @@ async function confirmDeleteNode(fbId, nodeId) {
     const nodeMap = {}; graphData.nodes.forEach(n => nodeMap[n.id] = n);
     showDetail(updatedNode, edges, nodeMap);
   }
+}
+
+// ── Query Network ──
+async function submitQuery() {
+  const input = document.getElementById('query-input');
+  const btn = document.getElementById('query-submit');
+  const result = document.getElementById('query-result');
+  const question = input.value.trim();
+  if (!question) return;
+
+  btn.disabled = true;
+  btn.textContent = '思考中...';
+  result.style.display = 'block';
+  result.innerHTML = '<span style="color:#aaa">正在查询...</span>';
+
+  try {
+    const data = await api('POST', '/api/query', { question });
+    if (data.error) {
+      result.innerHTML = `<span style="color:#d93025">${esc(data.error)}</span>`;
+    } else {
+      // Simple markdown-ish rendering
+      let html = esc(data.answer || '')
+        .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+        .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n/g, '<br>');
+      result.innerHTML = html;
+    }
+  } catch(e) {
+    result.innerHTML = `<span style="color:#d93025">查询失败: ${esc(e.message)}</span>`;
+  }
+
+  btn.disabled = false;
+  btn.textContent = '提问';
+}
+
+// Enter key to submit query
+document.addEventListener('DOMContentLoaded', () => {
+  const qi = document.getElementById('query-input');
+  if (qi) qi.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitQuery(); }
+  });
+});
+
+// ── Agent Frameworks ──
+function toggleFrameworks() {
+  const list = document.getElementById('fw-list');
+  list.classList.toggle('open');
+  if (list.classList.contains('open')) loadFrameworks();
+}
+
+async function loadFrameworks() {
+  try {
+    const data = await api('GET', '/api/agent/framework');
+    const list = document.getElementById('fw-list');
+    list.innerHTML = '';
+    for (const [aid, info] of Object.entries(data)) {
+      const fw = info.framework || {};
+      const v = fw.version || 0;
+      if (v === 0) continue;
+      const color = AGENT_COLORS[aid] || '#888';
+      const div = document.createElement('div');
+      div.className = 'fw-agent';
+      let bodyHtml = '';
+      (fw.core_beliefs || []).forEach(b => {
+        bodyHtml += `<div class="fw-belief">- ${esc(b)}</div>`;
+      });
+      (fw.open_questions || []).forEach(q => {
+        bodyHtml += `<div class="fw-question">? ${esc(q)}</div>`;
+      });
+      (fw.disagreements || []).forEach(d => {
+        bodyHtml += `<div class="fw-disagree">! ${esc(d)}</div>`;
+      });
+      div.innerHTML = `
+        <div class="fw-agent-header" onclick="this.nextElementSibling.classList.toggle('open')">
+          <div class="fw-dot" style="background:${color}"></div>
+          ${info.role_cn} v${v}
+        </div>
+        <div class="fw-agent-body">${bodyHtml}</div>
+      `;
+      list.appendChild(div);
+    }
+  } catch(e) {}
 }
 
 // ── Utilities ──
