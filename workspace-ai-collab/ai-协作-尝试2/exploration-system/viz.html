@@ -737,7 +737,9 @@ function getAgentColor(aid) {
 }
 
 let lastAgentJSON = '';
+let agentSliderCooldown = 0;
 function renderAgentSliders(agents) {
+  if (Date.now() < agentSliderCooldown) return;
   const json = JSON.stringify(agents);
   if (json === lastAgentJSON) return;
   lastAgentJSON = json;
@@ -763,8 +765,8 @@ function renderAgentSliders(agents) {
     `;
     const slider = row.querySelector('input');
     const valSpan = row.querySelector('.agent-freq-val');
-    slider.oninput = () => { valSpan.textContent = slider.value; };
-    slider.onchange = () => { updateAgentFreq(aid, parseFloat(slider.value)); };
+    slider.oninput = () => { valSpan.textContent = slider.value; agentSliderCooldown = Date.now() + 3000; };
+    slider.onchange = () => { agentSliderCooldown = Date.now() + 3000; updateAgentFreq(aid, parseFloat(slider.value)); };
     container.appendChild(row);
   }
 }
