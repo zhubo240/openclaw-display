@@ -647,11 +647,13 @@ async function setAllAgentFreq(value) {
     const valSpan = slider.nextElementSibling;
     if (valSpan) valSpan.textContent = v;
     const aid = slider.dataset.agent;
-    if (aid) promises.push(api('POST', '/api/agent/config', { agent_id: aid, frequency: v }));
+    if (aid) {
+      if (lastAgentData[aid]) lastAgentData[aid].frequency = v;
+      promises.push(api('POST', '/api/agent/config', { agent_id: aid, frequency: v }));
+    }
   });
+  lastAgentJSON = JSON.stringify(lastAgentData);
   await Promise.all(promises);
-  lastAgentJSON = '';
-  await fetchStatus();
 }
 
 function randomizeAgentFreq() {
@@ -737,12 +739,12 @@ function getAgentColor(aid) {
 }
 
 let lastAgentJSON = '';
-let agentSliderCooldown = 0;
+let lastAgentData = {};
 function renderAgentSliders(agents) {
-  if (Date.now() < agentSliderCooldown) return;
   const json = JSON.stringify(agents);
   if (json === lastAgentJSON) return;
   lastAgentJSON = json;
+  lastAgentData = JSON.parse(json);
   // Update AGENT_NAMES for dynamic agents
   for (const [aid, info] of Object.entries(agents)) {
     AGENT_NAMES[aid] = info.role_cn;
@@ -765,8 +767,16 @@ function renderAgentSliders(agents) {
     `;
     const slider = row.querySelector('input');
     const valSpan = row.querySelector('.agent-freq-val');
-    slider.oninput = () => { valSpan.textContent = slider.value; agentSliderCooldown = Date.now() + 3000; };
-    slider.onchange = () => { agentSliderCooldown = Date.now() + 3000; updateAgentFreq(aid, parseFloat(slider.value)); };
+    slider.oninput = () => { valSpan.textContent = slider.value; };
+    slider.onchange = () => {
+      const val = parseFloat(slider.value);
+      // Optimistically update cache so polling won't snap back
+      if (lastAgentData[aid]) {
+        lastAgentData[aid].frequency = val;
+        lastAgentJSON = JSON.stringify(lastAgentData);
+      }
+      updateAgentFreq(aid, val);
+    };
     container.appendChild(row);
   }
 }
