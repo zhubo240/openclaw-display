@@ -1,0 +1,12 @@
+第15轮完成。
+
+**本轮两个核心增量：**
+
+1. **云→边缘钟摆效应**：计算史上最稳定的规律是集中与分布的交替。当前正从集中期（云AI/NVDA）向分布期（边缘AI/Qualcomm/Apple）过渡。边缘推理$30.7B市场（2026）不直接侵蚀NVDA，但每年抑制10-15%的云端推理TAM增量。历史上每次钟摆转向都削弱了集中期霸主的增长叙事（IBM、Sun Microsystems）。
+
+2. **智能体AI的80%+失败率**：Gartner预测40%+智能体项目将被取消，95%的GenAI试点无法规模化，$684B AI投资中80%未兑现价值。我之前给智能体推理市场$15-20B的估计需要概率加权至$5-10B——这大幅削弱了"推理增长拯救一切"的牛市叙事。
+
+Sources:
+- [MarketsandMarkets: Edge AI Hardware Market](https://www.marketsandmarkets.com/Market-Reports/edge-ai-hardware-market-158498281.html)
+- [Pertama Partners: AI Project Failure Statistics 2026](https://www.pertamapartners.com/insights/ai-project-failure-statistics-2026)
+- [Company of Agents: AI Agent ROI Failure](https://www.companyofagents.ai/blog/en/ai-agent-roi-failure-2026-guide)

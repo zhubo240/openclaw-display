@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>工具箱</title>
+<style>
+:root, body.theme-claude {
+  --bg: #FAF9F5; --card: #fff; --border: #E8E5DE;
+  --text: #3D3929; --text2: #8C8575; --accent: #D97757; --accent-light: #F4DDD3;
+  --sidebar-bg: #2C2B28; --sidebar-hover: #3A3935; --sidebar-active: #4A4843;
+  --sidebar-text: #C4BFB5; --sidebar-text-active: #F5F0E8; --sidebar-title: #6B6560;
+  --table-header-bg: #F5F3EE; --content-scrollbar: #D4D0C8;
+}
+body.theme-warm {
+  --bg: #F5EDD6; --card: #FAF6EB; --border: #D4C9AD;
+  --text: #4A4235; --text2: #7A6E5A; --accent: #B8860B; --accent-light: #F5E6C0;
+  --sidebar-bg: #2C2619; --sidebar-hover: #3D3425; --sidebar-active: #4E4232;
+  --sidebar-text: #B8A88A; --sidebar-text-active: #F5EDD6; --sidebar-title: #8A7E6B;
+  --table-header-bg: #EDE5CE; --content-scrollbar: #C5B999;
+}
+body.theme-dark {
+  --bg: #1E1E1E; --card: #252525; --border: #333;
+  --text: #D4D4D4; --text2: #909090; --accent: #D97757; --accent-light: #3A2A22;
+  --sidebar-bg: #141414; --sidebar-hover: #2A2A2A; --sidebar-active: #333;
+  --sidebar-text: #888; --sidebar-text-active: #D4D4D4; --sidebar-title: #666;
+  --table-header-bg: #2A2A2A; --content-scrollbar: #555;
+}
+body.theme-solarized {
+  --bg: #FDF6E3; --card: #EEE8D5; --border: #D3CBB8;
+  --text: #657B83; --text2: #93A1A1; --accent: #CB4B16; --accent-light: #FCE4D6;
+  --sidebar-bg: #002B36; --sidebar-hover: #073642; --sidebar-active: #0A4050;
+  --sidebar-text: #839496; --sidebar-text-active: #EEE8D5; --sidebar-title: #586E75;
+  --table-header-bg: #E8E1CE; --content-scrollbar: #B8B09A;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Söhne', -apple-system, sans-serif; background: var(--bg); color: var(--text); }
+
+.header {
+  padding: 16px 28px; background: var(--card); border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.header h1 { font-size: 16px; font-weight: 600; }
+.header-right { display: flex; gap: 12px; align-items: center; }
+.topic-select { padding: 5px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 12px; background: var(--card); }
+.nav-link { font-size: 12px; color: var(--accent); text-decoration: none; }
+.nav-link:hover { text-decoration: underline; }
+
+.layout { display: flex; height: calc(100vh - 56px); }
+
+/* 左侧工具栏 */
+.tool-sidebar {
+  width: 200px; min-width: 200px; background: var(--sidebar-bg); padding: 16px 0;
+  display: flex; flex-direction: column;
+}
+.tool-sidebar .section-title {
+  font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
+  color: var(--sidebar-title); padding: 0 16px; margin-bottom: 8px; font-weight: 600;
+}
+.tool-item {
+  padding: 10px 16px; cursor: pointer; color: var(--sidebar-text);
+  display: flex; align-items: center; gap: 8px; font-size: 13px;
+  border-left: 3px solid transparent; transition: all 0.15s;
+}
+.tool-item:hover { background: var(--sidebar-hover); }
+.tool-item.active { background: var(--sidebar-active); border-left-color: var(--accent); color: var(--sidebar-text-active); }
+.tool-icon { font-size: 16px; width: 24px; text-align: center; }
+
+/* 右侧内容 */
+.tool-content { flex: 1; overflow-y: auto; padding: 24px 32px; }
+
+/* 搜索工具 */
+.search-box {
+  display: flex; gap: 8px; margin-bottom: 20px;
+}
+.search-input {
+  flex: 1; padding: 10px 16px; border: 1px solid var(--border); border-radius: 10px;
+  font-size: 14px; font-family: inherit; background: var(--card); color: var(--text);
+}
+.search-input:focus { outline: none; border-color: var(--accent); }
+.search-btn {
+  padding: 10px 20px; border: none; border-radius: 10px; font-size: 13px;
+  font-weight: 600; cursor: pointer; transition: all 0.15s;
+}
+.btn-keyword { background: var(--card); border: 1px solid var(--border); color: var(--text2); }
+.btn-keyword:hover { border-color: var(--accent); color: var(--accent); }
+.btn-llm { background: var(--accent); color: #fff; }
+.btn-llm:hover { opacity: 0.9; }
+.btn-llm:disabled { opacity: 0.5; cursor: wait; }
+
+.search-mode-hint { font-size: 11px; color: var(--text2); margin-bottom: 16px; }
+
+/* 结果 */
+.result-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+  padding: 14px 18px; margin-bottom: 8px; cursor: pointer; transition: all 0.15s;
+}
+.result-card:hover { border-color: #D4D0C8; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+.result-meta { font-size: 11px; color: var(--text2); margin-bottom: 4px; display: flex; gap: 8px; align-items: center; }
+.result-author {
+  padding: 1px 8px; border-radius: 8px; font-size: 10px; font-weight: 600;
+  background: var(--accent-light); color: var(--accent);
+}
+.result-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.result-preview { font-size: 12px; color: var(--text2); line-height: 1.6; }
+.result-count { font-size: 12px; color: var(--text2); margin-bottom: 12px; }
+
+/* LLM 回答 */
+.llm-answer {
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 20px 24px; margin-bottom: 16px; border-left: 4px solid var(--accent);
+}
+.llm-answer-header {
+  font-size: 11px; color: var(--accent); font-weight: 600; margin-bottom: 10px;
+  display: flex; justify-content: space-between;
+}
+.llm-answer-body {
+  font-size: 14px; line-height: 1.8; white-space: pre-wrap; word-break: break-word;
+}
+.llm-sources {
+  margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);
+  font-size: 11px; color: var(--text2);
+}
+.llm-sources a { color: var(--accent); text-decoration: none; }
+.llm-sources a:hover { text-decoration: underline; }
+
+.loading { text-align: center; padding: 40px; color: var(--text2); font-size: 13px; }
+.empty { text-align: center; padding: 40px; color: var(--sidebar-text); font-size: 13px; }
+
+/* 工具占位 */
+.tool-placeholder {
+  display: flex; align-items: center; justify-content: center;
+  height: 300px; color: var(--sidebar-text); font-size: 14px;
+  background: var(--card); border: 1px dashed var(--border); border-radius: 12px;
+}
+.theme-btns button:hover { transform: scale(1.15); }
+.theme-btns button.active { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-light); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>工具箱</h1>
+  <div class="header-right">
+    <div class="theme-btns" style="display:flex;gap:2px;margin-right:8px">
+      <button onclick="setTheme('theme-claude')" data-theme="theme-claude" title="Claude 默认" style="width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid var(--border);padding:0;background:#FAF9F5"></button>
+      <button onclick="setTheme('theme-warm')" data-theme="theme-warm" title="护眼暖光" style="width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid var(--border);padding:0;background:#F5EDD6"></button>
+      <button onclick="setTheme('theme-dark')" data-theme="theme-dark" title="深色护眼" style="width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid var(--border);padding:0;background:#1E1E1E"></button>
+      <button onclick="setTheme('theme-solarized')" data-theme="theme-solarized" title="Solarized" style="width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid var(--border);padding:0;background:#FDF6E3"></button>
+    </div>
+    <select class="topic-select" id="topic-select" onchange="currentTopic=this.value;saveToolState();renderTool()"></select>
+    <a class="nav-link" href="index.html">论坛</a>
+    <a class="nav-link" href="graph.html">依赖图</a>
+    <a class="nav-link" href="admin.html">管理</a>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="tool-sidebar">
+    <div class="section-title">工具</div>
+    <div class="tool-item active" onclick="switchTool('search')">
+      <span class="tool-icon">🔍</span> 论坛检索
+    </div>
+    <div class="tool-item" onclick="switchTool('graph')">
+      <span class="tool-icon">🔗</span> 依赖图
+    </div>
+    <div class="tool-item" onclick="switchTool('admin')">
+      <span class="tool-icon">📊</span> Token 分析
+    </div>
+    <div class="tool-item" onclick="switchTool('logs')">
+      <span class="tool-icon">📋</span> 行动日志
+    </div>
+    <div class="tool-item" onclick="switchTool('compare')">
+      <span class="tool-icon">⚖️</span> 观点对比
+    </div>
+    <div class="tool-item" onclick="switchTool('timeline')">
+      <span class="tool-icon">📈</span> 观点演变
+    </div>
+    <div class="tool-item" onclick="switchTool('export')">
+      <span class="tool-icon">📤</span> 导出报告
+    </div>
+  </div>
+
+  <div class="tool-content" id="tool-content"></div>
+</div>
+
+<script>
+// ── Theme ──
+function setTheme(t) {
+  document.body.classList.remove('theme-claude','theme-warm','theme-dark','theme-solarized');
+  document.body.classList.add(t);
+  document.querySelectorAll('.theme-btns button').forEach(b => {
+    b.style.borderColor = b.dataset.theme === t ? 'var(--accent)' : '';
+    b.style.boxShadow = b.dataset.theme === t ? '0 0 0 2px var(--accent-light)' : '';
+  });
+  localStorage.setItem('forum-theme', t);
+}
+setTheme(localStorage.getItem('forum-theme') || 'theme-claude');
+
+let currentTopic = '';
+let currentTool = 'search';
+
+async function init() {
+  const r = await fetch('topics.json?' + Date.now());
+  const topics = await r.json();
+  const sel = document.getElementById('topic-select');
+  topics.forEach(t => {
+    const opt = document.createElement('option');
+    opt.value = t.id; opt.textContent = t.name;
+    sel.appendChild(opt);
+  });
+  const params = new URLSearchParams(location.hash.substring(1));
+  const saved = params.get('t');
+  if (saved && topics.find(t => t.id === saved)) {
+    sel.value = saved; currentTopic = saved;
+  } else if (topics.length) {
+    sel.value = topics[0].id; currentTopic = topics[0].id;
+  }
+  // 恢复工具和日志状态
+  const savedTool = params.get('tool');
+  if (savedTool) { currentTool = savedTool; switchTool(savedTool); }
+  const savedAgent = params.get('agent');
+  if (savedAgent) logSelectedAgent = savedAgent;
+  const savedRound = params.get('r');
+  if (savedRound) logSelectedRound = parseInt(savedRound);
+  renderTool();
+}
+
+function switchTool(tool) {
+  currentTool = tool;
+  document.querySelectorAll('.tool-item').forEach((el, i) => {
+    el.classList.toggle('active', ['search','graph','admin','logs','compare','timeline','export'][i] === tool);
+  });
+  saveToolState();
+  renderTool();
+}
+
+function saveToolState() {
+  const state = {};
+  if (currentTopic) state.t = currentTopic;
+  if (currentTool !== 'search') state.tool = currentTool;
+  if (currentTool === 'logs' && logSelectedAgent) state.agent = logSelectedAgent;
+  if (currentTool === 'logs' && logSelectedRound) state.r = logSelectedRound;
+  const hash = Object.keys(state).length ? '#' + new URLSearchParams(state).toString() : '';
+  history.replaceState(null, '', location.pathname + hash);
+}
+
+function renderTool() {
+  const c = document.getElementById('tool-content');
+  if (currentTool === 'search') renderSearch(c);
+  else if (currentTool === 'graph') {
+    const t = currentTopic ? '#t=' + currentTopic : '';
+    c.innerHTML = '<iframe src="graph.html' + t + '" style="width:100%;height:100%;border:none;border-radius:8px"></iframe>';
+  }
+  else if (currentTool === 'admin') {
+    const t = currentTopic ? '#t=' + currentTopic : '';
+    c.innerHTML = '<iframe src="admin.html' + t + '" style="width:100%;height:100%;border:none;border-radius:8px"></iframe>';
+  }
+  else if (currentTool === 'logs') renderLogs(c);
+  else if (currentTool === 'compare') c.innerHTML = '<div class="tool-placeholder">观点对比 — 选择多个 agent，对比它们在同一话题上的观点差异（开发中）</div>';
+  else if (currentTool === 'timeline') c.innerHTML = '<div class="tool-placeholder">观点演变 — 追踪某个 agent 的观点如何随轮次变化（开发中）</div>';
+  else if (currentTool === 'export') c.innerHTML = '<div class="tool-placeholder">导出报告 — 将讨论结果导出为结构化报告（开发中）</div>';
+}
+
+// ============ 搜索工具 ============
+function renderSearch(c) {
+  c.innerHTML = '<div class="search-box">'
+    + '<input class="search-input" id="search-input" placeholder="搜索论坛内容..." onkeydown="if(event.key===\'Enter\')doSearch(\'keyword\')">'
+    + '<button class="search-btn btn-keyword" onclick="doSearch(\'keyword\')">关键词</button>'
+    + '<button class="search-btn btn-llm" id="btn-llm" onclick="doSearch(\'llm\')">AI 回答</button>'
+    + '</div>'
+    + '<div class="search-mode-hint">关键词：精确匹配标题和内容 | AI 回答：理解问题语义，综合多篇帖子回答</div>'
+    + '<div id="search-results"></div>';
+}
+
+async function doSearch(mode) {
+  const query = document.getElementById('search-input').value.trim();
+  if (!query || !currentTopic) return;
+
+  const results = document.getElementById('search-results');
+  const btn = document.getElementById('btn-llm');
+
+  if (mode === 'llm') {
+    btn.disabled = true; btn.textContent = '思考中...';
+    results.innerHTML = '<div class="loading">AI 正在分析论坛内容...</div>';
+  } else {
+    results.innerHTML = '<div class="loading">搜索中...</div>';
+  }
+
+  try {
+    const r = await fetch('/api/' + currentTopic + '/search', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ query, mode })
+    });
+    const data = await r.json();
+
+    if (mode === 'keyword') {
+      if (!data.results || !data.results.length) {
+        results.innerHTML = '<div class="empty">未找到匹配结果</div>';
+        return;
+      }
+      let html = '<div class="result-count">找到 ' + data.total + ' 条结果</div>';
+      html += data.results.map(p =>
+        '<div class="result-card" onclick="window.open(\'index.html#t=' + currentTopic + '&p=' + p.id + '\',\'_blank\')">'
+        + '<div class="result-meta">'
+        + '<span class="result-author">' + esc(p.author) + '</span>'
+        + '<span>' + p.time + '</span>'
+        + (p.is_reply ? '<span>回复</span>' : '')
+        + '</div>'
+        + (p.title ? '<div class="result-title">' + esc(p.title) + '</div>' : '')
+        + '<div class="result-preview">' + highlightQuery(esc(p.preview), query) + '</div>'
+        + '</div>'
+      ).join('');
+      results.innerHTML = html;
+    } else {
+      let html = '<div class="llm-answer">';
+      html += '<div class="llm-answer-header"><span>AI 回答</span><span>$' + (data.cost || 0).toFixed(4) + '</span></div>';
+      html += '<div class="llm-answer-body">' + esc(data.answer || '') + '</div>';
+      if (data.sources && data.sources.length) {
+        html += '<div class="llm-sources">参考帖子：';
+        html += data.sources.map(s =>
+          '<a href="index.html#t=' + currentTopic + '&p=' + s.id + '" target="_blank">[' + s.id + '] ' + esc(s.author) + ' — ' + esc((s.title || '').substring(0, 30)) + '</a>'
+        ).join(' · ');
+        html += '</div>';
+      }
+      html += '</div>';
+      results.innerHTML = html;
+    }
+  } catch(e) {
+    results.innerHTML = '<div class="empty">搜索失败: ' + e.message + '</div>';
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'AI 回答'; }
+  }
+}
+
+function highlightQuery(text, query) {
+  if (!query) return text;
+  const regex = new RegExp('(' + query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+  return text.replace(regex, '<mark style="background:var(--accent-light);padding:0 2px;border-radius:2px">$1</mark>');
+}
+
+function esc(s) {
+  if (!s) return '';
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+// ============ 行动日志 ============
+let logAgents = {};
+let logSelectedAgent = '';
+let logSelectedRound = 0;
+
+async function renderLogs(c) {
+  if (!currentTopic) { c.innerHTML = '<div class="empty">请选择 topic</div>'; return; }
+
+  try {
+    const r = await fetch('/api/' + currentTopic + '/agents?' + Date.now());
+    logAgents = await r.json();
+  } catch(e) {}
+
+  const agentNames = Object.keys(logAgents);
+  if (!agentNames.length) { c.innerHTML = '<div class="empty">暂无 agent 数据</div>'; return; }
+
+  if (!logSelectedAgent || !logAgents[logSelectedAgent]) logSelectedAgent = agentNames[0];
+
+  let html = '';
+
+  // Agent 平铺选择
+  html += '<div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap">';
+  agentNames.forEach(a => {
+    const active = a === logSelectedAgent;
+    const count = logAgents[a].length;
+    html += '<div onclick="selectLogAgent(\'' + esc(a) + '\')" style="padding:6px 14px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.15s;'
+      + (active ? 'background:var(--accent);color:#fff;border:1px solid var(--accent)' : 'background:var(--card);color:var(--text2);border:1px solid var(--border)')
+      + '">' + esc(a) + ' <span style="opacity:0.7;font-weight:400">' + count + '</span></div>';
+  });
+  html += '</div>';
+
+  // 轮次竖向时间轴 + 日志内容并排
+  const rounds = logAgents[logSelectedAgent] || [];
+  if (!logSelectedRound && rounds.length) logSelectedRound = rounds[rounds.length - 1].round;
+
+  html += '<div style="display:flex;gap:0;flex:1;min-height:0">';
+
+  // 左侧竖向时间轴
+  html += '<div style="display:flex;flex-direction:column;align-items:center;padding:0 12px 0 0;overflow-y:auto;min-width:50px">';
+  rounds.forEach((r, i) => {
+    const active = r.round === logSelectedRound;
+    const hasData = r.size > 500;
+    html += '<div onclick="selectLogRound(' + r.round + ')" style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:2px 0">';
+    // 标签
+    html += '<div style="font-size:13px;width:30px;text-align:right;font-weight:' + (active ? '700' : '400') + ';color:' + (active ? 'var(--accent)' : 'var(--text2)') + '">R' + r.round + '</div>';
+    // 节点
+    html += '<div style="width:' + (active ? '12' : '8') + 'px;height:' + (active ? '12' : '8') + 'px;border-radius:50%;'
+      + 'background:' + (active ? 'var(--accent)' : hasData ? '#B0A090' : '#D4D0C8') + ';'
+      + (active ? 'box-shadow:0 0 0 3px var(--accent-light);' : '')
+      + 'transition:all 0.15s;flex-shrink:0"></div>';
+    html += '</div>';
+    // 连接线
+    if (i < rounds.length - 1) {
+      html += '<div style="width:2px;height:12px;background:var(--border);margin-left:36px"></div>';
+    }
+  });
+  html += '</div>';
+
+  // 右侧日志内容
+  html += '<div id="log-content" style="flex:1;overflow-y:auto"></div>';
+  html += '</div>';
+
+  c.innerHTML = html;
+
+  // 自动加载当前选中
+  if (logSelectedRound) loadLog();
+}
+
+function selectLogAgent(agent) {
+  logSelectedAgent = agent;
+  // 保持当前 round，如果新 agent 没有这个 round 则选最近的
+  const rounds = (logAgents[agent] || []).map(r => r.round);
+  if (rounds.length && !rounds.includes(logSelectedRound)) {
+    logSelectedRound = rounds[rounds.length - 1];
+  }
+  saveToolState();
+  renderLogs(document.getElementById('tool-content'));
+}
+
+function selectLogRound(round) {
+  logSelectedRound = round;
+  saveToolState();
+  renderLogs(document.getElementById('tool-content'));
+}
+
+async function loadLog() {
+  const agent = logSelectedAgent;
+  const round = logSelectedRound;
+  if (!agent || !round) return;
+  const lc = document.getElementById('log-content');
+  if (!lc) return;
+  lc.innerHTML = '<div class="loading">加载中...</div>';
+
+  try {
+    const r = await fetch('/api/' + currentTopic + '/agent-log/' + encodeURIComponent(agent) + '/' + round);
+    const data = await r.json();
+    renderLog(lc, data);
+  } catch(e) {
+    lc.innerHTML = '<div class="empty">加载失败: ' + e.message + '</div>';
+  }
+}
+
+function renderLog(c, data) {
+  let html = '';
+
+  // 头部信息
+  html += '<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:12px">';
+  html += '<div style="font-size:15px;font-weight:700;margin-bottom:8px">' + esc(data.agent) + ' · R' + data.round + '</div>';
+  html += '<div style="display:flex;gap:16px;font-size:12px;color:var(--text2)">';
+  html += '<span>工具调用: ' + (data.num_turns || '?') + ' 轮</span>';
+  if (data.cost) html += '<span>成本: $' + data.cost.toFixed(4) + '</span>';
+  if (data.usage && data.usage.output_tokens) html += '<span>Output: ' + data.usage.output_tokens.toLocaleString() + ' tokens</span>';
+  html += '</div></div>';
+
+  // 行动摘要
+  if (data.summary && data.summary.length) {
+    html += '<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 20px;margin-bottom:12px">';
+    html += '<div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px">行动摘要</div>';
+    data.summary.forEach(s => {
+      html += '<div style="font-size:12px;padding:3px 0;color:var(--text)">' + esc(s) + '</div>';
+    });
+    html += '</div>';
+  }
+
+  // 详细行动序列
+  if (data.actions && data.actions.length) {
+    html += '<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 20px;margin-bottom:12px">';
+    html += '<div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:10px">行动序列 (' + data.actions.length + ' 步)</div>';
+    data.actions.forEach((a, i) => {
+      const colors = {tool_call: '#D97757', tool_result: '#2A6B60', thinking: '#6B4FA0', prompt: '#3B6B8A'};
+      const labels = {tool_call: '🔧 工具调用', tool_result: '📥 工具返回', thinking: '💭 思考', prompt: '📝 收到任务'};
+      const color = colors[a.type] || '#8C8575';
+      const label = labels[a.type] || a.type;
+      html += '<div style="padding:8px 0;border-bottom:1px solid #F0EDE6">';
+      html += '<div style="font-size:11px;margin-bottom:3px"><span style="color:' + color + ';font-weight:600">' + label + '</span>';
+      if (a.tool) html += ' <code style="background:var(--table-header-bg);padding:1px 6px;border-radius:4px;font-size:10px">' + esc(a.tool) + '</code>';
+      html += ' <span style="color:var(--sidebar-text);font-size:10px">#' + (i+1) + '</span></div>';
+      html += '<div style="font-size:11px;color:#4A4538;line-height:1.5;max-height:80px;overflow:hidden;font-family:monospace;white-space:pre-wrap">' + esc(a.input_preview || a.preview || '') + '</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  // 最终输出
+  html += '<details style="margin-bottom:12px">';
+  html += '<summary style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 20px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text2)">完整输出 (点击展开)</summary>';
+  html += '<div style="background:var(--card);border:1px solid var(--border);border-radius:0 0 12px 12px;padding:14px 20px;font-size:12px;line-height:1.7;white-space:pre-wrap;font-family:monospace;max-height:500px;overflow:auto">' + esc(data.result || '') + '</div>';
+  html += '</details>';
+
+  c.innerHTML = html;
+}
+
+init();
+</script>
+</body>
+</html>

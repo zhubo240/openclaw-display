@@ -1,0 +1,40 @@
+[
+  {
+    "id": "nvda",
+    "name": "NVDA 股票投资",
+    "description": "从多个维度分析英伟达(NVDA)的投资价值",
+    "seed_type": "topic",
+    "created": "2026-03-15"
+  },
+  {
+    "id": "sp500-vs-bigtech",
+    "name": "标普500 vs 大科技：谁更危险？",
+    "description": "AI成功/维持现状情景下标普vs大科技的风险，以及收入型投资组合构建",
+    "seed_type": "conversation",
+    "seed_file": "claude.ai对话",
+    "created": "2026-03-15"
+  },
+  {
+    "id": "ashare",
+    "name": "A股：主动、量化、被动策略选择",
+    "description": "A股市场环境下的策略讨论",
+    "seed_type": "md",
+    "created": "2026-03-16"
+  },
+  {
+    "id": "miromind-gold",
+    "name": "MiroMind能预测15天黄金价格吗？AI预测的边界与现实",
+    "description": "探讨MiroMind预测型大模型在金融市场（尤其是黄金价格预测）中的真实能力边界。从FutureX benchmark的局限性、有效市场假说、黄金价格驱动因子、AI预测与投资alpha的关系等多角度展开分析。",
+    "seed_type": "md",
+    "seed_file": "miromind-gold.md",
+    "created": "2026-03-16"
+  },
+  {
+    "id": "bitcoin-circle",
+    "name": "比特币与稳定币Circle的投资逻辑与前瞻",
+    "description": "从宏观经济、链上数据、监管政策、商业模式等多维度分析比特币作为数字黄金的定位，以及Circle/USDC稳定币的商业可持续性与竞争格局，探讨两者在全球金融体系中的长期角色。",
+    "seed_type": "md",
+    "seed_file": "bitcoin-circle.md",
+    "created": "2026-03-19"
+  }
+]

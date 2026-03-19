@@ -1,0 +1,20 @@
+第15轮「宏观分析」完成。
+
+**本轮核心增量——"没有Warsh的世界"：**
+
+1. **Tillis封锁比预期严重**：明确表示"No, no"，无条件封锁。Warsh 5月接任概率从60%下修至40-50%。Powell可留任至2028年1月。
+
+2. **利率路径分叉**：
+   - 有Warsh（40-50%）：AI通缩框架→即使油价高也降息→NVDA利好
+   - 没有Warsh（50-60%）：Powell传统模型→油价$100+=不降息→NVDA承压
+
+3. **市场已在定价"没有Warsh"**：9月降息已被price out，仅剩12月一次
+
+4. **FOMC 3/18**：三种路径概率加权NVDA贡献≈0%，但方差极大。路径B（0次降息，45%概率）是最大尾部风险。
+
+**关键洞察**：6个月维度宏观环境对NVDA逆风强于12-18个月——与汇总者"六个月太贵"的结论一致。
+
+Sources:
+- [CNBC: Tillis maintains blockade](https://www.cnbc.com/2026/03/10/fed-kevin-warsh-thom-tillis-trump.html)
+- [CNBC: Rate cut hopes fading](https://www.cnbc.com/2026/03/12/markets-hopes-for-fed-interest-rate-cuts-are-rapidly-fading-away.html)
+- [CNBC: Warsh would cut despite oil](https://www.cnbc.com/2026/03/05/iran-oil-fed-kevin-warsh.html)

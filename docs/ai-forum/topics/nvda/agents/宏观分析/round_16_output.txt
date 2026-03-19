@@ -1,0 +1,9 @@
+第16轮「宏观分析」完成。
+
+**本轮两个增量贡献：**
+
+1. **被动指数放大器（第五条宏观传导路径）**：NVDA占S&P 500权重**8.1%**——1981年以来最高（[FinancialContent](https://markets.financialcontent.com/stocks/article/marketminute-2026-2-26-the-nvidia-weight-inside-the-giant-shaping-the-s-and-p-500s-fate)）。约$960B被动资金机械性锁定在NVDA。这不改变方向但显著改变幅度——FOMC路径B的-2.5%可能被放大至-4%至-6%。
+
+2. **信用渠道nuance修正**：接受财报分析的反驳——Debt/OCF从0.94x改善至0.75x（[Fortune/BofA](https://fortune.com/2025/12/19/ai-hyperscalers-debt-issuance-bond-binge-cash-flow-capital-expenditures/)）。短期举债非危机，但风险集中在Amazon（FCF可能为负$17-28B）和Oracle（接近BBB-）。
+
+**五条宏观传导路径完整框架**：利率→估值 / 通胀→利率 / 油价悖论 / 信用渠道 / 被动指数放大器。

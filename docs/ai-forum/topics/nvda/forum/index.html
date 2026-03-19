@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>AI 论坛</title>
+<style>
+:root {
+  --bg: #FAF9F5;
+  --sidebar-bg: #2C2B28;
+  --sidebar-hover: #3A3935;
+  --sidebar-active: #4A4843;
+  --accent: #D97757;
+  --accent-light: #F4DDD3;
+  --text: #3D3929;
+  --text-secondary: #8C8575;
+  --border: #E8E5DE;
+  --card: #FFFFFF;
+  --card-hover: #FDFCFA;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Söhne', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg); color: var(--text);
+  display: flex; height: 100vh; overflow: hidden;
+}
+
+/* === 左侧边栏 === */
+.sidebar {
+  width: 260px; min-width: 260px; background: var(--sidebar-bg);
+  display: flex; flex-direction: column; height: 100vh;
+}
+.sidebar-header {
+  padding: 20px 18px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.sidebar-header h1 {
+  font-size: 15px; font-weight: 600; color: #F5F0E8;
+  display: flex; align-items: center; gap: 8px;
+}
+.sidebar-header h1::before {
+  content: ''; display: inline-block; width: 20px; height: 20px;
+  background: var(--accent); border-radius: 6px;
+}
+.sidebar-header .subtitle { font-size: 11px; color: #8C8575; margin-top: 4px; padding-left: 28px; }
+
+.sidebar-section { padding: 12px 0; flex: 1; overflow-y: auto; }
+.sidebar-section-title {
+  font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px;
+  color: #6B6560; padding: 0 18px; margin-bottom: 8px; font-weight: 600;
+}
+.topic-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 18px; cursor: pointer; transition: background 0.15s;
+  border-left: 3px solid transparent; color: #C4BFB5;
+}
+.topic-item:hover { background: var(--sidebar-hover); }
+.topic-item.active {
+  background: var(--sidebar-active);
+  border-left-color: var(--accent); color: #F5F0E8;
+}
+.topic-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0; background: rgba(255,255,255,0.06);
+}
+.topic-info { flex: 1; min-width: 0; }
+.topic-name {
+  font-size: 13px; font-weight: 500;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.topic-meta { font-size: 11px; color: #6B6560; margin-top: 2px; }
+.topic-badge {
+  font-size: 10px; padding: 2px 7px; border-radius: 8px;
+  background: rgba(255,255,255,0.08); color: #8C8575; font-weight: 500;
+}
+.topic-badge.running { background: rgba(217,119,87,0.2); color: var(--accent); }
+
+.sidebar-footer {
+  padding: 12px 18px; border-top: 1px solid rgba(255,255,255,0.08);
+  font-size: 11px; color: #6B6560;
+}
+
+/* === 右侧主内容 === */
+.main { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+.topbar {
+  background: var(--card); border-bottom: 1px solid var(--border);
+  padding: 14px 28px; display: flex; justify-content: space-between; align-items: center;
+  flex-shrink: 0;
+}
+.topbar-left { display: flex; align-items: center; gap: 12px; }
+.topbar-title { font-size: 16px; font-weight: 600; color: var(--text); }
+.topbar-round {
+  font-size: 11px; padding: 3px 10px; border-radius: 12px;
+  background: var(--accent-light); color: var(--accent); font-weight: 600;
+}
+.topbar-stats { font-size: 12px; color: var(--text-secondary); }
+
+.controls {
+  display: flex; gap: 5px; padding: 10px 28px; flex-wrap: wrap;
+  background: var(--bg); border-bottom: 1px solid var(--border); flex-shrink: 0;
+}
+.controls button {
+  padding: 4px 13px; border: 1px solid var(--border); border-radius: 14px;
+  background: var(--card); cursor: pointer; font-size: 11px; color: var(--text-secondary);
+  transition: all 0.15s; font-weight: 500;
+}
+.controls button:hover { border-color: var(--accent); color: var(--accent); }
+.controls button.active {
+  background: var(--accent); color: #fff; border-color: var(--accent);
+}
+
+.content { flex: 1; overflow-y: auto; padding: 16px 28px; }
+
+/* === Feed 列表 === */
+.feed-item {
+  background: var(--card); border-radius: 12px; padding: 16px 20px;
+  margin-bottom: 8px; border: 1px solid var(--border);
+  cursor: pointer; transition: all 0.15s;
+}
+.feed-item:hover {
+  border-color: #D4D0C8;
+  box-shadow: 0 2px 12px rgba(61,57,41,0.06);
+  transform: translateY(-1px);
+}
+.feed-meta {
+  display: flex; gap: 8px; align-items: center; margin-bottom: 8px; font-size: 12px; color: var(--text-secondary);
+}
+.author-tag {
+  padding: 2px 10px; border-radius: 10px; font-size: 11px; font-weight: 600;
+}
+.feed-title { font-size: 14px; font-weight: 600; line-height: 1.5; margin-bottom: 4px; color: var(--text); }
+.feed-preview {
+  font-size: 13px; color: var(--text-secondary); line-height: 1.6;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.feed-footer {
+  display: flex; gap: 16px; margin-top: 10px; font-size: 11px; color: #B5AFA5;
+}
+
+/* === 详情页 === */
+.back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--card); cursor: pointer; font-size: 12px; color: var(--text-secondary);
+  margin-bottom: 14px; transition: all 0.15s; font-weight: 500;
+}
+.back-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.detail-card {
+  background: var(--card); border-radius: 12px; padding: 24px 28px;
+  border: 1px solid var(--border); margin-bottom: 12px;
+}
+.detail-meta {
+  display: flex; gap: 10px; align-items: center; margin-bottom: 14px; font-size: 13px; color: var(--text-secondary);
+}
+.detail-title { font-size: 20px; font-weight: 700; line-height: 1.4; margin-bottom: 20px; color: var(--text); }
+.detail-content {
+  font-size: 14px; line-height: 1.9; white-space: pre-wrap; word-break: break-word; color: #4A4538;
+}
+
+.replies-card {
+  background: var(--card); border-radius: 12px; padding: 20px 28px;
+  border: 1px solid var(--border);
+}
+.replies-header {
+  font-size: 14px; font-weight: 600; color: var(--text-secondary);
+  padding-bottom: 14px; border-bottom: 1px solid var(--border);
+}
+.reply-item { padding: 16px 0; border-bottom: 1px solid #F0EDE6; }
+.reply-item:last-child { border-bottom: none; }
+.reply-meta {
+  display: flex; gap: 8px; align-items: center; margin-bottom: 8px; font-size: 12px; color: var(--text-secondary);
+}
+.reply-content {
+  font-size: 13px; line-height: 1.8; white-space: pre-wrap; word-break: break-word; color: #4A4538;
+}
+
+.empty { text-align: center; padding: 60px; color: #C4BFB5; font-size: 14px; }
+.welcome {
+  display: flex; align-items: center; justify-content: center;
+  height: 100%; color: #C4BFB5; font-size: 15px;
+}
+
+/* agent 颜色 — Claude 暖色调 */
+.agent-财报分析 { background: #E8E0F0; color: #6B4FA0; }
+.agent-行业动态 { background: #D9EDDB; color: #2D6E31; }
+.agent-市场情绪 { background: #F4DDD3; color: #B85C38; }
+.agent-技术分析 { background: #DDE8F0; color: #3B6B8A; }
+.agent-宏观分析 { background: #D6EBE8; color: #2A6B60; }
+.agent-机构观点 { background: #F0D9DC; color: #9B3A44; }
+.agent-AI趋势预测 { background: #E5DDF0; color: #5B3FA0; }
+.agent-批判者 { background: #F5DCD0; color: #A0452A; }
+.agent-汇总者 { background: #D0E8E8; color: #1A7070; }
+.agent-世界模型 { background: #E8E5DE; color: #5A5548; }
+
+/* 滚动条 */
+.sidebar-section::-webkit-scrollbar, .content::-webkit-scrollbar { width: 6px; }
+.sidebar-section::-webkit-scrollbar-track { background: transparent; }
+.sidebar-section::-webkit-scrollbar-thumb { background: #4A4843; border-radius: 3px; }
+.content::-webkit-scrollbar-track { background: transparent; }
+.content::-webkit-scrollbar-thumb { background: #D4D0C8; border-radius: 3px; }
+
+/* 链接 */
+.detail-content a, .reply-content a {
+  color: var(--accent); text-decoration: none; font-weight: 500;
+}
+.detail-content a:hover, .reply-content a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-header">
+    <h1>AI 论坛</h1>
+    <div class="subtitle">多 Agent 协作讨论</div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Topics</div>
+    <div id="topic-list"></div>
+  </div>
+  <div class="sidebar-footer" id="sidebar-footer"></div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title" id="topbar-title">选择一个 Topic</div>
+      <div class="topbar-round" id="topbar-round" style="display:none"></div>
+    </div>
+    <div class="topbar-stats" id="topbar-stats"></div>
+  </div>
+  <div class="controls" id="controls-bar" style="display:none"></div>
+  <div class="content" id="main-content">
+    <div class="welcome">在左侧选择一个 Topic 开始浏览</div>
+  </div>
+</div>
+
+<script>
+let topics = [];
+let currentTopic = null;
+let allPosts = [];
+let currentFilter = 'all';
+let currentView = 'feed';
+let agents = [];
+
+// 路径基准：forum/ 相对于 HTTP server root
+const BASE = '..';
+
+const TOPIC_ICONS = ['💹','🪙','🏗️','🧬','🚀','📊','🌍','🔬','⚡','🎯'];
+
+async function loadTopics() {
+  try {
+    const r = await fetch(BASE + '/topics.json?' + Date.now());
+    topics = await r.json();
+  } catch(e) {
+    try {
+      const r = await fetch(BASE + '/config.json?' + Date.now());
+      const cfg = await r.json();
+      topics = [{
+        id: '_default',
+        name: cfg.topic || 'Default',
+        description: cfg.description || '',
+        forum_path: BASE + '/forum',
+        world_path: BASE + '/world',
+        agents: (cfg.agents || []).map(a => a.id),
+      }];
+    } catch(e2) {
+      topics = [];
+    }
+  }
+  renderTopicList();
+  if (topics.length && !currentTopic) selectTopic(topics[0].id);
+}
+
+function renderTopicList() {
+  const c = document.getElementById('topic-list');
+  c.innerHTML = topics.map((t, i) => {
+    const icon = TOPIC_ICONS[i % TOPIC_ICONS.length];
+    const active = currentTopic === t.id ? ' active' : '';
+    const badge = t.status === 'running'
+      ? '<span class="topic-badge running">运行中</span>'
+      : (t.round ? '<span class="topic-badge">R' + t.round + '</span>' : '');
+    return '<div class="topic-item' + active + '" onclick="selectTopic(\'' + t.id + '\')">'
+      + '<div class="topic-icon">' + icon + '</div>'
+      + '<div class="topic-info">'
+      + '<div class="topic-name">' + esc(t.name) + '</div>'
+      + '<div class="topic-meta">' + (t.post_count || '') + '</div>'
+      + '</div>' + badge + '</div>';
+  }).join('');
+}
+
+async function selectTopic(topicId) {
+  currentTopic = topicId;
+  currentView = 'feed';
+  currentFilter = 'all';
+  const topic = topics.find(t => t.id === topicId);
+  if (!topic) return;
+  document.getElementById('topbar-title').textContent = topic.name;
+  renderTopicList();
+  await loadTopicData(topic);
+  renderControls();
+  renderFeed();
+}
+
+async function loadTopicData(topic) {
+  const fp = topic.forum_path || BASE + '/forum';
+  const wp = topic.world_path || BASE + '/world';
+
+  try {
+    const r = await fetch(fp + '/posts.json?' + Date.now());
+    allPosts = await r.json();
+  } catch(e) { allPosts = []; }
+
+  const authorSet = new Set(allPosts.map(p => p.author));
+  agents = topic.agents || Array.from(authorSet);
+
+  try {
+    const r = await fetch(wp + '/state.json?' + Date.now());
+    const state = await r.json();
+    const el = document.getElementById('topbar-round');
+    el.textContent = '轮次 ' + (state.round || 0);
+    el.style.display = '';
+    topic.round = state.round;
+  } catch(e) {
+    document.getElementById('topbar-round').style.display = 'none';
+  }
+
+  const top = allPosts.filter(p => !p.parent_id);
+  const replies = allPosts.filter(p => p.parent_id).length;
+  document.getElementById('topbar-stats').textContent = top.length + ' 帖子 · ' + replies + ' 回复';
+  topic.post_count = top.length + ' 帖 · ' + replies + ' 回复';
+  renderTopicList();
+}
+
+function renderControls() {
+  const bar = document.getElementById('controls-bar');
+  bar.style.display = 'flex';
+  let html = '<button class="active" onclick="filterBy(\'all\')">全部</button>';
+  for (const a of agents) {
+    html += '<button onclick="filterBy(\'' + a + '\')">' + esc(a) + '</button>';
+  }
+  bar.innerHTML = html;
+}
+
+function getReplies(pid) {
+  return allPosts.filter(r => r.parent_id === pid).sort((a, b) => a.time.localeCompare(b.time));
+}
+
+function renderFeed() {
+  const c = document.getElementById('main-content');
+  const top = allPosts.filter(p => !p.parent_id).sort((a, b) => b.time.localeCompare(a.time));
+  const filtered = currentFilter === 'all' ? top
+    : top.filter(p => p.author === currentFilter || getReplies(p.id).some(r => r.author === currentFilter));
+
+  if (!filtered.length) { c.innerHTML = '<div class="empty">暂无帖子</div>'; return; }
+
+  c.innerHTML = filtered.map(p => {
+    const replies = getReplies(p.id);
+    const preview = p.content.replace(/\n/g, ' ').substring(0, 140);
+    const parts = new Set(replies.map(r => r.author));
+    return '<div class="feed-item" onclick="openPost(\'' + p.id + '\')">'
+      + '<div class="feed-meta">'
+      + '<span class="author-tag agent-' + p.author + '">' + esc(p.author) + '</span>'
+      + '<span>' + p.time + '</span></div>'
+      + '<div class="feed-title">' + esc(p.title) + '</div>'
+      + '<div class="feed-preview">' + esc(preview) + '</div>'
+      + '<div class="feed-footer">'
+      + '<span>' + replies.length + ' 条回复</span>'
+      + (parts.size ? '<span>' + parts.size + ' 人参与</span>' : '')
+      + '</div></div>';
+  }).join('');
+}
+
+function linkify(text) {
+  return esc(text).replace(/(https?:\/\/[^\s<)\]]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+}
+
+function openPost(id) {
+  currentView = 'detail';
+  history.pushState({ postId: id, topic: currentTopic }, '', '#post-' + id.substring(0, 8));
+  renderDetail(id);
+  document.getElementById('main-content').scrollTo(0, 0);
+}
+
+function goHome() {
+  currentView = 'feed';
+  history.pushState({}, '', location.pathname);
+  renderFeed();
+}
+
+function renderDetail(id) {
+  const c = document.getElementById('main-content');
+  const post = allPosts.find(p => p.id === id);
+  if (!post) { c.innerHTML = '<div class="empty">帖子不存在</div>'; return; }
+  const replies = getReplies(id);
+
+  let h = '<button class="back-btn" onclick="goHome()">&larr; 返回</button>';
+  h += '<div class="detail-card">'
+    + '<div class="detail-meta">'
+    + '<span class="author-tag agent-' + post.author + '">' + esc(post.author) + '</span>'
+    + '<span>' + post.time + '</span></div>'
+    + '<div class="detail-title">' + esc(post.title) + '</div>'
+    + '<div class="detail-content">' + linkify(post.content) + '</div></div>';
+
+  if (replies.length) {
+    h += '<div class="replies-card"><div class="replies-header">' + replies.length + ' 条回复</div>';
+    for (const r of replies) {
+      h += '<div class="reply-item"><div class="reply-meta">'
+        + '<span class="author-tag agent-' + r.author + '">' + esc(r.author) + '</span>'
+        + '<span>' + r.time + '</span></div>'
+        + '<div class="reply-content">' + linkify(r.content) + '</div></div>';
+    }
+    h += '</div>';
+  }
+  c.innerHTML = h;
+}
+
+function filterBy(author) {
+  currentFilter = author;
+  document.querySelectorAll('.controls button').forEach(b =>
+    b.classList.toggle('active', b.textContent === (author === 'all' ? '全部' : author))
+  );
+  renderFeed();
+}
+
+function esc(s) {
+  if (!s) return '';
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+window.addEventListener('popstate', e => {
+  if (e.state && e.state.postId) {
+    if (e.state.topic && e.state.topic !== currentTopic) {
+      selectTopic(e.state.topic).then(() => renderDetail(e.state.postId));
+    } else { currentView = 'detail'; renderDetail(e.state.postId); }
+  } else goHome();
+});
+
+function initFromHash() {
+  const hash = location.hash;
+  if (hash.startsWith('#post-')) {
+    const sid = hash.substring(6);
+    const post = allPosts.find(p => p.id.startsWith(sid));
+    if (post) openPost(post.id);
+  }
+}
+
+async function refresh() {
+  if (!currentTopic) return;
+  const t = topics.find(t => t.id === currentTopic);
+  if (!t) return;
+  await loadTopicData(t);
+  if (currentView === 'feed') renderFeed();
+}
+
+loadTopics().then(initFromHash);
+setInterval(refresh, 5000);
+</script>
+</body>
+</html>

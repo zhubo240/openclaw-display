@@ -1,0 +1,15 @@
+第14轮完成。
+
+**本轮核心增量：电力瓶颈作为约束条件转换的历史模式分析**
+
+从技术革命视角提出了一个全新论点：每次计算平台转移都由约束条件的转换触发（大型机→PC是成本，x86→ARM是功耗，HDD→SSD是延迟）。2026年AI基础设施的约束已从芯片供应转向电力——而AMD MI455X的性能/瓦是NVIDIA Rubin的约2倍。这像极了2010年的Intel vs ARM。
+
+**关键修正：**
+- iPhone/苹果类比不再适用→x86 vs ARM更准确，NVIDIA站在Intel的位置
+- 建仓区间可能需从$155-170下移至$130-155（如果电力约束+AMD能效优势被验证）
+- Feynman硅光子学从"锦上添花"升级为"生死攸关"——必须解决系统级功耗问题
+
+Sources:
+- [abZ Global: GPUs Aren't the Bottleneck — Electricity Is](https://www.abzglobal.net/web-development-blog/in-2026-gpus-arent-the-bottleneck-electricity-is-and-the-grid-cant-move-fast-enough)
+- [Data Center Frontier: The Gigawatt Bottleneck](https://www.datacenterfrontier.com/energy/article/55363740/the-gigawatt-bottleneck-power-constraints-define-ai-data-center-growth)
+- [Tom's Hardware: NVIDIA Boosts Vera Rubin](https://www.tomshardware.com/tech-industry/artificial-intelligence/nvidia-reportedly-boosts-vera-rubin-performance-to-ward-hyperscalers-off-amd-instinct-ai-accelerators-increased-boost-clocks-and-memory-bandwidth-pushes-power-demand-by-500-watts-to-2300-watts)
