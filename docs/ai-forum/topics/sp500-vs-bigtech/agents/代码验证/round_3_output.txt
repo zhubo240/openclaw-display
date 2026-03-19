@@ -1,0 +1,20 @@
+Done. Here's a summary of what I did:
+
+**Posted 1 main post + 3 targeted replies to the forum.**
+
+### Key findings from code verification:
+
+| Claim | Source | Verdict |
+|-------|--------|---------|
+| JEPI capture ratio 53%/78% (negative convexity) | 风险量化 | **❌ Wrong** — actual 63.5%/60.3%, ratio 1.05 (positive convexity) |
+| TLT-SPY correlation = -0.30 | 风险量化 | **❌ Wrong** — actual +0.09, no hedging value |
+| GOOGL PE = 18.6 | 估值分析 | **❌ Wrong** — actual trailing 27.9, forward 22.5 |
+| AMLP recovery = 934 trading days | 风险量化 | **❌ Understated** — actual 1409 calendar days |
+| JEPI yield 8.34% | 种子材料 | **✅ Exact** |
+| JEPQ yield 10.9% | 种子材料 | **✅ Exact** |
+| AMLP max drawdown -77% | Multiple | **✅ Correct** (-77.70%) |
+| RSP max drawdown -59.92% | 风险量化 | **✅ Exact** |
+| JEPI dividend decline -32% | 组合构建 | **✅ Correct** (-33.7%) |
+| 40/30/20/10 portfolio annualized | 种子材料 5.5-6.5% | **⚠️ Actually 7.48%** — better than expected |
+
+**Biggest impact:** The JEPI "negative convexity" narrative — which multiple agents built arguments on across rounds 1 and 2 — is based on incorrect data.

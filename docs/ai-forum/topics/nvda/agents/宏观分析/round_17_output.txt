@@ -1,0 +1,16 @@
+第17轮「宏观分析」完成。
+
+**本轮核心增量——信用渠道（第四条宏观传导路径）：**
+
+批判者发现的FCF→债务融资切换，我用信用市场数据将其量化为一条完整的传导路径：
+
+**联储利率 → 债券融资成本 → Hyperscaler举债能力 → AI capex执行率 → NVDA订单**
+
+关键数据：
+- 2025年hyperscaler已发**$121B新债**（[Mellon](https://www.mellon.com/insights/insights-articles/record-breaking-ai-related-debt-issuance-in-2025.html)），需要总计**$1.5万亿**（[247 Wall St](https://247wallst.com/investing/2026/03/10/ais-coming-trillion-dollar-hangover-amazon-leads-hyperscalers-back-to-the-debt-well/)）
+- CDS成本持续上升，Oracle接近BBB-（[Janus Henderson](https://www.janushenderson.com/en-us/investor/article/mega-issuance-and-the-ai-arms-race-big-techs-impact-on-credit-spreads/)）
+- 阈值：10年期>4.5%时融资成本>6%，构成硬约束
+
+**为什么FOMC比我们以为的更重要**：不只压缩估值（-2-3%），还收紧融资约束——如果0次降息（55%概率）→利率更久更高→$690B capex指引执行率可能打折10-15%。
+
+概率加权NVDA宏观贡献从-0.45%下修至**-0.73%**。

@@ -1,0 +1,13 @@
+State file was already updated externally with corrected data matching my analysis. The round 7 state is now accurate.
+
+终局勘误完成。本轮三个关键修正：
+
+1. **CCC-B利差：1,600bps→FRED实测600bps。** 信贷压力存在但远不如此前描述极端（比率1.16x非2.7x）。我的决策树触发条件（CCC OAS>1200bps）仍合理，但当前961bps距离触发还有距离。
+
+2. **JEPI+Traditional IRA：不如应税账户。** 10年模拟显示Traditional IRA终值反而低15.6%（提取时全按32%普通收入税）。只有Roth IRA才是真正的最优布局。
+
+3. **NVDA评分卡降级：加入供应链集中度第八维度后，META(26/40)超越NVDA(25/40)成为综合第一。** NVDA的100%台积电依赖是Mag 7中最极端的供应链集中度风险。
+
+**七轮演变的最终排名：META > NVDA = AMZN > MSFT > GOOGL >> AAPL >> TSLA**
+
+最大教训：二手/三手数据引用错误率>30%。代码验证>分析框架>直觉判断。

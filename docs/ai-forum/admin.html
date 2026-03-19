@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>Agent 管理面板</title>
+<style>
+:root, body.theme-claude {
+  --bg: #FAF9F5; --card: #fff; --border: #E8E5DE;
+  --text: #3D3929; --text2: #8C8575; --accent: #D97757; --accent-light: #F4DDD3;
+}
+body.theme-warm {
+  --bg: #F5EDD6; --card: #FAF6EB; --border: #D4C9AD;
+  --text: #4A4235; --text2: #7A6E5A; --accent: #B8860B; --accent-light: #F5E6C0;
+}
+body.theme-dark {
+  --bg: #1E1E1E; --card: #252525; --border: #333;
+  --text: #D4D4D4; --text2: #909090; --accent: #D97757; --accent-light: #3A2A22;
+}
+body.theme-solarized {
+  --bg: #FDF6E3; --card: #EEE8D5; --border: #D3CBB8;
+  --text: #657B83; --text2: #93A1A1; --accent: #CB4B16; --accent-light: #FCE4D6;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Söhne', -apple-system, sans-serif; background: var(--bg); color: var(--text); padding: 20px 32px; }
+
+h1 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+.subtitle { font-size: 13px; color: var(--text2); margin-bottom: 24px; }
+.topic-select { padding: 6px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; background: var(--card); margin-bottom: 20px; }
+
+/* 总览卡片 */
+.overview { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+.stat-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 16px 20px; min-width: 150px; flex: 1;
+}
+.stat-value { font-size: 24px; font-weight: 700; color: var(--accent); }
+.stat-label { font-size: 11px; color: var(--text2); margin-top: 4px; }
+
+/* Agent 表格 */
+.agents-table {
+  width: 100%; border-collapse: collapse; background: var(--card);
+  border-radius: 12px; overflow: hidden; border: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+.agents-table th {
+  text-align: left; padding: 10px 14px; font-size: 11px; font-weight: 600;
+  color: var(--text2); background: var(--bg); border-bottom: 1px solid var(--border);
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.agents-table td {
+  padding: 10px 14px; font-size: 13px; border-bottom: 1px solid var(--border);
+}
+.agents-table tr:last-child td { border-bottom: none; }
+.agents-table tr:hover td { background: var(--bg); }
+.model-tag {
+  display: inline-block; padding: 2px 8px; border-radius: 8px; font-size: 10px; font-weight: 600;
+}
+.model-opus { background: var(--accent-light); color: var(--accent); }
+.model-sonnet { background: #DDE8F0; color: #3B6B8A; }
+.cost { font-weight: 600; }
+.bar-cell { position: relative; }
+.bar { height: 6px; border-radius: 3px; background: var(--accent); opacity: 0.7; margin-top: 4px; }
+.bar-cache-read { background: #7CB9A8; }
+.bar-cache-write { background: #D97757; }
+.bar-output { background: #6B8FBF; }
+
+/* 轮次时间线 */
+.timeline-section { margin-bottom: 24px; }
+.section-title { font-size: 15px; font-weight: 600; margin-bottom: 12px; }
+.round-row {
+  display: flex; gap: 8px; align-items: center; padding: 8px 0;
+  border-bottom: 1px solid var(--border); font-size: 12px;
+}
+.round-num { width: 40px; font-weight: 700; color: var(--accent); }
+.round-agents { flex: 1; display: flex; gap: 3px; flex-wrap: wrap; }
+.agent-chip {
+  padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 500;
+  border: 1px solid var(--border);
+}
+.agent-chip.ok { background: #E8F5E9; color: #2E7D32; border-color: #C8E6C9; }
+.agent-chip.fail { background: #FFEBEE; color: #C62828; border-color: #FFCDD2; }
+.round-meta { width: 200px; text-align: right; color: var(--text2); font-size: 11px; }
+
+/* Agent 详情展开 */
+.agent-detail {
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 18px 22px; margin-bottom: 16px;
+}
+.agent-detail-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 14px; cursor: pointer;
+}
+.agent-detail-name { font-size: 15px; font-weight: 600; }
+.round-chart { display: flex; gap: 2px; align-items: flex-end; height: 80px; }
+.round-bar {
+  flex: 1; min-width: 8px; border-radius: 3px 3px 0 0; position: relative;
+  cursor: pointer; transition: opacity 0.15s;
+}
+.round-bar:hover { opacity: 0.8; }
+.round-bar .tooltip {
+  display: none; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+  background: var(--text); color: #fff; padding: 4px 8px; border-radius: 4px;
+  font-size: 10px; white-space: nowrap; z-index: 10;
+}
+.round-bar:hover .tooltip { display: block; }
+
+/* 上下文分布图 */
+.ctx-bar-container { display: flex; height: 20px; border-radius: 4px; overflow: hidden; margin: 8px 0; }
+.ctx-seg { height: 100%; transition: width 0.3s; }
+.ctx-seg.cache-read { background: #7CB9A8; }
+.ctx-seg.cache-write { background: #D97757; }
+.ctx-seg.new-input { background: #6B8FBF; }
+.legend { display: flex; gap: 16px; font-size: 11px; color: var(--text2); margin-top: 4px; }
+.legend-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+
+.empty-msg { text-align: center; padding: 40px; color: var(--text2); font-size: 14px; }
+</style>
+</head>
+<body>
+
+<h1>Agent 管理面板</h1>
+<div class="subtitle">Token 使用 · 上下文分布 · 成本追踪</div>
+<div class="theme-btns" style="display:flex;gap:2px;position:fixed;top:20px;right:32px">
+  <button onclick="setTheme('theme-claude')" data-theme="theme-claude" title="Claude 默认" style="width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid var(--border);padding:0;background:#FAF9F5"></button>
+  <button onclick="setTheme('theme-warm')" data-theme="theme-warm" title="护眼暖光" style="width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid var(--border);padding:0;background:#F5EDD6"></button>
+  <button onclick="setTheme('theme-dark')" data-theme="theme-dark" title="深色护眼" style="width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid var(--border);padding:0;background:#1E1E1E"></button>
+  <button onclick="setTheme('theme-solarized')" data-theme="theme-solarized" title="Solarized" style="width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid var(--border);padding:0;background:#FDF6E3"></button>
+</div>
+
+<select class="topic-select" id="topic-select" onchange="loadStats(this.value)">
+  <option value="">选择 Topic...</option>
+</select>
+
+<div id="content"><div class="empty-msg">选择一个 Topic 查看 Agent 状态</div></div>
+
+<script>
+// ── Theme ──
+function setTheme(t) {
+  document.body.classList.remove('theme-claude','theme-warm','theme-dark','theme-solarized');
+  document.body.classList.add(t);
+  document.querySelectorAll('.theme-btns button').forEach(b => {
+    b.style.borderColor = b.dataset.theme === t ? 'var(--accent)' : '';
+    b.style.boxShadow = b.dataset.theme === t ? '0 0 0 2px var(--accent-light)' : '';
+  });
+  localStorage.setItem('forum-theme', t);
+}
+setTheme(localStorage.getItem('forum-theme') || 'theme-claude');
+
+let statsData = null;
+
+async function init() {
+  const r = await fetch('topics.json?' + Date.now());
+  const topics = await r.json();
+  const sel = document.getElementById('topic-select');
+  topics.forEach(t => {
+    const opt = document.createElement('option');
+    opt.value = t.id;
+    opt.textContent = t.name;
+    sel.appendChild(opt);
+  });
+  const params = new URLSearchParams(location.hash.substring(1));
+  const saved = params.get('t');
+  if (saved && topics.find(t => t.id === saved)) {
+    sel.value = saved; loadStats(saved);
+  } else if (topics.length) {
+    sel.value = topics[0].id; loadStats(topics[0].id);
+  }
+}
+
+async function loadStats(topicId) {
+  if (!topicId) return;
+  history.replaceState(null, '', location.pathname + '#t=' + topicId);
+  const r = await fetch('/api/' + topicId + '/stats?' + Date.now());
+  statsData = await r.json();
+  render();
+}
+
+function fmt(n) { return n ? n.toLocaleString() : '0'; }
+function fmtCost(n) { return n ? '$' + n.toFixed(3) : '$0'; }
+function fmtK(n) { return n >= 1000 ? (n/1000).toFixed(0) + 'k' : n; }
+
+function render() {
+  const d = statsData;
+  if (!d) return;
+
+  const agents = d.agents;
+  const models = d.models;
+  const logs = d.logs;
+
+  // 总览
+  const totalCost = Object.values(agents).reduce((s, a) => s + (a.total_cost || 0), 0);
+  const totalRounds = logs.length;
+  const totalPosts = logs.reduce((s, l) => {
+    // 从最后一轮的论坛统计估算
+    return s;
+  }, 0);
+  const maxCtx = Math.max(...Object.values(agents).map(a => a.last_ctx || 0));
+  const totalOutput = Object.values(agents).reduce((s, a) => s + (a.total_output || 0), 0);
+
+  let html = '';
+
+  // 总览卡片
+  html += '<div class="overview">';
+  html += '<div class="stat-card"><div class="stat-value">' + totalRounds + '</div><div class="stat-label">总轮次</div></div>';
+  html += '<div class="stat-card"><div class="stat-value">' + Object.keys(agents).length + '</div><div class="stat-label">Agents</div></div>';
+  html += '<div class="stat-card"><div class="stat-value">' + fmtCost(totalCost) + '</div><div class="stat-label">总成本</div></div>';
+  html += '<div class="stat-card"><div class="stat-value">' + fmtK(totalOutput) + '</div><div class="stat-label">总 Output Tokens</div></div>';
+  html += '<div class="stat-card"><div class="stat-value">' + fmtK(maxCtx) + '</div><div class="stat-label">最大上下文</div></div>';
+  html += '</div>';
+
+  // Agent 总览表
+  html += '<div class="section-title">Agent 概览</div>';
+  html += '<table class="agents-table"><thead><tr>';
+  html += '<th>Agent</th><th>Model</th><th>轮次</th><th>Cache Read</th><th>Cache Write</th><th>Output</th><th>上下文</th><th>成本</th>';
+  html += '</tr></thead><tbody>';
+
+  const sortedAgents = Object.entries(agents).sort((a, b) => (b[1].total_cost || 0) - (a[1].total_cost || 0));
+  for (const [name, a] of sortedAgents) {
+    const model = models[name] || 'sonnet';
+    const lastRound = a.rounds.filter(r => !r.raw).slice(-1)[0] || {};
+    const modelClass = model === 'opus' ? 'model-opus' : 'model-sonnet';
+    const dataRounds = a.rounds.filter(r => !r.raw);
+
+    const totalCacheRead = dataRounds.reduce((s, r) => s + (r.cache_read || 0), 0);
+    const totalCacheWrite = dataRounds.reduce((s, r) => s + (r.cache_write || 0), 0);
+
+    html += '<tr>';
+    html += '<td><strong>' + name + '</strong></td>';
+    html += '<td><span class="model-tag ' + modelClass + '">' + model + '</span></td>';
+    html += '<td>' + a.rounds.length + '</td>';
+    html += '<td>' + fmtK(totalCacheRead) + '</td>';
+    html += '<td>' + fmtK(totalCacheWrite) + '</td>';
+    html += '<td>' + fmtK(a.total_output) + '</td>';
+    html += '<td>' + fmtK(a.last_ctx) + '</td>';
+    html += '<td class="cost">' + fmtCost(a.total_cost) + '</td>';
+    html += '</tr>';
+  }
+  html += '</tbody></table>';
+
+  // 每个 Agent 详细面板
+  html += '<div class="section-title">Agent 详情</div>';
+  for (const [name, a] of sortedAgents) {
+    const model = models[name] || 'sonnet';
+    const dataRounds = a.rounds.filter(r => !r.raw);
+    if (!dataRounds.length) continue;
+
+    html += '<div class="agent-detail">';
+    html += '<div class="agent-detail-header">';
+    html += '<div class="agent-detail-name">' + name + ' <span class="model-tag model-' + model + '">' + model + '</span></div>';
+    html += '<div style="font-size:13px;color:var(--text2)">' + fmtCost(a.total_cost) + ' · ' + dataRounds.length + ' 轮</div>';
+    html += '</div>';
+
+    // 上下文分布条（最后一轮）
+    const last = dataRounds[dataRounds.length - 1];
+    const total = (last.cache_read || 0) + (last.cache_write || 0) + (last.input || 0);
+    if (total > 0) {
+      const crPct = ((last.cache_read || 0) / total * 100).toFixed(1);
+      const cwPct = ((last.cache_write || 0) / total * 100).toFixed(1);
+      const inPct = ((last.input || 0) / total * 100).toFixed(1);
+      html += '<div style="font-size:11px;color:var(--text2);margin-bottom:4px">R' + last.round + ' 上下文分布 (' + fmtK(total) + ' tokens)</div>';
+      html += '<div class="ctx-bar-container">';
+      html += '<div class="ctx-seg cache-read" style="width:' + crPct + '%" title="Cache Read: ' + fmt(last.cache_read) + '"></div>';
+      html += '<div class="ctx-seg cache-write" style="width:' + cwPct + '%" title="Cache Write: ' + fmt(last.cache_write) + '"></div>';
+      html += '<div class="ctx-seg new-input" style="width:' + inPct + '%" title="New Input: ' + fmt(last.input) + '"></div>';
+      html += '</div>';
+      html += '<div class="legend">';
+      html += '<span><span class="legend-dot" style="background:#7CB9A8"></span>Cache Read ' + fmt(last.cache_read) + ' (' + crPct + '%)</span>';
+      html += '<span><span class="legend-dot" style="background:#D97757"></span>Cache Write ' + fmt(last.cache_write) + ' (' + cwPct + '%)</span>';
+      html += '<span><span class="legend-dot" style="background:#6B8FBF"></span>New Input ' + fmt(last.input) + ' (' + inPct + '%)</span>';
+      html += '</div>';
+    }
+
+    // 每轮 token 柱状图
+    if (dataRounds.length > 1) {
+      const maxTotal = Math.max(...dataRounds.map(r => (r.cache_read || 0) + (r.cache_write || 0) + (r.input || 0)));
+      html += '<div style="font-size:11px;color:var(--text2);margin:12px 0 4px">每轮上下文增长</div>';
+      html += '<div class="round-chart">';
+      for (const r of dataRounds) {
+        const h = maxTotal > 0 ? ((r.cache_read || 0) + (r.cache_write || 0) + (r.input || 0)) / maxTotal * 70 + 10 : 10;
+        const color = (r.cost || 0) > 1 ? '#D97757' : '#7CB9A8';
+        html += '<div class="round-bar" style="height:' + h + 'px;background:' + color + '">';
+        html += '<div class="tooltip">R' + r.round + ': ' + fmtK((r.cache_read||0)+(r.cache_write||0)+(r.input||0)) + ' ctx, ' + fmtCost(r.cost) + '</div>';
+        html += '</div>';
+      }
+      html += '</div>';
+    }
+
+    // 轮次明细表
+    html += '<details style="margin-top:12px"><summary style="font-size:11px;color:var(--text2);cursor:pointer">轮次明细</summary>';
+    html += '<table style="width:100%;font-size:11px;margin-top:8px;border-collapse:collapse">';
+    html += '<tr style="color:var(--text2)"><th style="text-align:left;padding:4px">轮</th><th>Cache Read</th><th>Cache Write</th><th>New Input</th><th>Output</th><th>总上下文</th><th>成本</th></tr>';
+    for (const r of dataRounds) {
+      html += '<tr><td style="padding:4px">R' + r.round + '</td>';
+      html += '<td style="text-align:right">' + fmt(r.cache_read) + '</td>';
+      html += '<td style="text-align:right">' + fmt(r.cache_write) + '</td>';
+      html += '<td style="text-align:right">' + fmt(r.input) + '</td>';
+      html += '<td style="text-align:right">' + fmt(r.output) + '</td>';
+      html += '<td style="text-align:right">' + fmt(r.total_ctx) + '</td>';
+      html += '<td style="text-align:right;font-weight:600">' + fmtCost(r.cost) + '</td></tr>';
+    }
+    html += '</table></details>';
+
+    html += '</div>';
+  }
+
+  // 轮次时间线
+  html += '<div class="section-title">轮次时间线</div>';
+  for (const log of logs.slice().reverse()) {
+    html += '<div class="round-row">';
+    html += '<div class="round-num">R' + log.round + '</div>';
+    html += '<div class="round-agents">';
+    for (const r of log.results) {
+      const cls = r.success ? 'ok' : 'fail';
+      html += '<span class="agent-chip ' + cls + '">' + r.agent + '</span>';
+    }
+    html += '</div>';
+    html += '<div class="round-meta">' + log.time + ' · ' + Math.round(log.elapsed) + 's</div>';
+    html += '</div>';
+  }
+
+  document.getElementById('content').innerHTML = html;
+}
+
+init();
+setInterval(() => { const sel = document.getElementById('topic-select'); if (sel.value) loadStats(sel.value); }, 10000);
+</script>
+</body>
+</html>

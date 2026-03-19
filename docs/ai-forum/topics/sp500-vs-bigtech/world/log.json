@@ -1,0 +1,1571 @@
+[
+  {
+    "round": 1,
+    "time": "2026-03-15 18:54:40",
+    "elapsed": 223.7,
+    "results": [
+      {
+        "agent": "AI情景推演",
+        "success": true,
+        "elapsed": 141.0,
+        "stdout_len": 394,
+        "stderr": ""
+      },
+      {
+        "agent": "宏观环境",
+        "success": true,
+        "elapsed": 141.0,
+        "stdout_len": 364,
+        "stderr": ""
+      },
+      {
+        "agent": "历史类比",
+        "success": true,
+        "elapsed": 157.7,
+        "stdout_len": 343,
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 167.6,
+        "stdout_len": 343,
+        "stderr": ""
+      },
+      {
+        "agent": "组合构建",
+        "success": true,
+        "elapsed": 169.4,
+        "stdout_len": 397,
+        "stderr": ""
+      },
+      {
+        "agent": "风险量化",
+        "success": true,
+        "elapsed": 178.7,
+        "stdout_len": 417,
+        "stderr": ""
+      },
+      {
+        "agent": "估值分析",
+        "success": true,
+        "elapsed": 223.7,
+        "stdout_len": 408,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 1,
+    "time": "2026-03-15 18:55:24",
+    "elapsed": 257.8,
+    "results": [
+      {
+        "agent": "历史类比",
+        "success": true,
+        "elapsed": 169.9,
+        "stdout_len": 541,
+        "stderr": ""
+      },
+      {
+        "agent": "估值分析",
+        "success": true,
+        "elapsed": 173.6,
+        "stdout_len": 487,
+        "stderr": ""
+      },
+      {
+        "agent": "AI情景推演",
+        "success": true,
+        "elapsed": 180.4,
+        "stdout_len": 665,
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 183.6,
+        "stdout_len": 435,
+        "stderr": ""
+      },
+      {
+        "agent": "风险量化",
+        "success": true,
+        "elapsed": 210.0,
+        "stdout_len": 478,
+        "stderr": ""
+      },
+      {
+        "agent": "宏观环境",
+        "success": true,
+        "elapsed": 211.3,
+        "stdout_len": 1090,
+        "stderr": ""
+      },
+      {
+        "agent": "组合构建",
+        "success": true,
+        "elapsed": 257.7,
+        "stdout_len": 504,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 2,
+    "time": "2026-03-15 19:13:34",
+    "elapsed": 234.4,
+    "results": [
+      {
+        "agent": "历史类比",
+        "success": true,
+        "elapsed": 197.0,
+        "stdout_len": 406,
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 207.9,
+        "stdout_len": 501,
+        "stderr": ""
+      },
+      {
+        "agent": "AI情景推演",
+        "success": true,
+        "elapsed": 210.3,
+        "stdout_len": 441,
+        "stderr": ""
+      },
+      {
+        "agent": "估值分析",
+        "success": true,
+        "elapsed": 215.5,
+        "stdout_len": 450,
+        "stderr": ""
+      },
+      {
+        "agent": "组合构建",
+        "success": true,
+        "elapsed": 221.3,
+        "stdout_len": 522,
+        "stderr": ""
+      },
+      {
+        "agent": "风险量化",
+        "success": true,
+        "elapsed": 221.4,
+        "stdout_len": 339,
+        "stderr": ""
+      },
+      {
+        "agent": "宏观环境",
+        "success": true,
+        "elapsed": 234.3,
+        "stdout_len": 1375,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 2,
+    "time": "2026-03-15 19:14:38",
+    "elapsed": 254.5,
+    "results": [
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 162.8,
+        "stdout_len": 414,
+        "stderr": ""
+      },
+      {
+        "agent": "宏观环境",
+        "success": true,
+        "elapsed": 189.9,
+        "stdout_len": 1502,
+        "stderr": ""
+      },
+      {
+        "agent": "AI情景推演",
+        "success": true,
+        "elapsed": 206.5,
+        "stdout_len": 492,
+        "stderr": ""
+      },
+      {
+        "agent": "历史类比",
+        "success": true,
+        "elapsed": 217.4,
+        "stdout_len": 582,
+        "stderr": ""
+      },
+      {
+        "agent": "风险量化",
+        "success": true,
+        "elapsed": 226.1,
+        "stdout_len": 369,
+        "stderr": ""
+      },
+      {
+        "agent": "组合构建",
+        "success": true,
+        "elapsed": 252.9,
+        "stdout_len": 450,
+        "stderr": ""
+      },
+      {
+        "agent": "估值分析",
+        "success": true,
+        "elapsed": 254.4,
+        "stdout_len": 399,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 3,
+    "time": "2026-03-15 19:34:23",
+    "elapsed": 348.7,
+    "results": [
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 216.7,
+        "stdout_len": 589,
+        "stderr": ""
+      },
+      {
+        "agent": "宏观环境",
+        "success": true,
+        "elapsed": 226.4,
+        "stdout_len": 1337,
+        "stderr": ""
+      },
+      {
+        "agent": "历史类比",
+        "success": true,
+        "elapsed": 232.2,
+        "stdout_len": 655,
+        "stderr": ""
+      },
+      {
+        "agent": "风险量化",
+        "success": true,
+        "elapsed": 246.3,
+        "stdout_len": 435,
+        "stderr": ""
+      },
+      {
+        "agent": "估值分析",
+        "success": true,
+        "elapsed": 254.7,
+        "stdout_len": 393,
+        "stderr": ""
+      },
+      {
+        "agent": "组合构建",
+        "success": true,
+        "elapsed": 257.0,
+        "stdout_len": 527,
+        "stderr": ""
+      },
+      {
+        "agent": "AI情景推演",
+        "success": true,
+        "elapsed": 260.9,
+        "stdout_len": 496,
+        "stderr": ""
+      },
+      {
+        "agent": "代码验证",
+        "success": true,
+        "elapsed": 348.6,
+        "stdout_len": 365,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 3,
+    "time": "2026-03-15 19:35:27",
+    "elapsed": 349.2,
+    "results": [
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 207.7,
+        "stdout_len": 593,
+        "stderr": ""
+      },
+      {
+        "agent": "宏观环境",
+        "success": true,
+        "elapsed": 220.5,
+        "stdout_len": 1562,
+        "stderr": ""
+      },
+      {
+        "agent": "风险量化",
+        "success": true,
+        "elapsed": 222.6,
+        "stdout_len": 414,
+        "stderr": ""
+      },
+      {
+        "agent": "估值分析",
+        "success": true,
+        "elapsed": 240.5,
+        "stdout_len": 648,
+        "stderr": ""
+      },
+      {
+        "agent": "历史类比",
+        "success": true,
+        "elapsed": 242.7,
+        "stdout_len": 535,
+        "stderr": ""
+      },
+      {
+        "agent": "AI情景推演",
+        "success": true,
+        "elapsed": 244.1,
+        "stdout_len": 560,
+        "stderr": ""
+      },
+      {
+        "agent": "组合构建",
+        "success": true,
+        "elapsed": 254.6,
+        "stdout_len": 657,
+        "stderr": ""
+      },
+      {
+        "agent": "代码验证",
+        "success": true,
+        "elapsed": 349.2,
+        "stdout_len": 1098,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 4,
+    "time": "2026-03-15 19:42:15",
+    "elapsed": 253.4,
+    "results": [
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 167.6,
+        "stdout_len": 627,
+        "stderr": ""
+      },
+      {
+        "agent": "AI情景推演",
+        "success": true,
+        "elapsed": 173.8,
+        "stdout_len": 498,
+        "stderr": ""
+      },
+      {
+        "agent": "组合构建",
+        "success": true,
+        "elapsed": 193.7,
+        "stdout_len": 402,
+        "stderr": ""
+      },
+      {
+        "agent": "历史类比",
+        "success": true,
+        "elapsed": 205.5,
+        "stdout_len": 672,
+        "stderr": ""
+      },
+      {
+        "agent": "风险量化",
+        "success": true,
+        "elapsed": 208.1,
+        "stdout_len": 405,
+        "stderr": ""
+      },
+      {
+        "agent": "宏观环境",
+        "success": true,
+        "elapsed": 221.8,
+        "stdout_len": 1709,
+        "stderr": ""
+      },
+      {
+        "agent": "估值分析",
+        "success": true,
+        "elapsed": 253.4,
+        "stdout_len": 504,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 4,
+    "time": "2026-03-15 19:52:19",
+    "elapsed": 176.1,
+    "results": [
+      {
+        "agent": "AI情景推演",
+        "success": true,
+        "elapsed": 102.1,
+        "stdout_len": 418,
+        "stderr": ""
+      },
+      {
+        "agent": "风险量化",
+        "success": true,
+        "elapsed": 111.5,
+        "stdout_len": 420,
+        "stderr": ""
+      },
+      {
+        "agent": "宏观环境",
+        "success": true,
+        "elapsed": 114.2,
+        "stdout_len": 1570,
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 116.8,
+        "stdout_len": 414,
+        "stderr": ""
+      },
+      {
+        "agent": "历史类比",
+        "success": true,
+        "elapsed": 120.9,
+        "stdout_len": 531,
+        "stderr": ""
+      },
+      {
+        "agent": "组合构建",
+        "success": true,
+        "elapsed": 140.8,
+        "stdout_len": 571,
+        "stderr": ""
+      },
+      {
+        "agent": "估值分析",
+        "success": true,
+        "elapsed": 176.0,
+        "stdout_len": 641,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 4,
+    "time": "2026-03-15 19:53:20",
+    "elapsed": 172.5,
+    "results": [
+      {
+        "agent": "AI情景推演",
+        "success": true,
+        "elapsed": 80.1,
+        "stdout_len": 498,
+        "stderr": ""
+      },
+      {
+        "agent": "宏观环境",
+        "success": true,
+        "elapsed": 89.0,
+        "stdout_len": 1600,
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 112.4,
+        "stdout_len": 551,
+        "stderr": ""
+      },
+      {
+        "agent": "历史类比",
+        "success": true,
+        "elapsed": 127.2,
+        "stdout_len": 426,
+        "stderr": ""
+      },
+      {
+        "agent": "风险量化",
+        "success": true,
+        "elapsed": 147.4,
+        "stdout_len": 353,
+        "stderr": ""
+      },
+      {
+        "agent": "组合构建",
+        "success": true,
+        "elapsed": 149.8,
+        "stdout_len": 394,
+        "stderr": ""
+      },
+      {
+        "agent": "估值分析",
+        "success": true,
+        "elapsed": 172.4,
+        "stdout_len": 392,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 5,
+    "time": "2026-03-15 19:59:51",
+    "elapsed": 756.0,
+    "results": [
+      {
+        "agent": "AI情景推演",
+        "success": true,
+        "elapsed": 154.6,
+        "stdout_len": 550,
+        "stderr": ""
+      },
+      {
+        "agent": "历史类比",
+        "success": true,
+        "elapsed": 168.1,
+        "stdout_len": 579,
+        "stderr": ""
+      },
+      {
+        "agent": "宏观环境",
+        "success": true,
+        "elapsed": 176.3,
+        "stdout_len": 1152,
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 185.4,
+        "stdout_len": 689,
+        "stderr": ""
+      },
+      {
+        "agent": "风险量化",
+        "success": true,
+        "elapsed": 202.4,
+        "stdout_len": 424,
+        "stderr": ""
+      },
+      {
+        "agent": "估值分析",
+        "success": true,
+        "elapsed": 202.4,
+        "stdout_len": 612,
+        "stderr": ""
+      },
+      {
+        "agent": "组合构建",
+        "success": true,
+        "elapsed": 210.2,
+        "stdout_len": 493,
+        "stderr": ""
+      },
+      {
+        "agent": "代码验证",
+        "success": true,
+        "elapsed": 324.4,
+        "stdout_len": 1057,
+        "stderr": ""
+      },
+      {
+        "agent": "汇总者",
+        "success": true,
+        "elapsed": 221.3,
+        "stdout_len": 331,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 5,
+    "time": "2026-03-15 20:11:34",
+    "elapsed": 254.4,
+    "results": [
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 92.1,
+        "stdout_len": 421,
+        "stderr": ""
+      },
+      {
+        "agent": "AI情景推演",
+        "success": true,
+        "elapsed": 92.2,
+        "stdout_len": 265,
+        "stderr": ""
+      },
+      {
+        "agent": "历史类比",
+        "success": true,
+        "elapsed": 97.0,
+        "stdout_len": 329,
+        "stderr": ""
+      },
+      {
+        "agent": "组合构建",
+        "success": true,
+        "elapsed": 99.6,
+        "stdout_len": 499,
+        "stderr": ""
+      },
+      {
+        "agent": "宏观环境",
+        "success": true,
+        "elapsed": 110.8,
+        "stdout_len": 1223,
+        "stderr": ""
+      },
+      {
+        "agent": "估值分析",
+        "success": true,
+        "elapsed": 138.1,
+        "stdout_len": 486,
+        "stderr": ""
+      },
+      {
+        "agent": "风险量化",
+        "success": true,
+        "elapsed": 157.6,
+        "stdout_len": 434,
+        "stderr": ""
+      },
+      {
+        "agent": "代码验证",
+        "success": false,
+        "elapsed": 87.2,
+        "stdout_len": 51,
+        "stderr": ""
+      },
+      {
+        "agent": "汇总者",
+        "success": false,
+        "elapsed": 9.5,
+        "stdout_len": 51,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 5,
+    "time": "2026-03-15 20:12:10",
+    "elapsed": 230.2,
+    "results": [
+      {
+        "agent": "宏观环境",
+        "success": true,
+        "elapsed": 58.0,
+        "stdout_len": 1000,
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 72.6,
+        "stdout_len": 206,
+        "stderr": ""
+      },
+      {
+        "agent": "组合构建",
+        "success": true,
+        "elapsed": 82.5,
+        "stdout_len": 451,
+        "stderr": ""
+      },
+      {
+        "agent": "历史类比",
+        "success": true,
+        "elapsed": 87.2,
+        "stdout_len": 357,
+        "stderr": ""
+      },
+      {
+        "agent": "估值分析",
+        "success": true,
+        "elapsed": 91.4,
+        "stdout_len": 565,
+        "stderr": ""
+      },
+      {
+        "agent": "AI情景推演",
+        "success": true,
+        "elapsed": 105.4,
+        "stdout_len": 437,
+        "stderr": ""
+      },
+      {
+        "agent": "风险量化",
+        "success": true,
+        "elapsed": 113.8,
+        "stdout_len": 385,
+        "stderr": ""
+      },
+      {
+        "agent": "代码验证",
+        "success": false,
+        "elapsed": 111.7,
+        "stdout_len": 51,
+        "stderr": ""
+      },
+      {
+        "agent": "汇总者",
+        "success": false,
+        "elapsed": 4.6,
+        "stdout_len": 51,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 6,
+    "time": "2026-03-15 20:27:20",
+    "elapsed": 9.3,
+    "results": [
+      {
+        "agent": "宏观环境",
+        "success": false,
+        "elapsed": 6.6,
+        "stdout_len": 51,
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": false,
+        "elapsed": 7.2,
+        "stdout_len": 51,
+        "stderr": ""
+      },
+      {
+        "agent": "估值分析",
+        "success": false,
+        "elapsed": 7.4,
+        "stdout_len": 51,
+        "stderr": ""
+      },
+      {
+        "agent": "组合构建",
+        "success": false,
+        "elapsed": 7.9,
+        "stdout_len": 51,
+        "stderr": ""
+      },
+      {
+        "agent": "风险量化",
+        "success": false,
+        "elapsed": 8.2,
+        "stdout_len": 51,
+        "stderr": ""
+      },
+      {
+        "agent": "AI情景推演",
+        "success": false,
+        "elapsed": 8.9,
+        "stdout_len": 51,
+        "stderr": ""
+      },
+      {
+        "agent": "历史类比",
+        "success": false,
+        "elapsed": 9.2,
+        "stdout_len": 51,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 7,
+    "time": "2026-03-15 20:42:28",
+    "elapsed": 8.7,
+    "results": [
+      {
+        "agent": "批判者",
+        "success": false,
+        "elapsed": 6.2,
+        "stdout_len": 51,
+        "stderr": ""
+      },
+      {
+        "agent": "历史类比",
+        "success": false,
+        "elapsed": 6.3,
+        "stdout_len": 51,
+        "stderr": ""
+      },
+      {
+        "agent": "AI情景推演",
+        "success": false,
+        "elapsed": 7.1,
+        "stdout_len": 51,
+        "stderr": ""
+      },
+      {
+        "agent": "风险量化",
+        "success": false,
+        "elapsed": 7.4,
+        "stdout_len": 51,
+        "stderr": ""
+      },
+      {
+        "agent": "组合构建",
+        "success": false,
+        "elapsed": 7.9,
+        "stdout_len": 51,
+        "stderr": ""
+      },
+      {
+        "agent": "估值分析",
+        "success": false,
+        "elapsed": 8.5,
+        "stdout_len": 51,
+        "stderr": ""
+      },
+      {
+        "agent": "宏观环境",
+        "success": false,
+        "elapsed": 8.6,
+        "stdout_len": 51,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 8,
+    "time": "2026-03-15 21:09:36",
+    "elapsed": 161.4,
+    "results": [
+      {
+        "agent": "宏观环境",
+        "success": true,
+        "elapsed": 97.2,
+        "stdout_len": 510,
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 116.9,
+        "stdout_len": 358,
+        "stderr": ""
+      },
+      {
+        "agent": "历史类比",
+        "success": true,
+        "elapsed": 121.0,
+        "stdout_len": 403,
+        "stderr": ""
+      },
+      {
+        "agent": "风险量化",
+        "success": true,
+        "elapsed": 138.5,
+        "stdout_len": 346,
+        "stderr": ""
+      },
+      {
+        "agent": "AI情景推演",
+        "success": true,
+        "elapsed": 144.4,
+        "stdout_len": 346,
+        "stderr": ""
+      },
+      {
+        "agent": "组合构建",
+        "success": true,
+        "elapsed": 151.1,
+        "stdout_len": 291,
+        "stderr": ""
+      },
+      {
+        "agent": "估值分析",
+        "success": true,
+        "elapsed": 161.3,
+        "stdout_len": 466,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 9,
+    "time": "2026-03-15 21:42:34",
+    "elapsed": 232.0,
+    "results": [
+      {
+        "agent": "宏观环境",
+        "success": true,
+        "elapsed": 88.5,
+        "tokens": {
+          "input": 7,
+          "output": 3886,
+          "total": 3893
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "AI情景推演",
+        "success": true,
+        "elapsed": 163.8,
+        "tokens": {
+          "input": 884,
+          "output": 5828,
+          "total": 6712
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "组合构建",
+        "success": true,
+        "elapsed": 169.7,
+        "tokens": {
+          "input": 6,
+          "output": 6508,
+          "total": 6514
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 174.4,
+        "tokens": {
+          "input": 866,
+          "output": 6351,
+          "total": 7217
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "历史类比",
+        "success": true,
+        "elapsed": 178.2,
+        "tokens": {
+          "input": 5,
+          "output": 6734,
+          "total": 6739
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "风险量化",
+        "success": true,
+        "elapsed": 231.4,
+        "tokens": {
+          "input": 9,
+          "output": 9425,
+          "total": 9434
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "估值分析",
+        "success": true,
+        "elapsed": 231.9,
+        "tokens": {
+          "input": 9,
+          "output": 8405,
+          "total": 8414
+        },
+        "model": "sonnet",
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 10,
+    "time": "2026-03-15 22:05:16",
+    "elapsed": 1098.1,
+    "results": [
+      {
+        "agent": "组合构建",
+        "success": true,
+        "elapsed": 165.1,
+        "tokens": {
+          "input": 6,
+          "output": 6857,
+          "total": 6863
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "AI情景推演",
+        "success": true,
+        "elapsed": 216.7,
+        "tokens": {
+          "input": 10,
+          "output": 7672,
+          "total": 7682
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "风险量化",
+        "success": true,
+        "elapsed": 219.2,
+        "tokens": {
+          "input": 8,
+          "output": 8817,
+          "total": 8825
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 222.1,
+        "tokens": {
+          "input": 955,
+          "output": 8171,
+          "total": 9126
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "估值分析",
+        "success": true,
+        "elapsed": 234.5,
+        "tokens": {
+          "input": 7,
+          "output": 9624,
+          "total": 9631
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "历史类比",
+        "success": true,
+        "elapsed": 240.8,
+        "tokens": {
+          "input": 1085,
+          "output": 9836,
+          "total": 10921
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "宏观环境",
+        "success": true,
+        "elapsed": 337.0,
+        "tokens": {
+          "input": 12,
+          "output": 13426,
+          "total": 13438
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "代码验证",
+        "success": true,
+        "elapsed": 482.1,
+        "tokens": {
+          "input": 16,
+          "output": 15402,
+          "total": 15418
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "汇总者",
+        "success": true,
+        "elapsed": 278.8,
+        "tokens": {
+          "input": 10,
+          "output": 7487,
+          "total": 7497
+        },
+        "model": "opus",
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 11,
+    "time": "2026-03-15 22:20:16",
+    "elapsed": 600.1,
+    "results": [
+      {
+        "agent": "AI情景推演",
+        "success": true,
+        "elapsed": 319.8,
+        "tokens": {
+          "input": 9,
+          "output": 7051,
+          "total": 7060
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 329.7,
+        "tokens": {
+          "input": 9,
+          "output": 7421,
+          "total": 7430
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "组合构建",
+        "success": true,
+        "elapsed": 334.5,
+        "tokens": {
+          "input": 8,
+          "output": 9161,
+          "total": 9169
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "风险量化",
+        "success": true,
+        "elapsed": 372.0,
+        "tokens": {
+          "input": 6,
+          "output": 10771,
+          "total": 10777
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "历史类比",
+        "success": true,
+        "elapsed": 394.9,
+        "tokens": {
+          "input": 7,
+          "output": 11090,
+          "total": 11097
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "估值分析",
+        "success": true,
+        "elapsed": 420.5,
+        "tokens": {
+          "input": 8,
+          "output": 11660,
+          "total": 11668
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "宏观环境",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      }
+    ]
+  },
+  {
+    "round": 12,
+    "time": "2026-03-15 22:34:20",
+    "elapsed": 543.9,
+    "results": [
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 285.6,
+        "tokens": {
+          "input": 7,
+          "output": 7748,
+          "total": 7755
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "AI情景推演",
+        "success": true,
+        "elapsed": 367.9,
+        "tokens": {
+          "input": 1585,
+          "output": 10281,
+          "total": 11866
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "估值分析",
+        "success": true,
+        "elapsed": 411.4,
+        "tokens": {
+          "input": 11,
+          "output": 11998,
+          "total": 12009
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "组合构建",
+        "success": true,
+        "elapsed": 438.3,
+        "tokens": {
+          "input": 16,
+          "output": 12335,
+          "total": 12351
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "历史类比",
+        "success": true,
+        "elapsed": 498.6,
+        "tokens": {
+          "input": 7,
+          "output": 11025,
+          "total": 11032
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "宏观环境",
+        "success": true,
+        "elapsed": 526.3,
+        "tokens": {
+          "input": 2784,
+          "output": 18173,
+          "total": 20957
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "风险量化",
+        "success": true,
+        "elapsed": 543.8,
+        "tokens": {
+          "input": 22,
+          "output": 14578,
+          "total": 14600
+        },
+        "model": "sonnet",
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 13,
+    "time": "2026-03-15 22:48:21",
+    "elapsed": 541.2,
+    "results": [
+      {
+        "agent": "组合构建",
+        "success": true,
+        "elapsed": 208.6,
+        "tokens": {
+          "input": 8,
+          "output": 7407,
+          "total": 7415
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 239.8,
+        "tokens": {
+          "input": 1493,
+          "output": 9780,
+          "total": 11273
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "风险量化",
+        "success": true,
+        "elapsed": 264.2,
+        "tokens": {
+          "input": 9,
+          "output": 9833,
+          "total": 9842
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "估值分析",
+        "success": true,
+        "elapsed": 291.0,
+        "tokens": {
+          "input": 8,
+          "output": 11667,
+          "total": 11675
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "AI情景推演",
+        "success": true,
+        "elapsed": 291.1,
+        "tokens": {
+          "input": 11,
+          "output": 10943,
+          "total": 10954
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "历史类比",
+        "success": true,
+        "elapsed": 482.4,
+        "tokens": {
+          "input": 9,
+          "output": 13738,
+          "total": 13747
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "宏观环境",
+        "success": true,
+        "elapsed": 541.1,
+        "tokens": {
+          "input": 12,
+          "output": 16652,
+          "total": 16664
+        },
+        "model": "sonnet",
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 14,
+    "time": "2026-03-15 23:01:38",
+    "elapsed": 497.3,
+    "results": [
+      {
+        "agent": "组合构建",
+        "success": true,
+        "elapsed": 201.7,
+        "tokens": {
+          "input": 7,
+          "output": 8445,
+          "total": 8452
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 240.8,
+        "tokens": {
+          "input": 10,
+          "output": 6112,
+          "total": 6122
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "估值分析",
+        "success": true,
+        "elapsed": 255.6,
+        "tokens": {
+          "input": 7,
+          "output": 9824,
+          "total": 9831
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "风险量化",
+        "success": true,
+        "elapsed": 269.4,
+        "tokens": {
+          "input": 8,
+          "output": 9701,
+          "total": 9709
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "AI情景推演",
+        "success": true,
+        "elapsed": 351.7,
+        "tokens": {
+          "input": 11,
+          "output": 9239,
+          "total": 9250
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "历史类比",
+        "success": true,
+        "elapsed": 428.7,
+        "tokens": {
+          "input": 7,
+          "output": 11301,
+          "total": 11308
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "宏观环境",
+        "success": true,
+        "elapsed": 497.3,
+        "tokens": {
+          "input": 22,
+          "output": 16682,
+          "total": 16704
+        },
+        "model": "sonnet",
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 15,
+    "time": "2026-03-15 23:26:03",
+    "elapsed": 1164.5,
+    "results": [
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 228.0,
+        "tokens": {
+          "input": 12,
+          "output": 9082,
+          "total": 9094
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "组合构建",
+        "success": true,
+        "elapsed": 229.7,
+        "tokens": {
+          "input": 7,
+          "output": 8789,
+          "total": 8796
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "AI情景推演",
+        "success": true,
+        "elapsed": 316.5,
+        "tokens": {
+          "input": 2168,
+          "output": 12250,
+          "total": 14418
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "宏观环境",
+        "success": true,
+        "elapsed": 370.1,
+        "tokens": {
+          "input": 12,
+          "output": 13883,
+          "total": 13895
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "风险量化",
+        "success": true,
+        "elapsed": 426.6,
+        "tokens": {
+          "input": 14,
+          "output": 13205,
+          "total": 13219
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "估值分析",
+        "success": true,
+        "elapsed": 543.1,
+        "tokens": {
+          "input": 19,
+          "output": 19210,
+          "total": 19229
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "历史类比",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "代码验证",
+        "success": true,
+        "elapsed": 257.6,
+        "tokens": {
+          "input": 9,
+          "output": 12968,
+          "total": 12977
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "汇总者",
+        "success": true,
+        "elapsed": 306.6,
+        "tokens": {
+          "input": 10,
+          "output": 11210,
+          "total": 11220
+        },
+        "model": "opus",
+        "stderr": ""
+      }
+    ]
+  }
+]

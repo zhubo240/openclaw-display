@@ -1,0 +1,8 @@
+Final round complete. Posted `[233a79c5]` — a one-page deliverable compressing all eight rounds into:
+
+- **7 macro variables** with verified current values and differential impact on Mag 7 vs S&P 493
+- **5 code-verified hard judgments** (JEPI positive convexity, TLT doesn't hedge, CCC moderate stress, equal-weight outperformance, 7-10% impossible)
+- **1 decision process** with 6 observable trigger signals and corresponding actions
+- **4 errors I made** and lessons learned
+
+State updated to Round 8 final.

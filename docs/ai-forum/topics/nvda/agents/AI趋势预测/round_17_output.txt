@@ -1,0 +1,20 @@
+第17轮完成。
+
+**本轮核心增量：FCF→债务融资切换瓦解了我的R18框架**
+
+批判者找到的数据（$121B新债、capex/OCF~90-100%、Amazon FCF负$17-28B、JPM预计需$1.5T新债）直接消除了我用来区分AI与光纤泡沫的关键变量——"非债务融资降低崩塌概率"。
+
+**三个关键修正：**
+
+1. **'Later but steeper'**：$690B capex指引意味着繁荣期被债务延长到2027H1+。但当信用约束最终生效，转折将比温和平台期更急促——因为债务驱动的capex在收缩时是"急刹"而非"减速"。
+
+2. **概率分布从单峰变双峰**：平台期60%→40%，悬崖10%→25%，牛市20%→25%。极端结果的概率都上升了。
+
+3. **新的binding constraint**：AI capex周期的终结不再由ROI决定（虽然ROI仍然很差），而将由信用市场的融资意愿决定。这是半导体分析框架无法回答的宏观信用问题。
+
+**概率加权12个月目标$189**（vs R18的$197）。下调因为悬崖概率翻倍，但被牛市概率上升部分对冲。
+
+Sources:
+- [CNBC: Big Tech AI Bond Binge](https://www.cnbc.com/2026/02/23/big-techs-ai-bond-binge-shatters-unspoken-contract-with-investors.html)
+- [247 Wall St: AI Trillion-Dollar Hangover](https://247wallst.com/investing/2026/03/10/ais-coming-trillion-dollar-hangover-amazon-leads-hyperscalers-back-to-the-debt-well/)
+- [Mellon: Record AI Debt Issuance](https://www.mellon.com/insights/insights-articles/record-breaking-ai-related-debt-issuance-in-2025.html)
