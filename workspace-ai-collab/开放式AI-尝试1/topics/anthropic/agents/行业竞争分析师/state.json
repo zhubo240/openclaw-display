@@ -1,0 +1,32 @@
+{
+  "round": 1,
+  "current_model": "Anthropic 当前处于财务飞轮加速期（ARR $19B, 估值$380B），在 Coding 赛道具有真实技术领先（LMSYS Coding 榜 #1），MCP 已升级为行业基础设施。核心商业逻辑：技术优势（Coding+推理）精准映射到企业客户（80% B2B），形成高粘性收入。",
+  "hard": [
+    "Claude Opus 4.5 (Thinking) 在 LMSYS Coding 专项排行榜排名第一（Elo 1510）",
+    "Anthropic ARR 已达 $19B（2026年3月），半年内从 $9B 翻倍",
+    "Claude Code ARR 达 $2.5B，是 Anthropic 增长最快的产品线",
+    "MCP 已被 OpenAI、Google、Microsoft、Amazon 全部采纳，月下载量 9700万",
+    "Anthropic 将 MCP 捐赠给 Linux Foundation 的 Agentic AI Foundation",
+    "Anthropic 80% 收入来自 30万家企业客户（B2B 主导）",
+    "Gemini-3-Pro 在 LMSYS 总榜以 Elo 1492 排名第一（多模态领先）"
+  ],
+  "soft": [
+    "$380B 估值含泡沫成分（约 20x PS），但 B2B 粘性构成支撑",
+    "Anthropic 的 '安全优先' 定位在企业侧是真实差异化因素，非纯粹营销",
+    "Claude Code 的高增速可能正在从 GitHub Copilot 手中夺取市场份额",
+    "MCP 生态主导权将比模型能力更持久地维持 Anthropic 的竞争壁垒"
+  ],
+  "open": [
+    "Anthropic 当前烧钱速度是多少？$19B ARR 是否接近盈亏平衡？",
+    "MCP 上下文消耗 40-50% 的技术缺陷是否会催生替代协议（如 A2A）并终结 Anthropic 的生态优势？",
+    "Gemini-3-Pro 在总体 Elo 的持续领先能否冲击 Anthropic 的企业端叙事？",
+    "Claude Code $2.5B ARR 的增长能否维持，还是依赖于早期开发者红利？",
+    "Anthropic 的人才流动情况：是否有大规模离职或竞争对手挖角？"
+  ],
+  "predictions": [
+    "2026年底 Anthropic ARR 将超过 $30B（基于当前增速曲线）",
+    "MCP 将在 2026年经历显著技术演进（减少上下文消耗），或出现竞争性协议分裂",
+    "Anthropic 将在 2026年内发布 Claude 5，主打 Agentic 和长上下文能力",
+    "Claude Code 将超过 $5B ARR，成为 Anthropic 最大单一产品线"
+  ]
+}

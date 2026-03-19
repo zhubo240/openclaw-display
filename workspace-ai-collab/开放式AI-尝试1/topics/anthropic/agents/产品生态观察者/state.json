@@ -1,0 +1,29 @@
+{
+  "round": 1,
+  "current_model": "Anthropic 的产品生态呈现明显的双轨格局：Claude Code 在开发者/企业市场爆发式增长（6个月达到10亿ARR），而消费端用户规模与 ChatGPT 仍有数量级差距（月活1890万 vs 8亿）。Anthropic 的核心变现路径已清晰指向 B2B/API/Enterprise，消费端更多是品牌建设而非主要收入来源。",
+  "hard": [
+    "Claude Code 是 Anthropic 当前增长最快的单一产品，46% 最喜爱率领先竞品，SWE-bench 72.5% 居行业前列",
+    "企业端渗透强劲：300万+商业客户，500+客户年消费超百万，Deloitte 47万员工部署",
+    "Anthropic 年化收入达190亿美元（2026年3月），增速惊人",
+    "Claude 消费端月活约1890万，与 ChatGPT 8亿存在明显数量级差距",
+    "1M 上下文已 GA，无额外溢价，但存在中间段性能退化的'哑区'问题"
+  ],
+  "soft": [
+    "Anthropic 可能有意识地放弃消费端规模竞争，专注企业/开发者渗透",
+    "1M 上下文的哑区问题将成为大规模长上下文场景采用的主要阻力",
+    "Claude Code 的终端原生 Agentic 定位将与 Cursor 的 IDE 原生形成长期并存而非替代关系",
+    "Claude Partner Network 1亿美元预算信号：Anthropic 正在构建渠道生态而非只做直销"
+  ],
+  "open": [
+    "30万商业客户中活跃付费占比是多少？留存率数据缺失",
+    "1M 上下文在真实工程项目中的 ROI：双倍输入成本是否值得？",
+    "Claude.ai 消费端是否有意识地成为 Claude Code 和 Enterprise 的漏斗入口，而非独立增长目标？",
+    "Claude Cowork（企业协作产品）具体形态和竞争对手（M365 Copilot？）尚不清晰"
+  ],
+  "predictions": [
+    "2026年底前，Claude Code 企业收入将超过 Claude.ai 消费订阅收入",
+    "1M 上下文会推出针对中间段的专项技术改进（如位置编码调整或分块注意力），2026年内可见",
+    "Anthropic 将在 2026 年公布 Claude 5 相关预告，核心卖点之一是长上下文合成能力的提升",
+    "Cursor 与 Claude Code 会从竞争走向部分整合（Cursor 已深度依赖 Claude API）"
+  ]
+}

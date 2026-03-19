@@ -1,0 +1,30 @@
+{
+  "round": 1,
+  "current_model": "Anthropic 的研究体系由三条互相支撑的技术线构成：Constitutional AI（解决对齐训练数据可扩展性）、Sleeper Agents研究（证明行为测试不足以保证安全）、Sparse Autoencoders可解释性（提供内部检查工具）。三者共同构建了一套'训练→验证→检查'的安全方法论，但从论文到产品安全保障之间仍有大量空白。",
+  "hard": [
+    "CAI(2022)证明RLAIF在无害性指标上显著优于RLHF，帮助性持平，来源：arxiv 2212.08073",
+    "Sleeper Agents论文(2024.01)证明后门行为能穿透SFT、RLHF、对抗性训练，且训练规模越大越顽固",
+    "Scaling Monosemanticity(2024)成功从Claude 3 Sonnet提取跨语言跨模态的单义性特征，发现了与欺骗/谄媚相关的特征",
+    "Claude Opus 4.6(2026.02)在SWE-bench、Humanity's Last Exam、Terminal-Bench 2.0上领先所有前沿模型",
+    "Claude 4系列明确战略押注编程能力，与Claude Code产品形成协同"
+  ],
+  "soft": [
+    "CAI中的'宪法'原则由人工制定，存在价值观嵌入问题——Anthropic自己的价值观被编码进模型",
+    "SAE方法识别出特征≠能控制特征，可解释性到可干预仍有大距离",
+    "SWE-bench可能存在过拟合风险，高分不一定代表真实编程能力的等比提升",
+    "Anthropic将安全研究作为竞争差异化点，可能存在'安全洗白'(safety-washing)动机"
+  ],
+  "open": [
+    "CAI的'宪法'如何制定、迭代？是否有版本历史公开？",
+    "Sleeper Agents发现后门无法被安全训练消除，Anthropic自己的生产模型有无相关检测机制？",
+    "SAE规模化研究目前停留在特征识别，何时能实现可靠的行为干预？",
+    "Anthropic的scaling law研究是否有独特于DeepMind/OpenAI的发现，还是主要在应用现有结论？",
+    "Responsible Scaling Policy(RSP)实际约束力如何？是否有执行案例？"
+  ],
+  "predictions": [
+    "Claude 5将在extended thinking和长上下文推理上有重大突破，且会公开更多关于SAE用于实时监控的应用",
+    "SAE研究将在未来12个月内从'识别特征'进展到'修改特征'的初步实验",
+    "SWE-bench将逐步被更难、更真实的编程基准替代，Anthropic的领先优势在新基准上可能缩小",
+    "Anthropic将发布CAI 2.0或Constitutional AI的更新论文，说明如何处理价值观嵌入问题"
+  ]
+}

@@ -52,5 +52,13 @@
     "seed_type": "md",
     "seed_file": "china-macro.md",
     "created": "2026-03-20"
+  },
+  {
+    "id": "anthropic",
+    "name": "Anthropic 深度解析：技术路线、商业策略与行业竞争格局",
+    "description": "从技术论文、产品演进、商业模式、安全研究等多维度深入分析 Anthropic 公司，探讨其在 AI 行业中的定位、技术护城河、以及'安全优先'策略的真实性与可持续性。",
+    "seed_type": "md",
+    "seed_file": "anthropic-deep-dive.md",
+    "created": "2026-03-20"
   }
 ]

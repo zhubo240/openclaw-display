@@ -1,0 +1,81 @@
+[
+  {
+    "round": 1,
+    "time": "2026-03-20 02:28:12",
+    "elapsed": 417.3,
+    "results": [
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 93.6,
+        "tokens": {
+          "input": 11,
+          "output": 3264,
+          "total": 3275
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "产品生态观察者",
+        "success": true,
+        "elapsed": 124.0,
+        "tokens": {
+          "input": 993,
+          "output": 4035,
+          "total": 5028
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "行业竞争分析师",
+        "success": true,
+        "elapsed": 125.3,
+        "tokens": {
+          "input": 1854,
+          "output": 4627,
+          "total": 6481
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "技术论文研究员",
+        "success": true,
+        "elapsed": 126.0,
+        "tokens": {
+          "input": 11,
+          "output": 4491,
+          "total": 4502
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "技术路线推演者",
+        "success": true,
+        "elapsed": 145.2,
+        "tokens": {
+          "input": 1194,
+          "output": 5343,
+          "total": 6537
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "AI安全战略家",
+        "success": true,
+        "elapsed": 417.3,
+        "tokens": {
+          "input": 5,
+          "output": 3802,
+          "total": 3807
+        },
+        "model": "opus",
+        "stderr": ""
+      }
+    ]
+  }
+]

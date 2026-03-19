@@ -1,0 +1,33 @@
+{
+  "round": 1,
+  "current_model": "Anthropic 2026 技术路线以 Agent 为矛（Claude Code/Cowork/MCP 生态）、模型能力为盾（Claude 5 Q2-Q3 发布）、可解释性为护城河（attribution graphs 开源、2027 目标）。Constitutional AI 正从规则列表进化为推理式对齐。上下文窗口 1M 已是标配，10M 短期非优先。",
+  "hard": [
+    "MCP 已成事实标准，10000+ 公开服务器，被 ChatGPT/Cursor/Gemini/VS Code 采用",
+    "Opus 4.6 和 Sonnet 4.6 均已支持 1M token 上下文，且取消长上下文溢价",
+    "Anthropic 2026年1月重写了 Claude Constitution，从规则列表转向理解式原则",
+    "MIT Technology Review 将机械可解释性列为 2026 十大突破技术",
+    "Cowork 产品将 Computer Use 扩展到非开发者用户",
+    "Claude Sonnet 5 代号 Fennec 已在 Vertex AI 日志中出现"
+  ],
+  "soft": [
+    "Claude 5 将采用 hybrid scaling（适度参数增长 + 架构创新 + 推理时计算优化）而非纯 scaling",
+    "可解释性的最大商业价值在于成为企业级 AI 安全审计工具",
+    "Agent 能力是 2026-2027 最大商业赌注和技术投入优先方向",
+    "Constitutional AI 2.0 将在 RLAIF 阶段引入推理链证明",
+    "Anthropic 短期不会追求 10M 上下文，深耕 1M 质量是更优策略"
+  ],
+  "open": [
+    "Claude 5 是否会引入 MoE 架构？目前无直接证据",
+    "可解释性研究能否在 2027 前达到 Dario 设定的目标？进展不明",
+    "RLAIF 的对齐税到底有多大？缺乏量化数据",
+    "Multi-agent 协作的安全边界如何设定？技术方案未公开",
+    "Anthropic 烧钱速度 vs 收入增长的具体数字？需要财务数据"
+  ],
+  "predictions": [
+    "Claude Sonnet 5 将在 2026 Q2（4-6月）发布，定价低于 Opus 4.5 但性能接近",
+    "2026 年底前 Anthropic 将推出基于可解释性的企业安全产品或功能",
+    "MCP 将在 2026 年底前覆盖 50000+ 公开服务器",
+    "Claude 5 full family 将在 2026 Q3 发布，包含原生 multi-agent 能力",
+    "Anthropic 2026 年收入将突破 20 亿美元（基于 agent 产品驱动）"
+  ]
+}

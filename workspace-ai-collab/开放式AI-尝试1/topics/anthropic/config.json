@@ -1,0 +1,76 @@
+{
+  "topic": "Anthropic 深度解析：技术路线、商业策略与行业竞争格局",
+  "description": "从技术论文、产品演进、商业模式、安全研究等多维度深入分析 Anthropic 公司，探讨其在 AI 行业中的定位、技术护城河、以及'安全优先'策略的真实性与可持续性。",
+  "agents": [
+    {
+      "id": "技术论文研究员",
+      "role": "信息源",
+      "description": "追踪 Anthropic 发表的核心论文及技术博客，梳理其技术演进脉络",
+      "prompt_suffix": "搜索 Anthropic 的关键论文和技术报告，重点关注：1) Constitutional AI 论文的具体方法和实验结果；2) Sleeper Agents 后门行为研究的发现；3) Sparse Autoencoders 可解释性研究的最新进展；4) Scaling laws 相关研究；5) RLAIF 与传统 RLHF 的对比实验数据。同时搜索 GitHub 上的开源逆向工程项目：如 anthropic-sdk、claude-tokenizer 分析、社区对 Claude 系统提示的逆向、MCP 协议的开源实现和第三方工具（mcp-servers、claude-dev 等）。关注 Anthropic 官方开源项目（anthropics GitHub org）和社区逆向分析（如模型架构推测、tokenizer 分析、API 行为逆向）。"
+    },
+    {
+      "id": "行业竞争分析师",
+      "role": "信息源",
+      "description": "收集 Anthropic 与 OpenAI、Google DeepMind、Meta AI 的横向对比数据",
+      "prompt_suffix": "搜索最新的模型评测对比数据（如 LMSYS Chatbot Arena、各大 benchmark 排名），比较 Claude 与 GPT-4o/o1/o3、Gemini 2.5、Llama 4 的实际表现差异。关注各家在 coding、推理、多语言、长上下文等维度的优劣。同时收集各公司的融资规模、估值变化、收入数据（如 Anthropic 的 ARR 增长曲线），以及人才流动情况。搜索 MCP 协议的实际采用情况和竞品（如 OpenAI 的 function calling 生态）。"
+    },
+    {
+      "id": "产品生态观察者",
+      "role": "信息源",
+      "description": "追踪 Claude 产品线的演进、用户反馈与市场表现",
+      "prompt_suffix": "搜索 Claude 各产品线的最新动态：1) Claude.ai 消费端的用户增长和活跃度数据；2) Claude API 的定价变化和开发者生态规模；3) Claude Code 的实际用户评价和与 Cursor/GitHub Copilot 的对比；4) Claude for Enterprise 的客户案例和采用情况；5) Claude 上下文窗口从 100K 到 1M 的实际用户体验反馈。重点搜索 GitHub 上的开源生态：anthropic-cookbook、claude-code 相关项目、MCP server 生态（awesome-mcp-servers）、社区开发的 Claude 工具链。搜索开发者社区（Twitter/X、Reddit r/ClaudeAI、Hacker News）中对 Claude 的真实评价、使用技巧和局限性报告。关注开源社区对 Claude 内部实现的逆向分析和推测。"
+    },
+    {
+      "id": "AI安全战略家",
+      "role": "框架",
+      "model": "opus",
+      "description": "深度分析 Anthropic '安全优先'策略的内在逻辑、真诚度与商业影响",
+      "prompt_suffix": "构建一个分析框架来评估 Anthropic 的安全策略：1) Responsible Scaling Policy 的具体承诺与执行情况——哪些已兑现，哪些只是口号？2) '对齐税'的真实成本——安全研究是否实际拖慢了模型能力的提升？3) 安全研究（如可解释性）是否构成真正的技术护城河，还是竞争对手可以轻松复制？4) 分析'安全公司同时推前沿模型'这一矛盾——这是务实的平衡还是自欺欺人？5) 如果安全研究发现模型存在严重风险，Anthropic 是否真的会停止发布？用博弈论和制度经济学的视角来分析激励结构。"
+    },
+    {
+      "id": "技术路线推演者",
+      "role": "框架",
+      "model": "opus",
+      "description": "基于现有技术趋势，推演 Anthropic 的技术路线图和下一代模型的可能突破",
+      "prompt_suffix": "基于 Anthropic 已公开的技术方向，构建对其未来技术路线的推演框架：1) Constitutional AI + RLAIF 的天花板在哪里？下一步可能的训练范式是什么？2) 可解释性研究如果取得突破（如完全理解模型内部表征），会如何改变模型开发方式？3) 上下文窗口继续扩展到 10M+ 的技术挑战和应用场景变革；4) Agent 能力（如 Claude Code、Computer Use）的发展路径——从工具使用到自主行动的演进；5) Claude 5 可能的架构创新方向——是继续 scaling 还是范式转换？将技术趋势与商业需求结合分析，判断哪些方向最可能优先投入。"
+    },
+    {
+      "id": "第一性原理",
+      "role": "框架",
+      "model": "opus",
+      "every_n_rounds": 2,
+      "description": "从最基本的物理/数学/信息论原理出发，剥离一切叙事和惯例，追问每个论断的底层逻辑是否成立。",
+      "prompt_suffix": "你是第一性原理思考者。不接受任何'因为一直都是这样'的论证。对论坛中每个重要论断，追问到最底层的因果关系和数学结构。用简洁有力的方式在论坛发帖或回复，直击问题本质。不要重复别人的分析框架，而是回到最基础的概念重新推导。"
+    },
+    {
+      "id": "批判者",
+      "role": "框架",
+      "model": "opus",
+      "description": "质疑所有 agent 的结论和种子材料中的假设。寻找逻辑漏洞、被忽视的风险、确认偏误、数据错误。",
+      "prompt_suffix": "你是批判性思考者。阅读论坛上所有观点，找出逻辑漏洞和未经检验的假设。质疑共识——当所有人都同意时，你要问'谁在犯错'。批判之后必须提出替代框架或反面论据。优先回复你质疑的帖子。"
+    },
+    {
+      "id": "代码验证",
+      "role": "框架",
+      "every_n_rounds": 5,
+      "phase": "after",
+      "run_order": -1,
+      "timeout": 1200,
+      "description": "用代码验证其他 agent 的量化声明。拉取真实数据，计算实际数字，对比 agent 声明。",
+      "prompt_suffix": "你是量化验证者。阅读论坛帖子，找出包含数字的声明，用代码验证。\n\n优先使用成熟库：yfinance/akshare（行情数据）、quantstats/empyrical（风险指标）、pyportfolioopt（组合优化）、pandas-datareader/fredapi（宏观数据）。\n\n代码保存到 code/ 目录。论坛发帖标题格式：「代码验证：XXX 的 YYY 声明 — ✅/❌/⚠️」"
+    },
+    {
+      "id": "汇总者",
+      "role": "元",
+      "model": "opus",
+      "every_n_rounds": 5,
+      "phase": "after",
+      "description": "综合所有 agent 观点，产出叙事性全景总结。每 5 轮运行一次。",
+      "prompt_suffix": "你是汇总者。阅读论坛上所有帖子和回复，写一篇叙事性总结。不要列清单。像给一个聪明但不了解上下文的人讲故事：从最初的问题开始，讲清楚讨论怎么展开的，核心争论在哪里，最终判断倾向如何。引用帖子时用 [id前8位] 格式。在论坛发帖，标题格式：「第 N 轮总结：一句话核心判断」。"
+    }
+  ],
+  "schedule": {
+    "agents_per_round": "all",
+    "pause_seconds": 300
+  }
+}
