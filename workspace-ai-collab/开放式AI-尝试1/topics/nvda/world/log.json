@@ -1,0 +1,1826 @@
+[
+  {
+    "round": 1,
+    "time": "2026-03-13 23:58:45",
+    "elapsed": 394.8,
+    "results": [
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 308.4,
+        "stdout_len": 217,
+        "stderr": ""
+      },
+      {
+        "agent": "技术分析",
+        "success": true,
+        "elapsed": 328.2,
+        "stdout_len": 232,
+        "stderr": ""
+      },
+      {
+        "agent": "市场情绪",
+        "success": true,
+        "elapsed": 363.2,
+        "stdout_len": 339,
+        "stderr": ""
+      },
+      {
+        "agent": "机构观点",
+        "success": true,
+        "elapsed": 369.3,
+        "stdout_len": 347,
+        "stderr": ""
+      },
+      {
+        "agent": "宏观分析",
+        "success": true,
+        "elapsed": 380.6,
+        "stdout_len": 314,
+        "stderr": ""
+      },
+      {
+        "agent": "AI趋势预测",
+        "success": true,
+        "elapsed": 383.5,
+        "stdout_len": 350,
+        "stderr": ""
+      },
+      {
+        "agent": "行业动态",
+        "success": true,
+        "elapsed": 393.3,
+        "stdout_len": 303,
+        "stderr": ""
+      },
+      {
+        "agent": "财报分析",
+        "success": true,
+        "elapsed": 394.8,
+        "stdout_len": 343,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 2,
+    "time": "2026-03-14 00:02:34",
+    "elapsed": 199.4,
+    "results": [
+      {
+        "agent": "AI趋势预测",
+        "success": true,
+        "elapsed": 138.4,
+        "stdout_len": 251,
+        "stderr": ""
+      },
+      {
+        "agent": "技术分析",
+        "success": true,
+        "elapsed": 148.3,
+        "stdout_len": 231,
+        "stderr": ""
+      },
+      {
+        "agent": "市场情绪",
+        "success": true,
+        "elapsed": 168.2,
+        "stdout_len": 387,
+        "stderr": ""
+      },
+      {
+        "agent": "机构观点",
+        "success": true,
+        "elapsed": 176.8,
+        "stdout_len": 354,
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 180.3,
+        "stdout_len": 386,
+        "stderr": ""
+      },
+      {
+        "agent": "宏观分析",
+        "success": true,
+        "elapsed": 180.4,
+        "stdout_len": 282,
+        "stderr": ""
+      },
+      {
+        "agent": "行业动态",
+        "success": true,
+        "elapsed": 182.3,
+        "stdout_len": 403,
+        "stderr": ""
+      },
+      {
+        "agent": "财报分析",
+        "success": true,
+        "elapsed": 199.3,
+        "stdout_len": 363,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 3,
+    "time": "2026-03-14 00:13:04",
+    "elapsed": 600.1,
+    "results": [
+      {
+        "agent": "机构观点",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "财报分析",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "AI趋势预测",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "技术分析",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "批判者",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "市场情绪",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "宏观分析",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "行业动态",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      }
+    ]
+  },
+  {
+    "round": 4,
+    "time": "2026-03-15 00:05:00",
+    "elapsed": 222.4,
+    "results": [
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 130.5,
+        "stdout_len": 296,
+        "stderr": ""
+      },
+      {
+        "agent": "技术分析",
+        "success": true,
+        "elapsed": 140.4,
+        "stdout_len": 255,
+        "stderr": ""
+      },
+      {
+        "agent": "宏观分析",
+        "success": true,
+        "elapsed": 174.2,
+        "stdout_len": 337,
+        "stderr": ""
+      },
+      {
+        "agent": "AI趋势预测",
+        "success": true,
+        "elapsed": 188.6,
+        "stdout_len": 440,
+        "stderr": ""
+      },
+      {
+        "agent": "市场情绪",
+        "success": true,
+        "elapsed": 190.5,
+        "stdout_len": 426,
+        "stderr": ""
+      },
+      {
+        "agent": "行业动态",
+        "success": true,
+        "elapsed": 212.1,
+        "stdout_len": 423,
+        "stderr": ""
+      },
+      {
+        "agent": "财报分析",
+        "success": true,
+        "elapsed": 213.4,
+        "stdout_len": 350,
+        "stderr": ""
+      },
+      {
+        "agent": "机构观点",
+        "success": true,
+        "elapsed": 222.4,
+        "stdout_len": 419,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 5,
+    "time": "2026-03-15 00:29:50",
+    "elapsed": 590.2,
+    "results": [
+      {
+        "agent": "宏观分析",
+        "success": true,
+        "elapsed": 482.3,
+        "stdout_len": 389,
+        "stderr": ""
+      },
+      {
+        "agent": "市场情绪",
+        "success": true,
+        "elapsed": 523.2,
+        "stdout_len": 491,
+        "stderr": ""
+      },
+      {
+        "agent": "财报分析",
+        "success": true,
+        "elapsed": 535.7,
+        "stdout_len": 275,
+        "stderr": ""
+      },
+      {
+        "agent": "技术分析",
+        "success": true,
+        "elapsed": 535.7,
+        "stdout_len": 284,
+        "stderr": ""
+      },
+      {
+        "agent": "AI趋势预测",
+        "success": true,
+        "elapsed": 537.6,
+        "stdout_len": 414,
+        "stderr": ""
+      },
+      {
+        "agent": "行业动态",
+        "success": true,
+        "elapsed": 551.2,
+        "stdout_len": 357,
+        "stderr": ""
+      },
+      {
+        "agent": "机构观点",
+        "success": true,
+        "elapsed": 557.3,
+        "stdout_len": 421,
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 583.2,
+        "stdout_len": 359,
+        "stderr": ""
+      },
+      {
+        "agent": "汇总者",
+        "success": false,
+        "elapsed": 4.0,
+        "stdout_len": 0,
+        "stderr": "No conversation found with session ID: 1054bad6-050e-596f-b9ca-c7816a1adbbf\n"
+      },
+      {
+        "agent": "世界模型",
+        "success": false,
+        "elapsed": 2.8,
+        "stdout_len": 0,
+        "stderr": "No conversation found with session ID: 06f786f7-733f-5320-9a65-e574d7440bf5\n"
+      }
+    ]
+  },
+  {
+    "round": 6,
+    "time": "2026-03-15 00:49:20",
+    "elapsed": 269.5,
+    "results": [
+      {
+        "agent": "财报分析",
+        "success": true,
+        "elapsed": 175.6,
+        "stdout_len": 284,
+        "stderr": ""
+      },
+      {
+        "agent": "技术分析",
+        "success": true,
+        "elapsed": 182.5,
+        "stdout_len": 283,
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 193.0,
+        "stdout_len": 343,
+        "stderr": ""
+      },
+      {
+        "agent": "AI趋势预测",
+        "success": true,
+        "elapsed": 217.2,
+        "stdout_len": 587,
+        "stderr": ""
+      },
+      {
+        "agent": "机构观点",
+        "success": true,
+        "elapsed": 224.8,
+        "stdout_len": 287,
+        "stderr": ""
+      },
+      {
+        "agent": "市场情绪",
+        "success": true,
+        "elapsed": 230.8,
+        "stdout_len": 507,
+        "stderr": ""
+      },
+      {
+        "agent": "宏观分析",
+        "success": true,
+        "elapsed": 248.3,
+        "stdout_len": 383,
+        "stderr": ""
+      },
+      {
+        "agent": "行业动态",
+        "success": true,
+        "elapsed": 269.4,
+        "stdout_len": 344,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 7,
+    "time": "2026-03-15 01:07:38",
+    "elapsed": 198.4,
+    "results": [
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 116.6,
+        "stdout_len": 291,
+        "stderr": ""
+      },
+      {
+        "agent": "宏观分析",
+        "success": true,
+        "elapsed": 143.5,
+        "stdout_len": 422,
+        "stderr": ""
+      },
+      {
+        "agent": "AI趋势预测",
+        "success": true,
+        "elapsed": 143.6,
+        "stdout_len": 517,
+        "stderr": ""
+      },
+      {
+        "agent": "市场情绪",
+        "success": true,
+        "elapsed": 144.8,
+        "stdout_len": 338,
+        "stderr": ""
+      },
+      {
+        "agent": "技术分析",
+        "success": true,
+        "elapsed": 146.4,
+        "stdout_len": 303,
+        "stderr": ""
+      },
+      {
+        "agent": "机构观点",
+        "success": true,
+        "elapsed": 156.4,
+        "stdout_len": 315,
+        "stderr": ""
+      },
+      {
+        "agent": "财报分析",
+        "success": true,
+        "elapsed": 164.4,
+        "stdout_len": 289,
+        "stderr": ""
+      },
+      {
+        "agent": "行业动态",
+        "success": true,
+        "elapsed": 198.3,
+        "stdout_len": 402,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 8,
+    "time": "2026-03-15 01:30:52",
+    "elapsed": 493.4,
+    "results": [
+      {
+        "agent": "宏观分析",
+        "success": true,
+        "elapsed": 351.7,
+        "stdout_len": 301,
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 358.5,
+        "stdout_len": 281,
+        "stderr": ""
+      },
+      {
+        "agent": "技术分析",
+        "success": true,
+        "elapsed": 415.9,
+        "stdout_len": 210,
+        "stderr": ""
+      },
+      {
+        "agent": "市场情绪",
+        "success": true,
+        "elapsed": 416.8,
+        "stdout_len": 352,
+        "stderr": ""
+      },
+      {
+        "agent": "财报分析",
+        "success": true,
+        "elapsed": 417.3,
+        "stdout_len": 284,
+        "stderr": ""
+      },
+      {
+        "agent": "AI趋势预测",
+        "success": true,
+        "elapsed": 430.9,
+        "stdout_len": 295,
+        "stderr": ""
+      },
+      {
+        "agent": "机构观点",
+        "success": true,
+        "elapsed": 438.8,
+        "stdout_len": 222,
+        "stderr": ""
+      },
+      {
+        "agent": "行业动态",
+        "success": true,
+        "elapsed": 493.3,
+        "stdout_len": 420,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 9,
+    "time": "2026-03-15 01:48:06",
+    "elapsed": 134.5,
+    "results": [
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 87.5,
+        "stdout_len": 185,
+        "stderr": ""
+      },
+      {
+        "agent": "宏观分析",
+        "success": true,
+        "elapsed": 88.1,
+        "stdout_len": 128,
+        "stderr": ""
+      },
+      {
+        "agent": "行业动态",
+        "success": true,
+        "elapsed": 90.8,
+        "stdout_len": 154,
+        "stderr": ""
+      },
+      {
+        "agent": "财报分析",
+        "success": true,
+        "elapsed": 102.2,
+        "stdout_len": 252,
+        "stderr": ""
+      },
+      {
+        "agent": "AI趋势预测",
+        "success": true,
+        "elapsed": 111.6,
+        "stdout_len": 398,
+        "stderr": ""
+      },
+      {
+        "agent": "机构观点",
+        "success": true,
+        "elapsed": 120.1,
+        "stdout_len": 242,
+        "stderr": ""
+      },
+      {
+        "agent": "技术分析",
+        "success": true,
+        "elapsed": 128.6,
+        "stdout_len": 171,
+        "stderr": ""
+      },
+      {
+        "agent": "市场情绪",
+        "success": true,
+        "elapsed": 134.4,
+        "stdout_len": 291,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 10,
+    "time": "2026-03-15 02:05:30",
+    "elapsed": 144.2,
+    "results": [
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 77.9,
+        "stdout_len": 127,
+        "stderr": ""
+      },
+      {
+        "agent": "财报分析",
+        "success": true,
+        "elapsed": 83.8,
+        "stdout_len": 50,
+        "stderr": ""
+      },
+      {
+        "agent": "宏观分析",
+        "success": true,
+        "elapsed": 84.9,
+        "stdout_len": 41,
+        "stderr": ""
+      },
+      {
+        "agent": "技术分析",
+        "success": true,
+        "elapsed": 100.8,
+        "stdout_len": 62,
+        "stderr": ""
+      },
+      {
+        "agent": "市场情绪",
+        "success": true,
+        "elapsed": 110.0,
+        "stdout_len": 85,
+        "stderr": ""
+      },
+      {
+        "agent": "行业动态",
+        "success": true,
+        "elapsed": 120.5,
+        "stdout_len": 164,
+        "stderr": ""
+      },
+      {
+        "agent": "机构观点",
+        "success": true,
+        "elapsed": 130.1,
+        "stdout_len": 147,
+        "stderr": ""
+      },
+      {
+        "agent": "AI趋势预测",
+        "success": true,
+        "elapsed": 136.1,
+        "stdout_len": 339,
+        "stderr": ""
+      },
+      {
+        "agent": "汇总者",
+        "success": false,
+        "elapsed": 5.7,
+        "stdout_len": 0,
+        "stderr": "No conversation found with session ID: 1054bad6-050e-596f-b9ca-c7816a1adbbf\n"
+      },
+      {
+        "agent": "世界模型",
+        "success": false,
+        "elapsed": 2.2,
+        "stdout_len": 0,
+        "stderr": "No conversation found with session ID: 06f786f7-733f-5320-9a65-e574d7440bf5\n"
+      }
+    ]
+  },
+  {
+    "round": 11,
+    "time": "2026-03-15 02:24:11",
+    "elapsed": 220.9,
+    "results": [
+      {
+        "agent": "宏观分析",
+        "success": true,
+        "elapsed": 82.3,
+        "stdout_len": 27,
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": false,
+        "error": "'utf-8' codec can't decode byte 0xb8 in position 336259: invalid start byte"
+      },
+      {
+        "agent": "财报分析",
+        "success": false,
+        "error": "Extra data: line 1172 column 2 (char 168463)"
+      },
+      {
+        "agent": "技术分析",
+        "success": false,
+        "error": "Extra data: line 1172 column 2 (char 168463)"
+      },
+      {
+        "agent": "行业动态",
+        "success": false,
+        "error": "Extra data: line 1172 column 2 (char 168463)"
+      },
+      {
+        "agent": "机构观点",
+        "success": true,
+        "elapsed": 174.3,
+        "stdout_len": 28,
+        "stderr": ""
+      },
+      {
+        "agent": "AI趋势预测",
+        "success": true,
+        "elapsed": 197.2,
+        "stdout_len": 146,
+        "stderr": ""
+      },
+      {
+        "agent": "市场情绪",
+        "success": true,
+        "elapsed": 220.8,
+        "stdout_len": 71,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 12,
+    "time": "2026-03-15 02:41:11",
+    "elapsed": 119.5,
+    "results": [
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 40.3,
+        "stdout_len": 19,
+        "stderr": ""
+      },
+      {
+        "agent": "AI趋势预测",
+        "success": true,
+        "elapsed": 61.4,
+        "stdout_len": 45,
+        "stderr": ""
+      },
+      {
+        "agent": "机构观点",
+        "success": true,
+        "elapsed": 62.7,
+        "stdout_len": 13,
+        "stderr": ""
+      },
+      {
+        "agent": "市场情绪",
+        "success": true,
+        "elapsed": 69.8,
+        "stdout_len": 36,
+        "stderr": ""
+      },
+      {
+        "agent": "宏观分析",
+        "success": true,
+        "elapsed": 80.4,
+        "stdout_len": 20,
+        "stderr": ""
+      },
+      {
+        "agent": "行业动态",
+        "success": true,
+        "elapsed": 83.1,
+        "stdout_len": 33,
+        "stderr": ""
+      },
+      {
+        "agent": "财报分析",
+        "success": true,
+        "elapsed": 83.7,
+        "stdout_len": 37,
+        "stderr": ""
+      },
+      {
+        "agent": "技术分析",
+        "success": true,
+        "elapsed": 119.4,
+        "stdout_len": 39,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 13,
+    "time": "2026-03-15 17:01:54",
+    "elapsed": 31.6,
+    "results": [
+      {
+        "agent": "财报分析",
+        "success": true,
+        "elapsed": 19.3,
+        "stdout_len": 24,
+        "stderr": ""
+      },
+      {
+        "agent": "AI趋势预测",
+        "success": true,
+        "elapsed": 20.5,
+        "stdout_len": 23,
+        "stderr": ""
+      },
+      {
+        "agent": "宏观分析",
+        "success": true,
+        "elapsed": 20.6,
+        "stdout_len": 19,
+        "stderr": ""
+      },
+      {
+        "agent": "技术分析",
+        "success": true,
+        "elapsed": 21.9,
+        "stdout_len": 18,
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 22.7,
+        "stdout_len": 18,
+        "stderr": ""
+      },
+      {
+        "agent": "市场情绪",
+        "success": true,
+        "elapsed": 23.0,
+        "stdout_len": 29,
+        "stderr": ""
+      },
+      {
+        "agent": "机构观点",
+        "success": true,
+        "elapsed": 26.7,
+        "stdout_len": 13,
+        "stderr": ""
+      },
+      {
+        "agent": "行业动态",
+        "success": true,
+        "elapsed": 31.5,
+        "stdout_len": 30,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 14,
+    "time": "2026-03-15 17:05:54",
+    "elapsed": 0.3,
+    "results": [
+      {
+        "agent": "AI趋势预测",
+        "success": false,
+        "elapsed": 0.3,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 81106f77-46bc-5ba8-ae1f-7467ae96a882 is already in use.\n"
+      },
+      {
+        "agent": "行业动态",
+        "success": false,
+        "elapsed": 0.3,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 54204f65-cd1b-5897-915a-82a1533d06ec is already in use.\n"
+      },
+      {
+        "agent": "机构观点",
+        "success": false,
+        "elapsed": 0.3,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID bad11ea5-f4e0-5097-83b1-36cd79b71c60 is already in use.\n"
+      },
+      {
+        "agent": "技术分析",
+        "success": false,
+        "elapsed": 0.3,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 20b4b5b8-63cb-5632-aff6-a812bba63be4 is already in use.\n"
+      },
+      {
+        "agent": "财报分析",
+        "success": false,
+        "elapsed": 0.3,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 6f3be702-00d4-59d8-9c63-0155cacb4208 is already in use.\n"
+      },
+      {
+        "agent": "市场情绪",
+        "success": false,
+        "elapsed": 0.3,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 482e7f47-e8ef-5f8c-9807-3c4f55b1c63d is already in use.\n"
+      },
+      {
+        "agent": "批判者",
+        "success": false,
+        "elapsed": 0.3,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 0ec8fa25-dec8-5454-b147-9332791c5234 is already in use.\n"
+      },
+      {
+        "agent": "宏观分析",
+        "success": false,
+        "elapsed": 0.3,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 430761ce-d862-5f7b-952c-2408a4475c6e is already in use.\n"
+      }
+    ]
+  },
+  {
+    "round": 14,
+    "time": "2026-03-15 17:08:04",
+    "elapsed": 188.3,
+    "results": [
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 128.1,
+        "stdout_len": 360,
+        "stderr": ""
+      },
+      {
+        "agent": "市场情绪",
+        "success": true,
+        "elapsed": 132.7,
+        "stdout_len": 355,
+        "stderr": ""
+      },
+      {
+        "agent": "宏观分析",
+        "success": true,
+        "elapsed": 139.5,
+        "stdout_len": 282,
+        "stderr": ""
+      },
+      {
+        "agent": "行业动态",
+        "success": true,
+        "elapsed": 142.9,
+        "stdout_len": 404,
+        "stderr": ""
+      },
+      {
+        "agent": "技术分析",
+        "success": true,
+        "elapsed": 146.7,
+        "stdout_len": 250,
+        "stderr": ""
+      },
+      {
+        "agent": "AI趋势预测",
+        "success": true,
+        "elapsed": 150.2,
+        "stdout_len": 357,
+        "stderr": ""
+      },
+      {
+        "agent": "机构观点",
+        "success": true,
+        "elapsed": 166.4,
+        "stdout_len": 291,
+        "stderr": ""
+      },
+      {
+        "agent": "财报分析",
+        "success": true,
+        "elapsed": 188.3,
+        "stdout_len": 310,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 14,
+    "time": "2026-03-15 17:20:12",
+    "elapsed": 197.3,
+    "results": [
+      {
+        "agent": "机构观点",
+        "success": true,
+        "elapsed": 90.4,
+        "stdout_len": 298,
+        "stderr": ""
+      },
+      {
+        "agent": "宏观分析",
+        "success": true,
+        "elapsed": 136.1,
+        "stdout_len": 378,
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 146.8,
+        "stdout_len": 446,
+        "stderr": ""
+      },
+      {
+        "agent": "财报分析",
+        "success": true,
+        "elapsed": 150.1,
+        "stdout_len": 307,
+        "stderr": ""
+      },
+      {
+        "agent": "行业动态",
+        "success": true,
+        "elapsed": 161.3,
+        "stdout_len": 364,
+        "stderr": ""
+      },
+      {
+        "agent": "市场情绪",
+        "success": true,
+        "elapsed": 170.3,
+        "stdout_len": 345,
+        "stderr": ""
+      },
+      {
+        "agent": "AI趋势预测",
+        "success": true,
+        "elapsed": 175.3,
+        "stdout_len": 1036,
+        "stderr": ""
+      },
+      {
+        "agent": "技术分析",
+        "success": true,
+        "elapsed": 197.3,
+        "stdout_len": 267,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 15,
+    "time": "2026-03-15 17:20:55",
+    "elapsed": 0.6,
+    "results": [
+      {
+        "agent": "技术分析",
+        "success": false,
+        "elapsed": 0.2,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 20b4b5b8-63cb-5632-aff6-a812bba63be4 is already in use.\n"
+      },
+      {
+        "agent": "宏观分析",
+        "success": false,
+        "elapsed": 0.2,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 430761ce-d862-5f7b-952c-2408a4475c6e is already in use.\n"
+      },
+      {
+        "agent": "行业动态",
+        "success": false,
+        "elapsed": 0.2,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 54204f65-cd1b-5897-915a-82a1533d06ec is already in use.\n"
+      },
+      {
+        "agent": "财报分析",
+        "success": false,
+        "elapsed": 0.2,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 6f3be702-00d4-59d8-9c63-0155cacb4208 is already in use.\n"
+      },
+      {
+        "agent": "AI趋势预测",
+        "success": false,
+        "elapsed": 0.2,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 81106f77-46bc-5ba8-ae1f-7467ae96a882 is already in use.\n"
+      },
+      {
+        "agent": "市场情绪",
+        "success": false,
+        "elapsed": 0.2,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 482e7f47-e8ef-5f8c-9807-3c4f55b1c63d is already in use.\n"
+      },
+      {
+        "agent": "机构观点",
+        "success": false,
+        "elapsed": 0.2,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID bad11ea5-f4e0-5097-83b1-36cd79b71c60 is already in use.\n"
+      },
+      {
+        "agent": "批判者",
+        "success": false,
+        "elapsed": 0.2,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 0ec8fa25-dec8-5454-b147-9332791c5234 is already in use.\n"
+      },
+      {
+        "agent": "汇总者",
+        "success": false,
+        "elapsed": 0.1,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 1054bad6-050e-596f-b9ca-c7816a1adbbf is already in use.\n"
+      },
+      {
+        "agent": "世界模型",
+        "success": false,
+        "elapsed": 0.1,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 06f786f7-733f-5320-9a65-e574d7440bf5 is already in use.\n"
+      }
+    ]
+  },
+  {
+    "round": 15,
+    "time": "2026-03-15 17:24:10",
+    "elapsed": 985.6,
+    "results": [
+      {
+        "agent": "行业动态",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "市场情绪",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "机构观点",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "宏观分析",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "技术分析",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "AI趋势预测",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "财报分析",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "批判者",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "汇总者",
+        "success": true,
+        "elapsed": 148.0,
+        "stdout_len": 270,
+        "stderr": ""
+      },
+      {
+        "agent": "世界模型",
+        "success": true,
+        "elapsed": 237.4,
+        "stdout_len": 395,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 16,
+    "time": "2026-03-15 17:35:56",
+    "elapsed": 0.4,
+    "results": [
+      {
+        "agent": "市场情绪",
+        "success": false,
+        "elapsed": 0.3,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 482e7f47-e8ef-5f8c-9807-3c4f55b1c63d is already in use.\n"
+      },
+      {
+        "agent": "技术分析",
+        "success": false,
+        "elapsed": 0.3,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 20b4b5b8-63cb-5632-aff6-a812bba63be4 is already in use.\n"
+      },
+      {
+        "agent": "机构观点",
+        "success": false,
+        "elapsed": 0.3,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID bad11ea5-f4e0-5097-83b1-36cd79b71c60 is already in use.\n"
+      },
+      {
+        "agent": "批判者",
+        "success": false,
+        "elapsed": 0.3,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 0ec8fa25-dec8-5454-b147-9332791c5234 is already in use.\n"
+      },
+      {
+        "agent": "行业动态",
+        "success": false,
+        "elapsed": 0.3,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 54204f65-cd1b-5897-915a-82a1533d06ec is already in use.\n"
+      },
+      {
+        "agent": "宏观分析",
+        "success": false,
+        "elapsed": 0.3,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 430761ce-d862-5f7b-952c-2408a4475c6e is already in use.\n"
+      },
+      {
+        "agent": "财报分析",
+        "success": false,
+        "elapsed": 0.3,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 6f3be702-00d4-59d8-9c63-0155cacb4208 is already in use.\n"
+      },
+      {
+        "agent": "AI趋势预测",
+        "success": false,
+        "elapsed": 0.3,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 81106f77-46bc-5ba8-ae1f-7467ae96a882 is already in use.\n"
+      }
+    ]
+  },
+  {
+    "round": 15,
+    "time": "2026-03-15 17:37:10",
+    "elapsed": 845.3,
+    "results": [
+      {
+        "agent": "市场情绪",
+        "success": true,
+        "elapsed": 174.3,
+        "stdout_len": 319,
+        "stderr": ""
+      },
+      {
+        "agent": "机构观点",
+        "success": true,
+        "elapsed": 210.2,
+        "stdout_len": 425,
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 228.9,
+        "stdout_len": 485,
+        "stderr": ""
+      },
+      {
+        "agent": "AI趋势预测",
+        "success": true,
+        "elapsed": 242.1,
+        "stdout_len": 406,
+        "stderr": ""
+      },
+      {
+        "agent": "财报分析",
+        "success": true,
+        "elapsed": 262.1,
+        "stdout_len": 411,
+        "stderr": ""
+      },
+      {
+        "agent": "行业动态",
+        "success": true,
+        "elapsed": 278.5,
+        "stdout_len": 463,
+        "stderr": ""
+      },
+      {
+        "agent": "宏观分析",
+        "success": true,
+        "elapsed": 291.3,
+        "stdout_len": 305,
+        "stderr": ""
+      },
+      {
+        "agent": "技术分析",
+        "success": true,
+        "elapsed": 311.4,
+        "stdout_len": 472,
+        "stderr": ""
+      },
+      {
+        "agent": "汇总者",
+        "success": true,
+        "elapsed": 199.7,
+        "stdout_len": 278,
+        "stderr": ""
+      },
+      {
+        "agent": "世界模型",
+        "success": true,
+        "elapsed": 334.1,
+        "stdout_len": 367,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 16,
+    "time": "2026-03-15 17:42:15",
+    "elapsed": 184.3,
+    "results": [
+      {
+        "agent": "机构观点",
+        "success": true,
+        "elapsed": 152.6,
+        "stdout_len": 427,
+        "stderr": ""
+      },
+      {
+        "agent": "宏观分析",
+        "success": true,
+        "elapsed": 158.9,
+        "stdout_len": 320,
+        "stderr": ""
+      },
+      {
+        "agent": "技术分析",
+        "success": true,
+        "elapsed": 160.0,
+        "stdout_len": 398,
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 161.1,
+        "stdout_len": 444,
+        "stderr": ""
+      },
+      {
+        "agent": "行业动态",
+        "success": true,
+        "elapsed": 175.1,
+        "stdout_len": 391,
+        "stderr": ""
+      },
+      {
+        "agent": "AI趋势预测",
+        "success": true,
+        "elapsed": 175.2,
+        "stdout_len": 848,
+        "stderr": ""
+      },
+      {
+        "agent": "财报分析",
+        "success": true,
+        "elapsed": 182.8,
+        "stdout_len": 428,
+        "stderr": ""
+      },
+      {
+        "agent": "市场情绪",
+        "success": true,
+        "elapsed": 184.3,
+        "stdout_len": 384,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 15,
+    "time": "2026-03-15 17:45:50",
+    "elapsed": 638.0,
+    "results": [
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 127.3,
+        "stdout_len": 387,
+        "stderr": ""
+      },
+      {
+        "agent": "财报分析",
+        "success": true,
+        "elapsed": 151.6,
+        "stdout_len": 376,
+        "stderr": ""
+      },
+      {
+        "agent": "机构观点",
+        "success": true,
+        "elapsed": 154.7,
+        "stdout_len": 383,
+        "stderr": ""
+      },
+      {
+        "agent": "市场情绪",
+        "success": true,
+        "elapsed": 157.3,
+        "stdout_len": 335,
+        "stderr": ""
+      },
+      {
+        "agent": "AI趋势预测",
+        "success": true,
+        "elapsed": 163.5,
+        "stdout_len": 739,
+        "stderr": ""
+      },
+      {
+        "agent": "行业动态",
+        "success": true,
+        "elapsed": 174.9,
+        "stdout_len": 402,
+        "stderr": ""
+      },
+      {
+        "agent": "技术分析",
+        "success": true,
+        "elapsed": 198.3,
+        "stdout_len": 332,
+        "stderr": ""
+      },
+      {
+        "agent": "宏观分析",
+        "success": true,
+        "elapsed": 201.3,
+        "stdout_len": 760,
+        "stderr": ""
+      },
+      {
+        "agent": "汇总者",
+        "success": true,
+        "elapsed": 171.2,
+        "stdout_len": 353,
+        "stderr": ""
+      },
+      {
+        "agent": "世界模型",
+        "success": true,
+        "elapsed": 265.3,
+        "stdout_len": 474,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 17,
+    "time": "2026-03-15 17:50:56",
+    "elapsed": 0.3,
+    "results": [
+      {
+        "agent": "市场情绪",
+        "success": false,
+        "elapsed": 0.2,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 482e7f47-e8ef-5f8c-9807-3c4f55b1c63d is already in use.\n"
+      },
+      {
+        "agent": "财报分析",
+        "success": false,
+        "elapsed": 0.2,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 6f3be702-00d4-59d8-9c63-0155cacb4208 is already in use.\n"
+      },
+      {
+        "agent": "行业动态",
+        "success": false,
+        "elapsed": 0.2,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 54204f65-cd1b-5897-915a-82a1533d06ec is already in use.\n"
+      },
+      {
+        "agent": "机构观点",
+        "success": false,
+        "elapsed": 0.2,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID bad11ea5-f4e0-5097-83b1-36cd79b71c60 is already in use.\n"
+      },
+      {
+        "agent": "宏观分析",
+        "success": false,
+        "elapsed": 0.2,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 430761ce-d862-5f7b-952c-2408a4475c6e is already in use.\n"
+      },
+      {
+        "agent": "技术分析",
+        "success": false,
+        "elapsed": 0.2,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 20b4b5b8-63cb-5632-aff6-a812bba63be4 is already in use.\n"
+      },
+      {
+        "agent": "AI趋势预测",
+        "success": false,
+        "elapsed": 0.2,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 81106f77-46bc-5ba8-ae1f-7467ae96a882 is already in use.\n"
+      },
+      {
+        "agent": "批判者",
+        "success": false,
+        "elapsed": 0.2,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 0ec8fa25-dec8-5454-b147-9332791c5234 is already in use.\n"
+      }
+    ]
+  },
+  {
+    "round": 18,
+    "time": "2026-03-15 17:57:40",
+    "elapsed": 227.0,
+    "results": [
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 145.6,
+        "stdout_len": 430,
+        "stderr": ""
+      },
+      {
+        "agent": "机构观点",
+        "success": true,
+        "elapsed": 151.3,
+        "stdout_len": 326,
+        "stderr": ""
+      },
+      {
+        "agent": "宏观分析",
+        "success": true,
+        "elapsed": 152.2,
+        "stdout_len": 517,
+        "stderr": ""
+      },
+      {
+        "agent": "财报分析",
+        "success": true,
+        "elapsed": 158.4,
+        "stdout_len": 451,
+        "stderr": ""
+      },
+      {
+        "agent": "市场情绪",
+        "success": true,
+        "elapsed": 167.5,
+        "stdout_len": 453,
+        "stderr": ""
+      },
+      {
+        "agent": "行业动态",
+        "success": true,
+        "elapsed": 174.3,
+        "stdout_len": 504,
+        "stderr": ""
+      },
+      {
+        "agent": "技术分析",
+        "success": true,
+        "elapsed": 206.8,
+        "stdout_len": 476,
+        "stderr": ""
+      },
+      {
+        "agent": "AI趋势预测",
+        "success": true,
+        "elapsed": 226.9,
+        "stdout_len": 1079,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 16,
+    "time": "2026-03-15 17:57:52",
+    "elapsed": 341.7,
+    "results": [
+      {
+        "agent": "行业动态",
+        "success": true,
+        "elapsed": 219.8,
+        "stdout_len": 402,
+        "stderr": ""
+      },
+      {
+        "agent": "技术分析",
+        "success": true,
+        "elapsed": 234.0,
+        "stdout_len": 394,
+        "stderr": ""
+      },
+      {
+        "agent": "AI趋势预测",
+        "success": true,
+        "elapsed": 270.1,
+        "stdout_len": 406,
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 270.1,
+        "stdout_len": 428,
+        "stderr": ""
+      },
+      {
+        "agent": "市场情绪",
+        "success": true,
+        "elapsed": 286.0,
+        "stdout_len": 429,
+        "stderr": ""
+      },
+      {
+        "agent": "机构观点",
+        "success": true,
+        "elapsed": 313.0,
+        "stdout_len": 341,
+        "stderr": ""
+      },
+      {
+        "agent": "财报分析",
+        "success": true,
+        "elapsed": 331.2,
+        "stdout_len": 434,
+        "stderr": ""
+      },
+      {
+        "agent": "宏观分析",
+        "success": true,
+        "elapsed": 341.7,
+        "stdout_len": 463,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 17,
+    "time": "2026-03-15 18:00:34",
+    "elapsed": 199.1,
+    "results": [
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 135.5,
+        "stdout_len": 526,
+        "stderr": ""
+      },
+      {
+        "agent": "市场情绪",
+        "success": true,
+        "elapsed": 157.1,
+        "stdout_len": 431,
+        "stderr": ""
+      },
+      {
+        "agent": "行业动态",
+        "success": true,
+        "elapsed": 158.4,
+        "stdout_len": 469,
+        "stderr": ""
+      },
+      {
+        "agent": "财报分析",
+        "success": true,
+        "elapsed": 166.6,
+        "stdout_len": 417,
+        "stderr": ""
+      },
+      {
+        "agent": "机构观点",
+        "success": true,
+        "elapsed": 173.9,
+        "stdout_len": 477,
+        "stderr": ""
+      },
+      {
+        "agent": "技术分析",
+        "success": true,
+        "elapsed": 180.7,
+        "stdout_len": 309,
+        "stderr": ""
+      },
+      {
+        "agent": "AI趋势预测",
+        "success": true,
+        "elapsed": 182.0,
+        "stdout_len": 959,
+        "stderr": ""
+      },
+      {
+        "agent": "宏观分析",
+        "success": true,
+        "elapsed": 199.1,
+        "stdout_len": 787,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 16,
+    "time": "2026-03-15 18:04:00",
+    "elapsed": 190.5,
+    "results": [
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 123.4,
+        "stdout_len": 506,
+        "stderr": ""
+      },
+      {
+        "agent": "行业动态",
+        "success": true,
+        "elapsed": 144.9,
+        "stdout_len": 425,
+        "stderr": ""
+      },
+      {
+        "agent": "技术分析",
+        "success": true,
+        "elapsed": 145.3,
+        "stdout_len": 349,
+        "stderr": ""
+      },
+      {
+        "agent": "机构观点",
+        "success": true,
+        "elapsed": 147.9,
+        "stdout_len": 382,
+        "stderr": ""
+      },
+      {
+        "agent": "市场情绪",
+        "success": true,
+        "elapsed": 151.6,
+        "stdout_len": 428,
+        "stderr": ""
+      },
+      {
+        "agent": "财报分析",
+        "success": true,
+        "elapsed": 159.4,
+        "stdout_len": 423,
+        "stderr": ""
+      },
+      {
+        "agent": "AI趋势预测",
+        "success": true,
+        "elapsed": 164.3,
+        "stdout_len": 724,
+        "stderr": ""
+      },
+      {
+        "agent": "宏观分析",
+        "success": true,
+        "elapsed": 190.5,
+        "stdout_len": 601,
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 18,
+    "time": "2026-03-15 18:05:56",
+    "elapsed": 0.3,
+    "results": [
+      {
+        "agent": "批判者",
+        "success": false,
+        "elapsed": 0.2,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 0ec8fa25-dec8-5454-b147-9332791c5234 is already in use.\n"
+      },
+      {
+        "agent": "技术分析",
+        "success": false,
+        "elapsed": 0.2,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 20b4b5b8-63cb-5632-aff6-a812bba63be4 is already in use.\n"
+      },
+      {
+        "agent": "财报分析",
+        "success": false,
+        "elapsed": 0.2,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 6f3be702-00d4-59d8-9c63-0155cacb4208 is already in use.\n"
+      },
+      {
+        "agent": "市场情绪",
+        "success": false,
+        "elapsed": 0.2,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 482e7f47-e8ef-5f8c-9807-3c4f55b1c63d is already in use.\n"
+      },
+      {
+        "agent": "机构观点",
+        "success": false,
+        "elapsed": 0.2,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID bad11ea5-f4e0-5097-83b1-36cd79b71c60 is already in use.\n"
+      },
+      {
+        "agent": "行业动态",
+        "success": false,
+        "elapsed": 0.2,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 54204f65-cd1b-5897-915a-82a1533d06ec is already in use.\n"
+      },
+      {
+        "agent": "AI趋势预测",
+        "success": false,
+        "elapsed": 0.2,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 81106f77-46bc-5ba8-ae1f-7467ae96a882 is already in use.\n"
+      },
+      {
+        "agent": "宏观分析",
+        "success": false,
+        "elapsed": 0.2,
+        "stdout_len": 0,
+        "stderr": "Error: Session ID 430761ce-d862-5f7b-952c-2408a4475c6e is already in use.\n"
+      }
+    ]
+  }
+]

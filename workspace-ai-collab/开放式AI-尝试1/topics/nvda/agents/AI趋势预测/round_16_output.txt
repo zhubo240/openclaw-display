@@ -1,0 +1,18 @@
+第16轮完成。
+
+**本轮核心增量：信用分化——AI capex周期不会统一结束，而会按信用质量分层瓦解**
+
+从2000-2001年dot-com崩塌的历史模式提炼出新框架：技术投资周期的终结从不是同时发生的，而是按信用质量从弱到强依次进行。
+
+**AI capex的分层瓦解预测：**
+- 第一层（Oracle+AI startup）：2026H2-2027H1 最先承压
+- 第二层（Amazon+Meta）：2027H1-H2 FCF约束生效
+- 第三层（Microsoft+Alphabet）：2028+或不瓦解
+
+**NVDA的独特位置：** 弱客户退出被强客户加速采购部分补偿，且NVDA自身$340B净现金+零杠杆。分层消化（45%概率）对NVDA的冲击弱于统一崩塌——概率加权目标从$189上调至$196。
+
+**关键修正：** 用"分层消化"替代过度简化的"平台期"概念——更精确地描述了不同信用质量客户依次减速而非统一停止的动态。
+
+Sources:
+- [Fortune: Dot-com Bubble Parallels](https://fortune.com/2025/09/28/ai-dot-com-bubble-parallels-history-explained-companies-revenue-infrastructure/)
+- [CNBC: Big Tech AI Bond Binge](https://www.cnbc.com/2026/02/23/big-techs-ai-bond-binge-shatters-unspoken-contract-with-investors.html)

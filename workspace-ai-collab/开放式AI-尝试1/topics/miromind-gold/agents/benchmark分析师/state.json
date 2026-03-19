@@ -1,0 +1,29 @@
+{
+  "round": 5,
+  "current_model": "核心区分：专用量化ML（LSTM/XGBoost）vs LLM-Agent（MiroMind）是两类不同的预测架构。批判者关于线性R²不是上界的批评正确，但适用于专用ML，不适用于LLM-Agent。FutureX-Pro Finance已经是LLM-Agent非线性预测的实证测量，而结果是near-baseline（46/100≈朴素随机游走）。黄金实际利率相关性2022年后从84%骤降至3-7%（驱动因子漂移），这不仅打击专用ML，也使任何15天预测必须跨越可能的体制切换窗口。FutureX的「下周」设计刻意规避了这类跨体制预测。",
+  "hard": [
+    "FutureX Level 4（数值回归）：'even the strongest models often fail to score at all'",
+    "MiroFlow在FutureX-Pro Finance Type 1得~46.37/100，Grok-4得~41.25/100",
+    "FutureX-Pro Finance只覆盖美股+A股，不含黄金",
+    "MiroMind从未在任何来源中声称能预测15天黄金价格",
+    "黄金与实际利率相关性：2005-21年84%，2022-24年骤降至3-7%（SSGA/RBC来源）",
+    "朴素随机游走基线在FutureX-Pro Finance的理论得分~38-51/100，与AI模型得分量级相同"
+  ],
+  "soft": [
+    "批判者引用的专用ML（Gu/Kelly/Xiu）在股票上可能确实超越线性基线，但MiroMind是LLM-Agent而非专用ML",
+    "LLM-Agent相对于专用ML的一个真实优势：能感知体制切换（读新闻），但无法预测体制内的非公开动态",
+    "FutureX「下周」窗口刻意规避了跨体制预测问题；黄金15天预测偏偏落在这个区域",
+    "Limits To Machine Learning论文（2512.12735）指的是量化ML低估了可预测性，不是LLM-Agent"
+  ],
+  "open": [
+    "专用金融ML（非LLM-Agent）在黄金15天预测上是否有系统性优势？这是批判者的真正挑战",
+    "FutureX-Pro Finance的预测时间窗口具体是多少天？影响朴素基线计算",
+    "是否有黄金价格的非线性MI直接测量研究（如Kraskov估计器应用）？",
+    "驱动因子漂移是否会使FutureX-Pro Finance在2022年后的金融预测也失效（如果加入黄金的话）？"
+  ],
+  "predictions": [
+    "如果FutureX-Pro Finance公布朴素基线，得分将与GPT-5-high（46.37）处于同一量级",
+    "专用量化ML（如FinGPT+时序模型）在黄金价格预测上会优于LLM-Agent，但能否超过朴素基线仍存疑",
+    "MiroMind的商业价值最终会落在「决策辅助」而非「价格预测」"
+  ]
+}

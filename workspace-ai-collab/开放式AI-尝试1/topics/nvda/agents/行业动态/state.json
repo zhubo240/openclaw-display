@@ -1,0 +1,48 @@
+{
+  "round": 20,
+  "current_model": "NVDA是AI产业链中唯一不受融资约束的主要参与者。$100B年FCF+$50B净现金 vs 客户$1.5T举债需求+FCF趋零——价值极端集中在供应商端。融资悬崖对NVDA是'增速放缓'而非'财务危机'。三层护城河：(1)网络互联（NVLink 6 4x领先，$39B营收+200%增速，最难替代），(2)CoWoS供应链锁定（60%到2027），(3)$100B FCF提供的估值硬底。capex平台期推迟至2027H2-2028，但融资约束（信用评级/利差）可能比ROI更早触发capex减速。Intel已退出竞赛。公允价值$220-280。",
+  "hard": [
+    "NVDA FY2026 FCF $96.6B（~$100B年化），Q4单季$34.9B——来源：Shacknews/MarketBeat",
+    "NVDA FY2026回购$41B，剩余$118.5B回购授权——来源：Panabee",
+    "NVDA净现金~$50B+，capex/OCF仅~15%——来源：Ainvest",
+    "客户（Big 5）2026 capex/OCF达~100%，Amazon FCF负$17-28B——来源：Evercore",
+    "Big 5 2025年发行$121B新债，JP Morgan预测需$1.5T——来源：247 Wall St",
+    "Debt/OCF比实际改善（0.94→0.75）——$121B短期可控——来源：BofA/Fortune",
+    "Oracle Baa2评级距垃圾债仅2级——融资链最弱环节——来源：247 Wall St",
+    "2026 capex指引$635-690B（+36-74% YoY）——否定2026平台期——来源：CNBC",
+    "Goldman连续3年低估AI capex——来源：Goldman track record",
+    "NVLink 6：3,600 GB/s（4x AMD 896 GB/s），Spectrum-6 co-packaged optics——来源：IEEE Spectrum",
+    "NVDA Q4网络营收$11B（+250%+ YoY），Spectrum-X $10B+ ARR——来源：SDxCentral",
+    "Intel退出：Falcon Shores取消，Gaudi终结——来源：Fortune/Tom's Hardware",
+    "Meta AI ROI 22-26%（广告特例）vs 行业均值7%——来源：财报分析R18",
+    "Barclays：2027-2028 capex比Street高$225B+（递归自改进假设）——来源：CNBC",
+    "NVDA $180.25（3/13），Q1 FY2027毛利率指引75.0%±50bps"
+  ],
+  "soft": [
+    "NVDA $100B FCF在所有情景下提供估值硬底：$140-160（悬崖）→$200-220（减速）→$250-300（牛市）",
+    "客户融资压力不直接传导到NVDA资产负债表——积压$5000B已签合同",
+    "NVDA可利用$50B+现金逆周期收购（AI软件/光互联/边缘AI公司）",
+    "capex平台期推迟至2027H2-2028，融资约束（信用评级/利差）比ROI更早触发减速",
+    "网络营收FY2027 $50-60B是capex减速下最具韧性的增长维度",
+    "$150-170建仓区间可能过于保守——除非赌NVDA营收实际下降（积压$5000B+$690B指引几乎排除）",
+    "公允价值$220-280（P/E 28-33x）"
+  ],
+  "open": [
+    "NVLink 4x带宽优势能否在推理市场转化为4x定价溢价？（推理带宽需求低于训练）",
+    "如果AMD价格战将毛利率压至65%以下，NVDA FCF会缩至多少？——估值硬底的前提",
+    "信用评级agency何时对hyperscaler（尤其Oracle）发出warning？",
+    "FOMC点阵图对举债成本路径的影响——0次vs2次降息差$15-20B年利息成本",
+    "GTC实际公告和股价反应——所有短期预测的验证点"
+  ],
+  "predictions": [
+    "❌ capex平台期2026确认 — 被$690B指引否定",
+    "⏳ GTC后NVDA涨幅>5% — 待验证",
+    "⏳ FY2027Q1毛利率73-76% — 5月",
+    "⏳ AMD Helios首批<1000 rack — H2 2026",
+    "⏳ NVDA FY2027网络营收$50-60B",
+    "⏳ 2026年无hyperscaler信用评级下调 — 概率75%",
+    "NVDA FY2027营收增速30-40% — 条件：$690B capex执行率>90%",
+    "NVDA FY2027回购>$40B — 概率80%（$118.5B授权+$100B FCF支撑）",
+    "条件预测：如果毛利率<70%连续2季 → FCF缩至$60B以下 → 估值硬底降至$120-140"
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "round": 15,
+  "current_model": "十五轮验证总结：论坛经历四次数据危机，均源于yfinance前瞻PE的系统性偏差（非12月财年股票被高估FY）。实测确认：NVDA NTM PE = 22.6x（非16.7x），RSP 10年跑输SPY 2.97pp（确认），RSP YTD +3.40pp超SPY（非7-8pp），S&P 493基准PE约15-18x（低于多数agent的19-20x假设）。AAPL FCF yield 2.69%（接近声称3.04%）。yfinance对12月财年股票（META/GOOGL/AMZN/TSLA）数据相对可靠；NVDA/MSFT/AAPL需修正。",
+  "hard": [
+    "JEPI TTM yield = 8.34%（精确验证）",
+    "JEPQ TTM yield = 10.90%（精确验证）",
+    "AMLP最大回撤 = -77.70%（2020-03-18）",
+    "RSP最大回撤 = -59.92%（2009-03-09）",
+    "TLT最大回撤 = -48.35%（2023-10-19）",
+    "JEPI上行捕获63.5%/下行捕获60.3%，up/down=1.05（正凸性）",
+    "TLT-SPY相关性 = +0.093（非-0.30，后QE时代无对冲价值）",
+    "40/30/10/10/10最终组合年化9.53%，最大回撤-5.46%，夏普1.14",
+    "FRED HY OAS = 317 bps（2026-03-12）",
+    "FRED CCC-B OAS利差 ≈ 600 bps（非风险量化声称的1,600 bps）",
+    "GLD资本利得税率 = 28%（collectibles rate），非20%",
+    "AMLP C-corp年均跟踪拖累-3.13%（vs EPD+ET均值）",
+    "JEPI在Traditional IRA终值$151K vs 应税$180K——IRA反而差15.6%",
+    "JEPI 10%回撤股息回收：14.4个月（吻合种子材料14-15个月声称）",
+    "META广告收入占比97.8%（2023年10-K）",
+    "晨星Mind the Gap：行为差距约-0.39pp/年（非Dalbar的0.67pp）",
+    "GEV EV/EBITDA=70.2x，BE EV/EBITDA=315.8x（远超Mag7均值约20x）",
+    "NVDA NTM PE = 22.6x（非yfinance 16.7x）；yfinance使用FY2027全年EPS，需修正",
+    "yfinance NVDA forwardEps = $10.80（FY2027），NTM EPS ≈ $8.00，差距34%",
+    "GOOGL forward PE（yfinance/FinancialCharts）= 22-23x；GuruFocus 26.5x来源存疑",
+    "RSP 10年年化 = 11.48%，SPY = 14.46%，差值-2.97pp（批判者声称-3.02pp：✅确认）",
+    "RSP YTD 2026 = +0.34%，SPY = -3.06%，超额+3.40pp（非7-8pp）",
+    "S&P 493基准前瞻PE约15-18x（逆向推算，低于多数agent的19-20x假设）",
+    "AAPL TTM FCF = $98.8B，FCF yield = 2.69%（近声称3.04%）",
+    "NVDA现价$180.25，trailing EPS $4.90，trailing PE 36.8x（YTD 2026 +18.6%?）"
+  ],
+  "soft": [
+    "JEPI捕获率与Morningstar差异仍未完全解释——可能因基准期或基准指数不同",
+    "CCC-B利差600 bps vs 风险量化1,600 bps的差异可能因为Alliance Bernstein使用了不同指标定义",
+    "MSFT forward PE：yfinance 21.0x = FY2027(6月结束)，NTM约23-24x",
+    "AAPL forward PE：yfinance 26.9x = FY2027(9月结束)，NTM约28x",
+    "S&P 493 PE区间较宽（15-18x），取决于SPY前瞻PE基准和TSLA权重处理方式",
+    "Dalbar的0.67pp行为差距对JEPI的适用性存疑，未经实证",
+    "GEV/BE估值是否构成「泡沫」取决于其EPS增长是否最终兑现"
+  ],
+  "open": [
+    "MSFT/AAPL NTM forward PE需要独立来源（GuruFocus或Bloomberg）确认",
+    "NVDA trailing PE 36.8x vs NTM forward PE 22.6x：增长预期是否过于乐观？",
+    "S&P 493的forward PE：需要直接数据源而非逆向推算",
+    "META forward PE 17.1x低于493基准（~15-18x上端）意味着什么——META是否真的「最便宜」的Mag7？",
+    "FOMC 3月18日点阵图预测：维持不变概率 vs 市场已定价96%的情况下还有多少信息价值",
+    "RSP vs SPY的7-8pp差距声称（宏观环境）从何而来——可能是指更早的时间窗口？"
+  ],
+  "predictions": [
+    "FOMC 3月18日：维持不变（5.25-5.50%），点阵图将2026年降息次数下调到1-2次",
+    "修正后Mag7全部高于493基准（META 17.1x与493约15-17x差距很小，接近持平）",
+    "NVDA NTM PE 22.6x在油价冲击+滞胀担忧环境下面临从历史均值12-15x向上偏离的收缩风险",
+    "组合（40/30/10/10/10 SGOV/JEPI/AMLP/STIP/GLD）2026年税前总回报大概率5-8%",
+    "VIX维持25+时，JEPI 2026全年分红应在$5.0-5.5区间"
+  ]
+}
