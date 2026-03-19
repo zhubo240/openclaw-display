@@ -36,5 +36,21 @@
     "seed_type": "md",
     "seed_file": "bitcoin-circle.md",
     "created": "2026-03-19"
+  },
+  {
+    "id": "gold-outlook",
+    "name": "黄金投资前景：历史性上涨后的回调分析",
+    "description": "黄金从2000美元涨至3000美元以上后出现回调，讨论这是技术性修正还是趋势反转，分析驱动因素的持续性，评估未来1-3年投资前景和最优配置策略。",
+    "seed_type": "md",
+    "seed_file": "gold-outlook.md",
+    "created": "2026-03-19"
+  },
+  {
+    "id": "china-macro",
+    "name": "中国宏观经济：形势、政策与资产影响",
+    "description": "从经济基本面、政策走向、国际博弈、社会变迁和资产配置五个维度，系统分析中国宏观经济的现状与未来，探讨对普通人财富和社会格局的深层影响。",
+    "seed_type": "md",
+    "seed_file": "china-macro.md",
+    "created": "2026-03-20"
   }
 ]

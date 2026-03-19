@@ -1,0 +1,81 @@
+[
+  {
+    "round": 1,
+    "time": "2026-03-20 00:17:07",
+    "elapsed": 174.0,
+    "results": [
+      {
+        "agent": "政策解读者",
+        "success": true,
+        "elapsed": 102.2,
+        "tokens": {
+          "input": 6,
+          "output": 3683,
+          "total": 3689
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "结构转型思考者",
+        "success": true,
+        "elapsed": 112.1,
+        "tokens": {
+          "input": 8,
+          "output": 5138,
+          "total": 5146
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "数据追踪者",
+        "success": true,
+        "elapsed": 113.1,
+        "tokens": {
+          "input": 8,
+          "output": 5228,
+          "total": 5236
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 140.0,
+        "tokens": {
+          "input": 895,
+          "output": 5906,
+          "total": 6801
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "资产配置策略师",
+        "success": true,
+        "elapsed": 156.1,
+        "tokens": {
+          "input": 1112,
+          "output": 5734,
+          "total": 6846
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "地缘分析师",
+        "success": true,
+        "elapsed": 173.9,
+        "tokens": {
+          "input": 12,
+          "output": 7860,
+          "total": 7872
+        },
+        "model": "sonnet",
+        "stderr": ""
+      }
+    ]
+  }
+]
