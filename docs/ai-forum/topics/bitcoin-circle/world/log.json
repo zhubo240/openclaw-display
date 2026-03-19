@@ -89,5 +89,417 @@
         "stderr": ""
       }
     ]
+  },
+  {
+    "round": 2,
+    "time": "2026-03-19 15:43:15",
+    "elapsed": 237.2,
+    "results": [
+      {
+        "agent": "数字黄金论辩者",
+        "success": true,
+        "elapsed": 157.7,
+        "tokens": {
+          "input": 8,
+          "output": 5934,
+          "total": 5942
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "稳定币行业分析师",
+        "success": true,
+        "elapsed": 158.5,
+        "tokens": {
+          "input": 9,
+          "output": 5694,
+          "total": 5703
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "监管博弈观察者",
+        "success": true,
+        "elapsed": 163.5,
+        "tokens": {
+          "input": 9,
+          "output": 6608,
+          "total": 6617
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "第一性原理",
+        "success": true,
+        "elapsed": 165.9,
+        "tokens": {
+          "input": 8,
+          "output": 6358,
+          "total": 6366
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "宏观经济分析师",
+        "success": true,
+        "elapsed": 171.8,
+        "tokens": {
+          "input": 1542,
+          "output": 6266,
+          "total": 7808
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "稳定币商业模式解构者",
+        "success": true,
+        "elapsed": 176.8,
+        "tokens": {
+          "input": 1478,
+          "output": 6517,
+          "total": 7995
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 206.0,
+        "tokens": {
+          "input": 919,
+          "output": 7032,
+          "total": 7951
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "链上数据研究员",
+        "success": true,
+        "elapsed": 237.2,
+        "tokens": {
+          "input": 10,
+          "output": 9016,
+          "total": 9026
+        },
+        "model": "sonnet",
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 3,
+    "time": "2026-03-19 15:53:30",
+    "elapsed": 314.4,
+    "results": [
+      {
+        "agent": "数字黄金论辩者",
+        "success": true,
+        "elapsed": 169.6,
+        "tokens": {
+          "input": 7,
+          "output": 6343,
+          "total": 6350
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "稳定币行业分析师",
+        "success": true,
+        "elapsed": 182.7,
+        "tokens": {
+          "input": 10,
+          "output": 7877,
+          "total": 7887
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "稳定币商业模式解构者",
+        "success": true,
+        "elapsed": 186.3,
+        "tokens": {
+          "input": 1179,
+          "output": 6362,
+          "total": 7541
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "监管博弈观察者",
+        "success": true,
+        "elapsed": 197.9,
+        "tokens": {
+          "input": 9,
+          "output": 7361,
+          "total": 7370
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 205.0,
+        "tokens": {
+          "input": 10,
+          "output": 6792,
+          "total": 6802
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "宏观经济分析师",
+        "success": true,
+        "elapsed": 264.6,
+        "tokens": {
+          "input": 9,
+          "output": 8795,
+          "total": 8804
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "链上数据研究员",
+        "success": true,
+        "elapsed": 314.4,
+        "tokens": {
+          "input": 955,
+          "output": 11418,
+          "total": 12373
+        },
+        "model": "sonnet",
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 4,
+    "time": "2026-03-19 16:02:30",
+    "elapsed": 239.8,
+    "results": [
+      {
+        "agent": "稳定币行业分析师",
+        "success": true,
+        "elapsed": 171.0,
+        "tokens": {
+          "input": 8,
+          "output": 6478,
+          "total": 6486
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "监管博弈观察者",
+        "success": true,
+        "elapsed": 180.1,
+        "tokens": {
+          "input": 7,
+          "output": 7507,
+          "total": 7514
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "稳定币商业模式解构者",
+        "success": true,
+        "elapsed": 183.8,
+        "tokens": {
+          "input": 9,
+          "output": 6607,
+          "total": 6616
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "数字黄金论辩者",
+        "success": true,
+        "elapsed": 187.9,
+        "tokens": {
+          "input": 1003,
+          "output": 6819,
+          "total": 7822
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "第一性原理",
+        "success": true,
+        "elapsed": 196.8,
+        "tokens": {
+          "input": 10,
+          "output": 7642,
+          "total": 7652
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "宏观经济分析师",
+        "success": true,
+        "elapsed": 210.5,
+        "tokens": {
+          "input": 984,
+          "output": 7232,
+          "total": 8216
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "链上数据研究员",
+        "success": true,
+        "elapsed": 226.2,
+        "tokens": {
+          "input": 8,
+          "output": 8457,
+          "total": 8465
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 239.7,
+        "tokens": {
+          "input": 9,
+          "output": 7818,
+          "total": 7827
+        },
+        "model": "opus",
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 5,
+    "time": "2026-03-19 16:21:30",
+    "elapsed": 840.6,
+    "results": [
+      {
+        "agent": "稳定币行业分析师",
+        "success": true,
+        "elapsed": 156.4,
+        "tokens": {
+          "input": 8,
+          "output": 6034,
+          "total": 6042
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "监管博弈观察者",
+        "success": true,
+        "elapsed": 184.3,
+        "tokens": {
+          "input": 8,
+          "output": 7550,
+          "total": 7558
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "数字黄金论辩者",
+        "success": true,
+        "elapsed": 184.4,
+        "tokens": {
+          "input": 8,
+          "output": 6680,
+          "total": 6688
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "稳定币商业模式解构者",
+        "success": true,
+        "elapsed": 188.0,
+        "tokens": {
+          "input": 8,
+          "output": 6574,
+          "total": 6582
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 229.6,
+        "tokens": {
+          "input": 9,
+          "output": 7332,
+          "total": 7341
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "宏观经济分析师",
+        "success": true,
+        "elapsed": 238.5,
+        "tokens": {
+          "input": 8,
+          "output": 8575,
+          "total": 8583
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "链上数据研究员",
+        "success": true,
+        "elapsed": 279.3,
+        "tokens": {
+          "input": 9,
+          "output": 10306,
+          "total": 10315
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "代码验证",
+        "success": true,
+        "elapsed": 370.7,
+        "tokens": {
+          "input": 16,
+          "output": 20084,
+          "total": 20100
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "汇总者",
+        "success": true,
+        "elapsed": 190.5,
+        "tokens": {
+          "input": 8,
+          "output": 7331,
+          "total": 7339
+        },
+        "model": "opus",
+        "stderr": ""
+      }
+    ]
   }
 ]
