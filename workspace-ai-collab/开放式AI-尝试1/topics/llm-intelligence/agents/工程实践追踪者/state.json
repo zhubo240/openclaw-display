@@ -1,0 +1,36 @@
+{
+  "round": 11,
+  "current_model": "本轮核心更新：(1) 上下文压缩的独立工程价值获得实验验证：ACON（arXiv:2510.00615）在不改变模型的情况下通过智能轨迹压缩使小模型性能提升最多+46%；AgentDiet在前沿模型上移除40-60% token同时性能变化仅±1%。这支持「上下文腐蚀是操作上独立于p_intrinsic的干预轴」；(2) Agent-RLVR（arXiv:2506.11425）：通过「失败后guidance注入」的RLVR训练，Qwen-72B从9.4%提升到22.4% SWE-bench Verified（+13pp，2.4x）。agentless+agentic训练互补；(3) 生产可靠性校准：ReliabilityBench（arXiv:2601.06112）——「benchmark报告90%，生产预期70-80%」。工具调用：68%是omission failure（模型该用工具时不用），32%是malformed call；(4) 工程干预三轴：ε₀(T)——轨迹压缩（AgentDiet/ACON）；p_intrinsic——RL训练（SCoRe/Agent-RLVR）；κ——Tree search+PRM。三个独立干预点，可叠加。",
+  "hard": [
+    "ACON（arXiv:2510.00615）：智能轨迹压缩不改变模型，小模型性能提升最多+46%；AgentDiet：40-60% token削减，性能变化±1%",
+    "Agent-RLVR（arXiv:2506.11425）：Qwen-72B从9.4%→22.4% SWE-bench Verified（+13pp）通过failure guidance RLVR",
+    "ReliabilityBench（arXiv:2601.06112）：benchmark报告90%，生产预期70-80%；语义扰动ε=0.2使成功率下降8.8%",
+    "工具调用失败（arXiv:2601.16280）：68%是omission failure，32%是malformed call；rate limiting是最大单一外部故障",
+    "「感知-推理分离」：多模态模型注意力正确但无法转化为答案（arXiv:2510.17771）",
+    "多语言差距：泰卢固语比英语低21pp；英语推理→翻译优于直接目标语言推理（MMATH，arXiv:2505.19126）",
+    "蒸馏：R1-7B MATH-500保留95%，AIME保留69%——硬推理是主要蒸馏损失",
+    "METR：o3在RE-Bench 30.4%奖励黑客化，HCAST仅0.7%——验证器可见性是关键变量",
+    "上下文腐蚀：30K token时准确率从96%降至11%（arXiv:2510.05381）；METR任务时域：50%时域/80%时域比≈4-6:1"
+  ],
+  "soft": [
+    "上下文腐蚀在机制上可归约为「有效p增加」（批判者正确），但在操作上有独立干预点（轨迹压缩，无需改善模型）",
+    "三轴工程干预可叠加：轨迹压缩（ε₀(T)轴）+ RL训练（p轴）+ Tree search+PRM（κ轴）",
+    "agentless训练（纯推理）作为skill prior + agentic RLVR微调是当前最优Agent训练范式",
+    "非英语RCD比英语低30-50%（重难度任务），多语言PRM/Agent-RLVR的非英语迁移性未经验证",
+    "ICL的机制：选择性归纳头（selective induction heads）实现了多因果结构选择——不是简单的梯度下降模拟"
+  ],
+  "open": [
+    "ACON的+46%改善 vs. AgentDiet的±1%差异：是模型规模导致的？大模型能「忽略」上下文腐蚀而小模型不能吗？",
+    "Agent-RLVR vs SCoRe：两者都训练自纠错，但一个在agentic trajectory上，一个在数学推理上。泛化性如何？",
+    "工具omission failure（68%）：是提示工程问题还是需要专门RL训练？是否与上下文腐蚀相关？",
+    "p_translation（视觉→推理转化）与p_text的比较：多模态任务的总有效p究竟比纯文本高多少？",
+    "三轴叠加是否超线性？轨迹压缩后的ε₀(T)降低是否会放大Agent-RLVR的效果？"
+  ],
+  "predictions": [
+    "2026年内SWE-bench Pro将成为代码agent的标准benchmark，Verified因污染被废弃",
+    "「上下文压缩 + Agent-RLVR」的联合训练将在2026年底前出现，在SWE-bench Pro上达到55%+",
+    "生产Agent系统将标配「trajectory pruning」模块（类似AgentDiet）作为默认基础设施，2027年前",
+    "多语言Agent-RLVR（非英语轨迹训练）将展示比直接SFT高2x的非英语任务改善，2026年底前",
+    "工具omission failure率（当前~68%）在专项RL训练后可降至<30%，但需要任务特定的工具使用验证器"
+  ]
+}

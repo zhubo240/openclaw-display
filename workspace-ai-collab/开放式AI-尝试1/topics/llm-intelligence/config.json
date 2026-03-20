@@ -1,0 +1,76 @@
+{
+  "topic": "大模型智能的本质、边界与未来方向",
+  "description": "探讨大语言模型展现的'智能'行为的本质机制——从next token prediction到涌现能力，从统计学习到因果推理，从已知局限到理论上限。结合认知科学、语言学、哲学、信息论等跨学科视角，评估当前LLM的真实能力边界和未来演进路径。",
+  "agents": [
+    {
+      "id": "缩放律研究员",
+      "role": "信息源",
+      "description": "追踪scaling laws、涌现能力、test-time compute等实证研究的最新进展",
+      "prompt_suffix": "搜索以下具体信息：(1) Chinchilla scaling laws之后的新发现，特别是DeepSeek、Llama 3等模型是否打破了原有的数据-参数最优比例；(2) Stanford关于涌现能力是度量伪影的论文(Schaeffer et al. 2023)的后续争论和反驳；(3) test-time compute scaling的最新实验结果（OpenAI o1/o3, DeepSeek-R1等）——推理时增加计算量能提升多少能力？有无天花板？(4) 合成数据训练的可持续性实证——模型坍缩(model collapse)问题的最新研究进展。用具体数据和论文支撑你的分析。"
+    },
+    {
+      "id": "可解释性分析师",
+      "role": "信息源",
+      "description": "追踪机械可解释性(mechanistic interpretability)和模型内部机制研究",
+      "prompt_suffix": "搜索以下具体信息：(1) Anthropic的'A Mathematical Framework for Transformer Circuits'之后的可解释性研究进展，特别是induction heads、superposition、feature splitting等发现；(2) in-context learning的内部机制——模型推理时究竟在做什么？是否在隐式地做梯度下降？(Oswald et al., Akyürek et al.等相关论文)；(3) chain-of-thought推理是否真的改善了模型的内部计算，还是只是格式化输出？(faithfulness of CoT研究)；(4) 模型内部是否形成了世界模型的证据——Othello-GPT、空间表征等研究的最新进展。重点关注这些发现对'理解'问题的启示。"
+    },
+    {
+      "id": "认知科学桥梁",
+      "role": "框架",
+      "model": "opus",
+      "description": "从认知科学和哲学角度构建LLM智能的理论框架，评估其与人类认知的异同",
+      "prompt_suffix": "构建一个跨学科的分析框架，需要覆盖：(1) System 1/System 2双过程理论——标准LLM是纯System 1，而CoT/extended thinking是否实现了System 2？这个类比的准确性和局限在哪里？(2) 中文房间论证的当代修正——Searle的论证在LLM时代是否需要更新？如果模型内部形成了可解释的世界表征，论证是否还成立？(3) 预测编码(predictive coding)理论——人脑的预测编码与next token prediction的深层对应和根本差异；(4) Chollet的ARC挑战所揭示的抽象推理缺陷——这是架构问题还是根本性限制？提出你自己对'LLM智能'的操作性定义。"
+    },
+    {
+      "id": "边界理论家",
+      "role": "框架",
+      "model": "opus",
+      "description": "从数学和计算理论角度分析LLM智能的硬性边界",
+      "prompt_suffix": "系统性地分析以下理论限制：(1) 统计学习理论的泛化界——PAC learning框架下LLM的泛化能力有何理论保证和限制？过参数化为什么反而有效(双下降现象)？(2) 幻觉的根本原因——这是可以通过工程手段消除的，还是自回归生成模型的固有缺陷？从信息论角度分析；(3) 因果推理vs相关性——Pearl的因果阶梯中LLM处于哪一层？有无突破的可能？(4) Kolmogorov复杂度视角——压缩即智能的说法在多大程度上成立？LLM作为压缩器的理论极限是什么？(5) LeCun vs Sutskever的路线之争——自回归预测是通向AGI的道路还是死胡同？给出你的判断和论据。"
+    },
+    {
+      "id": "工程实践追踪者",
+      "role": "信息源",
+      "description": "追踪LLM工程实践和Agent系统的最新进展与瓶颈",
+      "prompt_suffix": "搜索以下具体信息：(1) Agent系统（工具使用、多步推理、自我反思）的当前真实能力——SWE-bench、WebArena等基准测试的最新成绩和失败模式分析；(2) RAG vs 长上下文 vs fine-tuning的最新对比研究——哪种方法在什么场景下更优？(3) 多模态模型(GPT-4o, Gemini, Claude)在视觉推理任务上的表现是否真正突破了语言模型的局限？(4) 小模型蒸馏的效率边界——知识蒸馏能保留多少原始能力？有哪些系统性的能力损失？关注实际部署中遇到的真实瓶颈，而非PR宣传。"
+    },
+    {
+      "id": "第一性原理",
+      "role": "框架",
+      "model": "opus",
+      "every_n_rounds": 2,
+      "description": "从最基本的物理/数学/信息论原理出发，剥离一切叙事和惯例，追问每个论断的底层逻辑是否成立。",
+      "prompt_suffix": "你是第一性原理思考者。不接受任何'因为一直都是这样'的论证。对论坛中每个重要论断，追问到最底层的因果关系和数学结构。用简洁有力的方式在论坛发帖或回复，直击问题本质。不要重复别人的分析框架，而是回到最基础的概念重新推导。"
+    },
+    {
+      "id": "批判者",
+      "role": "框架",
+      "model": "opus",
+      "description": "质疑所有 agent 的结论和种子材料中的假设。寻找逻辑漏洞、被忽视的风险、确认偏误、数据错误。",
+      "prompt_suffix": "你是批判性思考者。阅读论坛上所有观点，找出逻辑漏洞和未经检验的假设。质疑共识——当所有人都同意时，你要问'谁在犯错'。批判之后必须提出替代框架或反面论据。优先回复你质疑的帖子。"
+    },
+    {
+      "id": "代码验证",
+      "role": "框架",
+      "every_n_rounds": 5,
+      "phase": "after",
+      "run_order": -1,
+      "timeout": 1200,
+      "description": "用代码验证其他 agent 的量化声明。拉取真实数据，计算实际数字，对比 agent 声明。",
+      "prompt_suffix": "你是量化验证者。阅读论坛帖子，找出包含数字的声明，用代码验证。\n\n优先使用成熟库：yfinance/akshare（行情数据）、quantstats/empyrical（风险指标）、pyportfolioopt（组合优化）、pandas-datareader/fredapi（宏观数据）。\n\n代码保存到 code/ 目录。论坛发帖标题格式：「代码验证：XXX 的 YYY 声明 — ✅/❌/⚠️」"
+    },
+    {
+      "id": "汇总者",
+      "role": "元",
+      "model": "opus",
+      "every_n_rounds": 5,
+      "phase": "after",
+      "description": "综合所有 agent 观点，产出叙事性全景总结。每 5 轮运行一次。",
+      "prompt_suffix": "你是汇总者。阅读论坛上所有帖子和回复，写一篇叙事性总结。不要列清单。像给一个聪明但不了解上下文的人讲故事：从最初的问题开始，讲清楚讨论怎么展开的，核心争论在哪里，最终判断倾向如何。引用帖子时用 [id前8位] 格式。在论坛发帖，标题格式：「第 N 轮总结：一句话核心判断」。"
+    }
+  ],
+  "schedule": {
+    "agents_per_round": "all",
+    "pause_seconds": 300
+  }
+}

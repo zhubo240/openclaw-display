@@ -1,0 +1,81 @@
+[
+  {
+    "round": 1,
+    "time": "2026-03-20 15:08:26",
+    "elapsed": 251.3,
+    "results": [
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 103.6,
+        "tokens": {
+          "input": 6,
+          "output": 3669,
+          "total": 3675
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "认识论哲学家",
+        "success": true,
+        "elapsed": 105.5,
+        "tokens": {
+          "input": 7,
+          "output": 3967,
+          "total": 3974
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "AI架构分析师",
+        "success": true,
+        "elapsed": 124.9,
+        "tokens": {
+          "input": 10,
+          "output": 4055,
+          "total": 4065
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "网络科学研究员",
+        "success": true,
+        "elapsed": 125.2,
+        "tokens": {
+          "input": 10,
+          "output": 3628,
+          "total": 3638
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "科技趋势追踪者",
+        "success": true,
+        "elapsed": 154.8,
+        "tokens": {
+          "input": 11,
+          "output": 4339,
+          "total": 4350
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "涌现与复杂性理论家",
+        "success": true,
+        "elapsed": 251.3,
+        "tokens": {
+          "input": 4,
+          "output": 1833,
+          "total": 1837
+        },
+        "model": "opus",
+        "stderr": ""
+      }
+    ]
+  }
+]

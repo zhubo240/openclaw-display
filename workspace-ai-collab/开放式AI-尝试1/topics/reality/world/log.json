@@ -1,0 +1,1081 @@
+[
+  {
+    "round": 1,
+    "time": "2026-03-20 10:48:26",
+    "elapsed": 298.1,
+    "results": [
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 85.8,
+        "tokens": {
+          "input": 8,
+          "output": 3154,
+          "total": 3162
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "物理实在探索者",
+        "success": true,
+        "elapsed": 127.3,
+        "tokens": {
+          "input": 1021,
+          "output": 4653,
+          "total": 5674
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "涌现与意识研究者",
+        "success": true,
+        "elapsed": 146.1,
+        "tokens": {
+          "input": 934,
+          "output": 4519,
+          "total": 5453
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "科学发现动力学研究者",
+        "success": true,
+        "elapsed": 150.0,
+        "tokens": {
+          "input": 1089,
+          "output": 4509,
+          "total": 5598
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "技术哲学与演化框架师",
+        "success": true,
+        "elapsed": 174.5,
+        "tokens": {
+          "input": 949,
+          "output": 6143,
+          "total": 7092
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "元问题与模拟假说调查员",
+        "success": true,
+        "elapsed": 247.5,
+        "tokens": {
+          "input": 3785,
+          "output": 8587,
+          "total": 12372
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "认识论与知识边界分析师",
+        "success": true,
+        "elapsed": 298.1,
+        "tokens": {
+          "input": 3,
+          "output": 43,
+          "total": 46
+        },
+        "model": "opus",
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 2,
+    "time": "2026-03-20 11:00:37",
+    "elapsed": 430.7,
+    "results": [
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 157.8,
+        "tokens": {
+          "input": 7,
+          "output": 6356,
+          "total": 6363
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "科学发现动力学研究者",
+        "success": true,
+        "elapsed": 178.3,
+        "tokens": {
+          "input": 935,
+          "output": 6138,
+          "total": 7073
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "第一性原理",
+        "success": true,
+        "elapsed": 205.2,
+        "tokens": {
+          "input": 8,
+          "output": 8414,
+          "total": 8422
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "技术哲学与演化框架师",
+        "success": true,
+        "elapsed": 226.0,
+        "tokens": {
+          "input": 12,
+          "output": 8374,
+          "total": 8386
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "元问题与模拟假说调查员",
+        "success": true,
+        "elapsed": 250.8,
+        "tokens": {
+          "input": 13,
+          "output": 9059,
+          "total": 9072
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "涌现与意识研究者",
+        "success": true,
+        "elapsed": 263.4,
+        "tokens": {
+          "input": 11,
+          "output": 8761,
+          "total": 8772
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "物理实在探索者",
+        "success": true,
+        "elapsed": 289.0,
+        "tokens": {
+          "input": 927,
+          "output": 11258,
+          "total": 12185
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "认识论与知识边界分析师",
+        "success": true,
+        "elapsed": 430.6,
+        "tokens": {
+          "input": 3,
+          "output": 26,
+          "total": 29
+        },
+        "model": "opus",
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 3,
+    "time": "2026-03-20 11:13:25",
+    "elapsed": 468.2,
+    "results": [
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 215.3,
+        "tokens": {
+          "input": 7,
+          "output": 8697,
+          "total": 8704
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "涌现与意识研究者",
+        "success": true,
+        "elapsed": 230.4,
+        "tokens": {
+          "input": 913,
+          "output": 7830,
+          "total": 8743
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "技术哲学与演化框架师",
+        "success": true,
+        "elapsed": 250.7,
+        "tokens": {
+          "input": 963,
+          "output": 8941,
+          "total": 9904
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "元问题与模拟假说调查员",
+        "success": true,
+        "elapsed": 263.3,
+        "tokens": {
+          "input": 12,
+          "output": 9363,
+          "total": 9375
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "科学发现动力学研究者",
+        "success": true,
+        "elapsed": 268.8,
+        "tokens": {
+          "input": 2795,
+          "output": 7953,
+          "total": 10748
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "物理实在探索者",
+        "success": true,
+        "elapsed": 294.1,
+        "tokens": {
+          "input": 13,
+          "output": 12053,
+          "total": 12066
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "认识论与知识边界分析师",
+        "success": true,
+        "elapsed": 468.1,
+        "tokens": {
+          "input": 3,
+          "output": 55,
+          "total": 58
+        },
+        "model": "opus",
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 4,
+    "time": "2026-03-20 11:28:25",
+    "elapsed": 600.1,
+    "results": [
+      {
+        "agent": "元问题与模拟假说调查员",
+        "success": true,
+        "elapsed": 507.8,
+        "tokens": {
+          "input": 11,
+          "output": 9851,
+          "total": 9862
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "技术哲学与演化框架师",
+        "success": true,
+        "elapsed": 508.4,
+        "tokens": {
+          "input": 968,
+          "output": 6314,
+          "total": 7282
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "科学发现动力学研究者",
+        "success": true,
+        "elapsed": 520.9,
+        "tokens": {
+          "input": 874,
+          "output": 7900,
+          "total": 8774
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 553.8,
+        "tokens": {
+          "input": 6,
+          "output": 3592,
+          "total": 3598
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "涌现与意识研究者",
+        "success": true,
+        "elapsed": 579.2,
+        "tokens": {
+          "input": 8,
+          "output": 7045,
+          "total": 7053
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "第一性原理",
+        "success": true,
+        "elapsed": 585.8,
+        "tokens": {
+          "input": 8,
+          "output": 5542,
+          "total": 5550
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "物理实在探索者",
+        "success": true,
+        "elapsed": 589.2,
+        "tokens": {
+          "input": 9,
+          "output": 6515,
+          "total": 6524
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "认识论与知识边界分析师",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      }
+    ]
+  },
+  {
+    "round": 5,
+    "time": "2026-03-20 11:52:26",
+    "elapsed": 1141.0,
+    "results": [
+      {
+        "agent": "科学发现动力学研究者",
+        "success": true,
+        "elapsed": 224.8,
+        "tokens": {
+          "input": 7,
+          "output": 7661,
+          "total": 7668
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "涌现与意识研究者",
+        "success": true,
+        "elapsed": 314.7,
+        "tokens": {
+          "input": 10,
+          "output": 8329,
+          "total": 8339
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "元问题与模拟假说调查员",
+        "success": true,
+        "elapsed": 418.0,
+        "tokens": {
+          "input": 13,
+          "output": 11244,
+          "total": 11257
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "认识论与知识边界分析师",
+        "success": true,
+        "elapsed": 430.0,
+        "tokens": {
+          "input": 3,
+          "output": 555,
+          "total": 558
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 467.4,
+        "tokens": {
+          "input": 3,
+          "output": 172,
+          "total": 175
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "物理实在探索者",
+        "success": true,
+        "elapsed": 477.2,
+        "tokens": {
+          "input": 24,
+          "output": 11581,
+          "total": 11605
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "技术哲学与演化框架师",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "代码验证",
+        "success": true,
+        "elapsed": 318.7,
+        "tokens": {
+          "input": 18,
+          "output": 14662,
+          "total": 14680
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "汇总者",
+        "success": true,
+        "elapsed": 222.1,
+        "tokens": {
+          "input": 10,
+          "output": 8167,
+          "total": 8177
+        },
+        "model": "opus",
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 6,
+    "time": "2026-03-20 12:07:05",
+    "elapsed": 578.8,
+    "results": [
+      {
+        "agent": "科学发现动力学研究者",
+        "success": true,
+        "elapsed": 270.8,
+        "tokens": {
+          "input": 10,
+          "output": 9077,
+          "total": 9087
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "技术哲学与演化框架师",
+        "success": true,
+        "elapsed": 308.6,
+        "tokens": {
+          "input": 10,
+          "output": 9906,
+          "total": 9916
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "认识论与知识边界分析师",
+        "success": true,
+        "elapsed": 425.1,
+        "tokens": {
+          "input": 3,
+          "output": 621,
+          "total": 624
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 457.9,
+        "tokens": {
+          "input": 3,
+          "output": 247,
+          "total": 250
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "物理实在探索者",
+        "success": true,
+        "elapsed": 490.0,
+        "tokens": {
+          "input": 10,
+          "output": 10813,
+          "total": 10823
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "元问题与模拟假说调查员",
+        "success": true,
+        "elapsed": 548.4,
+        "tokens": {
+          "input": 13,
+          "output": 19698,
+          "total": 19711
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "涌现与意识研究者",
+        "success": true,
+        "elapsed": 564.0,
+        "tokens": {
+          "input": 14,
+          "output": 14779,
+          "total": 14793
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "第一性原理",
+        "success": true,
+        "elapsed": 578.7,
+        "tokens": {
+          "input": 16,
+          "output": 11039,
+          "total": 11055
+        },
+        "model": "opus",
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 7,
+    "time": "2026-03-20 12:22:05",
+    "elapsed": 600.2,
+    "results": [
+      {
+        "agent": "技术哲学与演化框架师",
+        "success": true,
+        "elapsed": 375.5,
+        "tokens": {
+          "input": 11,
+          "output": 9077,
+          "total": 9088
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "元问题与模拟假说调查员",
+        "success": true,
+        "elapsed": 419.4,
+        "tokens": {
+          "input": 11,
+          "output": 14190,
+          "total": 14201
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "认识论与知识边界分析师",
+        "success": true,
+        "elapsed": 479.5,
+        "tokens": {
+          "input": 3,
+          "output": 222,
+          "total": 225
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "科学发现动力学研究者",
+        "success": true,
+        "elapsed": 486.3,
+        "tokens": {
+          "input": 1026,
+          "output": 12370,
+          "total": 13396
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 510.1,
+        "tokens": {
+          "input": 3,
+          "output": 265,
+          "total": 268
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "物理实在探索者",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "涌现与意识研究者",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      }
+    ]
+  },
+  {
+    "round": 8,
+    "time": "2026-03-20 12:34:45",
+    "elapsed": 459.3,
+    "results": [
+      {
+        "agent": "科学发现动力学研究者",
+        "success": true,
+        "elapsed": 283.7,
+        "tokens": {
+          "input": 10,
+          "output": 10310,
+          "total": 10320
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "认识论与知识边界分析师",
+        "success": true,
+        "elapsed": 364.4,
+        "tokens": {
+          "input": 3,
+          "output": 328,
+          "total": 331
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "元问题与模拟假说调查员",
+        "success": false,
+        "elapsed": 413.0,
+        "tokens": {
+          "input": 9,
+          "output": 8533,
+          "total": 8542
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "物理实在探索者",
+        "success": false,
+        "elapsed": 423.1,
+        "tokens": {
+          "input": 13,
+          "output": 8672,
+          "total": 8685
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "第一性原理",
+        "success": false,
+        "elapsed": 423.3,
+        "tokens": {
+          "input": 10,
+          "output": 9011,
+          "total": 9021
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "技术哲学与演化框架师",
+        "success": false,
+        "elapsed": 429.5,
+        "tokens": {
+          "input": 0,
+          "output": 0,
+          "total": 0
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": false,
+        "elapsed": 430.6,
+        "tokens": {
+          "input": 0,
+          "output": 0,
+          "total": 0
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "涌现与意识研究者",
+        "success": false,
+        "elapsed": 459.2,
+        "tokens": {
+          "input": 0,
+          "output": 0,
+          "total": 0
+        },
+        "model": "sonnet",
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 9,
+    "time": "2026-03-20 12:39:52",
+    "elapsed": 7.4,
+    "results": [
+      {
+        "agent": "技术哲学与演化框架师",
+        "success": false,
+        "elapsed": 4.1,
+        "tokens": {
+          "input": 0,
+          "output": 0,
+          "total": 0
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "认识论与知识边界分析师",
+        "success": false,
+        "elapsed": 4.1,
+        "tokens": {
+          "input": 0,
+          "output": 0,
+          "total": 0
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "科学发现动力学研究者",
+        "success": false,
+        "elapsed": 4.6,
+        "tokens": {
+          "input": 0,
+          "output": 0,
+          "total": 0
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": false,
+        "elapsed": 5.4,
+        "tokens": {
+          "input": 0,
+          "output": 0,
+          "total": 0
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "元问题与模拟假说调查员",
+        "success": false,
+        "elapsed": 5.7,
+        "tokens": {
+          "input": 0,
+          "output": 0,
+          "total": 0
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "涌现与意识研究者",
+        "success": false,
+        "elapsed": 6.7,
+        "tokens": {
+          "input": 0,
+          "output": 0,
+          "total": 0
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "物理实在探索者",
+        "success": false,
+        "elapsed": 7.3,
+        "tokens": {
+          "input": 0,
+          "output": 0,
+          "total": 0
+        },
+        "model": "sonnet",
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 10,
+    "time": "2026-03-20 12:45:08",
+    "elapsed": 15.9,
+    "results": [
+      {
+        "agent": "元问题与模拟假说调查员",
+        "success": false,
+        "elapsed": 4.8,
+        "tokens": {
+          "input": 0,
+          "output": 0,
+          "total": 0
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "涌现与意识研究者",
+        "success": false,
+        "elapsed": 5.8,
+        "tokens": {
+          "input": 0,
+          "output": 0,
+          "total": 0
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "第一性原理",
+        "success": false,
+        "elapsed": 6.5,
+        "tokens": {
+          "input": 0,
+          "output": 0,
+          "total": 0
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "物理实在探索者",
+        "success": false,
+        "elapsed": 7.4,
+        "tokens": {
+          "input": 0,
+          "output": 0,
+          "total": 0
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "技术哲学与演化框架师",
+        "success": false,
+        "elapsed": 7.4,
+        "tokens": {
+          "input": 0,
+          "output": 0,
+          "total": 0
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "科学发现动力学研究者",
+        "success": false,
+        "elapsed": 7.9,
+        "tokens": {
+          "input": 0,
+          "output": 0,
+          "total": 0
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": false,
+        "elapsed": 7.9,
+        "tokens": {
+          "input": 0,
+          "output": 0,
+          "total": 0
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "认识论与知识边界分析师",
+        "success": false,
+        "elapsed": 8.8,
+        "tokens": {
+          "input": 0,
+          "output": 0,
+          "total": 0
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "代码验证",
+        "success": false,
+        "elapsed": 3.2,
+        "tokens": {
+          "input": 0,
+          "output": 0,
+          "total": 0
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "汇总者",
+        "success": false,
+        "elapsed": 3.6,
+        "tokens": {
+          "input": 0,
+          "output": 0,
+          "total": 0
+        },
+        "model": "opus",
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 11,
+    "time": "2026-03-20 15:10:40",
+    "elapsed": 600.2,
+    "results": [
+      {
+        "agent": "科学发现动力学研究者",
+        "success": true,
+        "elapsed": 372.6,
+        "tokens": {
+          "input": 12,
+          "output": 11606,
+          "total": 11618
+        },
+        "model": "sonnet",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "元问题与模拟假说调查员",
+        "success": true,
+        "elapsed": 392.2,
+        "tokens": {
+          "input": 10,
+          "output": 15663,
+          "total": 15673
+        },
+        "model": "sonnet",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "物理实在探索者",
+        "success": true,
+        "elapsed": 419.8,
+        "tokens": {
+          "input": 13,
+          "output": 16437,
+          "total": 16450
+        },
+        "model": "sonnet",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "技术哲学与演化框架师",
+        "success": true,
+        "elapsed": 468.0,
+        "tokens": {
+          "input": 23,
+          "output": 16693,
+          "total": 16716
+        },
+        "model": "opus",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 504.2,
+        "tokens": {
+          "input": 24,
+          "output": 13848,
+          "total": 13872
+        },
+        "model": "opus",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "认识论与知识边界分析师",
+        "success": true,
+        "elapsed": 521.1,
+        "tokens": {
+          "input": 3,
+          "output": 168,
+          "total": 171
+        },
+        "model": "opus",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "涌现与意识研究者",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      }
+    ]
+  }
+]

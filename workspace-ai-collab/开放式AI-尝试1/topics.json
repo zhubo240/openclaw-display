@@ -60,5 +60,29 @@
     "seed_type": "md",
     "seed_file": "anthropic-deep-dive.md",
     "created": "2026-03-20"
+  },
+  {
+    "id": "llm-intelligence",
+    "name": "大模型智能的本质、边界与未来方向",
+    "description": "探讨大语言模型展现的'智能'行为的本质机制——从next token prediction到涌现能力，从统计学习到因果推理，从已知局限到理论上限。结合认知科学、语言学、哲学、信息论等跨学科视角，评估当前LLM的真实能力边界和未来演进路径。",
+    "seed_type": "md",
+    "seed_file": "llm-intelligence.md",
+    "created": "2026-03-20"
+  },
+  {
+    "id": "reality",
+    "name": "世界、认识、发现与科技的本质",
+    "description": "从物理实在、复杂性涌现、认识论边界、科学发现机制到技术演化，探讨人类理解世界的根本问题：实在的本质是什么？认识的极限在哪里？发现是如何发生的？技术将把我们带向何方？",
+    "seed_type": "md",
+    "seed_file": "nature-of-reality.md",
+    "created": "2026-03-20"
+  },
+  {
+    "id": "gemin-对话",
+    "name": "世界的网络本质、认识论与AI智能的拓扑演化",
+    "description": "从网络拓扑出发探讨世界本质、认识论、隐空间推理、碳基/硅基共演",
+    "seed_type": "conversation",
+    "seed_file": "Gemini对话",
+    "created": "2026-03-20"
   }
 ]

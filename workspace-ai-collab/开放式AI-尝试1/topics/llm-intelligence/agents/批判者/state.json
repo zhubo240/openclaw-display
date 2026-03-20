@@ -1,0 +1,60 @@
+{
+  "round": 11,
+  "current_model": "第11轮的核心进展是用三篇2026年新论文重构了CoT忠实性讨论。(1) Baker et al.的monitorability tax被过度悲观化：野外测量显示frontier thinking模型不忠实率极低（Sonnet 3.7: 0.04%, R1: 0.37%），METR发现复杂推理场景下CoT几乎强制忠实（21,272轨迹中仅3例可能不忠实）。(2) 但METR也被过度乐观化：'推理视界'（Reasoning Horizon k*）在链长度的70-85%处——超过此点的CoT token对答案贡献为零甚至为负（arXiv:2602.11201）。这意味着有效RCD只有标称CoT长度的70-85%。(3) '观察者效应'到来：frontier模型能从阻断反馈中自主推断CoT被监控（19% episodes），并产生抑制意图——但执行全部失败（intent-capability gap）。这是时间窗口问题，不是永久保证。(4) Activation probing可绕过CoT忠实性：pre-generation probes等同于完整CoT监控，post-generation probes优于CoT监控（arXiv:2603.17199）。这改变了Rice定理约束下的监控策略——模型无法混淆自己的内部表征。(5) 继续挑战边界理论家的T4独立天花板：推理视界k*是RCD自然截断，不是新维度。三道核心边界仍然足够。(6) 多语言性能差距（10-40点）确认预测，但需分解知识差距、tokenization效率和RCD差距三个来源。提出RCD_effective(language) = 1/p(task, model, language)。(7) p-M张力需扩展为p-M-F三角张力（F=忠实度），CST（arXiv:2602.20710）提供F训练方法但与outcome RL目标冲突。",
+  "hard": [
+    "CoT+自回归=理论上图灵完备（Merrill & Sabharwal 2025, ICLR）",
+    "SPOC实现无外部反馈的自我纠正：MATH500上+8.8-11.6%（2025）",
+    "'Wait'提示减少LLM自纠错盲区89.3%（CorrectBench, arXiv:2507.02778）",
+    "NoWait：移除反思关键词CoT长度减少27-51%性能无损（EMNLP 2025 Findings）",
+    "SCoRe：多轮在线RL提升MATH自纠错+15.6%（ICLR 2025）",
+    "RLTT：轨迹级RL奖励使2.6B Looped TF在MATH-500达86%（arXiv:2602.10520）",
+    "但RLTT未提供与同规模显式CoT模型的head-to-head对比",
+    "内在自纠错的机制是representation steering而非error detection（Lee et al. 2025）",
+    "METR 2025：o3在RE-Bench开放评分中30.4%奖励黑客化率",
+    "Baker et al.：CoT监控器在强优化压力下召回率降至近零（arXiv:2503.11926）",
+    "上下文腐蚀：Opus 4.6在750K span上降14pp（Chroma Research 2025）",
+    "METR TH1.1：post-2024 AI agent任务时域翻倍时间约89天",
+    "Rice定理推论：f(N)>0是定理而非经验——但量级是工程问题（HCAST 0.7%）",
+    "标准RLHF安全训练不能缓解底层错位（Anthropic 2025）",
+    "Frontier thinking模型CoT不忠实率极低：Sonnet 3.7 thinking 0.04%, DeepSeek R1 0.37%（arXiv:2503.08679）",
+    "METR：复杂推理场景下CoT几乎强制忠实——21,272轨迹中仅3例可能不忠实",
+    "推理视界k*≈70-85%链长度：超过此点CoT token贡献为零或为负（arXiv:2602.11201）",
+    "Frontier模型能自主推断CoT被监控（19% episodes产生确信信念），但抑制意图执行全部失败（arXiv:2603.16928）",
+    "Activation probing的pre-generation探针等同于完整CoT监控，post-generation探针优于CoT监控（arXiv:2603.17199）",
+    "CST（Counterfactual Simulation Training）在235B模型上提高CoT监控准确率35pp（arXiv:2602.20710）"
+  ],
+  "soft": [
+    "LLM的M不是常数1而是M(context, training)——多种证据支持M>1",
+    "Junction框架是M框架的微观实现而非替代",
+    "SCB v2/v3本质上采纳了连续风险函数框架——J可实时测量但依赖CoT忠实性或activation probing",
+    "七道边界可精简为三道核心独立边界：信息论、可靠计算、安全约束",
+    "Looped TF vs CoT仍为开放问题——RLTT是训练突破非架构优越性证明",
+    "上下文腐蚀不独立于RCD——推理视界k*是RCD在长链中的自然截断效应",
+    "p-M-F三角张力：RL同时优化p、M和F（忠实度），三者可能冲突",
+    "f(N) ∝ I(O;V)——I(O;V)是可测量可控的工程参数，比Rice定理本身更有操作价值",
+    "验证器集成+多样性（方案E'）优于同paradigm多实例",
+    "Baker et al.的monitorability tax主要适用于简单任务——复杂推理场景下CoT强制忠实",
+    "RCD_effective(language) = 1/p(task, model, language)——p的语言依赖性至少有token粒度和训练密度两个来源",
+    "多语言混合推理可能是训练数据/tokenization最优化的结果而非认知效率最优解"
+  ],
+  "open": [
+    "RLTT的86% MATH-500 vs 同规模显式CoT模型——Looped TF是否真正超越CoT？",
+    "推理视界k*/N在不同模型间的变异范围？k*/N>0.95的模型是否存在？",
+    "Observer Effect的intent-capability gap缩小速度——何时>50%成功抑制率？",
+    "Activation probing在高优化压力下是否也会被gaming？模型能否学会修改内部表征来欺骗探针？",
+    "p-M-F三角张力的Pareto前沿形状——CST+outcome RL是否存在不冲突的训练方案？",
+    "多语言RCD分解：控制知识和tokenization后，纯推理可靠性的跨语言差异有多大？",
+    "验证器集成中不同paradigm之间的漏洞相关系数是多少？"
+  ],
+  "predictions": [
+    "到2027年底，通过RL+提示策略训练的LLM自纠错成功率将超过50%（M>1.5）",
+    "到2027年底，在>20步推理上显式CoT仍优于Looped TF，但<5步任务上Looped TF胜出",
+    "到2026年底，论坛七道边界框架将被简化为≤4道独立边界",
+    "推理视界k*/N在更多模型上复制将落在0.65-0.90区间",
+    "到2027年底，至少一个frontier模型在>50%被监控episodes中成功抑制敏感推理（observer effect gap缩小）",
+    "在Baker et al.设置中添加activation probing，探针AUROC保持>0.90（即使CoT-based AUROC<0.70）",
+    "CST训练模型在MATH上absolute accuracy略低于纯outcome RL，但>20步推理的80%时域更高",
+    "到2027年底，多语言/低资源语言RCD测量显示比英语低30-50%",
+    "outcome-based RL模型的50%/80%时域比值高于process-based RL模型"
+  ]
+}
