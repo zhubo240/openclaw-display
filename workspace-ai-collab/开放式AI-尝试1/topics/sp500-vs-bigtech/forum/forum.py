@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """论坛系统 — agent 间异步交流的公共空间"""
 
+import fcntl
 import json
 import sys
 import time
@@ -9,6 +10,7 @@ from pathlib import Path
 
 FORUM_DIR = Path(__file__).parent
 POSTS_FILE = FORUM_DIR / "posts.json"
+LOCK_FILE = FORUM_DIR / ".posts.lock"
 READ_MARKS_FILE = FORUM_DIR / "read_marks.json"
 
 
@@ -20,6 +22,20 @@ def load_posts():
 
 def save_posts(posts):
     POSTS_FILE.write_text(json.dumps(posts, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def locked_update(fn):
+    """读-改-写 posts.json，全程持有文件锁，防止并发损坏"""
+    LOCK_FILE.touch(exist_ok=True)
+    with open(LOCK_FILE, 'r') as lf:
+        fcntl.flock(lf, fcntl.LOCK_EX)
+        try:
+            posts = load_posts()
+            result = fn(posts)
+            save_posts(posts)
+            return result
+        finally:
+            fcntl.flock(lf, fcntl.LOCK_UN)
 
 
 def load_read_marks():
@@ -95,7 +111,6 @@ def cmd_post(args):
     title = args[1]
     content = args[2]
 
-    posts = load_posts()
     post = {
         "id": str(uuid.uuid4()),
         "author": author,
@@ -104,8 +119,9 @@ def cmd_post(args):
         "time": time.strftime("%Y-%m-%d %H:%M:%S"),
         "parent_id": None,
     }
-    posts.append(post)
-    save_posts(posts)
+    def do(posts):
+        posts.append(post)
+    locked_update(do)
     print(f"已发帖: [{post['id'][:8]}] {title}")
 
 
@@ -115,34 +131,34 @@ def cmd_reply(args):
     post_id = args[1]
     content = args[2]
 
-    posts = load_posts()
+    reply_obj = {"id": str(uuid.uuid4())}
 
-    # 找目标帖子
-    target = None
-    for p in posts:
-        if p["id"].startswith(post_id):
-            target = p
-            break
+    def do(posts):
+        target = None
+        for p in posts:
+            if p["id"].startswith(post_id):
+                target = p
+                break
+        if not target:
+            reply_obj["error"] = True
+            return
+        parent_id = target.get("parent_id") or target["id"]
+        reply = {
+            "id": reply_obj["id"],
+            "author": author,
+            "content": content,
+            "time": time.strftime("%Y-%m-%d %H:%M:%S"),
+            "parent_id": parent_id,
+            "reply_to": target["id"],
+            "title": None,
+        }
+        posts.append(reply)
 
-    if not target:
+    locked_update(do)
+    if reply_obj.get("error"):
         print(f"帖子 {post_id} 不存在")
-        return
-
-    # 如果回复的是回复，parent_id 指向主帖
-    parent_id = target.get("parent_id") or target["id"]
-
-    reply = {
-        "id": str(uuid.uuid4()),
-        "author": author,
-        "content": content,
-        "time": time.strftime("%Y-%m-%d %H:%M:%S"),
-        "parent_id": parent_id,
-        "reply_to": target["id"],
-        "title": None,
-    }
-    posts.append(reply)
-    save_posts(posts)
-    print(f"已回复: [{reply['id'][:8]}]")
+    else:
+        print(f"已回复: [{reply_obj['id'][:8]}]")
 
 
 def cmd_my_activity(args):

@@ -495,6 +495,9 @@ let allPosts = [];
 let currentFilter = 'all';
 let currentView = 'feed';
 let agents = [];
+let roundLog = [];     // world/log.json
+let maxRound = 0;
+let roundRange = [0, 999]; // [min, max] inclusive, 0=seed
 
 const ICONS = ['💹','🪙','🏗️','🧬','🚀','📊','🌍','🔬','⚡','🎯','📝','🔍','💡'];
 
@@ -568,6 +571,7 @@ async function selectTopic(id) {
   currentView = 'feed';
   currentFilter = 'all';
   currentPostId = null;
+  roundRange = [0, 999];
   const t = topics.find(x => x.id === id);
   if (!t) return;
   document.getElementById('topbar-title').textContent = t.name;
@@ -596,9 +600,19 @@ async function loadTopicData(t) {
     el.textContent = '轮次 ' + (s.round || 0);
     el.style.display = '';
     t.round = s.round;
+    maxRound = s.round || 0;
   } catch(e) {
     document.getElementById('topbar-round').style.display = 'none';
+    maxRound = 0;
   }
+
+  // Load round log and assign round numbers to posts
+  try {
+    const r = await fetch(base + '/world/log.json?' + Date.now());
+    roundLog = await r.json();
+  } catch(e) { roundLog = []; }
+  assignRounds();
+  roundRange = [0, maxRound];
 
   const top = allPosts.filter(p => !p.parent_id);
   const replies = allPosts.filter(p => p.parent_id).length;
@@ -609,13 +623,50 @@ async function loadTopicData(t) {
 
 let currentSubTab = 'posts'; // 'posts' | 'replies'
 
+function assignRounds() {
+  // Build time boundaries from log
+  const boundaries = []; // [{round, start, end}]
+  for (let i = 0; i < roundLog.length; i++) {
+    const entry = roundLog[i];
+    const start = entry.time;
+    const end = (i + 1 < roundLog.length) ? roundLog[i + 1].time : '9999';
+    boundaries.push({ round: entry.round, start, end });
+  }
+  allPosts.forEach(p => {
+    if (p.is_seed) { p._round = 0; return; }
+    p._round = 0;
+    for (const b of boundaries) {
+      if (p.time >= b.start && p.time < b.end) { p._round = b.round; break; }
+      if (p.time >= b.start) p._round = b.round; // last round
+    }
+  });
+}
+
 function renderControls() {
   const bar = document.getElementById('controls-bar');
   bar.style.display = 'flex';
-  let h = '<button class="active" onclick="filterBy(\'all\')">全部</button>';
-  h += '<button onclick="filterBy(\'原始材料\')">原始材料</button>';
-  for (const a of agents) h += '<button onclick="filterBy(\'' + a + '\')">' + esc(a) + '</button>';
+  let h = '<button class="' + (currentFilter === 'all' ? 'active' : '') + '" onclick="filterBy(\'all\')">全部</button>';
+  h += '<button class="' + (currentFilter === '原始材料' ? 'active' : '') + '" onclick="filterBy(\'原始材料\')">原始材料</button>';
+  for (const a of agents) {
+    h += '<button class="' + (currentFilter === a ? 'active' : '') + '" onclick="filterBy(\'' + esc(a) + '\')">' + esc(a) + '</button>';
+  }
+  // Round range selector
+  if (maxRound > 0) {
+    h += '<span style="display:inline-flex;align-items:center;gap:6px;margin-left:auto;font-size:11px;color:var(--text-secondary);white-space:nowrap">';
+    h += '轮次 <select id="round-min" onchange="updateRoundRange()" style="padding:2px 6px;border:1px solid var(--border);border-radius:6px;font-size:11px;background:var(--card);color:var(--text)">';
+    for (let i = 0; i <= maxRound; i++) h += '<option value="' + i + '"' + (roundRange[0] === i ? ' selected' : '') + '>' + (i === 0 ? '种子' : 'R' + i) + '</option>';
+    h += '</select> — <select id="round-max" onchange="updateRoundRange()" style="padding:2px 6px;border:1px solid var(--border);border-radius:6px;font-size:11px;background:var(--card);color:var(--text)">';
+    for (let i = 0; i <= maxRound; i++) h += '<option value="' + i + '"' + (roundRange[1] === i ? ' selected' : '') + '>' + (i === 0 ? '种子' : 'R' + i) + '</option>';
+    h += '</select></span>';
+  }
   bar.innerHTML = h;
+}
+
+function updateRoundRange() {
+  const min = parseInt(document.getElementById('round-min').value);
+  const max = parseInt(document.getElementById('round-max').value);
+  roundRange = [Math.min(min, max), Math.max(min, max)];
+  renderFeed();
 }
 
 function getReplies(pid) {
@@ -625,11 +676,14 @@ function getReplies(pid) {
 function renderFeed() {
   const c = document.getElementById('main-content');
 
+  // Round filter helper
+  const inRound = p => (p._round || 0) >= roundRange[0] && (p._round || 0) <= roundRange[1];
+
   // 筛选特定 agent 时，显示 sub-tabs（发帖/回复）
   if (currentFilter !== 'all') {
-    const agentPosts = allPosts.filter(p => !p.parent_id && p.author === currentFilter)
+    const agentPosts = allPosts.filter(p => !p.parent_id && p.author === currentFilter && inRound(p))
       .sort((a, b) => b.time.localeCompare(a.time));
-    const agentReplies = allPosts.filter(p => p.parent_id && p.author === currentFilter)
+    const agentReplies = allPosts.filter(p => p.parent_id && p.author === currentFilter && inRound(p))
       .sort((a, b) => b.time.localeCompare(a.time));
 
     let html = '<div class="sub-tabs">';
@@ -666,7 +720,7 @@ function renderFeed() {
   }
 
   // "全部"模式 — 混合显示所有帖子
-  let top = allPosts.filter(p => !p.parent_id).sort((a, b) => {
+  let top = allPosts.filter(p => !p.parent_id && inRound(p)).sort((a, b) => {
     if (a.is_seed && !b.is_seed) return -1;
     if (!a.is_seed && b.is_seed) return 1;
     return b.time.localeCompare(a.time);
@@ -684,7 +738,7 @@ function renderFeedItem(p) {
     + '<div class="feed-meta">'
     + '<span class="author-tag agent-' + p.author + '">' + esc(p.author) + '</span>'
     + '<span>' + p.time + '</span>'
-    + (p.is_seed ? '<span style="color:var(--accent);font-weight:600">第 0 轮</span>' : '')
+    + '<span style="color:var(--accent);font-weight:600;font-size:10px">R' + (p._round || 0) + '</span>'
     + '</div>'
     + '<div class="feed-title">' + esc(p.title) + '</div>'
     + '<div class="feed-preview">' + esc(preview) + '</div>'
@@ -790,9 +844,7 @@ function filterBy(author) {
   currentSubTab = 'posts';
   currentView = 'feed';
   currentPostId = null;
-  document.querySelectorAll('.controls button').forEach(b =>
-    b.classList.toggle('active', b.textContent === (author === 'all' ? '全部' : author))
-  );
+  renderControls();
   renderFeed();
   saveState();
 }
