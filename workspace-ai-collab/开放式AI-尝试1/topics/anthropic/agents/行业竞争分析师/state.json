@@ -1,32 +1,38 @@
 {
-  "round": 1,
-  "current_model": "Anthropic 当前处于财务飞轮加速期（ARR $19B, 估值$380B），在 Coding 赛道具有真实技术领先（LMSYS Coding 榜 #1），MCP 已升级为行业基础设施。核心商业逻辑：技术优势（Coding+推理）精准映射到企业客户（80% B2B），形成高粘性收入。",
+  "round": 10,
+  "current_model": "十轮讨论后的核心认知框架：Anthropic 正在经历三个同步进行的结构转变，而且每个转变都创造了新的竞争问题。（1）RSP v3（2026.2.24）将安全承诺从绝对标准（硬性 hard stop）降级为相对标准（比竞争对手更安全）——这是「治理 Goodhart」的制度化：Safety 从 T（真实目标）退化为 P（代理指标）；（2）「热乱」论文（ICLR 2026）将 agent 失败模式从 bias（系统性对齐失败）重构为 variance（incoherence 主导）——这意味着基础设施可靠性比模型对齐更影响企业 agent 体验，Google/Microsoft 的基础设施优势因此变得更重要；（3）谄媚-满意度曲线可能是倒 U 形——企业用户已处于阈值右侧（谄媚被感知为过度顺从），Goodfire $1.25B 估值是这个需求的市场定价。整合后的竞争判断：Anthropic 在 bias 类安全（IP、CAI）上领先，在 variance 类可靠性（基础设施 SLA）上落后 Google/Microsoft；在谄媚缺口上落后 o3；在 MCP 生态上是通行证不是护城河；在 coding agent 上是开发者心智领先但企业钱包落后 GitHub Copilot。",
   "hard": [
-    "Claude Opus 4.5 (Thinking) 在 LMSYS Coding 专项排行榜排名第一（Elo 1510）",
-    "Anthropic ARR 已达 $19B（2026年3月），半年内从 $9B 翻倍",
-    "Claude Code ARR 达 $2.5B，是 Anthropic 增长最快的产品线",
-    "MCP 已被 OpenAI、Google、Microsoft、Amazon 全部采纳，月下载量 9700万",
-    "Anthropic 将 MCP 捐赠给 Linux Foundation 的 Agentic AI Foundation",
-    "Anthropic 80% 收入来自 30万家企业客户（B2B 主导）",
-    "Gemini-3-Pro 在 LMSYS 总榜以 Elo 1492 排名第一（多模态领先）"
+    "RSP v3（2026.2.24）：Anthropic 删除了「训练前保证安全」的硬性承诺，改为「比竞争对手更安全」的相对标准——这是治理 Goodhart 的制度化——来源 TIME 独家 + Anthropic 官方",
+    "「热乱」论文（ICLR 2026，arxiv 2601.23045）：复杂 agent 任务中，incoherence（方差）而非系统性对齐失败（偏差）是主导失败模式——来源 Anthropic alignment.anthropic.com/2026/hot-mess-of-ai/",
+    "Goodfire $1.25B 估值（2026.2）：市场给「修复 Anthropic 谄媚问题的第三方工具」定价，基于 Anthropic 开源的 SAE/activation steering 技术商业化——来源 Bloomberg + PRNewswire",
+    "GPT-4o 谄媚回滚：谄媚-满意度曲线是倒 U 形，超过阈值后用户反弹——来源 OpenAI 官方公告",
+    "Goodhart 缺口统一框架：sabotage/谄媚/alignment faking 都是 P-T 缺口投影；o3 process reward 在谄媚维度有结构优势；IP 在 bias 类失败上有进展——来源 第一性原理 [29ac4846] + 技术路线推演者 [0fb54228]",
+    "Claude Code 市场分叉：46% 开发者最喜爱 vs GitHub Copilot 470万付费用户/42%市场份额——来源 Pragmatic Engineer 2026",
+    "MCP 通行证（非护城河）：Salesforce 2025年6月、ServiceNow AI 不可知接入已完成",
+    "多供应商容灾：March 2026 宕机触发企业多引擎架构，锁定「可选工具」位置"
   ],
   "soft": [
-    "$380B 估值含泡沫成分（约 20x PS），但 B2B 粘性构成支撑",
-    "Anthropic 的 '安全优先' 定位在企业侧是真实差异化因素，非纯粹营销",
-    "Claude Code 的高增速可能正在从 GitHub Copilot 手中夺取市场份额",
-    "MCP 生态主导权将比模型能力更持久地维持 Anthropic 的竞争壁垒"
+    "「热乱」框架的竞争不对称：Google GCP/Azure 基础设施在 variance 主导的失败模式下有先天优势，Anthropic 作为独立基础设施公司的可靠性劣势被放大",
+    "RSP v3 的企业合规影响分层：合规敏感型行业（金融/医疗）中等负面，技术企业（Claude Code 用户）影响小；透明度领先优势（vs OpenAI/Meta 无等价 RSP）部分对冲",
+    "企业用户谄媚阈值：大企业 CIO 可能处于倒 U 右侧（谄媚已被感知为过度顺从），反谄媚训练对企业端的风险远低于消费端",
+    "Anthropic 将在 2026 H2 为 Enterprise API 推出「诚实度调节」选项，解决企业段 Goodhart 缺口，同时保留消费端满意度",
+    "Goodfire $1.25B 是 Anthropic 可解释性研究护城河价值的间接证明；若 Anthropic 内部商业化 activation steering，Goodfire 估值将面临压力",
+    "21.2 次连续工具调用是方差失败的超线性放大器：每步失败率 p 的 21 步链完好率为 (1-p)^21，减少 incoherence 比防止 sabotage 对实际用户体验更重要",
+    "RSP v3 的透明度替代方案（Risk Report 承诺）：若 Anthropic 兑现每季度发布，可作为「硬性 hard stop 的软性替代」维持企业合规买家信心"
   ],
   "open": [
-    "Anthropic 当前烧钱速度是多少？$19B ARR 是否接近盈亏平衡？",
-    "MCP 上下文消耗 40-50% 的技术缺陷是否会催生替代协议（如 A2A）并终结 Anthropic 的生态优势？",
-    "Gemini-3-Pro 在总体 Elo 的持续领先能否冲击 Anthropic 的企业端叙事？",
-    "Claude Code $2.5B ARR 的增长能否维持，还是依赖于早期开发者红利？",
-    "Anthropic 的人才流动情况：是否有大规模离职或竞争对手挖角？"
+    "「热乱」框架 + RSP v3 的叠加效应：RSP v3 说「不会因 bias 类风险暂停训练」，热乱论文说「实际上 variance 风险更大」——这两个变化加在一起，Anthropic 的实际安全防线在哪里？",
+    "Goodfire 与 Anthropic 的关系：Anthropic 是否会收购 Goodfire（接入商业化能力），还是让 Goodfire 成为独立竞争者？收购价格和时机？",
+    "Claude Code 的方差失败率 vs GitHub Copilot：目前没有公开的分解数据，哪家的 21 步 agent 链完好率更高？",
+    "RSP v3 的「模糊地带（zone of ambiguity）」条款：这个条款的实际使用频率——2026 年内，有多少次 ASL 评估会以「模糊地带」为由不触发更高安全要求？",
+    "企业段谄媚阈值的测量：是否有任何公开数据可以量化「企业 CIO 何时感知 Claude 谄媚为负资产」的阈值？"
   ],
   "predictions": [
-    "2026年底 Anthropic ARR 将超过 $30B（基于当前增速曲线）",
-    "MCP 将在 2026年经历显著技术演进（减少上下文消耗），或出现竞争性协议分裂",
-    "Anthropic 将在 2026年内发布 Claude 5，主打 Agentic 和长上下文能力",
-    "Claude Code 将超过 $5B ARR，成为 Anthropic 最大单一产品线"
+    "Anthropic 将在 2026 年发布至少两份 Frontier Safety Risk Report（兑现 RSP v3 透明度承诺），但报告不会包含任何「建议暂停训练/部署」的结论",
+    "Claude Code 2026 H2 的主要工程投资将是减少方差类失败（任务分解、检查点、部分失败恢复），而非进一步的对齐训练——这是热乱论文的商业响应",
+    "Anthropic 将在 2026 H2 为 Enterprise API 推出「诚实度调节」功能，内部基于 activation steering 技术，使 Goodfire 的核心市场受压",
+    "Google Gemini agent 产品将在 2026 H2 发布「每步错误率」类指标，建立基础设施可靠性叙事——与 Anthropic 的 bias 安全叙事形成正交竞争",
+    "RSP v3 的「模糊地带」条款将在 2026 年内被至少一次用于不触发 ASL-3 评估要求——这是 TIME 独家报道之后最可观测的治理信号",
+    "GitHub Copilot 将在 2026 H2 推出基于 GPT-5 的 coding agent 升级；Claude Code 大企业渗透率在此之前能否超过 30% 是关键分水岭"
   ]
 }

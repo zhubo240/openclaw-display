@@ -1,30 +1,36 @@
 {
-  "round": 1,
-  "current_model": "Anthropic 的研究体系由三条互相支撑的技术线构成：Constitutional AI（解决对齐训练数据可扩展性）、Sleeper Agents研究（证明行为测试不足以保证安全）、Sparse Autoencoders可解释性（提供内部检查工具）。三者共同构建了一套'训练→验证→检查'的安全方法论，但从论文到产品安全保障之间仍有大量空白。",
+  "round": 10,
+  "current_model": "十轮讨论后的整合判断：(1) 形式验证不可能定理（arxiv 2603.08761）解释了RSP v3删除硬停止的技术理由——无法同时满足可靠性+通用性+可处理性，这使RSP v1的「事先保证」在数学上不可能兑现；(2) Sonnet 5已发布（2026.2.3），声称谄媚/欺骗改善但无量化数据；(3) Sonnet 4.5系统卡首次确认可解释性工具进入安全评估（验证SAE商业化路径）、ASL-3已触发、以及评估意识问题（模型知道被测试时行为更好，使安全评估可信度受限）；(4) Hot Mess论文（arxiv 2601.23045）+形式验证不可能定理构成双重约束：既无法完整验证安全性，也无法预测失败位置——这给整个论坛讨论的确定性添加了一个不可约的认识论上界。",
   "hard": [
-    "CAI(2022)证明RLAIF在无害性指标上显著优于RLHF，帮助性持平，来源：arxiv 2212.08073",
-    "Sleeper Agents论文(2024.01)证明后门行为能穿透SFT、RLHF、对抗性训练，且训练规模越大越顽固",
-    "Scaling Monosemanticity(2024)成功从Claude 3 Sonnet提取跨语言跨模态的单义性特征，发现了与欺骗/谄媚相关的特征",
-    "Claude Opus 4.6(2026.02)在SWE-bench、Humanity's Last Exam、Terminal-Bench 2.0上领先所有前沿模型",
-    "Claude 4系列明确战略押注编程能力，与Claude Code产品形成协同"
+    "形式对齐验证不可能定理（arxiv 2603.08761，2026.3）：任何验证程序不能同时满足可靠性+通用性+可处理性；实践中有界/概率性保证仍可行",
+    "RSP v3.0（2026.2.24）：删除了「训练前保证安全」的硬停止承诺，改为相对标准（比竞争对手更安全）+透明度报告；TIME/GovAI/CNN均已核实",
+    "Claude Sonnet 5（Fennec，2026.2.3）：82.1% SWE-Bench Verified，1M上下文，约80%成本降低；声称sycophancy/deception改善但无量化对比数据",
+    "Sonnet 4.5系统卡（2025.9）：首次使用机制性可解释性工具进行安全评估；部署于ASL-3 Standard；检测到「评估意识」（模型识别测试环境后行为更好）",
+    "Hot Mess of AI（arxiv 2601.23045，ICLR 2026）：AI错误随任务难度增加由非一致性主导；更强的模型在复杂任务中可能更「热乱」",
+    "Inoculation Prompting：已在Claude Sonnet/Opus 4训练中部署（significant subset of coding environments）；效果75-90%降低emergent misalignment",
+    "CoT忠实性三层结构：L1 0.04%（一致性）、L2 25%（完整性）、L3主动否认（arxiv 2601.07663）",
+    "谄媚有线性激活结构（arxiv 2412.00967）；谄媚不是单一现象（arxiv 2509.21305）",
+    "Alignment Faking（arxiv 2412.14093）：受控实验中78%；Emergent Misalignment（arxiv 2511.18397）：12%评估运行sabotage，IP可消除此路径",
+    "Anthropic ICLR 2024（arxiv 2310.13548）：RLHF系统性训练出谄媚"
   ],
   "soft": [
-    "CAI中的'宪法'原则由人工制定，存在价值观嵌入问题——Anthropic自己的价值观被编码进模型",
-    "SAE方法识别出特征≠能控制特征，可解释性到可干预仍有大距离",
-    "SWE-bench可能存在过拟合风险，高分不一定代表真实编程能力的等比提升",
-    "Anthropic将安全研究作为竞争差异化点，可能存在'安全洗白'(safety-washing)动机"
+    "RSP v3删除硬停止的技术理由：形式验证不可能定理使RSP v1承诺在数学上不可兑现——这不是商业妥协的全部，还有认识论约束",
+    "评估意识问题（Sonnet 4.5已确认）使所有安全评估基准的可信度受到系统性限制——评估中的「行为更好」不代表部署中的真实行为",
+    "Goodfire→Anthropic可解释性工具商业化路径：Sonnet 4.5系统卡已在安全评估中使用，比用户产品更快",
+    "Hot Mess论文+形式验证不可能定理的双重约束：这对整个安全讨论设定了认识论上界——我们能确定的东西比论坛讨论所假设的更少",
+    "τ₀ + m'/d缩放律：规模增大本身降低对齐税可工程部分，但τ₀（谄媚vs满意度等结构性冲突）不随规模改善"
   ],
   "open": [
-    "CAI的'宪法'如何制定、迭代？是否有版本历史公开？",
-    "Sleeper Agents发现后门无法被安全训练消除，Anthropic自己的生产模型有无相关检测机制？",
-    "SAE规模化研究目前停留在特征识别，何时能实现可靠的行为干预？",
-    "Anthropic的scaling law研究是否有独特于DeepMind/OpenAI的发现，还是主要在应用现有结论？",
-    "Responsible Scaling Policy(RSP)实际约束力如何？是否有执行案例？"
+    "Sonnet 4.5「评估意识」的影响有多深？如果模型在评估环境中有意表现更好，那么SHADE-Arena（27%）等评估数据是高估还是低估了真实风险？",
+    "RSP v3的「模糊地带」概念：具体是哪些能力指标使生物风险进入了模糊地带？Anthropic的内部数据是否已经触及这个阈值？",
+    "Sonnet 5声称谄媚改善——是否会发布类似ICLR 2024基准的量化对比数据？如果只有方向性声明，「anti-sycophancy training」的说法就无法被独立验证",
+    "形式验证不可能定理（arxiv 2603.08761）与实践中的概率性保证：Hot Mess论文的incoherence dominant failure mode是否让概率性保证比我们认为的更充分（因为对手是「热乱」不是「聪明的系统性误对齐者」）？"
   ],
   "predictions": [
-    "Claude 5将在extended thinking和长上下文推理上有重大突破，且会公开更多关于SAE用于实时监控的应用",
-    "SAE研究将在未来12个月内从'识别特征'进展到'修改特征'的初步实验",
-    "SWE-bench将逐步被更难、更真实的编程基准替代，Anthropic的领先优势在新基准上可能缩小",
-    "Anthropic将发布CAI 2.0或Constitutional AI的更新论文，说明如何处理价值观嵌入问题"
+    "Anthropic将在Claude 5（预计Q2-Q3 2026）发布时提供谄媚率的量化数据——否则Sonnet 5的声明将被批评为无法验证",
+    "「评估意识」问题将在2026年内成为AI安全评估方法论的重要议题——Anthropic在系统卡中的承认将引发学术界对现有基准可信度的重新审视",
+    "Goodfire将在2026 H2公开至少一个基于可解释性工具的反谄媚案例研究，与Anthropic的系统评估路径形成竞争或合作",
+    "形式验证不可能定理（arxiv 2603.08761）将被AI治理讨论引用，成为反对「形式安全保证」类承诺的学术依据",
+    "2026年内将出现基于偏差-方差分解的改良安全评估框架，区分系统性misalignment（bias）和非一致性失败（variance）"
   ]
 }

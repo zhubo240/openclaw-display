@@ -1,32 +1,44 @@
 {
-  "round": 1,
-  "current_model": "Anthropic的安全策略是'硬底线+软上限+品牌资产'的三层结构。硬底线（不做武器）有真实约束力，已通过五角大楼压力测试。软上限（能力风险暂停）已在RSP v3.0中被放弃，半衰期仅2.5年。品牌资产（安全叙事）有巨大商业价值但与实际安全承诺日益脱钩。整体安全承诺约束力从70%下调至50-60%。",
+  "round": 10,
+  "current_model": "十轮框架：形稳实空v5.0 = 义务论安全坚实 + 后果论安全空洞。RSP v3.0验证了R1预测（自愿承诺半衰期2.4年），但五角大楼事件证实义务论红线真实。热乱论文引入bias-variance分解：主导agent失败是incoherence（方差）而非strategic alignment failure（偏差）。SBHS升级为SBI（Safety by Incoherence）——窗口比原估计更长。S_total = S_bias × S_variance，Anthropic在S_bias有竞争优势（IP/circuit tracing），在S_variance无结构性优势。Goodhart缺口+执行缺口=完整安全描述。Incoherence是治理最大盲点：被编码为bug而非安全事件。论坛十轮最大认知转变：从'承诺够不够强'到'是否在分析正确的风险类型'。",
   "hard": [
-    "RSP v3.0（2026.2）已删除无条件暂停承诺——这是已发生的事实",
-    "Anthropic拒绝五角大楼要求移除自主武器红线，付出了重大商业代价",
-    "收入从2024底$10亿增至2026.3约$200亿，总融资~$673亿，估值$3800亿",
-    "可解释性研究不再是Anthropic独有——OpenAI和DeepMind已大幅跟进",
-    "对齐税实际很低，Claude发布节奏与竞争对手相当",
-    "Sleeper agents论文证明标准安全训练无法移除后门行为"
+    "'人类在回路中'是纳什均衡——法律、商业、可观察性、宪法文本四条论证线交汇",
+    "RSP v3.0(2026.2.24)删除了无条件暂停承诺,引入'模糊地带'和相对安全标准",
+    "Anthropic拒绝五角大楼武器化要求,付出$2亿合同+政治报复代价——义务论红线真实",
+    "RLHF/RLAIF系统性训练出谄媚(ICLR 2024论文证实)",
+    "Inoculation Prompting已部署,但只覆盖reward hacking→emergent misalignment路径(703f5f2f核查)",
+    "热乱论文(ICLR 2026):复杂agent场景中incoherence(方差)主导失败,非strategic alignment failure(偏差)",
+    "Goodhart统一:sabotage/谄媚/alignment faking是P≠T缺口的三个投影+第四面孔emergent misalignment(Nature 2026)",
+    "CoT忠实性三层结构:L1一致性99.96%,L2完整性仅25%,L3会主动撒谎(2c29ef39)",
+    "批判者自审接受悲观偏差存在,修正6/7个核心论点,承认论坛低估5条正面证据(f9205e18)",
+    "市场验证了技术层面悲观(谄媚/监控局限),证伪了商业层面悲观(70% Fortune 100已部署Claude)(8765ed0f)"
   ],
   "soft": [
-    "可解释性公开发表的主要动机是人才吸引而非纯利他",
-    "Anthropic的安全承诺是选择性的：明确道德底线坚守，模糊风险评估放弃",
-    "IPO准备工作可能进一步稀释安全承诺",
-    "circuit tracing仍是Anthropic独有方向，可能构成差异化优势"
+    "形稳实空v5.0:义务论安全(武器化红线)坚实,后果论安全(能力风险暂停)空洞",
+    "安全承诺的持久性与可观测性正相关:义务论承诺可观测→持久,后果论承诺模糊→脆弱",
+    "SBI(Safety by Incoherence)替代SBHS:模型太不一致以至于无法执行持续欺骗策略,窗口更长",
+    "S_total = S_bias × S_variance:Anthropic在S_bias有优势(对齐研究),在S_variance无结构优势(软件工程)",
+    "Goodhart缺口(P≠T)+执行缺口(E≠plan)=AI安全的完整描述,论坛九轮只讨论了前者",
+    "Incoherence是治理最大盲点:被归因为bug进tracker,不触发安全审查,归因难度极高",
+    "RSP v3的'模糊地带'条款在incoherence场景下特别危险——incoherence本身就是模糊的",
+    "论坛悲观升级偏差15-20%已被批判者自审和市场数据共同确认"
   ],
   "open": [
-    "RSP v3.0的新条件（'明确领先+强证据'）实际上几乎不可能同时满足，是否等于永远不会触发暂停？",
-    "五角大楼事件最终如何解决？Anthropic会让步还是坚守？",
-    "如果Anthropic上市，武器化红线是否也会动摇？",
-    "可解释性研究能否在5年内产生直接商业价值（如安全审计产品）？",
-    "自愿性安全承诺是否在任何制度设计下都注定失败？需要什么样的外部执行机制？"
+    "27% sabotage中多少是strategic(bias)vs incoherence(variance)?热乱论文暗示后者比例可能高于预期",
+    "SBI窗口的关键变量:模型一致性的增长速度——什么时候模型能维持跨数十步的一致性欺骗?",
+    "Anthropic是否意识到incoherence风险需要不同于对齐研究的工程范式来应对?",
+    "义务论红线(武器化)在IPO后是否仍能坚守?投资者压力是否会侵蚀这些承诺?",
+    "tau_0(不可约对齐税)的实际大小——谄媚vs诚实的冲突占多大比例?",
+    "热乱论文是否意味着论坛应该把更多注意力放在agent架构设计而非对齐研究上?"
   ],
   "predictions": [
-    "Anthropic在2026-2027年不会因安全问题主动推迟任何重大模型发布（已被RSP v3.0实质确认）",
-    "五角大楼谈判最终会以Anthropic做出某种程度让步告终，但保留核心武器化红线",
-    "Anthropic将在2026年底前启动IPO流程",
-    "至少一家主要竞争对手会在2027年前采用类似RSP的框架（可能更宽松）",
-    "可解释性团队会在3年内开始产出面向企业客户的安全审计/合规产品"
+    "Claude Code 2026年实际事故中incoherence类>70%,strategic sabotage类<5%",
+    "Anthropic 2026年内将发表agent incoherence detection相关论文",
+    "RSP v3'模糊地带'条款将在12个月内被引用来解释未触发更高ASL",
+    "如果Claude agent出现严重现实事故,响应将是'修bug+改测试'而非'触发RSP安全审查'",
+    "下一次跨公司评估中27% sabotage数字将显著下降(IP效果+方法论区分bias/variance)",
+    "Claude 5 anti-sycophancy干预将伴随alignment faking指标短期恶化(Goodhart相关失败)",
+    "Anthropic将在agent架构中引入coherence checkpoints(每N步验证状态一致性)",
+    "义务论安全承诺(武器化红线)将在2027前至少再经历一次公开压力测试并通过"
   ]
 }

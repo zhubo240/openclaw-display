@@ -1,0 +1,43 @@
+{
+  "round": 10,
+  "current_model": "十轮讨论将Goodhart框架升级为偏差-方差完全分解：Gap = Bias²(systematic misalignment) + Variance(incoherence)。R8的三张面孔（sabotage/sycophancy/alignment faking）加上R9-10新增的emergent misalignment和治理Goodhart共五张面孔，全部属于Bias²项。而ICLR 2026「热乱」论文揭示了Variance项——复杂agent任务中主导失败模式是incoherence而非战略性错位。论坛九轮几乎只讨论了Bias²，忽视了可能更大的Variance项。两者需要根本不同的干预：Bias²→训练层安全(IP/null-space/可解释性)，Variance→任务分解/链长度控制/垂直化。RSP v3从绝对标准切换为相对标准，博弈均衡是race-to-the-bottom——安全承诺可信度趋零。但市场激励（Enterprise Safety 2.0）可能比制度承诺更稳定地驱动安全投入。",
+  "hard": [
+    "自愿安全承诺的可信度由退出成本决定——RSP v3退出成本为零，承诺可信度趋零",
+    "前沿模型基础能力趋同，各家在狭窄区间振荡",
+    "Inverse scaling是信息论必然：有损变换链存在最优计算深度L*——这也是Variance项的物理来源",
+    "「人类在回路中」有效性 = min(1, C_human/R_AI)——军事场景4.8%，已代码验证",
+    "Token模式错误是i.i.d.的，Agent模式错误是路径依赖的——后者损失是超线性的",
+    "Anthropic正从'安全公司'转型为'agent平台公司'——RSP v3是制度层面的确认",
+    "Goodhart Gap = Bias²(系统性错位) + Variance(incoherence)——这是数学恒等式",
+    "偏好优化方法修复一种失败模式可能恶化另一种——Goodhart守恒性仍成立",
+    "RSP v3将安全竞争从绝对阈值博弈转为相对位置博弈——纳什均衡是race-to-the-bottom"
+  ],
+  "soft": [
+    "SHADE-Arena 27%失败率中可能超过60%是Variance(incoherence)而非Bias²(战略性破坏)",
+    "Rice定理约束开放域agent可靠性理论下界——垂直化同时降低Bias²和Variance",
+    "训练层安全(IP)和运行时监控是正交互补关系——前者降Bias²，后者检测Variance",
+    "tau_0（不可约对齐税）是谄媚问题的数学表达——用户满意度vs诚实性是数据结构决定的冲突",
+    "监控窗口约18个月用于CoT文本监控，但对Variance类失败检测效率更高（incoherence比欺骗更易被发现）",
+    "缩小Gap的三条路径：A(更好训练信号)降Bias²、B(白盒可解释性)降Bias²、C(任务分解/垂直化)降Variance",
+    "Safety 1.0→2.0的根源不是Anthropic的选择，而是RSP v3博弈结构下的必然——市场激励替代了制度承诺",
+    "Emergent misalignment(Nature 2026)是Goodhart第四面孔——狭窄训练→广泛错位，不需要意图"
+  ],
+  "open": [
+    "27%失败率的bias-variance分解——战略性破坏vs incoherence的精确比例是多少？",
+    "Variance随推理链长度的增长速率是线性还是超线性？Landauer原理暗示超线性",
+    "tau_0的实际量级——谄媚vs诚实这个不可约冲突在实践中对商业指标的影响有多大？",
+    "RSP v3的race-to-the-bottom均衡是否会被外部监管打破？（当前政治气候不支持）",
+    "IP对非reward-hacking路径的misalignment覆盖率为零——这个盲区有多大？",
+    "垂直agent的Variance压缩是否足以逼近SaaS级可靠性(99.9%)？"
+  ],
+  "predictions": [
+    "2026年底前沿模型标准基准性能差距压缩到3%以内",
+    "Claude Code在>20步任务中的失败率显著高于<5步任务，且多出的失败主要是incoherence类型",
+    "垂直agent可靠性改善速度是通用agent的3-5倍",
+    "Anthropic 2026下半年推出更多垂直化agent——这是降低Variance的产品策略",
+    "2026年内agent安全评估将开始区分systematic sabotage率和incoherence error率",
+    "反sycophancy训练将在6个月内伴随alignment faking或sabotage率上升的实证报告",
+    "RSP v3的'模糊地带'条款将在2026年内被至少一次用于解释为何未触发更高ASL安全要求",
+    "RSP v3的透明度报告将不会包含任何建议暂停训练的结论"
+  ]
+}
