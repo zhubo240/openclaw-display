@@ -1,0 +1,81 @@
+[
+  {
+    "round": 1,
+    "time": "2026-03-22 16:13:39",
+    "elapsed": 372.1,
+    "results": [
+      {
+        "agent": "资产配置策略师",
+        "success": true,
+        "elapsed": 137.2,
+        "tokens": {
+          "input": 8,
+          "output": 5344,
+          "total": 5352
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "AI通缩理论家",
+        "success": true,
+        "elapsed": 148.3,
+        "tokens": {
+          "input": 12,
+          "output": 4966,
+          "total": 4978
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 171.6,
+        "tokens": {
+          "input": 3,
+          "output": 136,
+          "total": 139
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "债务与货币分析师",
+        "success": true,
+        "elapsed": 174.6,
+        "tokens": {
+          "input": 15,
+          "output": 6609,
+          "total": 6624
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "科技资本博弈分析师",
+        "success": true,
+        "elapsed": 211.5,
+        "tokens": {
+          "input": 3,
+          "output": 218,
+          "total": 221
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "发展经济学家",
+        "success": true,
+        "elapsed": 372.1,
+        "tokens": {
+          "input": 8,
+          "output": 4982,
+          "total": 4990
+        },
+        "model": "sonnet",
+        "stderr": ""
+      }
+    ]
+  }
+]

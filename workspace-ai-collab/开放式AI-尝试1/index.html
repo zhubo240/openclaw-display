@@ -119,7 +119,19 @@ body {
 .sidebar {
   width: 260px; min-width: 260px; background: var(--sidebar-bg);
   display: flex; flex-direction: column; height: 100vh;
+  transition: width 0.2s, min-width 0.2s;
 }
+.sidebar.collapsed { width: 0; min-width: 0; overflow: hidden; }
+.sidebar-toggle {
+  position: absolute; left: 0; top: 50%; z-index: 200;
+  transform: translateY(-50%);
+  width: 16px; height: 36px; background: var(--sidebar-bg);
+  border: none; border-radius: 0 6px 6px 0;
+  color: var(--sidebar-text); cursor: pointer; font-size: 10px;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0.5; transition: opacity 0.15s;
+}
+.sidebar-toggle:hover { opacity: 1; }
 .sidebar-header {
   padding: 20px 18px 16px;
   border-bottom: 1px solid rgba(255,255,255,0.08);
@@ -193,7 +205,45 @@ body {
 .controls button:hover { border-color: var(--accent); color: var(--accent); }
 .controls button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
+.content-wrap { flex: 1; display: flex; overflow: hidden; position: relative; }
 .content { flex: 1; overflow-y: auto; padding: 16px 28px; }
+
+/* 轮次时间线 */
+.round-timeline {
+  width: 56px; min-width: 56px; background: var(--card); border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; align-items: center; padding: 16px 0;
+  overflow-y: auto; flex-shrink: 0;
+}
+.round-timeline::-webkit-scrollbar { width: 0; }
+.rt-node {
+  display: flex; flex-direction: column; align-items: center; cursor: pointer;
+  padding: 3px 0; transition: all 0.15s; position: relative;
+}
+.rt-dot {
+  width: 12px; height: 12px; border-radius: 50%; background: var(--border);
+  transition: all 0.15s; flex-shrink: 0;
+}
+.rt-node:hover .rt-dot { background: var(--accent); transform: scale(1.3); }
+.rt-node.active .rt-dot {
+  background: var(--accent); width: 14px; height: 14px;
+  box-shadow: 0 0 0 3px var(--accent-light);
+}
+.rt-node.in-range .rt-dot { background: var(--accent); opacity: 0.6; }
+.rt-label {
+  font-size: 11px; color: var(--text-secondary); margin-top: 2px; font-weight: 500;
+  line-height: 1;
+}
+.rt-node.active .rt-label, .rt-node.in-range .rt-label { color: var(--accent); font-weight: 700; }
+.rt-line {
+  width: 2px; height: 8px; background: var(--border); flex-shrink: 0;
+}
+.rt-line.in-range { background: var(--accent); opacity: 0.4; }
+.rt-reset {
+  font-size: 10px; color: var(--text-secondary); cursor: pointer; margin-top: 8px;
+  padding: 3px 8px; border-radius: 4px; border: 1px solid var(--border);
+  background: transparent; transition: all 0.15s;
+}
+.rt-reset:hover { color: var(--accent); border-color: var(--accent); }
 
 /* === Feed === */
 .feed-item {
@@ -459,6 +509,7 @@ body.fs-large .reply-content { font-size: 16px; line-height: 1.9; }
 </div>
 
 <div class="main">
+  <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()">&#9664;</button>
   <div class="topbar">
     <div class="topbar-left">
       <div class="topbar-title" id="topbar-title">选择一个 Topic</div>
@@ -480,10 +531,13 @@ body.fs-large .reply-content { font-size: 16px; line-height: 1.9; }
   </div>
   </div>
   <div class="controls" id="controls-bar" style="display:none"></div>
-  <div class="content" id="main-content">
-    <div class="welcome">
-      <div>在左侧选择一个 Topic 开始浏览</div>
-      <div style="font-size:12px">python3 create_topic.py &lt;种子文件&gt; 创建新 topic</div>
+  <div class="content-wrap">
+    <div class="round-timeline" id="round-timeline" style="display:none"></div>
+    <div class="content" id="main-content">
+      <div class="welcome">
+        <div>在左侧选择一个 Topic 开始浏览</div>
+        <div style="font-size:12px">python3 create_topic.py &lt;种子文件&gt; 创建新 topic</div>
+      </div>
     </div>
   </div>
 </div>
@@ -510,6 +564,10 @@ function saveState() {
   const state = {};
   if (currentTopic) state.t = currentTopic;
   if (currentFilter !== 'all') state.f = currentFilter;
+  // 轮次范围（非全选时保存）
+  if (maxRound > 0 && !(roundRange[0] === 0 && roundRange[1] === maxRound)) {
+    state.r = roundRange[0] === roundRange[1] ? '' + roundRange[0] : roundRange[0] + '-' + roundRange[1];
+  }
   // 只有当 postId 存在且属于当前 topic 的帖子时才保存
   if (currentView === 'detail' && currentPostId && allPosts.some(p => p.id === currentPostId)) {
     state.p = currentPostId.substring(0, 8);
@@ -520,10 +578,22 @@ function saveState() {
 
 function restoreState() {
   const params = new URLSearchParams(location.hash.substring(1));
+  let rr = null;
+  const rParam = params.get('r');
+  if (rParam) {
+    if (rParam.includes('-')) {
+      const parts = rParam.split('-').map(Number);
+      rr = [parts[0], parts[1]];
+    } else {
+      const v = parseInt(rParam);
+      rr = [v, v];
+    }
+  }
   return {
     topic: params.get('t'),
     filter: params.get('f') || 'all',
     postId: params.get('p'),
+    roundRange: rr,
   };
 }
 
@@ -539,6 +609,11 @@ async function loadTopics() {
   const saved = restoreState();
   if (saved.topic && topics.find(t => t.id === saved.topic)) {
     await selectTopic(saved.topic);
+    if (saved.roundRange) {
+      roundRange = saved.roundRange;
+      renderTimeline();
+      renderFeed();
+    }
     if (saved.filter !== 'all') filterBy(saved.filter);
     if (saved.postId) {
       const post = allPosts.find(p => p.id.startsWith(saved.postId));
@@ -612,7 +687,10 @@ async function loadTopicData(t) {
     roundLog = await r.json();
   } catch(e) { roundLog = []; }
   assignRounds();
-  roundRange = [0, maxRound];
+  // Only reset roundRange if it's out of bounds (topic switch), not on refresh
+  if (roundRange[1] > maxRound || roundRange[0] > maxRound) {
+    roundRange = [0, maxRound];
+  }
 
   const top = allPosts.filter(p => !p.parent_id);
   const replies = allPosts.filter(p => p.parent_id).length;
@@ -624,20 +702,28 @@ async function loadTopicData(t) {
 let currentSubTab = 'posts'; // 'posts' | 'replies'
 
 function assignRounds() {
-  // Build time boundaries from log
+  // Log records round END times. We need START times for assignment.
+  // R1 starts when topic is created (seed time), ends at log[0].time
+  // R2 starts at log[0].time, ends at log[1].time, etc.
   const boundaries = []; // [{round, start, end}]
   for (let i = 0; i < roundLog.length; i++) {
-    const entry = roundLog[i];
-    const start = entry.time;
-    const end = (i + 1 < roundLog.length) ? roundLog[i + 1].time : '9999';
-    boundaries.push({ round: entry.round, start, end });
+    const round = roundLog[i].round;
+    // Start = previous round's end time, or epoch for first round
+    const start = (i > 0) ? roundLog[i - 1].time : '0000';
+    const end = roundLog[i].time;
+    boundaries.push({ round, start, end });
   }
   allPosts.forEach(p => {
     if (p.is_seed) { p._round = 0; return; }
+    // Find the round whose window contains this post
+    // Posts created during round N appear between R(N-1) end and RN end
     p._round = 0;
     for (const b of boundaries) {
-      if (p.time >= b.start && p.time < b.end) { p._round = b.round; break; }
-      if (p.time >= b.start) p._round = b.round; // last round
+      if (p.time > b.start && p.time <= b.end) { p._round = b.round; break; }
+    }
+    // Posts after last log entry = last round
+    if (p._round === 0 && boundaries.length && p.time > boundaries[boundaries.length - 1].end) {
+      p._round = boundaries[boundaries.length - 1].round;
     }
   });
 }
@@ -650,23 +736,69 @@ function renderControls() {
   for (const a of agents) {
     h += '<button class="' + (currentFilter === a ? 'active' : '') + '" onclick="filterBy(\'' + esc(a) + '\')">' + esc(a) + '</button>';
   }
-  // Round range selector
-  if (maxRound > 0) {
-    h += '<span style="display:inline-flex;align-items:center;gap:6px;margin-left:auto;font-size:11px;color:var(--text-secondary);white-space:nowrap">';
-    h += '轮次 <select id="round-min" onchange="updateRoundRange()" style="padding:2px 6px;border:1px solid var(--border);border-radius:6px;font-size:11px;background:var(--card);color:var(--text)">';
-    for (let i = 0; i <= maxRound; i++) h += '<option value="' + i + '"' + (roundRange[0] === i ? ' selected' : '') + '>' + (i === 0 ? '种子' : 'R' + i) + '</option>';
-    h += '</select> — <select id="round-max" onchange="updateRoundRange()" style="padding:2px 6px;border:1px solid var(--border);border-radius:6px;font-size:11px;background:var(--card);color:var(--text)">';
-    for (let i = 0; i <= maxRound; i++) h += '<option value="' + i + '"' + (roundRange[1] === i ? ' selected' : '') + '>' + (i === 0 ? '种子' : 'R' + i) + '</option>';
-    h += '</select></span>';
-  }
   bar.innerHTML = h;
+  renderTimeline();
 }
 
-function updateRoundRange() {
-  const min = parseInt(document.getElementById('round-min').value);
-  const max = parseInt(document.getElementById('round-max').value);
-  roundRange = [Math.min(min, max), Math.max(min, max)];
+let _tlDragStart = null; // for drag-select on timeline
+
+function renderTimeline() {
+  const tl = document.getElementById('round-timeline');
+  if (maxRound <= 0) { tl.style.display = 'none'; return; }
+  tl.style.display = 'flex';
+
+  let h = '';
+  for (let i = 0; i <= maxRound; i++) {
+    const isActive = roundRange[0] === i && roundRange[1] === i;
+    const inRange = i >= roundRange[0] && i <= roundRange[1];
+    const allSelected = roundRange[0] === 0 && roundRange[1] === maxRound;
+    const cls = isActive ? 'active' : (inRange && !allSelected ? 'in-range' : '');
+    h += '<div class="rt-node ' + cls + '" data-round="' + i + '" onmousedown="tlMouseDown(' + i + ')" onmouseenter="tlMouseEnter(' + i + ')" onclick="tlClick(' + i + ')">';
+    h += '<div class="rt-dot"></div>';
+    h += '<div class="rt-label">' + (i === 0 ? 'S' : i) + '</div>';
+    h += '</div>';
+    if (i < maxRound) {
+      h += '<div class="rt-line' + (inRange && !allSelected && i + 1 <= roundRange[1] ? ' in-range' : '') + '"></div>';
+    }
+  }
+  if (!(roundRange[0] === 0 && roundRange[1] === maxRound)) {
+    h += '<button class="rt-reset" onclick="tlReset()">全部</button>';
+  }
+  tl.innerHTML = h;
+}
+
+function tlClick(r) {
+  roundRange = [r, r];
+  renderTimeline();
   renderFeed();
+  saveState();
+}
+
+function tlMouseDown(r) {
+  _tlDragStart = r;
+  document.addEventListener('mouseup', tlMouseUp, { once: true });
+}
+
+function tlMouseEnter(r) {
+  if (_tlDragStart !== null) {
+    roundRange = [Math.min(_tlDragStart, r), Math.max(_tlDragStart, r)];
+    renderTimeline();
+  }
+}
+
+function tlMouseUp() {
+  if (_tlDragStart !== null) {
+    _tlDragStart = null;
+    renderFeed();
+    saveState();
+  }
+}
+
+function tlReset() {
+  roundRange = [0, maxRound];
+  renderTimeline();
+  renderFeed();
+  saveState();
 }
 
 function getReplies(pid) {
@@ -710,7 +842,7 @@ function renderFeed() {
             + '<span class="reply-parent-title">' + esc(parentTitle) + '</span>'
             + '</div>'
             + '<div class="feed-preview">' + esc(preview) + '</div>'
-            + '<div class="feed-footer"><span>' + r.time + '</span></div>'
+            + '<div class="feed-footer"><span>' + r.time + '</span><span style="color:var(--accent);font-weight:600;font-size:10px">R' + (r._round || 0) + '</span></div>'
             + '</div>';
         }).join('');
       }
@@ -861,6 +993,7 @@ function handleHashChange() {
   if (saved.topic && saved.topic !== currentTopic) {
     _skipSaveState = true;
     selectTopic(saved.topic).then(() => {
+      if (saved.roundRange) { roundRange = saved.roundRange; renderTimeline(); renderFeed(); }
       if (saved.postId) {
         const post = allPosts.find(p => p.id.startsWith(saved.postId));
         if (post) { currentView = 'detail'; currentPostId = post.id; renderDetail(post.id); }
@@ -895,10 +1028,23 @@ async function refresh() {
   const hasExpanded = document.querySelector('.detail-content:not(.collapsed), .reply-content:not(.collapsed)');
   const isInteracting = isTyping || hasExpanded;
 
+  // 保存当前筛选状态
+  const savedFilter = currentFilter;
+  const savedRoundRange = [...roundRange];
   const scrollPos = document.getElementById('main-content').scrollTop;
+
   await loadTopicData(t);
 
+  // 恢复筛选状态
+  currentFilter = savedFilter;
+  roundRange = savedRoundRange;
+  // 如果 maxRound 增加了，扩展 roundRange 上界（全选模式下跟随）
+  if (savedRoundRange[1] >= maxRound - 1 && savedRoundRange[0] === 0) {
+    roundRange[1] = maxRound;
+  }
+
   if (!isInteracting) {
+    renderControls();
     if (currentView === 'feed') renderFeed();
     else if (currentView === 'detail' && currentPostId) renderDetail(currentPostId);
     document.getElementById('main-content').scrollTop = scrollPos;
@@ -1015,6 +1161,20 @@ function autoHideExpanders() {
       if (btn && btn.classList.contains('expand-btn')) btn.style.display = 'none';
     }
   });
+}
+
+// ============ 侧边栏折叠 ============
+function toggleSidebar() {
+  const sb = document.querySelector('.sidebar');
+  const btn = document.getElementById('sidebar-toggle');
+  sb.classList.toggle('collapsed');
+  btn.innerHTML = sb.classList.contains('collapsed') ? '&#9654;' : '&#9664;';
+  localStorage.setItem('forum-sidebar', sb.classList.contains('collapsed') ? 'collapsed' : '');
+}
+// 恢复状态
+if (localStorage.getItem('forum-sidebar') === 'collapsed') {
+  document.querySelector('.sidebar').classList.add('collapsed');
+  document.getElementById('sidebar-toggle').innerHTML = '&#9654;';
 }
 
 // ============ 主题切换 ============

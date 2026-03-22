@@ -100,5 +100,13 @@
     "seed_type": "md",
     "seed_file": "AI-with-gemini.md",
     "created": "2026-03-21"
+  },
+  {
+    "id": "gdp-debt-game",
+    "name": "GDP、债务与全球资产博弈",
+    "description": "债务驱动增长的悖论、AI通缩、主权/金融/科技三方博弈",
+    "seed_type": "conversation",
+    "seed_file": "GDP-债务-全球资产博弈.md",
+    "created": "2026-03-22"
   }
 ]
