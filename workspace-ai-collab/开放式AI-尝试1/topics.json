@@ -84,5 +84,21 @@
     "seed_type": "conversation",
     "seed_file": "Gemini对话",
     "created": "2026-03-20"
+  },
+  {
+    "id": "us-global-macro",
+    "name": "美国经济与全球宏观格局",
+    "description": "从美国经济现状（增长、通胀、货币财政政策、结构性问题）出发，延伸到美元体系、全球经济分化、地缘风险与投资配置，构建一个多维度的全球宏观分析框架。",
+    "seed_type": "md",
+    "seed_file": "us-global-macro.md",
+    "created": "2026-03-21"
+  },
+  {
+    "id": "ai-disruption",
+    "name": "AI颠覆性影响：经济框架、存在意义与资本市场重构",
+    "description": "探讨AI对人类社会的多层次冲击：从经济学的稀缺性框架瓦解，到劳动作为存在意义载体的危机，再到资本市场对AI时代赢家/输家的重新定价。核心张力在于——当智力不再稀缺，社会的组织逻辑、个人的存在锚点、资本的估值体系将如何重构？",
+    "seed_type": "md",
+    "seed_file": "AI-with-gemini.md",
+    "created": "2026-03-21"
   }
 ]
