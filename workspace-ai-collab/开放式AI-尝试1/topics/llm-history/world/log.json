@@ -1,0 +1,342 @@
+[
+  {
+    "round": 1,
+    "time": "2026-03-22 16:33:38",
+    "elapsed": 282.9,
+    "results": [
+      {
+        "agent": "架构考古学家",
+        "success": true,
+        "elapsed": 163.1,
+        "tokens": {
+          "input": 1858,
+          "output": 4583,
+          "total": 6441
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "Scaling律研究员",
+        "success": true,
+        "elapsed": 164.2,
+        "tokens": {
+          "input": 12,
+          "output": 4583,
+          "total": 4595
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "安全与对齐追踪者",
+        "success": true,
+        "elapsed": 164.8,
+        "tokens": {
+          "input": 12,
+          "output": 5004,
+          "total": 5016
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "范式演化理论家",
+        "success": true,
+        "elapsed": 171.3,
+        "tokens": {
+          "input": 885,
+          "output": 4581,
+          "total": 5466
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "产业生态观察者",
+        "success": true,
+        "elapsed": 171.8,
+        "tokens": {
+          "input": 11,
+          "output": 4846,
+          "total": 4857
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 238.8,
+        "tokens": {
+          "input": 8,
+          "output": 4742,
+          "total": 4750
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "涌现与理解哲学家",
+        "success": true,
+        "elapsed": 282.8,
+        "tokens": {
+          "input": 7,
+          "output": 4586,
+          "total": 4593
+        },
+        "model": "opus",
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "round": 2,
+    "time": "2026-03-22 18:55:16",
+    "elapsed": 600.8,
+    "results": [
+      {
+        "agent": "架构考古学家",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "批判者",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "涌现与理解哲学家",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "产业生态观察者",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "Scaling律研究员",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "第一性原理",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "安全与对齐追踪者",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "范式演化理论家",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      }
+    ]
+  },
+  {
+    "round": 3,
+    "time": "2026-03-22 19:05:48",
+    "elapsed": 332.3,
+    "results": [
+      {
+        "agent": "范式演化理论家",
+        "success": true,
+        "elapsed": 113.3,
+        "tokens": {
+          "input": 6,
+          "output": 4319,
+          "total": 4325
+        },
+        "model": "opus",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "产业生态观察者",
+        "success": true,
+        "elapsed": 141.1,
+        "tokens": {
+          "input": 6,
+          "output": 4016,
+          "total": 4022
+        },
+        "model": "sonnet",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "涌现与理解哲学家",
+        "success": true,
+        "elapsed": 151.4,
+        "tokens": {
+          "input": 7,
+          "output": 5343,
+          "total": 5350
+        },
+        "model": "opus",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "架构考古学家",
+        "success": true,
+        "elapsed": 156.4,
+        "tokens": {
+          "input": 961,
+          "output": 4164,
+          "total": 5125
+        },
+        "model": "sonnet",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "安全与对齐追踪者",
+        "success": true,
+        "elapsed": 182.2,
+        "tokens": {
+          "input": 1174,
+          "output": 4952,
+          "total": 6126
+        },
+        "model": "sonnet",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "Scaling律研究员",
+        "success": true,
+        "elapsed": 186.0,
+        "tokens": {
+          "input": 838,
+          "output": 6015,
+          "total": 6853
+        },
+        "model": "sonnet",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 332.1,
+        "tokens": {
+          "input": 7,
+          "output": 6338,
+          "total": 6345
+        },
+        "model": "opus",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      }
+    ]
+  },
+  {
+    "round": 4,
+    "time": "2026-03-22 19:13:10",
+    "elapsed": 141.5,
+    "results": [
+      {
+        "agent": "Scaling律研究员",
+        "success": false,
+        "elapsed": 72.3,
+        "tokens": {
+          "input": 3,
+          "output": 522,
+          "total": 525
+        },
+        "model": "sonnet",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "产业生态观察者",
+        "success": false,
+        "elapsed": 76.2,
+        "tokens": {
+          "input": 4,
+          "output": 1555,
+          "total": 1559
+        },
+        "model": "sonnet",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "第一性原理",
+        "success": false,
+        "elapsed": 90.4,
+        "tokens": {
+          "input": 4,
+          "output": 2722,
+          "total": 2726
+        },
+        "model": "opus",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "批判者",
+        "success": false,
+        "elapsed": 93.7,
+        "tokens": {
+          "input": 4,
+          "output": 1138,
+          "total": 1142
+        },
+        "model": "opus",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "安全与对齐追踪者",
+        "success": false,
+        "elapsed": 98.5,
+        "tokens": {
+          "input": 5,
+          "output": 2352,
+          "total": 2357
+        },
+        "model": "sonnet",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "架构考古学家",
+        "success": false,
+        "elapsed": 108.7,
+        "tokens": {
+          "input": 4,
+          "output": 2905,
+          "total": 2909
+        },
+        "model": "sonnet",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "涌现与理解哲学家",
+        "success": false,
+        "elapsed": 118.3,
+        "tokens": {
+          "input": 4,
+          "output": 2844,
+          "total": 2848
+        },
+        "model": "opus",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "范式演化理论家",
+        "success": false,
+        "elapsed": 141.5,
+        "tokens": {
+          "input": 4,
+          "output": 3679,
+          "total": 3683
+        },
+        "model": "opus",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      }
+    ]
+  }
+]

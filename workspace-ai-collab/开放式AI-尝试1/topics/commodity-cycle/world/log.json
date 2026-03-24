@@ -1,0 +1,81 @@
+[
+  {
+    "round": 1,
+    "time": "2026-03-23 21:38:03",
+    "elapsed": 125.7,
+    "results": [
+      {
+        "agent": "周期史学家",
+        "success": false,
+        "elapsed": 102.4,
+        "tokens": {
+          "input": 5,
+          "output": 3420,
+          "total": 3425
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 104.0,
+        "tokens": {
+          "input": 8,
+          "output": 3283,
+          "total": 3291
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "宏观货币策略师",
+        "success": false,
+        "elapsed": 113.6,
+        "tokens": {
+          "input": 12,
+          "output": 1630,
+          "total": 1642
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "中印需求跟踪者",
+        "success": false,
+        "elapsed": 114.3,
+        "tokens": {
+          "input": 1896,
+          "output": 4179,
+          "total": 6075
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "能源转型观察者",
+        "success": false,
+        "elapsed": 125.0,
+        "tokens": {
+          "input": 884,
+          "output": 5343,
+          "total": 6227
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "供需分析师",
+        "success": false,
+        "elapsed": 125.7,
+        "tokens": {
+          "input": 78,
+          "output": 4637,
+          "total": 4715
+        },
+        "model": "sonnet",
+        "stderr": ""
+      }
+    ]
+  }
+]

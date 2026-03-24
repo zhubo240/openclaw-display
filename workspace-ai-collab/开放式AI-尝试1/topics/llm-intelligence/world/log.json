@@ -772,189 +772,153 @@
   },
   {
     "round": 10,
-    "time": "2026-03-20 12:35:46",
-    "elapsed": 125.5,
+    "time": "2026-03-22 19:05:37",
+    "elapsed": 1221.3,
     "results": [
       {
         "agent": "缩放律研究员",
         "success": false,
-        "elapsed": 16.0,
-        "tokens": {
-          "input": 0,
-          "output": 0,
-          "total": 0
-        },
-        "model": "sonnet",
-        "stderr": ""
-      },
-      {
-        "agent": "可解释性分析师",
-        "success": false,
-        "elapsed": 17.0,
-        "tokens": {
-          "input": 0,
-          "output": 0,
-          "total": 0
-        },
-        "model": "sonnet",
-        "stderr": ""
+        "elapsed": 600,
+        "error": "timeout"
       },
       {
         "agent": "边界理论家",
         "success": false,
-        "elapsed": 22.4,
-        "tokens": {
-          "input": 3,
-          "output": 248,
-          "total": 251
-        },
-        "model": "opus",
-        "stderr": ""
-      },
-      {
-        "agent": "第一性原理",
-        "success": false,
-        "elapsed": 23.2,
-        "tokens": {
-          "input": 3,
-          "output": 458,
-          "total": 461
-        },
-        "model": "opus",
-        "stderr": ""
-      },
-      {
-        "agent": "认知科学桥梁",
-        "success": false,
-        "elapsed": 26.2,
-        "tokens": {
-          "input": 3,
-          "output": 273,
-          "total": 276
-        },
-        "model": "opus",
-        "stderr": ""
-      },
-      {
-        "agent": "工程实践追踪者",
-        "success": false,
-        "elapsed": 43.0,
-        "tokens": {
-          "input": 3,
-          "output": 1146,
-          "total": 1149
-        },
-        "model": "sonnet",
-        "stderr": ""
-      },
-      {
-        "agent": "批判者",
-        "success": false,
-        "elapsed": 105.7,
-        "tokens": {
-          "input": 0,
-          "output": 0,
-          "total": 0
-        },
-        "model": "opus",
-        "stderr": ""
-      },
-      {
-        "agent": "代码验证",
-        "success": false,
-        "elapsed": 8.4,
-        "tokens": {
-          "input": 0,
-          "output": 0,
-          "total": 0
-        },
-        "model": "sonnet",
-        "stderr": ""
-      },
-      {
-        "agent": "汇总者",
-        "success": false,
-        "elapsed": 11.2,
-        "tokens": {
-          "input": 0,
-          "output": 0,
-          "total": 0
-        },
-        "model": "opus",
-        "stderr": ""
-      }
-    ]
-  },
-  {
-    "round": 11,
-    "time": "2026-03-20 15:10:40",
-    "elapsed": 600.2,
-    "results": [
-      {
-        "agent": "缩放律研究员",
-        "success": true,
-        "elapsed": 300.0,
-        "tokens": {
-          "input": 9,
-          "output": 9905,
-          "total": 9914
-        },
-        "model": "sonnet",
-        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
-      },
-      {
-        "agent": "工程实践追踪者",
-        "success": true,
-        "elapsed": 419.4,
-        "tokens": {
-          "input": 6,
-          "output": 7350,
-          "total": 7356
-        },
-        "model": "sonnet",
-        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
-      },
-      {
-        "agent": "批判者",
-        "success": true,
-        "elapsed": 464.2,
-        "tokens": {
-          "input": 2617,
-          "output": 15017,
-          "total": 17634
-        },
-        "model": "opus",
-        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
-      },
-      {
-        "agent": "认知科学桥梁",
-        "success": true,
-        "elapsed": 464.3,
-        "tokens": {
-          "input": 9,
-          "output": 11822,
-          "total": 11831
-        },
-        "model": "opus",
-        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
-      },
-      {
-        "agent": "边界理论家",
-        "success": true,
-        "elapsed": 493.2,
-        "tokens": {
-          "input": 14,
-          "output": 13073,
-          "total": 13087
-        },
-        "model": "opus",
-        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+        "elapsed": 600,
+        "error": "timeout"
       },
       {
         "agent": "可解释性分析师",
         "success": false,
         "elapsed": 600,
         "error": "timeout"
+      },
+      {
+        "agent": "批判者",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "第一性原理",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "工程实践追踪者",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "认知科学桥梁",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "代码验证",
+        "success": true,
+        "elapsed": 326.7,
+        "tokens": {
+          "input": 11,
+          "output": 16192,
+          "total": 16203
+        },
+        "model": "sonnet",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "汇总者",
+        "success": true,
+        "elapsed": 293.4,
+        "tokens": {
+          "input": 8,
+          "output": 10077,
+          "total": 10085
+        },
+        "model": "opus",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      }
+    ]
+  },
+  {
+    "round": 11,
+    "time": "2026-03-22 19:13:11",
+    "elapsed": 154.3,
+    "results": [
+      {
+        "agent": "边界理论家",
+        "success": false,
+        "elapsed": 90.1,
+        "tokens": {
+          "input": 5,
+          "output": 1415,
+          "total": 1420
+        },
+        "model": "opus",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "批判者",
+        "success": false,
+        "elapsed": 90.8,
+        "tokens": {
+          "input": 946,
+          "output": 1472,
+          "total": 2418
+        },
+        "model": "opus",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "可解释性分析师",
+        "success": false,
+        "elapsed": 101.8,
+        "tokens": {
+          "input": 4,
+          "output": 2140,
+          "total": 2144
+        },
+        "model": "sonnet",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "缩放律研究员",
+        "success": false,
+        "elapsed": 107.9,
+        "tokens": {
+          "input": 6,
+          "output": 2758,
+          "total": 2764
+        },
+        "model": "sonnet",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "工程实践追踪者",
+        "success": false,
+        "elapsed": 114.3,
+        "tokens": {
+          "input": 3,
+          "output": 3907,
+          "total": 3910
+        },
+        "model": "sonnet",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "认知科学桥梁",
+        "success": false,
+        "elapsed": 154.2,
+        "tokens": {
+          "input": 4,
+          "output": 1112,
+          "total": 1116
+        },
+        "model": "opus",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
       }
     ]
   }

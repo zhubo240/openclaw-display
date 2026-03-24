@@ -108,5 +108,21 @@
     "seed_type": "conversation",
     "seed_file": "GDP-债务-全球资产博弈.md",
     "created": "2026-03-22"
+  },
+  {
+    "id": "llm-history",
+    "name": "AI/LLM发展史：从感知机到GPT-4的技术演进与未来走向",
+    "description": "梳理AI/LLM七十年发展脉络，从早期神经网络到Transformer革命、Scaling Laws、涌现能力，再到当前的推理增强与Agent范式。重点探讨六大核心争论：scaling是否撞墙、自回归范式的局限、LLM是否真正理解、AGI时间线、数据墙、下一代架构。",
+    "seed_type": "md",
+    "seed_file": "llm-history.md",
+    "created": "2026-03-22"
+  },
+  {
+    "id": "commodity-cycle",
+    "name": "大宗商品超级周期：我们正在进入第五轮吗？",
+    "description": "基于百年大宗商品价格数据，探讨当前金银铜等大宗商品暴涨是否标志着第五轮超级周期的开启。分析供给侧资本开支不足、AI/绿色转型需求、去美元化、地缘政治等多重驱动力，评估投资机会与风险。",
+    "seed_type": "md",
+    "seed_file": "commodity-supercycle.md",
+    "created": "2026-03-23"
   }
 ]

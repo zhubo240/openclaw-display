@@ -441,5 +441,206 @@
         "stderr": ""
       }
     ]
+  },
+  {
+    "round": 6,
+    "time": "2026-03-22 18:55:16",
+    "elapsed": 600.9,
+    "results": [
+      {
+        "agent": "批判者",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "政治经济学家",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "科技社会学家",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "存在主义哲学家",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "能源产业分析师",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "资本市场策略师",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "第一性原理",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      }
+    ]
+  },
+  {
+    "round": 7,
+    "time": "2026-03-22 19:10:17",
+    "elapsed": 600.4,
+    "results": [
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 271.7,
+        "tokens": {
+          "input": 12,
+          "output": 6451,
+          "total": 6463
+        },
+        "model": "opus",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "资本市场策略师",
+        "success": true,
+        "elapsed": 280.0,
+        "tokens": {
+          "input": 9,
+          "output": 4960,
+          "total": 4969
+        },
+        "model": "sonnet",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "政治经济学家",
+        "success": true,
+        "elapsed": 300.2,
+        "tokens": {
+          "input": 1034,
+          "output": 8007,
+          "total": 9041
+        },
+        "model": "opus",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "存在主义哲学家",
+        "success": true,
+        "elapsed": 368.4,
+        "tokens": {
+          "input": 20,
+          "output": 15813,
+          "total": 15833
+        },
+        "model": "opus",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "能源产业分析师",
+        "success": true,
+        "elapsed": 447.4,
+        "tokens": {
+          "input": 11,
+          "output": 6223,
+          "total": 6234
+        },
+        "model": "sonnet",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "科技社会学家",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      }
+    ]
+  },
+  {
+    "round": 7,
+    "time": "2026-03-22 19:10:21",
+    "elapsed": 520.0,
+    "results": [
+      {
+        "agent": "科技社会学家",
+        "success": true,
+        "elapsed": 126.3,
+        "tokens": {
+          "input": 6,
+          "output": 6254,
+          "total": 6260
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "能源产业分析师",
+        "success": true,
+        "elapsed": 136.4,
+        "tokens": {
+          "input": 6,
+          "output": 3529,
+          "total": 3535
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "存在主义哲学家",
+        "success": true,
+        "elapsed": 210.5,
+        "tokens": {
+          "input": 9,
+          "output": 6720,
+          "total": 6729
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "资本市场策略师",
+        "success": true,
+        "elapsed": 242.6,
+        "tokens": {
+          "input": 11,
+          "output": 5643,
+          "total": 5654
+        },
+        "model": "sonnet",
+        "stderr": ""
+      },
+      {
+        "agent": "政治经济学家",
+        "success": true,
+        "elapsed": 352.0,
+        "tokens": {
+          "input": 16,
+          "output": 14331,
+          "total": 14347
+        },
+        "model": "opus",
+        "stderr": ""
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 520.0,
+        "tokens": {
+          "input": 12,
+          "output": 14067,
+          "total": 14079
+        },
+        "model": "opus",
+        "stderr": ""
+      }
+    ]
   }
 ]

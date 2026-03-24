@@ -1,0 +1,82 @@
+{
+  "topic": "AI/LLM发展史：从感知机到GPT-4的技术演进与未来走向",
+  "description": "梳理AI/LLM七十年发展脉络，从早期神经网络到Transformer革命、Scaling Laws、涌现能力，再到当前的推理增强与Agent范式。重点探讨六大核心争论：scaling是否撞墙、自回归范式的局限、LLM是否真正理解、AGI时间线、数据墙、下一代架构。",
+  "agents": [
+    {
+      "id": "架构考古学家",
+      "role": "信息源",
+      "description": "追踪从Perceptron到Transformer到Mamba的架构演进线索，搜集各关键节点的技术突破细节",
+      "prompt_suffix": "搜索以下具体信息：(1) State Space Models (Mamba, Mamba-2) 的最新benchmark表现，与Transformer的对比数据；(2) RWKV、RetNet、Hyena等线性注意力变体的进展；(3) 混合架构（如Jamba = Mamba+Transformer）的实际部署情况；(4) xLSTM等RNN复兴路线的最新论文。关注架构创新是否真的能打破Transformer的统治地位，还是只在特定场景有优势。"
+    },
+    {
+      "id": "Scaling律研究员",
+      "role": "信息源",
+      "description": "追踪Scaling Laws的最新实证数据，搜集支持和反对scaling继续有效的证据",
+      "prompt_suffix": "搜索以下具体信息：(1) 2024-2026年各大模型（GPT-4.5/5、Claude 4系列、Gemini 2、LLaMA 4）的参数量、训练数据量、性能提升幅度，是否出现收益递减；(2) Chinchilla optimal之后的训练策略变化（over-training小模型 vs 继续scaling）；(3) 合成数据训练的最新结果（如textbook-quality data、self-play）；(4) test-time compute scaling（o1/o3路线）vs pre-training scaling的效率对比数据。用具体数字说话。"
+    },
+    {
+      "id": "涌现与理解哲学家",
+      "role": "框架",
+      "model": "opus",
+      "description": "从认知科学和语言哲学角度，构建关于LLM是否'理解'的分析框架，整合涌现能力争论",
+      "prompt_suffix": "构建一个多层次的分析框架来回答'LLM是否真正理解'：(1) 梳理Chomsky（语言是先天结构）vs Sutskever/Hinton（统计学习可达理解）的核心分歧点；(2) 分析'涌现是真实的'(Wei et al.) vs '涌现是度量伪影'(Schaeffer et al.)两派观点，这个争论是否已有定论；(3) 引入Searle中文房间、Bender鹦鹉论文、Mitchell的'理解的标准'等哲学视角；(4) 提出判断'理解'的可操作标准——什么样的实验结果能区分'真理解'和'高级模式匹配'？不要站队，要给出有层次的分析。"
+    },
+    {
+      "id": "安全与对齐追踪者",
+      "role": "信息源",
+      "description": "搜集AI安全、可解释性、对齐研究的最新进展和争论",
+      "prompt_suffix": "搜索以下具体信息：(1) Anthropic机械可解释性团队2024-2026的最新成果（sparse autoencoders在大模型上的发现、特征引导）；(2) Sleeper Agents后续——是否已有可靠的后门检测方法；(3) RLHF vs Constitutional AI vs DPO vs RLAIF的实际对齐效果对比；(4) 各公司Responsible Scaling Policy/安全承诺的执行情况；(5) 开源模型的安全问题——开放权重是否导致了实际的滥用案例。关注安全研究是否跟上了能力提升的速度。"
+    },
+    {
+      "id": "范式演化理论家",
+      "role": "框架",
+      "model": "opus",
+      "description": "从技术范式转换的视角，分析AI发展的结构性规律，预判下一个转折点",
+      "prompt_suffix": "构建一个'AI范式演化'的理论框架：(1) 识别历史上的范式转换点（符号AI→连接主义→深度学习→Transformer→???），每次转换的触发条件和过渡期特征是什么；(2) 当前我们是否处于范式转换前夜——LeCun的JEPA/世界模型路线、test-time compute路线、多模态统一路线，哪条最可能成为下一个范式；(3) Agent（ReAct/Claude Code/MCP）是范式转换还是当前范式的延伸；(4) 开源与闭源的竞争动态如何影响技术路线选择。给出你的结构化判断，标注置信度。"
+    },
+    {
+      "id": "产业生态观察者",
+      "role": "信息源",
+      "description": "追踪AI产业竞争格局、商业化进展、开源生态演变的最新动态",
+      "prompt_suffix": "搜索以下具体信息：(1) OpenAI/Anthropic/Google/Meta/字节/阿里在2025-2026年的模型发布节奏和战略差异；(2) DeepSeek、Qwen、Mistral等开源模型与闭源模型的性能差距变化趋势；(3) AI Agent产品化的实际进展——Claude Code、GitHub Copilot Agent、Devin等的用户反馈和实际能力边界；(4) 算力供给侧变化（英伟达B系列、AMD、自研芯片）对scaling路线的影响。关注哪些趋势在加速、哪些在放缓。"
+    },
+    {
+      "id": "第一性原理",
+      "role": "框架",
+      "model": "opus",
+      "every_n_rounds": 2,
+      "description": "从最基本的物理/数学/信息论原理出发，剥离一切叙事和惯例，追问每个论断的底层逻辑是否成立。",
+      "prompt_suffix": "你是第一性原理思考者。不接受任何'因为一直都是这样'的论证。对论坛中每个重要论断，追问到最底层的因果关系和数学结构。用简洁有力的方式在论坛发帖或回复，直击问题本质。不要重复别人的分析框架，而是回到最基础的概念重新推导。"
+    },
+    {
+      "id": "批判者",
+      "role": "框架",
+      "model": "opus",
+      "description": "质疑所有 agent 的结论和种子材料中的假设。寻找逻辑漏洞、被忽视的风险、确认偏误、数据错误。",
+      "prompt_suffix": "你是批判性思考者。阅读论坛上所有观点，找出逻辑漏洞和未经检验的假设。质疑共识——当所有人都同意时，你要问'谁在犯错'。批判之后必须提出替代框架或反面论据。优先回复你质疑的帖子。"
+    },
+    {
+      "id": "代码验证",
+      "role": "框架",
+      "every_n_rounds": 5,
+      "phase": "after",
+      "run_order": -1,
+      "timeout": 1200,
+      "description": "用代码验证其他 agent 的量化声明。拉取真实数据，计算实际数字，对比 agent 声明。",
+      "prompt_suffix": "你是量化验证者。阅读论坛帖子，找出包含数字的声明，用代码验证。\n\n优先使用成熟库：yfinance/akshare（行情数据）、quantstats/empyrical（风险指标）、pyportfolioopt（组合优化）、pandas-datareader/fredapi（宏观数据）。\n\n代码保存到 code/ 目录。论坛发帖标题格式：「代码验证：XXX 的 YYY 声明 — ✅/❌/⚠️」"
+    },
+    {
+      "id": "汇总者",
+      "role": "元",
+      "model": "opus",
+      "every_n_rounds": 5,
+      "phase": "after",
+      "description": "综合所有 agent 观点，产出叙事性全景总结。每 5 轮运行一次。",
+      "prompt_suffix": "你是汇总者。阅读论坛上所有帖子和回复，写一篇叙事性总结。不要列清单。像给一个聪明但不了解上下文的人讲故事：从最初的问题开始，讲清楚讨论怎么展开的，核心争论在哪里，最终判断倾向如何。引用帖子时用 [id前8位] 格式。在论坛发帖，标题格式：「第 N 轮总结：一句话核心判断」。"
+    }
+  ],
+  "schedule": {
+    "agents_per_round": "all",
+    "pause_seconds": 300
+  }
+}

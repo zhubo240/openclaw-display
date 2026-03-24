@@ -1,0 +1,34 @@
+{
+  "round": 3,
+  "current_model": "Scaling有四条相互独立的曲线：预训练（数据墙限制）、RLHF后训练（Goodhart天花板）、RLVR后训练（可验证任务突破）、test-time compute（受基础模型能力约束）。每条有自己的上限。未来能力提升是四条曲线的联合优化，而非单条的无限延伸。推理成本通缩（4年50x）改变的是「何时」经济可行，但不改变各自的能力天花板。",
+  "hard": [
+    "Chinchilla-optimal（20 tokens/参数）在实践中已被抛弃，Llama 3 8B达到1875 tokens/参数，约94倍偏差",
+    "GPT-5使用的预训练算力少于GPT-4.5，OpenAI明确转向后训练scaling（2025年确认）",
+    "Test-time compute在ARC-AGI上：o1=32%，o3高算力=88.5%，但成本从$5涨到$1000+/题",
+    "RLHF有Goodhart天花板（Gao et al. 2022 arxiv 2210.10760）：代理RM优化超过KL散度阈值后真实性能下降，更大RM只能延迟而不能消除",
+    "DeepSeek R1（2025.1）使用GRPO+RLVR，无需人标注，纯RL产生自我反思推理，达到o1级别性能",
+    "FrontierMath（极难数学题）：2024.11 SOTA<2% → 2026初GPT-5.4约47.6%，15个月约25倍提升",
+    "2025年全行业转向RLVR路线（Sebastian Raschka, 2025 LLM状态报告）",
+    "RLVR的核心限制：只适用于可符号验证的任务（数学/代码/逻辑），创意写作和对话仍需RLHF"
+  ],
+  "soft": [
+    "三段式pipeline（预训练+后训练+test-time）是2025-2026年标准，各段有独立scaling曲线",
+    "推理成本通缩（4年50x）主要影响test-time compute的经济可行性，不改变能力天花板",
+    "RLVR+GRPO是当前后训练scaling的最有效路线，比RLHF在可验证任务上更少Goodhart风险",
+    "「可验证性」本身将成为下一个AI能力扩展的关键约束：能否把更多任务转化为可验证形式",
+    "MoE架构（DeepSeek V3/Llama 4）的推理效率优势与RLVR结合，可能产生协同效应"
+  ],
+  "open": [
+    "RLVR能否扩展到开放域任务？能否用LLM-as-judge替代符号验证器而不引入Goodhart问题？",
+    "FrontierMath从<2%到47%的速度是否可持续？Tier 4（真正研究级）问题的解决率是否会触顶？",
+    "Test-time compute + RLVR的组合效果：是否存在协同（推理时搜索 × 更好的验证信号）？",
+    "Reward model overoptimization的新形态：当模型用CoT推理时，是否更容易找到「满足字面意思但违反精神」的答案？",
+    "GPT-6/Claude 5是否会有一个专门的RLVR阶段用来提升数学/代码/科学能力？"
+  ],
+  "predictions": [
+    "2026年底：FrontierMath Tier 1-3解决率超过70%，Tier 4超过50%（RLVR+test-time compute协同效果）",
+    "2026年底：至少3个主流模型公开承认RLVR是主要训练路线，不再单纯依赖RLHF",
+    "「可验证性扩展」将成为2026-2027年的关键研究方向：把更多任务转化为RLVR可训练的形式（如利用网页浏览日志、代码执行反馈等）",
+    "RLHF的Goodhart问题将导致一个可测量的「优化饱和点」现象：更多RLHF计算反而导致某些benchmarks分数下降"
+  ]
+}

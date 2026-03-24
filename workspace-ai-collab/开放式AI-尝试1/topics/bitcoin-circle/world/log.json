@@ -501,5 +501,345 @@
         "stderr": ""
       }
     ]
+  },
+  {
+    "round": 6,
+    "time": "2026-03-22 18:54:26",
+    "elapsed": 600.2,
+    "results": [
+      {
+        "agent": "稳定币行业分析师",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "宏观经济分析师",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "稳定币商业模式解构者",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "链上数据研究员",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "数字黄金论辩者",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "批判者",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "第一性原理",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      },
+      {
+        "agent": "监管博弈观察者",
+        "success": false,
+        "elapsed": 600,
+        "error": "timeout"
+      }
+    ]
+  },
+  {
+    "round": 7,
+    "time": "2026-03-22 19:04:08",
+    "elapsed": 282.0,
+    "results": [
+      {
+        "agent": "链上数据研究员",
+        "success": true,
+        "elapsed": 185.5,
+        "tokens": {
+          "input": 6,
+          "output": 6804,
+          "total": 6810
+        },
+        "model": "sonnet",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "数字黄金论辩者",
+        "success": true,
+        "elapsed": 187.8,
+        "tokens": {
+          "input": 9,
+          "output": 7141,
+          "total": 7150
+        },
+        "model": "opus",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "稳定币行业分析师",
+        "success": true,
+        "elapsed": 208.1,
+        "tokens": {
+          "input": 8,
+          "output": 6669,
+          "total": 6677
+        },
+        "model": "sonnet",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "宏观经济分析师",
+        "success": true,
+        "elapsed": 224.1,
+        "tokens": {
+          "input": 9,
+          "output": 8454,
+          "total": 8463
+        },
+        "model": "sonnet",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "监管博弈观察者",
+        "success": true,
+        "elapsed": 267.7,
+        "tokens": {
+          "input": 7,
+          "output": 9867,
+          "total": 9874
+        },
+        "model": "sonnet",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 273.7,
+        "tokens": {
+          "input": 12,
+          "output": 9282,
+          "total": 9294
+        },
+        "model": "opus",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "稳定币商业模式解构者",
+        "success": true,
+        "elapsed": 281.9,
+        "tokens": {
+          "input": 10,
+          "output": 10087,
+          "total": 10097
+        },
+        "model": "opus",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      }
+    ]
+  },
+  {
+    "round": 8,
+    "time": "2026-03-22 19:12:40",
+    "elapsed": 212.1,
+    "results": [
+      {
+        "agent": "数字黄金论辩者",
+        "success": true,
+        "elapsed": 158.3,
+        "tokens": {
+          "input": 8,
+          "output": 5159,
+          "total": 5167
+        },
+        "model": "opus",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "宏观经济分析师",
+        "success": false,
+        "elapsed": 180.7,
+        "tokens": {
+          "input": 8,
+          "output": 7258,
+          "total": 7266
+        },
+        "model": "sonnet",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "批判者",
+        "success": false,
+        "elapsed": 183.5,
+        "tokens": {
+          "input": 983,
+          "output": 6089,
+          "total": 7072
+        },
+        "model": "opus",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "链上数据研究员",
+        "success": false,
+        "elapsed": 185.7,
+        "tokens": {
+          "input": 7,
+          "output": 6589,
+          "total": 6596
+        },
+        "model": "sonnet",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "第一性原理",
+        "success": false,
+        "elapsed": 189.5,
+        "tokens": {
+          "input": 6,
+          "output": 6735,
+          "total": 6741
+        },
+        "model": "opus",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "监管博弈观察者",
+        "success": false,
+        "elapsed": 193.1,
+        "tokens": {
+          "input": 6,
+          "output": 6855,
+          "total": 6861
+        },
+        "model": "sonnet",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "稳定币商业模式解构者",
+        "success": false,
+        "elapsed": 205.4,
+        "tokens": {
+          "input": 831,
+          "output": 7003,
+          "total": 7834
+        },
+        "model": "opus",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "稳定币行业分析师",
+        "success": false,
+        "elapsed": 212.0,
+        "tokens": {
+          "input": 7,
+          "output": 7965,
+          "total": 7972
+        },
+        "model": "sonnet",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      }
+    ]
+  },
+  {
+    "round": 9,
+    "time": "2026-03-23 21:22:40",
+    "elapsed": 339.3,
+    "results": [
+      {
+        "agent": "数字黄金论辩者",
+        "success": true,
+        "elapsed": 183.9,
+        "tokens": {
+          "input": 1008,
+          "output": 7011,
+          "total": 8019
+        },
+        "model": "opus",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "链上数据研究员",
+        "success": true,
+        "elapsed": 188.9,
+        "tokens": {
+          "input": 901,
+          "output": 6504,
+          "total": 7405
+        },
+        "model": "sonnet",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "稳定币行业分析师",
+        "success": true,
+        "elapsed": 194.3,
+        "tokens": {
+          "input": 8,
+          "output": 8264,
+          "total": 8272
+        },
+        "model": "sonnet",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "监管博弈观察者",
+        "success": true,
+        "elapsed": 198.8,
+        "tokens": {
+          "input": 9,
+          "output": 8002,
+          "total": 8011
+        },
+        "model": "sonnet",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "宏观经济分析师",
+        "success": true,
+        "elapsed": 239.9,
+        "tokens": {
+          "input": 11,
+          "output": 11665,
+          "total": 11676
+        },
+        "model": "sonnet",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "稳定币商业模式解构者",
+        "success": true,
+        "elapsed": 284.4,
+        "tokens": {
+          "input": 12,
+          "output": 6659,
+          "total": 6671
+        },
+        "model": "opus",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      },
+      {
+        "agent": "批判者",
+        "success": true,
+        "elapsed": 339.2,
+        "tokens": {
+          "input": 15,
+          "output": 8796,
+          "total": 8811
+        },
+        "model": "opus",
+        "stderr": "Warning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.\n"
+      }
+    ]
   }
 ]
